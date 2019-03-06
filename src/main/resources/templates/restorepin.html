@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Restore PIN</title>
+</head>
+<body style="background: #c63926;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;">
+<h1>
+<a id="redirect" th:href=" 'fashioncoin://recovery=' + ${recovery}" >CLICK TO RECOVERY PIN</a>
+</h1>
+<script>
+    window.onload = function (ev) {
+        var rl = document.getElementById('redirect');
+        window.location.href  = r1.href;
+    }
+</script>
+</body>
+</html>
