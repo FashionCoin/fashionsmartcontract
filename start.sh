@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd /var/git/fashionsmartcontract
-java -jar /var/git/fashionsmartcontract/target/back-0.0.1-SNAPSHOT.jar
+java -jar /var/git/fashionsmartcontract/target/back-0.0.1-SNAPSHOT.jar jgznvrYtdCMG7yye sLx6uuCbLAdanHde
