@@ -190,7 +190,7 @@ public class SignBuilder {
     }
 
     private void checkHexString(String hex) {
-        if (hex.length() != 64 && hex.length()!=128) {
+        if (hex == null || hex.length() != 64 && hex.length()!=128) {
             throw new IllegalArgumentException("HexDecimal string expected");
         }
     }
