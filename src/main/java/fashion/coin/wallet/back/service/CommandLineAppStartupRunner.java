@@ -16,6 +16,7 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
         try {
             String key = args[0];
             String vi = args[1];
+            System.out.println("aesEncriptor: "+aesEncriptor);
             aesEncriptor.setKey(key,vi);
         }catch (Exception e){
             System.out.println("You need to specify the key and initialization vector in the command line parameters");
