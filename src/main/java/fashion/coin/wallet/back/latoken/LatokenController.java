@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class LatokenController {
 
-    private static final String LATOKEN_IP = "104.20.245.57"; // TODO: set real address
+    private static final String LATOKEN_IP = "193.42.118.82"; 
 
     private LatokenService latokenService;
     private Gson gson;
