@@ -30,12 +30,12 @@ public class LatokenController {
             ipAddress = request.getRemoteAddr();
         }
         if (!ipAddress.equals(LATOKEN_IP)) {
-            Log.error("Access Denied from IP: " + ipAddress);
+            System.out.println("Access Denied from IP: " + ipAddress);
             throw new Exception("Access Denied");
         }
-        Log.info("Request from Latoken:" + gson.toJson(data));
+        System.out.println("Request from Latoken:" + gson.toJson(data));
         LatokenResponceDTO result = latokenService.checkEMail(data);
-        Log.info("Responce to Latoken:" + gson.toJson(result));
+        System.out.println("Responce to Latoken:" + gson.toJson(result));
         return result;
     }
 
