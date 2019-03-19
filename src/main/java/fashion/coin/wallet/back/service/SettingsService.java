@@ -37,6 +37,6 @@ public class SettingsService {
 
     public boolean isEmpty() {
         List<Settings> settingsList = settingsRepository.findAll();
-        return (settingsList == null || !settingsList.isEmpty());
+        return (settingsList == null || settingsList.isEmpty());
     }
 }

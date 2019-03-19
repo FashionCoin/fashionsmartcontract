@@ -82,7 +82,7 @@ public class AESEncriptor implements AttributeConverter<String, String> {
 
         KEY_128 = key;
         initVector = vi.getBytes();
-        IvParameterSpec iv = new IvParameterSpec(initVector);
+        iv = new IvParameterSpec(initVector);
 
         if (settingsService.isEmpty()) {
             settingsService.set(TEST_PHRASE_KEY, TEST_PHRASE_VALUE);
