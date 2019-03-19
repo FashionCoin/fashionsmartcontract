@@ -2,7 +2,7 @@ package fashion.coin.wallet.back.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import fashion.coin.wallet.back.service.AIService;
+
 import javax.annotation.PostConstruct;
 
 /**
@@ -19,12 +19,11 @@ public class InitService {
 
     EmailService emailService;
     BlockchainService blockchainService;
-    AIService aiService;
+
 
     @PostConstruct
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
-        aiService.isReady();
     }
 
     @Autowired
@@ -37,8 +36,4 @@ public class InitService {
         this.blockchainService = blockchainService;
     }
     
-    @Autowired
-    public void setAiService(AIService aiService) {
-        this.aiService = aiService;
-    }
 }
