@@ -125,6 +125,7 @@ public class AIService {
         BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
         SignBuilder.init();
         try {
+            System.out.println(priv_key);
             String sign = SignBuilder.init()
                     .setNetworkId(0)
                     .setProtocolVersion(0)
