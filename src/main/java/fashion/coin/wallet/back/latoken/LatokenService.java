@@ -14,21 +14,11 @@ import java.util.List;
 public class LatokenService {
 
     ClientRepository clientRepository;
-    SetEmailRepository setEmailRepository;
+
 
     Gson gson;
 
     public LatokenResponceDTO checkEMail(LatokenRequestDTO data) {
-
-        List<Client> clientList = clientRepository.findAll();
-        for(Client cl : clientList){
-            System.out.println(gson.toJson(cl));
-        }
-
-        List<SetEmailRequest> setEmailRequestList = setEmailRepository.findAll();
-        for(SetEmailRequest setEmailRequest : setEmailRequestList){
-            System.out.println(gson.toJson(setEmailRequest));
-        }
 
         Client client = clientRepository.findClientByEmail(data.getEmail().toLowerCase());
         if(client != null ){
@@ -48,8 +38,4 @@ public class LatokenService {
         this.gson = gson;
     }
 
-    @Autowired
-    public void setSetEmailRepository(SetEmailRepository setEmailRepository) {
-        this.setEmailRepository = setEmailRepository;
-    }
 }
