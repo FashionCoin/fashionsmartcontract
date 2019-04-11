@@ -79,7 +79,7 @@ public class FiatService {
                     data.getPhone(),
                     data.getCryptoname(),
                     false,
-                    "Processed"
+                    "Payment not sent"
             );
 
             if (!payment.getResult()) {

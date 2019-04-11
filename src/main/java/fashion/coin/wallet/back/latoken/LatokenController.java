@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class LatokenController {
-
-    private static final String LATOKEN_IP = "193.42.118.82"; 
 
     private LatokenService latokenService;
     private Gson gson;
@@ -29,7 +28,7 @@ public class LatokenController {
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
         }
-        if (!ipAddress.equals(LATOKEN_IP)) {
+        if (!ipAddress.equals(latokenIp)) {
             System.out.println("Access Denied from IP: " + ipAddress);
             throw new Exception("Access Denied");
         }
@@ -49,4 +48,7 @@ public class LatokenController {
     public void setGson(Gson gson) {
         this.gson = gson;
     }
+
+    @Value("${latoken.ip}")
+    private String latokenIp;
 }
