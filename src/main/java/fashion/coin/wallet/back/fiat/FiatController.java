@@ -38,6 +38,24 @@ public class FiatController {
         return result;
     }
 
+    @PostMapping("/api/v1/fiat/pay")
+    @ResponseBody
+    PayResponceDTO createPayment(@RequestBody PayRequestDTO data,
+                                 HttpServletRequest request) throws Exception {
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        if (!ipAddress.equals(FIAT_IP)) {
+            System.out.println("Access Denied from IP: " + ipAddress);
+            throw new Exception("Access Denied");
+        }
+        System.out.println("Request from Fiat:" + gson.toJson(data));
+        PayResponceDTO result = fiatService.createPayment(data);
+        System.out.println("Responce to Fiat:" + gson.toJson(result));
+        return result;
+    }
+
     @Autowired
     public void setFiatService(FiatService fiatService) {
         this.fiatService = fiatService;

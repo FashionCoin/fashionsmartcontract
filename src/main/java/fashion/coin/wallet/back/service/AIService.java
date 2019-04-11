@@ -90,9 +90,10 @@ public class AIService {
     }
 
 
-    public void transfer(String amountStr, String receiver) {
-
-        BigInteger amount = new BigInteger(amountStr + "000", 10);
+    public boolean transfer(String amountStr, String receiver) {
+        BigDecimal floatamount = new BigDecimal(amountStr);
+//        BigInteger amount = new BigInteger(amountStr + "000", 10);
+        BigInteger amount = floatamount.movePointRight(3).toBigInteger();
         BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
         SignBuilder.init();
         try {
@@ -112,10 +113,11 @@ public class AIService {
             TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
             System.out.println(gson.toJson(transactionRequestDTO));
             System.out.println(gson.toJson(transactionService.send(transactionRequestDTO)));
-
+return true;
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -155,8 +157,6 @@ public class AIService {
         transactionRequestDTO.setBlockchainTransaction(blockchainTransactionDTO);
         return transactionRequestDTO;
     }
-
-
 
 
     public static final String CREATE_WALLET = "{\n" +
