@@ -1,14 +1,16 @@
-package fashion.coin.wallet.back.fiat;
+package fashion.coin.wallet.back.fiat.service;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.fiat.dto.*;
+import fashion.coin.wallet.back.fiat.entity.FiatPayment;
+import fashion.coin.wallet.back.fiat.repository.FiatPaymentRepository;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.service.AIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +27,10 @@ public class FiatService {
     AIService aiService;
 
     Gson gson;
+
+
+    @Value("${fiat.secretkey}")
+    private String fiatSecretKey;
 
     public CheckPhoneResponceDTO checkPhone(CheckPhoneRequestDTO data) {
         try {
@@ -138,6 +144,26 @@ public class FiatService {
         }
     }
 
-    @Value("${fiat.secretkey}")
-    private String fiatSecretKey;
+
+    public PaymentHistoryDTO getHistory(LogsRequestDTO data) {
+        try{
+            List<FiatPayment> payments;
+            if(data.getOnlysuccessful()){
+             payments = fiatPaymentRepository.findAllByTimestampBetweenAndResult(
+                     data.getStart(),
+                     data.getEnd(),
+                     true);
+            }else{
+                payments = fiatPaymentRepository.findAllByTimestampBetween(
+                        data.getStart(),
+                        data.getEnd());
+            }
+            return new PaymentHistoryDTO(payments);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new PaymentHistoryDTO();
+        }
+    }
+
+
 }

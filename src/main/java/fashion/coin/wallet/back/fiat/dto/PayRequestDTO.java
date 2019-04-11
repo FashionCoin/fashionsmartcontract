@@ -1,12 +1,8 @@
-package fashion.coin.wallet.back.fiat;
+package fashion.coin.wallet.back.fiat.dto;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 
-@Entity
-public class FiatPayment {
-    @Id
+public class PayRequestDTO {
     String id;
     Long timestamp;
     BigDecimal amount;
@@ -15,14 +11,13 @@ public class FiatPayment {
     BigDecimal fshn;
     String phone;
     String cryptoname;
-    Boolean result;
-    String msg;
+    String signature;
 
-    public FiatPayment() {
+    public PayRequestDTO() {
     }
 
-    public FiatPayment(String id, Long timestamp, BigDecimal amount, BigDecimal fee, String currency,
-                       BigDecimal fshn, String phone, String cryptoname, Boolean result, String msg) {
+    public PayRequestDTO(String id, Long timestamp, BigDecimal amount, BigDecimal fee, String currency,
+                         BigDecimal fshn, String phone, String cryptoname, String signature) {
         this.id = id;
         this.timestamp = timestamp;
         this.amount = amount;
@@ -31,8 +26,7 @@ public class FiatPayment {
         this.fshn = fshn;
         this.phone = phone;
         this.cryptoname = cryptoname;
-        this.result = result;
-        this.msg = msg;
+        this.signature = signature;
     }
 
     public String getId() {
@@ -99,19 +93,11 @@ public class FiatPayment {
         this.cryptoname = cryptoname;
     }
 
-    public Boolean getResult() {
-        return result;
+    public String getSignature() {
+        return signature;
     }
 
-    public void setResult(Boolean result) {
-        this.result = result;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

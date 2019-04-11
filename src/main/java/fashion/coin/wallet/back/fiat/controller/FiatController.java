@@ -1,8 +1,8 @@
-package fashion.coin.wallet.back.fiat;
+package fashion.coin.wallet.back.fiat.controller;
 
 import com.google.gson.Gson;
-import fashion.coin.wallet.back.latoken.LatokenRequestDTO;
-import fashion.coin.wallet.back.latoken.LatokenResponceDTO;
+import fashion.coin.wallet.back.fiat.dto.*;
+import fashion.coin.wallet.back.fiat.service.FiatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -36,6 +36,17 @@ public class FiatController {
         checkIp(request);
         System.out.println("Request from Fiat:" + gson.toJson(data));
         PayResponceDTO result = fiatService.createPayment(data);
+        System.out.println("Responce to Fiat:" + gson.toJson(result));
+        return result;
+    }
+
+    @PostMapping("/api/v1/fiat/logs")
+    @ResponseBody
+    PaymentHistoryDTO getHistory(@RequestBody LogsRequestDTO data,
+                                 HttpServletRequest request) throws Exception {
+        checkIp(request);
+        System.out.println("Request from Fiat:" + gson.toJson(data));
+        PaymentHistoryDTO result = fiatService.getHistory(data);
         System.out.println("Responce to Fiat:" + gson.toJson(result));
         return result;
     }

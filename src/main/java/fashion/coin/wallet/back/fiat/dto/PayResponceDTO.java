@@ -1,4 +1,4 @@
-package fashion.coin.wallet.back.fiat;
+package fashion.coin.wallet.back.fiat.dto;
 
 public class PayResponceDTO {
     Boolean result;
