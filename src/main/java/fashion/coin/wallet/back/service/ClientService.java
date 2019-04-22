@@ -137,7 +137,10 @@ public class ClientService {
     }
 
     private Client findClientByEmail(String email) {
-        return clientRepository.findClientByEmail(email);
+        List<Client> clientList = clientRepository.findClientsByEmail(email);
+        if(clientList == null || clientList.size()==0) return null;
+        else return clientList.get(0);
+//        return clientRepository.findClientByEmail(email);
     }
 
     private String getRandomToken(int size) {

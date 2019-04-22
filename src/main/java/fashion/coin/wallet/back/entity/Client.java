@@ -28,7 +28,6 @@ public class Client implements Comparable<Client>{
 
     boolean loginChanged;
 
-    @Column(unique = true)
     String email;
 
     String pin;
