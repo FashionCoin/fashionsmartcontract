@@ -136,7 +136,7 @@ public class ClientService {
         return client == null;
     }
 
-    private Client findClientByEmail(String email) {
+    public Client findClientByEmail(String email) {
         List<Client> clientList = clientRepository.findClientsByEmail(email);
         if(clientList == null || clientList.size()==0) return null;
         else return clientList.get(0);
