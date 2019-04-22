@@ -54,7 +54,7 @@ public class ClientService {
             if (!checkEmoji(data.getLogin().toLowerCase())) return error105;
             if (blockchainService.sendTransaction(data.getBlockchainTransaction()).length() == 0)
                 return error101;
-            aiService.cryptoname(data.getLogin().toLowerCase(), "", data.getWalletAddress());
+//            aiService.cryptoname(data.getLogin().toLowerCase(), "", data.getWalletAddress());
             clientRepository.save(new Client(data.getLogin().toLowerCase(), data.getApikey(), data.getWalletAddress()));
             return created;
         } catch (Exception e) {
@@ -341,5 +341,21 @@ public class ClientService {
         Client client = clientRepository.findClientByLogin(login);
         client.setAvatar(path);
         clientRepository.save(client);
+    }
+
+    public ResultDTO egisterCryptoname(CryptonameEmailDTO data) {
+        try {
+            System.out.println(gson.toJson(data));
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            if (client != null) return error100;
+            if (!checkEmoji(data.getCryptoname().toLowerCase())) return error105;
+
+            clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
+                    data.getEmail()));
+            return created;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }

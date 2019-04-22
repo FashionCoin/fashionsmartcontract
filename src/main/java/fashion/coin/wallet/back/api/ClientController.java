@@ -64,6 +64,13 @@ public class ClientController {
         return clientService.changeClientInfo(clientInfo);
     }
 
+    @PostMapping("/api/v1/registercryptoname")
+    @ResponseBody
+    ResultDTO registerCryptoname(@RequestBody  CryptonameEmailDTO data){
+        return clientService.egisterCryptoname( data);
+    }
+
+
     @Autowired
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;

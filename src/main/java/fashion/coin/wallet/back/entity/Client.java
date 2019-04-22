@@ -48,6 +48,11 @@ public class Client implements Comparable<Client>{
         this.walletBalance = BigDecimal.ZERO;
     }
 
+    public Client(String login, String email) {
+        this.login = login;
+        this.email = email;
+    }
+
     public Client(String login, String apikey, String walletAddress) {
         this.login = login;
         this.apikey = apikey;
