@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static fashion.coin.wallet.back.FashionCoinWallet.HOST_NAME;
+import static java.lang.Character.isLetter;
 
 /**
  * Created by JAVA-P on 22.10.2018.
@@ -51,7 +52,7 @@ public class ClientService {
             String pub_key = jsonTransaction.getBody().getPub_key();
             if (pub_key == null) return error106;
             if (!pub_key.equals(data.getWalletAddress())) return error103;
-            if (!checkEmoji(data.getLogin().toLowerCase())) return error105;
+            if (!checkValidCryptoname(data.getLogin().toLowerCase())) return error105;
             if (blockchainService.sendTransaction(data.getBlockchainTransaction()).length() == 0)
                 return error101;
 //            aiService.cryptoname(data.getLogin().toLowerCase(), "", data.getWalletAddress());
@@ -69,7 +70,7 @@ public class ClientService {
             Client client = clientRepository.findClientByLogin(data.getLogin().toLowerCase());
             if (client != null) return error100;
             if (!data.getLogin().toLowerCase().equals(data.getLogin())) return error104;
-            if (!checkEmoji(data.getLogin())) return error105;
+            if (!checkValidCryptoname(data.getLogin())) return error105;
             return validLogin;
         } catch (Exception e) {
             return new ResultDTO(false, e.getMessage(), -1);
@@ -77,19 +78,23 @@ public class ClientService {
     }
 
 
-    private boolean checkEmoji(String login) {
-        login = login.replaceAll("[^a-zA-Z]", "");
-        if (login.length() < 2) return false;
-        String htmlDecimal = EmojiParser.parseToHtmlDecimal(login);
-        if (htmlDecimal.contains(";&#")) return false;
+    private boolean checkValidCryptoname(String cryptoname) {
 
-        String textWithoutEmoji = EmojiParser.removeAllEmojis(login);
+        if(cryptoname.length()<1) return false;
+
+        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname);
+        List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
+
+        if(textWithoutEmoji.length()+textOnlyEmoji.size()>25) return false;
+
+        // Reserv:
+        if(textWithoutEmoji.length()==0 && textOnlyEmoji.size()==1) return false;
 
         char[] charArray = textWithoutEmoji.toCharArray();
         int charArrayLength = textWithoutEmoji.length();
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
-            if (!(isLatinLetter(symbol) && Character.isLowerCase(symbol)) && symbol != '-') return false;
+            if (!(Character.isLetter(symbol) && Character.isLowerCase(symbol)) && symbol != '-') return false;
         }
         return true;
     }
@@ -103,7 +108,7 @@ public class ClientService {
         List<String> tests = Arrays.asList("normallogin", "nor-malLogin", "norm-allogin", "norma.llogin", "normallo_gin",
                 "norm allogin", "norm\uD83D\uDE09\uD83D\uDE09allogin", "nor\uD83D\uDE03mallogin", "norm\uD83D\uDE09-\uD83D\uDE09allogin", "nor\uD83D\uDE03mallo\ngin");
         for (String test : tests) {
-            System.out.println(test + " " + clientService.checkEmoji(test));
+            System.out.println(test + " " + clientService.checkValidCryptoname(test));
         }
     }
 
@@ -138,7 +143,7 @@ public class ClientService {
 
     public Client findClientByEmail(String email) {
         List<Client> clientList = clientRepository.findClientsByEmail(email);
-        if(clientList == null || clientList.size()==0) return null;
+        if (clientList == null || clientList.size() == 0) return null;
         else return clientList.get(0);
 //        return clientRepository.findClientByEmail(email);
     }
@@ -212,7 +217,7 @@ public class ClientService {
             messagingService.sendNotification("change_balance",
                     client.getWalletBalance().toString(),
                     "topic_" + client.getWalletAddress());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -282,7 +287,7 @@ public class ClientService {
 
         if (data.getLogin() != null) {
             if (!data.getLogin().toLowerCase().equals(data.getLogin())) return error104;
-            if (!checkEmoji(data.getLogin())) return error105;
+            if (!checkValidCryptoname(data.getLogin())) return error105;
 
             if (!client.getLogin().toLowerCase().equals(data.getLogin().toLowerCase())) {
                 if (client.isLoginChanged()) return error113;
@@ -348,11 +353,13 @@ public class ClientService {
             System.out.println(gson.toJson(data));
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client != null) return error100;
-            if (!checkEmoji(data.getCryptoname().toLowerCase())) return error105;
+            List<Client> clientList = clientRepository.findClientsByEmail(data.getEmail());
+            if (clientList != null && clientList.size() > 0) return error114;
+            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) return error105;
 
             clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
                     data.getEmail()));
-            emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: "+data.getCryptoname().toLowerCase()+" ");
+            emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: " + data.getCryptoname().toLowerCase() + " ");
             return created;
         } catch (Exception e) {
             e.printStackTrace();
