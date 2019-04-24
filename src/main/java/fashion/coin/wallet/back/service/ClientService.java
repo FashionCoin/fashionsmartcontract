@@ -343,7 +343,7 @@ public class ClientService {
         clientRepository.save(client);
     }
 
-    public ResultDTO egisterCryptoname(CryptonameEmailDTO data) {
+    public ResultDTO registerCryptoname(CryptonameEmailDTO data) {
         try {
             System.out.println(gson.toJson(data));
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
@@ -352,6 +352,7 @@ public class ClientService {
 
             clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
                     data.getEmail()));
+            emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: "+data.getCryptoname().toLowerCase()+" ");
             return created;
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,7 +1,6 @@
 package fashion.coin.wallet.back.api;
 
 import fashion.coin.wallet.back.dto.*;
-import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,7 +66,7 @@ public class ClientController {
     @PostMapping("/api/v1/registercryptoname")
     @ResponseBody
     ResultDTO registerCryptoname(@RequestBody  CryptonameEmailDTO data){
-        return clientService.egisterCryptoname( data);
+        return clientService.registerCryptoname( data);
     }
 
 
