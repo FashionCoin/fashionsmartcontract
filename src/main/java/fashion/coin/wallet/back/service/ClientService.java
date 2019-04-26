@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.EmojiParser;
@@ -11,6 +13,7 @@ import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.nio.cs.UTF_8;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -356,6 +359,7 @@ public class ClientService {
     public ResultDTO registerCryptoname(CryptonameEmailDTO data) {
         try {
             System.out.println(gson.toJson(data));
+            System.out.println(Bytes.asList( data.getCryptoname().getBytes()));
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client != null) {
                 System.out.println(gson.toJson(error100));
