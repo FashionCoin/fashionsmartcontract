@@ -357,10 +357,19 @@ public class ClientService {
         try {
             System.out.println(gson.toJson(data));
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
-            if (client != null) return error100;
+            if (client != null) {
+                System.out.println(gson.toJson(error100));
+                return error100;
+            }
             List<Client> clientList = clientRepository.findClientsByEmail(data.getEmail());
-            if (clientList != null && clientList.size() > 0) return error114;
-            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) return error105;
+            if (clientList != null && clientList.size() > 0){
+                System.out.println(gson.toJson(error114));
+                return error114;
+            }
+            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) {
+                System.out.println(gson.toJson(error105));
+                return error105;
+            }
 
             clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
                     data.getEmail()));
