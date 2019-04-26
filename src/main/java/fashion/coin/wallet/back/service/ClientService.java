@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.EmojiParser;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -79,6 +80,9 @@ public class ClientService {
 
 
     private boolean checkValidCryptoname(String cryptoname) {
+
+        System.out.println(EmojiParser.parseToAliases(cryptoname));
+
         System.out.println("cryptoname: "+cryptoname);
         System.out.println("cryptoname.length(): "+cryptoname.length());
         if(cryptoname.length()<1) return false;
@@ -100,7 +104,9 @@ public class ClientService {
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
             System.out.println(symbol);
+            System.out.println("Code: "+ (int)symbol);
             if (!(Character.isLetter(symbol) && Character.isLowerCase(symbol)) && symbol != '-') return false;
+
         }
         return true;
     }
