@@ -81,7 +81,7 @@ public class ClientService {
 
     private boolean checkValidCryptoname(String cryptoname) {
 
-        System.out.println(EmojiParser.parseToAliases(cryptoname));
+        System.out.println(EmojiParser.parseToAliases(cryptoname, EmojiParser.FitzpatrickAction.REMOVE));
 
         System.out.println("cryptoname: "+cryptoname);
         System.out.println("cryptoname.length(): "+cryptoname.length());
