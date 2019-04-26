@@ -79,21 +79,27 @@ public class ClientService {
 
 
     private boolean checkValidCryptoname(String cryptoname) {
-
+        System.out.println("cryptoname: "+cryptoname);
+        System.out.println("cryptoname.length(): "+cryptoname.length());
         if(cryptoname.length()<1) return false;
 
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname);
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
 
-        if(textWithoutEmoji.length()+textOnlyEmoji.size()>25) return false;
+        System.out.println("textWithoutEmoji: "+textWithoutEmoji);
+        System.out.println("textOnlyEmoji: "+ gson.toJson(textOnlyEmoji));
+        System.out.println("textWithoutEmoji.length()+textOnlyEmoji.size(): "+ textWithoutEmoji.length()+textOnlyEmoji.size());
 
+        if(textWithoutEmoji.length()+textOnlyEmoji.size()>25) return false;
+        System.out.println("textWithoutEmoji.length() textOnlyEmoji.size():"+textWithoutEmoji.length()+" "+textOnlyEmoji.size());
         // Reserv:
         if(textWithoutEmoji.length()==0 && textOnlyEmoji.size()==1) return false;
 
         char[] charArray = textWithoutEmoji.toCharArray();
-        int charArrayLength = textWithoutEmoji.length();
+        int charArrayLength = charArray.length;
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
+            System.out.println(symbol);
             if (!(Character.isLetter(symbol) && Character.isLowerCase(symbol)) && symbol != '-') return false;
         }
         return true;
