@@ -95,6 +95,7 @@ public class ClientService {
         int charArrayLength = charArray.length;
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
+            System.out.println(symbol + " "+(int)symbol);
             if (!Character.isJavaIdentifierPart(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
                     symbol != '-') return false;
