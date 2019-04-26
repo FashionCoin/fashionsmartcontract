@@ -1,9 +1,9 @@
 package fashion.coin.wallet.back.service;
 
-import com.google.common.collect.Lists;
+
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
-import com.vdurmont.emoji.EmojiManager;
+
 import com.vdurmont.emoji.EmojiParser;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -13,7 +13,7 @@ import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.nio.cs.UTF_8;
+
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
