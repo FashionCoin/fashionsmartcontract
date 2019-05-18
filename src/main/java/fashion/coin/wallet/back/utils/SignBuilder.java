@@ -165,6 +165,17 @@ public class SignBuilder {
         return result;
     }
 
+    public Map<String, String> createKeyPayr(byte[] seed) {
+        byte[] secretKey = Arrays.copyOf(seed, 64);
+        byte[] publicKey = new byte[32];
+        TweetNaCl.crypto_sign_keypair(publicKey, secretKey, true);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("pub_key", bytesToHex(publicKey));
+        result.put("priv_key", bytesToHex(secretKey));
+        return result;
+    }
+
     private void checkUint8(int number) {
         if (number < 0 || number > 255) {
             throw new IllegalArgumentException("Wrong number range, 0..255 expected");

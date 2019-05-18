@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>FSHN</title>
+</head>
+<body>
+
+<form method="get" action="/keygen">
+    <input type="button" value="< Back to photo">
+</form>
+
+<h1>Key List</h1>
+
+
+<div th:each="keypair : ${keypairs}">
+    <h2 th:text="${keypair.key}">BTC</h2>
+    <table>
+        <tr th:each="param : ${keypair.value}">
+            <td th:text="${param.key}">Param name</td>
+            <td th:text="${param.value}">Param value</td>
+        </tr>
+    </table>
+    <hr>
+</div>
+
+<form method="get" action="/keygen">
+    <input type="button" value="Back to photo">
+</form>
+
+</body>
+</html>
