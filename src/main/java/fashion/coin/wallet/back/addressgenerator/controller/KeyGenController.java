@@ -23,7 +23,7 @@ public class KeyGenController {
         return "keygen";
     }
 
-    @PostMapping("/")
+    @PostMapping("/keygen")
     public String handleFileUpload(ModelMap modelMap, @RequestParam("file") MultipartFile file) {
 
         try {
