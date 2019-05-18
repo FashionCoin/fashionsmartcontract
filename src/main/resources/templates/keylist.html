@@ -17,7 +17,7 @@
     <h2 th:text="${keypair.key}">BTC</h2>
     <table>
         <tr th:each="curparam : ${keypair.value}">
-            <td th:text="${curparam.key}">Param name</td>
+            <td th:text="${curparam.key}:">Param name</td>
             <td th:text="${curparam.value}">Param value</td>
         </tr>
     </table>
