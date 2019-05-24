@@ -30,7 +30,7 @@ public class CryptoExistsError implements TelegramEventHandler {
 
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
-        Integer userId = update.getCallbackQuery().getFrom().getId();
+        Integer userId = update.getMessage().getFrom().getId();
         telegramDataService.setValue(userId.toString(), CURRENTSTEP, WAITNAME);
 
         String cryptoname = update.getMessage().getText();
