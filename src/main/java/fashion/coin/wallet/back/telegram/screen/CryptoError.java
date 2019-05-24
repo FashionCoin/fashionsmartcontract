@@ -35,7 +35,7 @@ public class CryptoError implements TelegramEventHandler {
 
         SendMessage message = new SendMessage()
                 .setChatId(update.getMessage().getChatId())
-                .setText("“Ваше имя не соответствует правилам, попробуйте еще раз");
+                .setText("Ваше имя не соответствует правилам, попробуйте еще раз");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
