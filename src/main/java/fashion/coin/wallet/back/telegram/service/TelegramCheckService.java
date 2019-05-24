@@ -92,7 +92,9 @@ public class TelegramCheckService {
                     .setUserId(userId);
             ChatMember member = fashionBot.execute(getChatMember);
             System.out.println("@annakfashion"+member);
-            if (member != null && member.getUser() != null && member.getUser().getId() != null) {
+            if (member != null && member.getUser() != null && member.getUser().getId() != null
+            ) {
+                System.out.println(member.getStatus());
                 return true;
             }
         } catch (Exception e) {
