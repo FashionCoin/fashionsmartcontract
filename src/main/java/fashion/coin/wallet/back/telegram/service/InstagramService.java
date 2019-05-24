@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class InstagramService {
@@ -25,12 +27,21 @@ public class InstagramService {
     String username;
     @Value("${instgram.bot.password}")
     String password;
+    private Pattern pattern;
+    private Matcher matcher;
+    private static final String USERNAME_PATTERN = "^[a-z0-9_-]{3,15}$";
 
     @PostConstruct
     public void start() {
         tryConnect();
+        pattern = Pattern.compile(USERNAME_PATTERN);
     }
 
+    public boolean validate(final String username){
+        matcher = pattern.matcher(username);
+        return matcher.matches();
+
+    }
 
     private void tryConnect() {
         try {
@@ -59,6 +70,8 @@ public class InstagramService {
         Long userId = null;
 
         try {
+            if(!validate(instAccaunt)) return false;
+
             InstagramSearchUsernameResult userResult = instagram.sendRequest(new InstagramSearchUsernameRequest(instAccaunt));
             if (userResult == null || userResult.getUser() == null || userResult.getUser().getUsername() == null
                     || userResult.getUser().getFollowing_count() == 0) {
