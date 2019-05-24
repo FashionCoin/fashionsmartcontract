@@ -32,7 +32,7 @@ public class ReferalScreen implements TelegramEventHandler {
         Integer userId = update.getCallbackQuery().getFrom().getId();
         SendMessage message = new SendMessage()
                 .setChatId(chatId)
-                .setReplyMarkup(startInlineKeyboard())
+                .setReplyMarkup(startInlineKeyboard(userId.toString()))
                 .setText("Скопируй свою уникальную ссылку на бот и отправь ее своему другу. После " +
                         "того, как твой друг заведет себе Crypto Name в нашем боте, ты получишь " +
                         "1,000 FSHN на свой баланс, а твой друг 20,000 FSHN за создание СN. Мы не " +
@@ -48,7 +48,7 @@ public class ReferalScreen implements TelegramEventHandler {
     }
 
 
-    public static InlineKeyboardMarkup startInlineKeyboard() {
+    public static InlineKeyboardMarkup startInlineKeyboard(String userId) {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class ReferalScreen implements TelegramEventHandler {
                 .setText("отправить реферальную ссылку")
                 .setSwitchInlineQuery("Привет, я зарегистрировал себе Crypto Name и получил 10 000 FSHN.\n" +
                         "Рекомендую тебе сделать то же самое, по ссылке:\n" +
-                        "{http://ХХХХХ.ХХХХ.ХХХ/ХХХХХХХХХ}")
+                        "{https://t.me/CryptoNameAirdropBot?start=" + userId + "}")
         );
         rowsInline.add(rowTwoInline);
 
