@@ -26,7 +26,7 @@ public class FirstScreen implements TelegramEventHandler {
 
     public static FirstScreen getInstance(){
         if(screen == null) screen = new FirstScreen();
-        screen.telegramCheckService = ContextProvider.getBean(TelegramCheckService.class);
+        screen.telegramCheckService = TelegramCheckService.getInstance();
         return screen;
     }
 
