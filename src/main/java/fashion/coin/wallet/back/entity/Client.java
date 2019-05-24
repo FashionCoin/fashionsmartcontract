@@ -16,7 +16,7 @@ import java.math.BigDecimal;
  * All rights to the software code are owned by GateOn
  */
 @Entity
-public class Client implements Comparable<Client>{
+public class Client implements Comparable<Client> {
 
     @Id
     @GeneratedValue
@@ -29,7 +29,7 @@ public class Client implements Comparable<Client>{
     boolean loginChanged;
 
     String email;
-
+    Integer telegramId;
     String pin;
 
     String phone;
@@ -51,6 +51,11 @@ public class Client implements Comparable<Client>{
     public Client(String login, String email) {
         this.login = login;
         this.email = email;
+    }
+
+    public Client(String login, Integer telegramId) {
+        this.login = login;
+        this.telegramId = telegramId;
     }
 
     public Client(String login, String apikey, String walletAddress) {
@@ -154,6 +159,14 @@ public class Client implements Comparable<Client>{
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Integer getTelegramId() {
+        return telegramId;
+    }
+
+    public void setTelegramId(Integer telegramId) {
+        this.telegramId = telegramId;
     }
 
     @Override

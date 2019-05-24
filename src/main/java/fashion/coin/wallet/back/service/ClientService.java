@@ -384,4 +384,31 @@ public class ClientService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+    public ResultDTO registerCryptoname(CryptonameTelegramDTO data) {
+        try {
+            System.out.println(gson.toJson(data));
+            System.out.println(Bytes.asList( data.getCryptoname().getBytes()));
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            if (client != null) {
+                System.out.println(gson.toJson(error100));
+                return error100;
+            }
+            List<Client> clientList = clientRepository.findClientsByTelegramId(data.getTelegramId());
+            if (clientList != null && clientList.size() > 0){
+                System.out.println(gson.toJson(error114));
+                return error114;
+            }
+            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) {
+                System.out.println(gson.toJson(error105));
+                return error105;
+            }
+
+            clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
+                    data.getTelegramId()));
+            return created;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
 }
