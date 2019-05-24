@@ -66,8 +66,10 @@ public class InstagramService {
             userId = userResult.getUser().getPk();
         } catch (ClientProtocolException e) {
             e.printStackTrace();
+            return false;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
 
         String nextMaxId = null;
