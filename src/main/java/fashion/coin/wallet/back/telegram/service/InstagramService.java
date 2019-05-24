@@ -52,7 +52,7 @@ public class InstagramService {
 
     public boolean checkFollowing(String instAccaunt) {
 
-        if(instagram == null || !instagram.isLoggedIn()){
+        if (instagram == null || !instagram.isLoggedIn()) {
             tryConnect();
         }
 
@@ -60,6 +60,10 @@ public class InstagramService {
 
         try {
             InstagramSearchUsernameResult userResult = instagram.sendRequest(new InstagramSearchUsernameRequest(instAccaunt));
+            if (userResult == null || userResult.getUser() == null || userResult.getUser().getUsername() == null
+                    || userResult.getUser().getFollowing_count() == 0) {
+                return false;
+            }
             System.out.println("ID for @annakfashion is " + userResult.getUser().getPk());
             System.out.println("Number of followers: " + userResult.getUser().getFollower_count());
             System.out.println("Number of following: " + userResult.getUser().getFollowing_count());
