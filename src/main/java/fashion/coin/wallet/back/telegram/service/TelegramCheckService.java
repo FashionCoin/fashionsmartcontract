@@ -208,8 +208,10 @@ public class TelegramCheckService {
             Integer userId = update.getMessage().getFrom().getId();
 
             String refer = message.substring(7);
-            System.out.println("Refer: " + refer);
-            dataService.setValue(userId.toString(), REFER, refer);
+            if(!refer.equals(userId)){
+                System.out.println("Refer: " + refer);
+                dataService.setValue(userId.toString(), REFER, refer);
+            }
         }
     }
 
