@@ -163,6 +163,7 @@ public class TelegramCheckService {
         if (result.isResult()) {
             dataService.setValue(userId.toString(), CRYPTONAME, cryptoname);
             dataService.setValue(userId.toString(), WAITNAME, "");
+            dataService.setValue(userId.toString(), CURRENTSTEP, "");
             referalBonus(userId.toString());
             CryptoDoneScreen.getInstance().execute(fashionBot, update);
             return;
