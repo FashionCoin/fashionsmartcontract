@@ -60,7 +60,8 @@ public class TelegramCheckService {
                     .setUserId(userId);
             ChatMember member = fashionBot.execute(getChatMember);
 
-            if (member != null && member.getUser() != null && member.getUser().getId() != null) {
+            if (member != null && member.getUser() != null && member.getUser().getId() != null
+                    && member.getStatus().equals("member")) {
                 return true;
             }
         } catch (Exception e) {
@@ -91,10 +92,11 @@ public class TelegramCheckService {
                     .setChatId("@annakfashion")
                     .setUserId(userId);
             ChatMember member = fashionBot.execute(getChatMember);
-            System.out.println("@annakfashion"+member);
+//            System.out.println("@annakfashion"+member);
             if (member != null && member.getUser() != null && member.getUser().getId() != null
+                    && member.getStatus().equals("member")
             ) {
-                System.out.println(member.getStatus());
+//                System.out.println(member.getStatus());
                 return true;
             }
         } catch (Exception e) {
