@@ -34,6 +34,9 @@ public class InstagramService {
 
     private void tryConnect() {
         try {
+
+            Thread.sleep(100000);
+
             // Login to instagram
             instagram = Instagram4j.builder().username(username).password(password).build();
             instagram.setup();
@@ -41,6 +44,8 @@ public class InstagramService {
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -85,6 +90,11 @@ public class InstagramService {
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
+                try {
+                    Thread.sleep(1000000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
         return false;
