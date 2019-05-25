@@ -85,8 +85,8 @@ public class ClientService {
     private boolean checkValidCryptoname(String cryptoname) {
 
         if (cryptoname.length() < 1) return false;
-
-        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname);
+        Character ch = ((char)65039);
+        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(ch.toString(),"");
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
 
         if (textWithoutEmoji.length() + textOnlyEmoji.size() > 25) return false;
@@ -94,12 +94,16 @@ public class ClientService {
         // Reserv:
         if (textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1) return false;
 
+        int codePointCount = textWithoutEmoji.codePointCount(0,textWithoutEmoji.length());
+        if(codePointCount == 1 && codePointCount < textWithoutEmoji.length()) return false;
+
+
         char[] charArray = textWithoutEmoji.toCharArray();
         int charArrayLength = charArray.length;
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
             System.out.println(symbol + " "+(int)symbol);
-            if (!Character.isJavaIdentifierPart(symbol) &&
+            if (!Character.isHighSurrogate(symbol) &&!Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
                     symbol != '-') return false;
 
