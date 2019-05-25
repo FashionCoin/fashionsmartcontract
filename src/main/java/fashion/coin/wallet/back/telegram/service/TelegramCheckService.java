@@ -116,6 +116,8 @@ public class TelegramCheckService {
                 increaceBalance(userId.toString(), "5000");
                 dataService.setValue(userId.toString(), INSTANNADONE, "done");
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
+            }else{
+                dataService.setValue(userId.toString(), CURRENTSTEP, "");
             }
         }
         CryptoNameScreen.getInstance().execute(fashionBot, update);
