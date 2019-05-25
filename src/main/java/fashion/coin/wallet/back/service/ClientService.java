@@ -105,6 +105,7 @@ public class ClientService {
             System.out.println(symbol + " "+(int)symbol);
             if (!Character.isHighSurrogate(symbol) &&!Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
+                    !(Character.isAlphabetic(symbol)) &&
                     symbol != '-') return false;
 
         }
