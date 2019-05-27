@@ -26,6 +26,7 @@ public class FashionBot extends TelegramLongPollingBot {
     public static final String TMANNANEXT = "telegramAnnaNext";
     public static final String INSTANNANEXT = "instagramAnnaNext";
     public static final String MYBALANCE = "myBalance";
+    public static final String CHECKEXISTSNAME = "checkExistsName";
 
 
     public FashionBot() {
@@ -46,7 +47,7 @@ public class FashionBot extends TelegramLongPollingBot {
             } else if (update.getCallbackQuery().getData().equals(GOTOFSHNSCREEN)) {
                 FashionScreen.getInstance().execute(this, update);
             } else if (update.getCallbackQuery().getData().equals(GOTOCREATENAMESCREEN)) {
-                CreateNameScreen.getInstance().execute(this, update);
+                TelegramCheckService.getInstance().checkExistsName(this, update);
             } else if (update.getCallbackQuery().getData().equals(GOTOREFERALSCREEN)) {
                 ReferalScreen.getInstance().execute(this, update);
             } else if (update.getCallbackQuery().getData().equals(MYBALANCE)) {
@@ -63,6 +64,8 @@ public class FashionBot extends TelegramLongPollingBot {
                 TelegramCheckService.getInstance().checkTAnna(this, update);
             } else if (update.getCallbackQuery().getData().equals(GOTOCFOLLOWING)) {
                TelegramCheckService.getInstance().goToFollowing(this, update);
+            }else if (update.getCallbackQuery().getData().equals(CHECKEXISTSNAME)) {
+               TelegramCheckService.getInstance().checkExistsName(this, update);
             }
 
         }

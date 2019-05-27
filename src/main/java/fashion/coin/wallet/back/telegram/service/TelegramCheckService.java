@@ -116,7 +116,7 @@ public class TelegramCheckService {
                 increaceBalance(userId.toString(), "5000");
                 dataService.setValue(userId.toString(), INSTANNADONE, "done");
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
-            }else{
+            } else {
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
             }
         }
@@ -139,7 +139,7 @@ public class TelegramCheckService {
     private final String TELEGRAMFSHNDONE = "telegramFashionDone";
     private final String TANNADONE = "telegramAnnaDone";
     private final String INSTANNADONE = "InstagramAnnaDone";
-    private final String CRYPTONAME = "CryptoName";
+    public static final String CRYPTONAME = "CryptoName";
     private final String REFER = "Refer";
     public static final String CURRENTSTEP = "currentStep";
     public static final String WAITINST = "waitInstagramName";
@@ -212,7 +212,7 @@ public class TelegramCheckService {
             Integer userId = update.getMessage().getFrom().getId();
 
             String refer = message.substring(7);
-            if(!refer.equals(userId)){
+            if (!refer.equals(userId)) {
                 System.out.println("Refer: " + refer);
                 dataService.setValue(userId.toString(), REFER, refer);
             }
@@ -228,4 +228,17 @@ public class TelegramCheckService {
         }
     }
 
+    public void checkExistsName(FashionBot fashionBot, Update update) {
+
+        Integer userId = update.getCallbackQuery().getFrom().getId();
+        String cryptoname = dataService.getValue(userId.toString(), CRYPTONAME);
+        if(cryptoname==null || cryptoname.length()==0){
+            CreateNameScreen.getInstance().execute(fashionBot, update);
+            return;
+        } else {
+            SkipCreationScreen.getInstance(cryptoname).execute(fashionBot,update);
+            return;
+        }
+
+    }
 }
