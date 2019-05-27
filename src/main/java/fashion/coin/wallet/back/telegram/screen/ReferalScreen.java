@@ -29,7 +29,9 @@ public class ReferalScreen implements TelegramEventHandler {
         Long chatId = update.hasMessage() ?
                 update.getMessage().getChatId() :
                 update.getCallbackQuery().getMessage().getChatId();
-        Integer userId = update.getCallbackQuery().getFrom().getId();
+        Integer userId = update.hasMessage() ?
+                update.getMessage().getFrom().getId() :
+                update.getCallbackQuery().getMessage().getFrom().getId();
         SendMessage message = new SendMessage()
                 .setChatId(chatId)
                 .setReplyMarkup(startInlineKeyboard(userId.toString()))
