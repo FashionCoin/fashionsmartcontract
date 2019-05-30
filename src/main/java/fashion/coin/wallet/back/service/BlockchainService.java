@@ -28,7 +28,7 @@ public class BlockchainService {
     private Gson gson;
 
     @Value("${fashion.blockchain.server}")
-    public static String BLOCKCHAIN_API_URI;
+    public String BLOCKCHAIN_API_URI;
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
