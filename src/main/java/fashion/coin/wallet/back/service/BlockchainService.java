@@ -32,7 +32,7 @@ public class BlockchainService {
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
-
+            System.out.println("url: "+BLOCKCHAIN_API_URI);
             HttpHeaders headers = new HttpHeaders();
 
             headers.setContentType(MediaType.APPLICATION_JSON);
