@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.blockchain.ResponceDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,7 +27,8 @@ public class BlockchainService {
     private RestTemplate restTemplate;
     private Gson gson;
 
-    public static final String BLOCKCHAIN_API_URI = "https://blockchain.coin.fashion/api/services/coin/v1/wallets/transaction";
+    @Value("${fashion.blockchain.server}")
+    public static String BLOCKCHAIN_API_URI;
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
