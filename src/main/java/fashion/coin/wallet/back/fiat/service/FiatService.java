@@ -50,6 +50,21 @@ public class FiatService {
         return new CheckPhoneResponceDTO(false, null);
     }
 
+    public CheckNameResponceDTO checkName(CheckNameRequestDTO data) {
+        try {
+            if (data == null) return new CheckNameResponceDTO(false, null);
+
+            Client client = clientRepository.findClientByLogin(data.getCryptoname());
+            if (client != null && client.getLogin() != null) {
+                return new CheckNameResponceDTO(true, client.getLogin());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new CheckNameResponceDTO(false, null);
+    }
+
     @Autowired
     public void setClientRepository(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;

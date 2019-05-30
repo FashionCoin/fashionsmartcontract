@@ -30,6 +30,17 @@ public class FiatController {
         return result;
     }
 
+    @PostMapping("/api/v1/fiat/checkname")
+    @ResponseBody
+    CheckNameResponceDTO checkName(@RequestBody CheckNameRequestDTO data,
+                                     HttpServletRequest request) throws Exception {
+        checkIp(request);
+        System.out.println("Request from Fiat:" + gson.toJson(data));
+        CheckNameResponceDTO result = fiatService.checkName(data);
+        System.out.println("Responce to Fiat:" + gson.toJson(result));
+        return result;
+    }
+
     @PostMapping("/api/v1/fiat/pay")
     @ResponseBody
     PayResponceDTO createPayment(@RequestBody PayRequestDTO data,
@@ -69,7 +80,12 @@ public class FiatController {
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
         }
-        if (!ipAddress.equals(fiatIp)) {
+       boolean result = false;
+        for(String validIp : fiatIp){
+            if(validIp.equals(ipAddress)) result = true;
+        }
+
+        if (!result) {
             System.out.println("Access Denied from IP: " + ipAddress);
             throw new Exception("Access Denied");
         }
@@ -86,5 +102,5 @@ public class FiatController {
     }
 
     @Value("${fiat.ip}")
-    private String fiatIp;
+    private String[] fiatIp;
 }
