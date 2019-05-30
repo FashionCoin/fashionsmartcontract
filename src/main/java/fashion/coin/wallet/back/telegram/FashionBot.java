@@ -39,7 +39,7 @@ public class FashionBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(update);
+//        System.out.println(update);
         if (update.hasCallbackQuery()) {
             System.out.println(update.getCallbackQuery().getData());
             if (update.getCallbackQuery().getData().equals(GOTOSECONDSCREEN)) {
