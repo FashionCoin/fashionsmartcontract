@@ -1,7 +1,5 @@
 package fashion.coin.wallet.back.entity;
 
-import org.graalvm.compiler.lir.CompositeValue;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
