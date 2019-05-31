@@ -85,8 +85,8 @@ public class ClientService {
     private boolean checkValidCryptoname(String cryptoname) {
 
         if (cryptoname.length() < 1) return false;
-        Character ch = ((char)65039);
-        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(ch.toString(),"");
+        Character ch = ((char) 65039);
+        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(ch.toString(), "");
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
 
         if (textWithoutEmoji.length() + textOnlyEmoji.size() > 25) return false;
@@ -94,16 +94,16 @@ public class ClientService {
         // Reserv:
         if (textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1) return false;
 
-        int codePointCount = textWithoutEmoji.codePointCount(0,textWithoutEmoji.length());
-        if(codePointCount == 1 && codePointCount < textWithoutEmoji.length()) return false;
+        int codePointCount = textWithoutEmoji.codePointCount(0, textWithoutEmoji.length());
+        if (codePointCount == 1 && codePointCount < textWithoutEmoji.length()) return false;
 
 
         char[] charArray = textWithoutEmoji.toCharArray();
         int charArrayLength = charArray.length;
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
-            System.out.println(symbol + " "+(int)symbol);
-            if (!Character.isHighSurrogate(symbol) &&!Character.isLowSurrogate(symbol) &&
+            System.out.println(symbol + " " + (int) symbol);
+            if (!Character.isHighSurrogate(symbol) && !Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
                     !(Character.isAlphabetic(symbol)) &&
                     symbol != '-') return false;
@@ -364,14 +364,14 @@ public class ClientService {
     public ResultDTO registerCryptoname(CryptonameEmailDTO data) {
         try {
             System.out.println(gson.toJson(data));
-            System.out.println(Bytes.asList( data.getCryptoname().getBytes()));
+            System.out.println(Bytes.asList(data.getCryptoname().getBytes()));
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client != null) {
                 System.out.println(gson.toJson(error100));
                 return error100;
             }
             List<Client> clientList = clientRepository.findClientsByEmail(data.getEmail());
-            if (clientList != null && clientList.size() > 0){
+            if (clientList != null && clientList.size() > 0) {
                 System.out.println(gson.toJson(error114));
                 return error114;
             }
@@ -389,17 +389,18 @@ public class ClientService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
     public ResultDTO registerCryptoname(CryptonameTelegramDTO data) {
         try {
             System.out.println(gson.toJson(data));
-            System.out.println(Bytes.asList( data.getCryptoname().getBytes()));
+            System.out.println(Bytes.asList(data.getCryptoname().getBytes()));
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client != null) {
                 System.out.println(gson.toJson(error100));
                 return error100;
             }
             List<Client> clientList = clientRepository.findClientsByTelegramId(data.getTelegramId());
-            if (clientList != null && clientList.size() > 0){
+            if (clientList != null && clientList.size() > 0) {
                 System.out.println(gson.toJson(error114));
                 return error114;
             }
@@ -415,5 +416,11 @@ public class ClientService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    public List<Client> findByCreateTimeBetween(LocalDateTime start, LocalDateTime end) {
+        List<Client> clientList = clientRepository.findByCreateTimeBetween(start, end);
+        if (clientList == null) clientList = new ArrayList<>();
+        return clientList;
     }
 }

@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.repository;
 import fashion.coin.wallet.back.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,4 +24,6 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
     List<Client> findClientsByPhone(String phone);
     List<Client> findClientsByTelegramId(Integer telegramId);
     List<Client> findClientsByPhoneEndingWith(String phone);
+
+    List<Client> findByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 }
