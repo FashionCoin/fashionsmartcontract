@@ -23,9 +23,9 @@ public class StatisticsService {
     String emaiManager;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy");
+    //    @Scheduled(cron = "0 */10 * * * *")  // 8:00, 8:30, 9:00, 9:30 and 10 o'clock every day.
 
-    //    @Scheduled(cron = "0 0 6 * * *")
-    @Scheduled(cron = "0 */10 * * * *")  // 8:00, 8:30, 9:00, 9:30 and 10 o'clock every day.
+    @Scheduled(cron = "0 0 6 * * *")
     public void sendRaport() {
 
 
@@ -48,7 +48,7 @@ public class StatisticsService {
         }
 
 
-        emailService.sendMail(emaiManager, "Статистика Crypto Name: за "+yesterday.format(formatter)+"  создано " + telegram + web + " CN ",
+        emailService.sendMail(emaiManager, "Статистика Crypto Name: за " + yesterday.format(formatter) + "  создано " + (telegram + web) + " CN ",
                 "Телеграм: " + telegram + " CN <br>" +
                         "Caйт:    " + web + " CN ");
 
