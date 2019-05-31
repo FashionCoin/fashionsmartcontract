@@ -16,7 +16,7 @@ public class StatisticsService {
 
 
     //    @Scheduled(cron = "0 0 6 * * *")
-    @Scheduled(cron = "0 /10 * * * *")  // 8:00, 8:30, 9:00, 9:30 and 10 o'clock every day.
+    @Scheduled(cron = "0 30 * * * *")  // 8:00, 8:30, 9:00, 9:30 and 10 o'clock every day.
     public void sendMail() {
 
 
