@@ -1,10 +1,13 @@
 package fashion.coin.wallet.back.entity;
 
+import org.graalvm.compiler.lir.CompositeValue;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Created by JAVA-P on 22.10.2018.
@@ -44,6 +47,8 @@ public class Client implements Comparable<Client> {
 
     String avatar;
 
+    LocalDateTime createTime;
+
     public Client() {
         this.walletBalance = BigDecimal.ZERO;
     }
@@ -51,11 +56,13 @@ public class Client implements Comparable<Client> {
     public Client(String login, String email) {
         this.login = login;
         this.email = email;
+        createTime = LocalDateTime.now();
     }
 
     public Client(String login, Integer telegramId) {
         this.login = login;
         this.telegramId = telegramId;
+        createTime = LocalDateTime.now();
     }
 
     public Client(String login, String apikey, String walletAddress) {
@@ -63,6 +70,7 @@ public class Client implements Comparable<Client> {
         this.apikey = apikey;
         this.walletAddress = walletAddress;
         this.walletBalance = BigDecimal.ZERO;
+        createTime = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -172,5 +180,16 @@ public class Client implements Comparable<Client> {
     @Override
     public int compareTo(Client o) {
         return this.id.compareTo(o.id);
+    }
+
+    public LocalDateTime getCreateTime() {
+
+        if(createTime==null) createTime = LocalDateTime.of(2019,05,30,00,00,00,00);
+
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
     }
 }
