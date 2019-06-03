@@ -28,6 +28,14 @@ public class ClientController {
        return clientService.trySignUp(data);
     }
 
+
+    @PostMapping("/api/v1/signin")
+    @ResponseBody
+    ResultDTO signIn(@RequestBody SignInDTO data){
+        return clientService.trySignIn(data);
+    }
+
+
     @PostMapping("/api/v1/checkname")
     @ResponseBody
     ResultDTO checkName(@RequestBody CheckCryptoNameDTO data){

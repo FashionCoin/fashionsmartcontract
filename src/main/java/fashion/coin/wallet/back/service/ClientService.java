@@ -11,6 +11,8 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.SetEmailRequest;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
+import fashion.coin.wallet.back.utils.SignBuilder;
+import fashion.coin.wallet.back.utils.TweetNaCl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +67,9 @@ public class ClientService {
                 return error101;
             aiService.cryptoname(data.getCryptoname().toLowerCase(), "", data.getWalletAddress());
 
-            if(client==null){
+            if (client == null) {
                 client = new Client(data.getCryptoname().toLowerCase(), data.getApikey(), data.getWalletAddress());
-            }else{
+            } else {
                 client.setWalletAddress(data.getWalletAddress());
             }
 
@@ -76,6 +78,42 @@ public class ClientService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+    public ResultDTO trySignIn(SignInDTO data) {
+        try {
+            System.out.println(gson.toJson(data));
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            if (client == null) return error108;
+            if (data.getApikey() == null) return error107;
+
+            if (client.getApikey().equals(data.getApikey())) return error109;
+
+            String apiKeyInSignature = data.getSignature().substring(128);
+            String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
+            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
+
+            if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
+            client.setApikey(data.getApikey());
+
+            clientRepository.save(client);
+            return validLogin;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+    private boolean checkSignature(String signedData, String publicKey) {
+        try {
+            byte[] signed = SignBuilder.hexStringToByteArray(signedData);
+            byte[] publicSigningKey = SignBuilder.hexStringToByteArray(publicKey);
+
+            byte[] result = TweetNaCl.crypto_sign_open(signed, publicSigningKey);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -250,6 +288,7 @@ public class ClientService {
     private static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
     private static final ResultDTO error113 = new ResultDTO(false, "Login has been changed once", 113);
     private static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
+    private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 114);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
