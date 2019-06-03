@@ -35,6 +35,13 @@ public class ClientController {
     }
 
 
+    @PostMapping("/api/v1/reservename")
+    @ResponseBody
+    ResultDTO reserveName(@RequestBody ReserveCryptoNameDTO data){
+        return clientService.reserveName(data);
+    }
+
+
     @PostMapping("/api/v1/getwallet")
     @ResponseBody
     ResultDTO getWallet(@RequestBody GetWalletDTO data){

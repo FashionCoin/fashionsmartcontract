@@ -69,6 +69,24 @@ public class ClientService {
     }
 
 
+    public ResultDTO reserveName(ReserveCryptoNameDTO data) {
+        try {
+            System.out.println(gson.toJson(data));
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            if (client != null) return error100;
+            if (data.getApikey() == null) return error107;
+
+            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) return error105;
+
+            clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey()));
+            return created;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
