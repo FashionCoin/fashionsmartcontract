@@ -71,10 +71,10 @@ public class ClientService {
 
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
-            Client client = clientRepository.findClientByLogin(data.getLogin().toLowerCase());
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client != null) return error100;
-            if (!data.getLogin().toLowerCase().equals(data.getLogin())) return error104;
-            if (!checkValidCryptoname(data.getLogin())) return error105;
+            if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
+            if (!checkValidCryptoname(data.getCryptoname())) return error105;
             return validLogin;
         } catch (Exception e) {
             return new ResultDTO(false, e.getMessage(), -1);
