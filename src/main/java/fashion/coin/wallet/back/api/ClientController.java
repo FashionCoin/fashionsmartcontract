@@ -28,10 +28,10 @@ public class ClientController {
        return clientService.trySignUp(data);
     }
 
-    @PostMapping("/api/v1/checklogin")
+    @PostMapping("/api/v1/checkname")
     @ResponseBody
-    ResultDTO checkLogin(@RequestBody CheckLoginDTO data){
-        return clientService.checkLogin(data);
+    ResultDTO checkName(@RequestBody CheckCryptoNameDTO data){
+        return clientService.checkName(data);
     }
 
 

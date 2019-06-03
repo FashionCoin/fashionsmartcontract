@@ -69,7 +69,7 @@ public class ClientService {
     }
 
 
-    public ResultDTO checkLogin(CheckLoginDTO data) {
+    public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
             Client client = clientRepository.findClientByLogin(data.getLogin().toLowerCase());
             if (client != null) return error100;

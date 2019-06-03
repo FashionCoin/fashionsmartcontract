@@ -1,14 +1,12 @@
 package fashion.coin.wallet.back.telegram.service;
 
 
-import fashion.coin.wallet.back.dto.CheckLoginDTO;
 import fashion.coin.wallet.back.dto.CryptonameTelegramDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.telegram.ContextProvider;
 import fashion.coin.wallet.back.telegram.FashionBot;
 import fashion.coin.wallet.back.telegram.screen.*;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;

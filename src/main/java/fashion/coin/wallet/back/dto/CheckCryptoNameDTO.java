@@ -9,12 +9,12 @@ package fashion.coin.wallet.back.dto;
  * Created by www.gateon.net
  * All rights to the software code are owned by GateOn
  */
-public class CheckLoginDTO {
+public class CheckCryptoNameDTO {
 
-    public CheckLoginDTO() {
+    public CheckCryptoNameDTO() {
     }
 
-    public CheckLoginDTO(String login) {
+    public CheckCryptoNameDTO(String login) {
         this.login = login;
     }
 
