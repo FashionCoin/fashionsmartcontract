@@ -127,7 +127,7 @@ public class ClientService {
 
             if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) return error105;
 
-            clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey()));
+            clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey(),null));
             return created;
         } catch (Exception e) {
             e.printStackTrace();
