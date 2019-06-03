@@ -49,18 +49,29 @@ public class ClientService {
     public ResultDTO trySignUp(RegistrationRequestDTO data) {
         try {
             System.out.println(gson.toJson(data));
-            Client client = clientRepository.findClientByLogin(data.getLogin().toLowerCase());
-            if (client != null) return error100;
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (data.getApikey() == null) return error107;
+            if (client != null) {
+                if (client.getApikey() != null && !client.getApikey().equals(data.getApikey()))
+                    return error100;
+            }
+
             BlockchainTransactionDTO jsonTransaction = data.getBlockchainTransaction();
             String pub_key = jsonTransaction.getBody().getPub_key();
             if (pub_key == null) return error106;
             if (!pub_key.equals(data.getWalletAddress())) return error103;
-            if (!checkValidCryptoname(data.getLogin().toLowerCase())) return error105;
+            if (!checkValidCryptoname(data.getCryptoname())) return error105;
             if (blockchainService.sendTransaction(data.getBlockchainTransaction()).length() == 0)
                 return error101;
-//            aiService.cryptoname(data.getLogin().toLowerCase(), "", data.getWalletAddress());
-            clientRepository.save(new Client(data.getLogin().toLowerCase(), data.getApikey(), data.getWalletAddress()));
+            aiService.cryptoname(data.getCryptoname().toLowerCase(), "", data.getWalletAddress());
+
+            if(client==null){
+                client = new Client(data.getCryptoname().toLowerCase(), data.getApikey(), data.getWalletAddress());
+            }else{
+                client.setWalletAddress(data.getWalletAddress());
+            }
+
+            clientRepository.save(client);
             return created;
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,17 +12,17 @@ import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
  * All rights to the software code are owned by GateOn
  */
 public class RegistrationRequestDTO {
-    String login;
+    String cryptoname;
     String apikey;
     String walletAddress;
     BlockchainTransactionDTO blockchainTransaction;
 
-    public String getLogin() {
-        return login;
+    public String getCryptoname() {
+        return cryptoname;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setCryptoname(String cryptoname) {
+        this.cryptoname = cryptoname;
     }
 
     public String getApikey() {
