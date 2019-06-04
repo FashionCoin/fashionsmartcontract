@@ -48,7 +48,7 @@ public class TAnnaScreen implements TelegramEventHandler {
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
         rowInline.add(new InlineKeyboardButton().setText("Готово").setCallbackData(TMANNADONE));
-        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(TMANNANEXT));
+        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOFOURTHROUTER));
         rowInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
         rowsInline.add(rowInline);
 

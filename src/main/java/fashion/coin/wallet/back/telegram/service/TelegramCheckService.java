@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.math.BigDecimal;
 
 import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
+import static org.hibernate.boot.model.source.internal.hbm.Helper.getValue;
 
 
 public class TelegramCheckService {
@@ -47,7 +48,7 @@ public class TelegramCheckService {
                 dataService.setValue(userId.toString(), TELEGRAMFSHNDONE, "done");
             }
         }
-        TAnnaScreen.getInstance().execute(fashionBot, update);
+        firstRouter(fashionBot,update,2);
     }
 
     private boolean checkSubscribeTelegramFashon(FashionBot fashionBot, Update update) {
@@ -80,7 +81,7 @@ public class TelegramCheckService {
                 dataService.setValue(userId.toString(), TANNADONE, "done");
             }
         }
-        InstAnnaScreen.getInstance().execute(fashionBot, update);
+        firstRouter(fashionBot,update,3);
     }
 
     private boolean checkSubscribeTelegramAnna(FashionBot fashionBot, Update update) {
@@ -134,6 +135,7 @@ public class TelegramCheckService {
         return instagramService.checkFollowing(userAccount);
     }
 
+    private final String EXPERIENCED = "experienced";
     private final String TELEGRAMFSHNDONE = "telegramFashionDone";
     private final String TANNADONE = "telegramAnnaDone";
     private final String INSTANNADONE = "InstagramAnnaDone";
@@ -168,6 +170,7 @@ public class TelegramCheckService {
             dataService.setValue(userId.toString(), CRYPTONAME, cryptoname);
             dataService.setValue(userId.toString(), WAITNAME, "");
             dataService.setValue(userId.toString(), CURRENTSTEP, "");
+
             referalBonus(userId.toString());
             CryptoDoneScreen.getInstance().execute(fashionBot, update);
             return;
@@ -230,13 +233,47 @@ public class TelegramCheckService {
 
         Integer userId = update.getCallbackQuery().getFrom().getId();
         String cryptoname = dataService.getValue(userId.toString(), CRYPTONAME);
-        if(cryptoname==null || cryptoname.length()==0){
+        if (cryptoname == null || cryptoname.length() == 0) {
             CreateNameScreen.getInstance().execute(fashionBot, update);
             return;
         } else {
-            SkipCreationScreen.getInstance(cryptoname).execute(fashionBot,update);
+            SkipCreationScreen.getInstance(cryptoname).execute(fashionBot, update);
             return;
         }
+
+    }
+
+
+    public void firstRouter(FashionBot fashionBot, Update update, int step) {
+        Integer userId = update.getCallbackQuery().getFrom().getId();
+        String experienced = dataService.getValue(userId.toString(), EXPERIENCED);
+        if (step > 0 || (experienced != null && experienced.length() > 0)) {
+            String telegramFashionDone = dataService.getValue(userId.toString(), TELEGRAMFSHNDONE);
+            if (step > 1 || (telegramFashionDone != null && telegramFashionDone.length() > 0)) {
+                String telegramAnnaDone = dataService.getValue(userId.toString(), TANNADONE);
+                if (step > 2 || (telegramAnnaDone != null && telegramAnnaDone.length() > 0)) {
+                    String InstagramAnnaDone = dataService.getValue(userId.toString(), INSTANNADONE);
+                    if (step > 3 || (InstagramAnnaDone != null && InstagramAnnaDone.length() > 0)) {
+                        String CryptoName = dataService.getValue(userId.toString(), CRYPTONAME);
+                        if (step > 4 || (CryptoName != null && CryptoName.length() > 0)) {
+                            LastScreen.getInstance().execute(fashionBot, update);
+                        } else {
+                            CreateNameScreen.getInstance().execute(fashionBot, update);
+                        }
+                    } else {
+                        InstAnnaScreen.getInstance().execute(fashionBot, update);
+                    }
+                } else {
+                    TAnnaScreen.getInstance().execute(fashionBot, update);
+                }
+            } else {
+                FashionScreen.getInstance().execute(fashionBot, update);
+            }
+        } else {
+            dataService.setValue(userId.toString(), EXPERIENCED, "experienced");
+            SecondScreen.getInstance().execute(fashionBot, update);
+        }
+
 
     }
 }

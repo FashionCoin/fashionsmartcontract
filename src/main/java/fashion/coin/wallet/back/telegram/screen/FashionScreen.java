@@ -49,7 +49,7 @@ public class FashionScreen implements TelegramEventHandler {
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
         rowInline.add(new InlineKeyboardButton().setText("Готово").setCallbackData(TMFSHNDONE));
-        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(TMEFSHNNEXT));
+        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOTHIRDROUTER));
         rowInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
         rowsInline.add(rowInline);
 

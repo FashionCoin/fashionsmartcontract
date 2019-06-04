@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fashion.coin.wallet.back.telegram.FashionBot.GOTOFIRSTROUTER;
 import static fashion.coin.wallet.back.telegram.FashionBot.GOTOSECONDSCREEN;
 
 
@@ -65,7 +66,7 @@ public class FirstScreen implements TelegramEventHandler {
 
 
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
-            rowInline.add(new InlineKeyboardButton().setText("Start").setCallbackData(GOTOSECONDSCREEN));
+            rowInline.add(new InlineKeyboardButton().setText("Start").setCallbackData(GOTOFIRSTROUTER));
             rowsInline.add(rowInline);
 
 

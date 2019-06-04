@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.telegram.screen;
 
+import fashion.coin.wallet.back.telegram.ContextProvider;
+import fashion.coin.wallet.back.telegram.service.TelegramDataService;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -11,24 +13,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static fashion.coin.wallet.back.telegram.FashionBot.*;
+import static fashion.coin.wallet.back.telegram.service.TelegramCheckService.CRYPTONAME;
 
 
 public class CryptoDoneScreen implements TelegramEventHandler {
     private static CryptoDoneScreen screen = null;
 
+
     private CryptoDoneScreen() {
     }
 
     public static CryptoDoneScreen getInstance(){
-        if(screen == null) screen = new CryptoDoneScreen();
+        if(screen == null) {
+            screen = new CryptoDoneScreen();
+        }
+
         return screen;
     }
 
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
+
+
+
         Long chatId = update.hasMessage() ?
                 update.getMessage().getChatId() :
                 update.getCallbackQuery().getMessage().getChatId();
+
+
         SendMessage message = new SendMessage()
                 .setChatId(chatId)
                 .setReplyMarkup(startInlineKeyboard())

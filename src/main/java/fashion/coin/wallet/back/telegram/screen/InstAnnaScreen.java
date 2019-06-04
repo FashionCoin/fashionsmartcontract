@@ -12,8 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fashion.coin.wallet.back.telegram.FashionBot.INSTANNANEXT;
-import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
+import static fashion.coin.wallet.back.telegram.FashionBot.*;
 import static fashion.coin.wallet.back.telegram.service.TelegramCheckService.CURRENTSTEP;
 import static fashion.coin.wallet.back.telegram.service.TelegramCheckService.WAITINST;
 
@@ -58,7 +57,7 @@ public class InstAnnaScreen implements TelegramEventHandler {
 
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(INSTANNANEXT));
+        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOFIFTHROUTER));
         rowInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
         rowsInline.add(rowInline);
 

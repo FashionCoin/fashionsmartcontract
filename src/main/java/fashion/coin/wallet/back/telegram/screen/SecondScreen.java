@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static fashion.coin.wallet.back.telegram.FashionBot.GOTOFSHNSCREEN;
+import static fashion.coin.wallet.back.telegram.FashionBot.GOTOSECONDROUTER;
 
 
 public class SecondScreen implements TelegramEventHandler {
@@ -56,7 +57,7 @@ public class SecondScreen implements TelegramEventHandler {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText("Продолжить").setCallbackData(GOTOFSHNSCREEN));
+        rowInline.add(new InlineKeyboardButton().setText("Продолжить").setCallbackData(GOTOSECONDROUTER));
         rowsInline.add(rowInline);
 
         inlineKeyboard.setKeyboard(rowsInline);

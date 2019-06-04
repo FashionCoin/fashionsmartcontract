@@ -16,6 +16,11 @@ public class FashionBot extends TelegramLongPollingBot {
     private String botToken;
 
     public static final String GOTOSECONDSCREEN = "goToSecondScreen";
+    public static final String GOTOFIRSTROUTER = "goToFirstRouter";
+    public static final String GOTOSECONDROUTER = "goToSecondRouter";
+    public static final String GOTOTHIRDROUTER = "goToThirdRouter";
+    public static final String GOTOFOURTHROUTER = "goToFourthRouter";
+    public static final String GOTOFIFTHROUTER = "goToFifthRouter";
     public static final String GOTOFSHNSCREEN = "goToFashionCoinScreen";
     public static final String GOTOCREATENAMESCREEN = "goToCreateNameScreen";
     public static final String GOTOCFOLLOWING = "goToFollowing";
@@ -42,10 +47,18 @@ public class FashionBot extends TelegramLongPollingBot {
         System.out.println(update);
         if (update.hasCallbackQuery()) {
             System.out.println(update.getCallbackQuery().getData());
-            if (update.getCallbackQuery().getData().equals(GOTOSECONDSCREEN)) {
-                SecondScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(GOTOFSHNSCREEN)) {
+            if (update.getCallbackQuery().getData().equals(GOTOFSHNSCREEN)) {
                 FashionScreen.getInstance().execute(this, update);
+            } else if (update.getCallbackQuery().getData().equals(GOTOFIRSTROUTER)) {
+                TelegramCheckService.getInstance().firstRouter(this, update, 0);
+            } else if (update.getCallbackQuery().getData().equals(GOTOSECONDROUTER)) {
+                TelegramCheckService.getInstance().firstRouter(this, update, 1);
+            } else if (update.getCallbackQuery().getData().equals(GOTOTHIRDROUTER)) {
+                TelegramCheckService.getInstance().firstRouter(this, update, 2);
+            } else if (update.getCallbackQuery().getData().equals(GOTOFOURTHROUTER)) {
+                TelegramCheckService.getInstance().firstRouter(this, update, 3);
+            }else if (update.getCallbackQuery().getData().equals(GOTOFIFTHROUTER)) {
+                TelegramCheckService.getInstance().firstRouter(this, update, 4);
             } else if (update.getCallbackQuery().getData().equals(GOTOCREATENAMESCREEN)) {
                 TelegramCheckService.getInstance().checkExistsName(this, update);
             } else if (update.getCallbackQuery().getData().equals(GOTOREFERALSCREEN)) {
@@ -63,14 +76,15 @@ public class FashionBot extends TelegramLongPollingBot {
             } else if (update.getCallbackQuery().getData().equals(TMANNADONE)) {
                 TelegramCheckService.getInstance().checkTAnna(this, update);
             } else if (update.getCallbackQuery().getData().equals(GOTOCFOLLOWING)) {
-               TelegramCheckService.getInstance().goToFollowing(this, update);
-            }else if (update.getCallbackQuery().getData().equals(CHECKEXISTSNAME)) {
-               TelegramCheckService.getInstance().checkExistsName(this, update);
+                TelegramCheckService.getInstance().goToFollowing(this, update);
+            } else if (update.getCallbackQuery().getData().equals(CHECKEXISTSNAME)) {
+                TelegramCheckService.getInstance().checkExistsName(this, update);
             }
 
         }
         if (update.hasMessage() && update.getMessage().hasText()) {
             if (update.getMessage().getText().contains("/start")) {
+//                TelegramCheckService.getInstance().start(this,update);
                 FirstScreen.getInstance().execute(this, update);
             } else {
                 TelegramCheckService.getInstance().checkText(this, update);

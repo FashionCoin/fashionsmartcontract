@@ -2,10 +2,9 @@ package fashion.coin.wallet.back.telegram.service;
 
 
 import fashion.coin.wallet.back.telegram.entity.TelegramBotData;
-import fashion.coin.wallet.back.telegram.entity.TelegramBotRepository;
+import fashion.coin.wallet.back.telegram.repository.TelegramBotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
 public class TelegramDataService {
