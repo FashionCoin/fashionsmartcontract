@@ -45,7 +45,7 @@ public class StatisticsService {
 
         for (Client client : clientList) {
 
-            switch (client.getFrom()) {
+            switch (client.getRegisteredFrom()) {
                 case FROMMOBILE:
                     mobile++;
                     break;

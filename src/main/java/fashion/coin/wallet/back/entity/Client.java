@@ -45,7 +45,7 @@ public class Client implements Comparable<Client> {
 
     String avatar;
 
-    String from; // Telegramm, Web, Mobile
+    String registeredFrom; // Telegramm, Web, Mobile
     LocalDateTime createTime;
 
     public Client() {
@@ -176,12 +176,12 @@ public class Client implements Comparable<Client> {
         this.telegramId = telegramId;
     }
 
-    public String getFrom() {
-        return from;
+    public String getRegisteredFrom() {
+        return registeredFrom;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setRegisteredFrom(String registeredFrom) {
+        this.registeredFrom = registeredFrom;
     }
 
     @Override

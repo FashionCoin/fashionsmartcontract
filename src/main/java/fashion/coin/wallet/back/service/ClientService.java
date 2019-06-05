@@ -73,7 +73,7 @@ public class ClientService {
             } else {
                 client.setWalletAddress(data.getWalletAddress());
             }
-            client.setFrom(FROMMOBILE);
+            client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
             return created;
         } catch (Exception e) {
@@ -450,7 +450,7 @@ public class ClientService {
             }
             client = new Client(data.getCryptoname().toLowerCase(),
                     data.getEmail());
-            client.setFrom(FROMWEB);
+            client.setRegisteredFrom(FROMWEB);
             clientRepository.save(client);
             emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: " + data.getCryptoname().toLowerCase() + " ");
             return created;
@@ -480,7 +480,7 @@ public class ClientService {
             }
             client = new Client(data.getCryptoname().toLowerCase(),
                     data.getTelegramId());
-            client.setFrom(FROMTELEGRAMM);
+            client.setRegisteredFrom(FROMTELEGRAMM);
             clientRepository.save(client);
             return created;
         } catch (Exception e) {
