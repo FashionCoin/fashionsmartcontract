@@ -10,15 +10,14 @@ package fashion.coin.wallet.back.dto;
  * All rights to the software code are owned by GateOn
  */
 public class GetWalletDTO {
-    String login;
+    String cryptoname;
 
 
-    public String getLogin() {
-        return login;
+    public String getCryptoname() {
+        return cryptoname;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setCryptoname(String cryptoname) {
+        this.cryptoname = cryptoname;
     }
-
 }

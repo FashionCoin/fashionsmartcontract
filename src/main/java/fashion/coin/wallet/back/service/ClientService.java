@@ -334,7 +334,7 @@ public class ClientService {
     }
 
     public ResultDTO getWallet(GetWalletDTO data) {
-        Client client = clientRepository.findClientByLogin(data.getLogin().toLowerCase());
+        Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
         if (client == null) return error108;
         return new ResultDTO(true, client.getWalletAddress(), 0);
     }

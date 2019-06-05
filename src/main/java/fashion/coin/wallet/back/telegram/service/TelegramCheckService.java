@@ -14,7 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.math.BigDecimal;
 
 import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
-import static org.hibernate.boot.model.source.internal.hbm.Helper.getValue;
 
 
 public class TelegramCheckService {
@@ -107,13 +106,13 @@ public class TelegramCheckService {
 
     public void checkInstAnna(FashionBot fashionBot, Update update) {
         Integer userId = update.getMessage().getFrom().getId();
-        String isdone = dataService.getValue(userId.toString(), INSTANNADONE);
+        String isdone = dataService.getValue(userId.toString(), INSTANAME);
         if (!"done".equals(isdone)) {
             String userAccount = update.getMessage().getText();
             boolean isSubscribe = checkSubscribeInstagramAnna(userAccount);
             if (isSubscribe) {
                 increaceBalance(userId.toString(), "5000");
-                dataService.setValue(userId.toString(), INSTANNADONE, "done");
+                dataService.setValue(userId.toString(), INSTANAME, userAccount);
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
             } else {
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
@@ -138,7 +137,7 @@ public class TelegramCheckService {
     private final String EXPERIENCED = "experienced";
     private final String TELEGRAMFSHNDONE = "telegramFashionDone";
     private final String TANNADONE = "telegramAnnaDone";
-    private final String INSTANNADONE = "InstagramAnnaDone";
+    private final String INSTANAME = "InstagramAnnaDone";
     public static final String CRYPTONAME = "CryptoName";
     private final String REFER = "Refer";
     public static final String CURRENTSTEP = "currentStep";
@@ -197,7 +196,7 @@ public class TelegramCheckService {
             TAnnaScreen.getInstance().execute(fashionBot, update);
             return;
         }
-        isdone = dataService.getValue(userId.toString(), INSTANNADONE);
+        isdone = dataService.getValue(userId.toString(), INSTANAME);
         if (!"done".equals(isdone)) {
             InstAnnaScreen.getInstance().execute(fashionBot, update);
             return;
@@ -252,7 +251,7 @@ public class TelegramCheckService {
             if (step > 1 || (telegramFashionDone != null && telegramFashionDone.length() > 0)) {
                 String telegramAnnaDone = dataService.getValue(userId.toString(), TANNADONE);
                 if (step > 2 || (telegramAnnaDone != null && telegramAnnaDone.length() > 0)) {
-                    String InstagramAnnaDone = dataService.getValue(userId.toString(), INSTANNADONE);
+                    String InstagramAnnaDone = dataService.getValue(userId.toString(), INSTANAME);
                     if (step > 3 || (InstagramAnnaDone != null && InstagramAnnaDone.length() > 0)) {
                         String CryptoName = dataService.getValue(userId.toString(), CRYPTONAME);
                         if (step > 4 || (CryptoName != null && CryptoName.length() > 0)) {

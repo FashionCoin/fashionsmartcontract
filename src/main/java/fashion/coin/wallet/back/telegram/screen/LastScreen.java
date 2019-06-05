@@ -41,7 +41,7 @@ public class LastScreen implements TelegramEventHandler {
                 update.getCallbackQuery().getMessage().getChatId();
         Integer userId = update.hasMessage() ?
                 update.getMessage().getFrom().getId() :
-                update.getCallbackQuery().getMessage().getFrom().getId();
+                update.getCallbackQuery().getFrom().getId();
 
         String cryptoname = telegramDataService.getValue(userId.toString(), CRYPTONAME);
         String balance = telegramDataService.getValue(userId.toString(), MYBALANCE);
