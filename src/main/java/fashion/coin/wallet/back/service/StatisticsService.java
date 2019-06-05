@@ -41,17 +41,33 @@ public class StatisticsService {
 
         int telegram = 0;
         int web = 0;
+        int mobile = 0;
 
         for (Client client : clientList) {
-            if (client.getTelegramId() != null && client.getTelegramId() != 0) telegram++;
-            else web++;
+
+            switch (client.getFrom()) {
+                case FROMMOBILE:
+                    mobile++;
+                    break;
+                case FROMTELEGRAMM:
+                    telegram++;
+                    break;
+                case FROMWEB:
+                    web++;
+                    break;
+            }
         }
 
 
         emailService.sendMail(emaiManager, "Статистика Crypto Name: за " + yesterday.format(formatter) + "  создано " + (telegram + web) + " CN ",
                 "Телеграм: " + telegram + " CN <br>" +
-                        "Caйт:    " + web + " CN ");
+                        "Caйт:    " + web + " CN <br>" +
+                        "Mobile:   " + mobile + " CN <br>");
 
     }
 
+
+    public static final String FROMTELEGRAMM = "Telegramm";
+    public static final String FROMWEB = "Web";
+    public static final String FROMMOBILE = "Mobile";
 }

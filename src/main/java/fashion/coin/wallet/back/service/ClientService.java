@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static fashion.coin.wallet.back.FashionCoinWallet.HOST_NAME;
+import static fashion.coin.wallet.back.service.StatisticsService.*;
 import static java.lang.Character.isLetter;
 
 /**
@@ -72,7 +73,7 @@ public class ClientService {
             } else {
                 client.setWalletAddress(data.getWalletAddress());
             }
-
+            client.setFrom(FROMMOBILE);
             clientRepository.save(client);
             return created;
         } catch (Exception e) {
@@ -127,7 +128,7 @@ public class ClientService {
 
             if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) return error105;
 
-            clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey(),null));
+            clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey(), null));
             return created;
         } catch (Exception e) {
             e.printStackTrace();
@@ -447,9 +448,10 @@ public class ClientService {
                 System.out.println(gson.toJson(error105));
                 return error105;
             }
-
-            clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
-                    data.getEmail()));
+            client = new Client(data.getCryptoname().toLowerCase(),
+                    data.getEmail());
+            client.setFrom(FROMWEB);
+            clientRepository.save(client);
             emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: " + data.getCryptoname().toLowerCase() + " ");
             return created;
         } catch (Exception e) {
@@ -476,9 +478,10 @@ public class ClientService {
                 System.out.println(gson.toJson(error105));
                 return error105;
             }
-
-            clientRepository.save(new Client(data.getCryptoname().toLowerCase(),
-                    data.getTelegramId()));
+            client = new Client(data.getCryptoname().toLowerCase(),
+                    data.getTelegramId());
+            client.setFrom(FROMTELEGRAMM);
+            clientRepository.save(client);
             return created;
         } catch (Exception e) {
             e.printStackTrace();

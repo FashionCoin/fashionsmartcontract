@@ -45,6 +45,7 @@ public class Client implements Comparable<Client> {
 
     String avatar;
 
+    String from; // Telegramm, Web, Mobile
     LocalDateTime createTime;
 
     public Client() {
@@ -175,6 +176,14 @@ public class Client implements Comparable<Client> {
         this.telegramId = telegramId;
     }
 
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     @Override
     public int compareTo(Client o) {
         return this.id.compareTo(o.id);
@@ -182,7 +191,7 @@ public class Client implements Comparable<Client> {
 
     public LocalDateTime getCreateTime() {
 
-        if(createTime==null) createTime = LocalDateTime.of(2019,05,30,00,00,00,00);
+        if (createTime == null) createTime = LocalDateTime.of(2019, 05, 30, 00, 00, 00, 00);
 
         return createTime;
     }
