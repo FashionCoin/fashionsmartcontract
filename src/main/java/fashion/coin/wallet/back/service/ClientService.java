@@ -64,6 +64,9 @@ public class ClientService {
             if (pub_key == null) return error106;
             if (!pub_key.equals(data.getWalletAddress())) return error103;
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
+
+            if (!checkNewWallet(data.getWalletAddress())) return error116;
+
             if (blockchainService.sendTransaction(data.getBlockchainTransaction()).length() == 0)
                 return error101;
             aiService.cryptoname(data.getCryptoname().toLowerCase(), "", data.getWalletAddress());
@@ -80,6 +83,12 @@ public class ClientService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    private boolean checkNewWallet(String walletAddress) {
+        Client client = clientRepository.findClientByWalletAddress(walletAddress);
+        if (client != null || client.getId() != null) return false;
+        else return true;
     }
 
     public ResultDTO trySignIn(SignInDTO data) {
@@ -289,7 +298,8 @@ public class ClientService {
     private static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
     private static final ResultDTO error113 = new ResultDTO(false, "Login has been changed once", 113);
     private static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
-    private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 114);
+    private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 115);
+    private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {

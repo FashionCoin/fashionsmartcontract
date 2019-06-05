@@ -20,10 +20,13 @@ public class InitService {
     EmailService emailService;
     BlockchainService blockchainService;
 
+    AIService aiService;
 
     @PostConstruct
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
+        aiService.printTransaction("2838ade4bf3f2a9c18a71821dd146057f5a2637ee76947e08055b36766d77554", "248810000.000");
+
     }
 
     @Autowired
@@ -35,5 +38,9 @@ public class InitService {
     public void setBlockchainService(BlockchainService blockchainService) {
         this.blockchainService = blockchainService;
     }
-    
+
+    @Autowired
+    public void setAiService(AIService aiService) {
+        this.aiService = aiService;
+    }
 }
