@@ -47,7 +47,7 @@ public class TelegramCheckService {
                 dataService.setValue(userId.toString(), TELEGRAMFSHNDONE, "done");
             }
         }
-        firstRouter(fashionBot,update,2);
+        firstRouter(fashionBot, update, 2);
     }
 
     private boolean checkSubscribeTelegramFashon(FashionBot fashionBot, Update update) {
@@ -80,7 +80,7 @@ public class TelegramCheckService {
                 dataService.setValue(userId.toString(), TANNADONE, "done");
             }
         }
-        firstRouter(fashionBot,update,3);
+        firstRouter(fashionBot, update, 3);
     }
 
     private boolean checkSubscribeTelegramAnna(FashionBot fashionBot, Update update) {
@@ -106,13 +106,30 @@ public class TelegramCheckService {
 
     public void checkInstAnna(FashionBot fashionBot, Update update) {
         Integer userId = update.getMessage().getFrom().getId();
-        String isdone = dataService.getValue(userId.toString(), INSTANAME);
+        String isdone = dataService.getValue(userId.toString(), INSTANNANAME);
         if (!"done".equals(isdone)) {
             String userAccount = update.getMessage().getText();
-            boolean isSubscribe = checkSubscribeInstagramAnna(userAccount);
+            boolean isSubscribe = checkSubscribeInstagram(userAccount,"annakfashion");
             if (isSubscribe) {
                 increaceBalance(userId.toString(), "5000");
-                dataService.setValue(userId.toString(), INSTANAME, userAccount);
+                dataService.setValue(userId.toString(), INSTANNANAME, userAccount);
+                dataService.setValue(userId.toString(), CURRENTSTEP, "");
+            } else {
+                dataService.setValue(userId.toString(), CURRENTSTEP, "");
+            }
+        }
+        CryptoNameScreen.getInstance().execute(fashionBot, update);
+    }
+
+    public void checkInstFashion(FashionBot fashionBot, Update update) {
+        Integer userId = update.getMessage().getFrom().getId();
+        String isdone = dataService.getValue(userId.toString(), INSTFASHIONNAME);
+        if (!"done".equals(isdone)) {
+            String userAccount = update.getMessage().getText();
+            boolean isSubscribe = checkSubscribeInstagram(userAccount,"fashioncoin");
+            if (isSubscribe) {
+                increaceBalance(userId.toString(), "5000");
+                dataService.setValue(userId.toString(), INSTFASHIONNAME, userAccount);
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
             } else {
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
@@ -130,26 +147,30 @@ public class TelegramCheckService {
     }
 
 
-    private boolean checkSubscribeInstagramAnna(String userAccount) {
-        return instagramService.checkFollowing(userAccount);
+    private boolean checkSubscribeInstagram(String userAccount,String followAccaunt) {
+        return instagramService.checkFollowing(userAccount,followAccaunt);
     }
 
     private final String EXPERIENCED = "experienced";
     private final String TELEGRAMFSHNDONE = "telegramFashionDone";
     private final String TANNADONE = "telegramAnnaDone";
-    private final String INSTANAME = "InstagramAnnaDone";
+    private final String INSTFASHIONNAME = "InstagramFashionDone";
+    private final String INSTANNANAME = "InstagramAnnaDone";
     public static final String CRYPTONAME = "CryptoName";
     private final String REFER = "Refer";
     public static final String CURRENTSTEP = "currentStep";
-    public static final String WAITINST = "waitInstagramName";
+    public static final String WAITINSTANNA = "waitInstagramAnna";
+    public static final String WAITINSTFASHION = "waitInstagramFashion";
     public static final String WAITNAME = "waitCryptonameName";
 
     public void checkText(FashionBot fashionBot, Update update) {
         System.out.println(update.getMessage().getText());
         Integer userId = update.getMessage().getFrom().getId();
         String currentStep = dataService.getValue(userId.toString(), CURRENTSTEP);
-        if (WAITINST.equals(currentStep)) {
+        if (WAITINSTANNA.equals(currentStep)) {
             checkInstAnna(fashionBot, update);
+        }if (WAITINSTFASHION.equals(currentStep)) {
+            checkInstFashion(fashionBot, update);
         } else if (WAITNAME.equals(currentStep)) {
             checkCryptoname(fashionBot, update);
         }
@@ -169,7 +190,7 @@ public class TelegramCheckService {
             dataService.setValue(userId.toString(), CRYPTONAME, cryptoname);
             dataService.setValue(userId.toString(), WAITNAME, "");
             dataService.setValue(userId.toString(), CURRENTSTEP, "");
-
+            increaceBalance(userId.toString(), "10000");
             referalBonus(userId.toString());
             CryptoDoneScreen.getInstance().execute(fashionBot, update);
             return;
@@ -180,29 +201,28 @@ public class TelegramCheckService {
             CryptoError.getInstance().execute(fashionBot, update);
             return;
         }
-
     }
 
-    public void goToFollowing(FashionBot fashionBot, Update update) {
-        Integer userId = update.getCallbackQuery().getFrom().getId();
-        String isdone = dataService.getValue(userId.toString(), TELEGRAMFSHNDONE);
-        if (!"done".equals(isdone)) {
-            FashionScreen.getInstance().execute(fashionBot, update);
-            return;
-        }
-        isdone = dataService.getValue(userId.toString(), TANNADONE);
-        if (!"done".equals(isdone)) {
-
-            TAnnaScreen.getInstance().execute(fashionBot, update);
-            return;
-        }
-        isdone = dataService.getValue(userId.toString(), INSTANAME);
-        if (!"done".equals(isdone)) {
-            InstAnnaScreen.getInstance().execute(fashionBot, update);
-            return;
-        }
-        SecondScreen.getInstance().execute(fashionBot, update);
-    }
+//    public void goToFollowing(FashionBot fashionBot, Update update) {
+//        Integer userId = update.getCallbackQuery().getFrom().getId();
+//        String isdone = dataService.getValue(userId.toString(), TELEGRAMFSHNDONE);
+//        if (!"done".equals(isdone)) {
+//            FashionScreen.getInstance().execute(fashionBot, update);
+//            return;
+//        }
+//        isdone = dataService.getValue(userId.toString(), TANNADONE);
+//        if (!"done".equals(isdone)) {
+//
+//            TAnnaScreen.getInstance().execute(fashionBot, update);
+//            return;
+//        }
+//        isdone = dataService.getValue(userId.toString(), INSTANAME);
+//        if (!"done".equals(isdone)) {
+//            InstAnnaScreen.getInstance().execute(fashionBot, update);
+//            return;
+//        }
+//        SecondScreen.getInstance().execute(fashionBot, update);
+//    }
 
     public void checkReferal(Update update) {
 
@@ -251,16 +271,21 @@ public class TelegramCheckService {
             if (step > 1 || (telegramFashionDone != null && telegramFashionDone.length() > 0)) {
                 String telegramAnnaDone = dataService.getValue(userId.toString(), TANNADONE);
                 if (step > 2 || (telegramAnnaDone != null && telegramAnnaDone.length() > 0)) {
-                    String InstagramAnnaDone = dataService.getValue(userId.toString(), INSTANAME);
-                    if (step > 3 || (InstagramAnnaDone != null && InstagramAnnaDone.length() > 0)) {
-                        String CryptoName = dataService.getValue(userId.toString(), CRYPTONAME);
-                        if (step > 4 || (CryptoName != null && CryptoName.length() > 0)) {
-                            LastScreen.getInstance().execute(fashionBot, update);
+                    String InstagramFashion = dataService.getValue(userId.toString(), INSTFASHIONNAME);
+                    if (step > 3 || (InstagramFashion != null && InstagramFashion.length() > 0)) {
+                        String InstagramAnnaDone = dataService.getValue(userId.toString(), INSTANNANAME);
+                        if (step > 4 || (InstagramAnnaDone != null && InstagramAnnaDone.length() > 0)) {
+                            String CryptoName = dataService.getValue(userId.toString(), CRYPTONAME);
+                            if (step > 5 || (CryptoName != null && CryptoName.length() > 0)) {
+                                LastScreen.getInstance().execute(fashionBot, update);
+                            } else {
+                                CreateNameScreen.getInstance().execute(fashionBot, update);
+                            }
                         } else {
-                            CreateNameScreen.getInstance().execute(fashionBot, update);
+                            InstAnnaScreen.getInstance().execute(fashionBot, update);
                         }
                     } else {
-                        InstAnnaScreen.getInstance().execute(fashionBot, update);
+                        InstFashionScreen.getInstance().execute(fashionBot, update);
                     }
                 } else {
                     TAnnaScreen.getInstance().execute(fashionBot, update);

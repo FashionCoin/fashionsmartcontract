@@ -61,7 +61,7 @@ public class InstagramService {
         }
     }
 
-    public boolean checkFollowing(String instAccaunt) {
+    public boolean checkFollowing(String instAccaunt,String followAccaunt) {
 
         if (instagram == null || !instagram.isLoggedIn()) {
             tryConnect();
@@ -77,9 +77,9 @@ public class InstagramService {
                     || userResult.getUser().getFollowing_count() == 0) {
                 return false;
             }
-            System.out.println("ID for @annakfashion is " + userResult.getUser().getPk());
-            System.out.println("Number of followers: " + userResult.getUser().getFollower_count());
-            System.out.println("Number of following: " + userResult.getUser().getFollowing_count());
+//            System.out.println("ID for @annakfashion is " + userResult.getUser().getPk());
+//            System.out.println("Number of followers: " + userResult.getUser().getFollower_count());
+//            System.out.println("Number of following: " + userResult.getUser().getFollowing_count());
             userId = userResult.getUser().getPk();
         } catch (ClientProtocolException e) {
             e.printStackTrace();
@@ -96,7 +96,7 @@ public class InstagramService {
 
                 if (fr != null && fr.getUsers() != null) {
                     for (InstagramUserSummary user : fr.getUsers()) {
-                        if ("annakfashion".equals(user.getUsername())) {
+                        if (followAccaunt.equals(user.getUsername())) {
                             return true;
                         }
                     }

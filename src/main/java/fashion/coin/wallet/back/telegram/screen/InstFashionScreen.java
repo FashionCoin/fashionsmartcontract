@@ -12,20 +12,21 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fashion.coin.wallet.back.telegram.FashionBot.*;
+import static fashion.coin.wallet.back.telegram.FashionBot.GOTOFIFTHROUTER;
+import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
 import static fashion.coin.wallet.back.telegram.service.TelegramCheckService.*;
 
 
-public class InstAnnaScreen implements TelegramEventHandler {
+public class InstFashionScreen implements TelegramEventHandler {
 
-   private static InstAnnaScreen screen = null;
+   private static InstFashionScreen screen = null;
     TelegramDataService telegramDataService = null;
-    private InstAnnaScreen() {
+    private InstFashionScreen() {
     }
 
-    public static InstAnnaScreen getInstance(){
+    public static InstFashionScreen getInstance(){
         if(screen == null) {
-            screen = new InstAnnaScreen();
+            screen = new InstFashionScreen();
             screen.telegramDataService = ContextProvider.getBean(TelegramDataService.class);
         }
         return screen;
@@ -34,11 +35,11 @@ public class InstAnnaScreen implements TelegramEventHandler {
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
         Integer userId = update.getCallbackQuery().getFrom().getId();
-        telegramDataService.setValue(userId.toString(),CURRENTSTEP,WAITINSTANNA);
+        telegramDataService.setValue(userId.toString(),CURRENTSTEP,WAITINSTFASHION);
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Зайди в Instagram на аккаунт Anna K https://www.instagram.com/annakfashion/ и нажми “Follow”, чтобы " +
+                .setText("Зайди в Instagram на аккаунт Fashion Coin https://www.instagram.com/fashioncoin/ и нажми “Follow”, чтобы " +
                         "получить 5,000 FSHN. После этого вернись в бот и введи и отправь свой " +
                         "Instagram account name (без @) в бот");
         try {
@@ -56,7 +57,7 @@ public class InstAnnaScreen implements TelegramEventHandler {
 
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOSIXROUTER));
+        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOFIFTHROUTER));
         rowInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
         rowsInline.add(rowInline);
 

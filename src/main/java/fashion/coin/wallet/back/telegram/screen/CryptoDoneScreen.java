@@ -64,7 +64,7 @@ public class CryptoDoneScreen implements TelegramEventHandler {
         rowsInline.add(rowOneInline);
 
         List<InlineKeyboardButton> rowTwoInline = new ArrayList<>();
-        rowTwoInline.add(new InlineKeyboardButton().setText("вернуться к блоку “Following”").setCallbackData(GOTOCFOLLOWING));
+        rowTwoInline.add(new InlineKeyboardButton().setText("вернуться к блоку “Following”").setCallbackData(GOTOSECONDROUTER));
         rowsInline.add(rowTwoInline);
 
         List<InlineKeyboardButton> rowThreeInline = new ArrayList<>();

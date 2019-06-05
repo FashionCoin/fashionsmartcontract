@@ -21,9 +21,9 @@ public class FashionBot extends TelegramLongPollingBot {
     public static final String GOTOTHIRDROUTER = "goToThirdRouter";
     public static final String GOTOFOURTHROUTER = "goToFourthRouter";
     public static final String GOTOFIFTHROUTER = "goToFifthRouter";
+    public static final String GOTOSIXROUTER = "goToSixRouter";
     public static final String GOTOFSHNSCREEN = "goToFashionCoinScreen";
     public static final String GOTOCREATENAMESCREEN = "goToCreateNameScreen";
-    public static final String GOTOCFOLLOWING = "goToFollowing";
     public static final String GOTOREFERALSCREEN = "goToReferalScreen";
     public static final String TMFSHNDONE = "telegramFashionDone";
     public static final String TMEFSHNNEXT = "telegramFashionNext";
@@ -57,8 +57,10 @@ public class FashionBot extends TelegramLongPollingBot {
                 TelegramCheckService.getInstance().firstRouter(this, update, 2);
             } else if (update.getCallbackQuery().getData().equals(GOTOFOURTHROUTER)) {
                 TelegramCheckService.getInstance().firstRouter(this, update, 3);
-            }else if (update.getCallbackQuery().getData().equals(GOTOFIFTHROUTER)) {
+            } else if (update.getCallbackQuery().getData().equals(GOTOFIFTHROUTER)) {
                 TelegramCheckService.getInstance().firstRouter(this, update, 4);
+            } else if (update.getCallbackQuery().getData().equals(GOTOSIXROUTER)) {
+                TelegramCheckService.getInstance().firstRouter(this, update, 5);
             } else if (update.getCallbackQuery().getData().equals(GOTOCREATENAMESCREEN)) {
                 TelegramCheckService.getInstance().checkExistsName(this, update);
             } else if (update.getCallbackQuery().getData().equals(GOTOREFERALSCREEN)) {
@@ -75,8 +77,6 @@ public class FashionBot extends TelegramLongPollingBot {
                 TelegramCheckService.getInstance().checkFashion(this, update);
             } else if (update.getCallbackQuery().getData().equals(TMANNADONE)) {
                 TelegramCheckService.getInstance().checkTAnna(this, update);
-            } else if (update.getCallbackQuery().getData().equals(GOTOCFOLLOWING)) {
-                TelegramCheckService.getInstance().goToFollowing(this, update);
             } else if (update.getCallbackQuery().getData().equals(CHECKEXISTSNAME)) {
                 TelegramCheckService.getInstance().checkExistsName(this, update);
             }
