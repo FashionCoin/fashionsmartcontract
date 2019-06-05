@@ -135,7 +135,7 @@ public class ClientService {
             if (client != null) return error100;
             if (data.getApikey() == null) return error107;
 
-            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) return error105;
+            if (!checkValidCryptoname(data.getCryptoname())) return error105;
 
             clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey(), null));
             return created;
@@ -454,7 +454,7 @@ public class ClientService {
                 System.out.println(gson.toJson(error114));
                 return error114;
             }
-            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) {
+            if (!checkValidCryptoname(data.getCryptoname())) {
                 System.out.println(gson.toJson(error105));
                 return error105;
             }
@@ -484,7 +484,7 @@ public class ClientService {
                 System.out.println(gson.toJson(error114));
                 return error114;
             }
-            if (!checkValidCryptoname(data.getCryptoname().toLowerCase())) {
+            if (!checkValidCryptoname(data.getCryptoname())) {
                 System.out.println(gson.toJson(error105));
                 return error105;
             }
