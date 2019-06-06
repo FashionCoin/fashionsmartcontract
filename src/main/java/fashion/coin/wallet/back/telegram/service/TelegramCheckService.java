@@ -264,7 +264,9 @@ public class TelegramCheckService {
 
 
     public void firstRouter(FashionBot fashionBot, Update update, int step) {
-        Integer userId = update.getCallbackQuery().getFrom().getId();
+        Integer userId = update.hasMessage() ?
+                update.getMessage().getFrom().getId() :
+                update.getCallbackQuery().getFrom().getId();
         String experienced = dataService.getValue(userId.toString(), EXPERIENCED);
         if (step > 0 || (experienced != null && experienced.length() > 0)) {
             String telegramFashionDone = dataService.getValue(userId.toString(), TELEGRAMFSHNDONE);
