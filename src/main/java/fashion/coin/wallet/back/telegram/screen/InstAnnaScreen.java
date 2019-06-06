@@ -36,9 +36,14 @@ public class InstAnnaScreen implements TelegramEventHandler {
         Integer userId = update.hasMessage() ?
                 update.getMessage().getFrom().getId() :
                 update.getCallbackQuery().getFrom().getId();
+
+        Long chatId = update.hasMessage() ?
+                update.getMessage().getChatId() :
+                update.getCallbackQuery().getMessage().getChatId();
+
         telegramDataService.setValue(userId.toString(),CURRENTSTEP,WAITINSTANNA);
         SendMessage message = new SendMessage()
-                .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                .setChatId(chatId)
                 .setReplyMarkup(startInlineKeyboard())
                 .setText("Зайди в Instagram на аккаунт Anna K https://www.instagram.com/annakfashion/ и нажми “Follow”, чтобы " +
                         "получить 5,000 FSHN. После этого вернись в бот и введи и отправь свой " +
