@@ -4,7 +4,7 @@ import fashion.coin.wallet.back.telegram.repository.TelegramTextRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.ServiceMode;
+
 
 /**
  * Created by JAVA-P on 04.06.2019.

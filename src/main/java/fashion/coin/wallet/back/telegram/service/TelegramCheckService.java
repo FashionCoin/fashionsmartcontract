@@ -118,7 +118,7 @@ public class TelegramCheckService {
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
             }
         }
-        CryptoNameScreen.getInstance().execute(fashionBot, update);
+        TelegramCheckService.getInstance().firstRouter(fashionBot, update, 5);
     }
 
     public void checkInstFashion(FashionBot fashionBot, Update update) {
@@ -135,7 +135,7 @@ public class TelegramCheckService {
                 dataService.setValue(userId.toString(), CURRENTSTEP, "");
             }
         }
-        CryptoNameScreen.getInstance().execute(fashionBot, update);
+        TelegramCheckService.getInstance().firstRouter(fashionBot, update, 4);
     }
 
     private void increaceBalance(String userId, String bonus) {
