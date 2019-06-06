@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FiatPaymentRepository extends JpaRepository<FiatPayment, String> {
+    FiatPayment findFiatPaymentById(String id);
     List<FiatPayment> findAllByTimestampBetweenAndResult(Long start, Long end, Boolean result);
     List<FiatPayment> findAllByTimestampBetween(Long start, Long end);
 }

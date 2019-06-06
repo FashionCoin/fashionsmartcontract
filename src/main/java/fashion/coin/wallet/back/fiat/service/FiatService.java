@@ -88,7 +88,7 @@ public class FiatService {
     public PayResponceDTO createPayment(PayRequestDTO data) {
         try {
             if (!checkSignature(data)) return new PayResponceDTO(false, "Bad signature");
-            FiatPayment payment = fiatPaymentRepository.getOne(data.getId());
+            FiatPayment payment = fiatPaymentRepository.findFiatPaymentById(data.getId());
             System.out.println("payment = " + payment);
             if (payment == null) payment = new FiatPayment(
                     data.getId(),
