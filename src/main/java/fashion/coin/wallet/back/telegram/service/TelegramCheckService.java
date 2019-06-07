@@ -243,7 +243,6 @@ public class TelegramCheckService {
     private void referalBonus(String userId) {
         String refer = dataService.getValue(userId, REFER);
         if (refer != null && refer.length() > 0) {
-            increaceBalance(userId, "10000");
             increaceBalance(refer, "1000");
         }
     }
