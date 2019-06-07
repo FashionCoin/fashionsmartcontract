@@ -44,9 +44,7 @@ public class CryptoDoneScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(chatId)
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Поздравляем!!! Теперь у тебя есть " +
-                        "имя на блокчейне. Мы пришлем тебе уникальную ссылку для завершения " +
-                        "регистрации позже");
+                .setText("Congratulations !!! Now you have a your Crypto Name on the Fashion Coin blockchain. Soon we will release Fashion Wallet and you can log in with your name in the DApp, finish registering your name and get your Crypto Name earned in the FSHN bot. ");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
@@ -60,15 +58,15 @@ public class CryptoDoneScreen implements TelegramEventHandler {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
         List<InlineKeyboardButton> rowOneInline = new ArrayList<>();
-        rowOneInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
+        rowOneInline.add(new InlineKeyboardButton().setText("MY BALANCE").setCallbackData(MYBALANCE));
         rowsInline.add(rowOneInline);
 
         List<InlineKeyboardButton> rowTwoInline = new ArrayList<>();
-        rowTwoInline.add(new InlineKeyboardButton().setText("вернуться к блоку “Following”").setCallbackData(GOTOSECONDROUTER));
+        rowTwoInline.add(new InlineKeyboardButton().setText("FOLLOWING").setCallbackData(GOTOSECONDROUTER));
         rowsInline.add(rowTwoInline);
 
         List<InlineKeyboardButton> rowThreeInline = new ArrayList<>();
-        rowThreeInline.add(new InlineKeyboardButton().setText("Получить реферальную ссылку").setCallbackData(GOTOREFERALSCREEN));
+        rowThreeInline.add(new InlineKeyboardButton().setText("GET UNIQUE REFERRAL LINK").setCallbackData(GOTOREFERALSCREEN));
         rowsInline.add(rowThreeInline);
 
         List<InlineKeyboardButton> rowFourInline = new ArrayList<>();

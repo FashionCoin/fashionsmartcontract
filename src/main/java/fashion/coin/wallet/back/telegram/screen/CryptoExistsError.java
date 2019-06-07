@@ -37,7 +37,7 @@ public class CryptoExistsError implements TelegramEventHandler {
 
         SendMessage message = new SendMessage()
                 .setChatId(update.getMessage().getChatId())
-                .setText("Жаль, но похоже имя " + cryptoname + " занято");
+                .setText("Sorry, this Crypto Name " + cryptoname + " is taken. Try another one and send it again");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {

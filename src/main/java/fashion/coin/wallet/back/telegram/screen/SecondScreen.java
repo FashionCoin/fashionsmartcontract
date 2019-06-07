@@ -30,20 +30,10 @@ public class SecondScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Дорогой друг мы тебе расскажем подробнее о том, " +
-                        "как ты можешь создать Crypto Name и заработать Fashion Coin. " +
-                        "В боте есть 3 блока заданий (возможностей): \n\n" +
-                        "a.Following: подпишись на наши ресурсы в Telegram и Instagram и получи за это вознаграждение " +
-                        "в FSHN и будь в курсе последних новостей Fashion Coin. \n\n" +
-                        "b. создание Crypto Name: создай свое уникальное Crypto Name на блокчейне и получи " +
-                        "на баланс 10,000 FSHN. Мы придумали способ предоставить любому человеку или бренду в мире " +
-                        "уникальное, защищенное, удобное для чтения и произношения имя. " +
-                        "Ты никогда не столкнешься с проблемой, что твои имя занято кем-то другим, " +
-                        "потому что мы даем возможность использовать буквы всех алфавитов мира и эмотиконы, " +
-                        "которые позволяют генерировать миллионы уникальных комбинаций. \n\n" +
-                        "c. реферальная программа: Получи свою уникальную реферальную ссылку " +
-                        "и приглашай своих друзей в наш бот, делись с ними возможностью создать Crypto Name " +
-                        "и получай за каждого друга по 1,000 FSHN НЕОГРАНИЧЕННО ");
+                .setText("To create a Crypto Name and earn FSHN, you need to complete 3 blocks of tasks:\n" +
+                        "1. Optionally subscribe to our Telegram and Instagram accounts, get a reward of 5,000 FSHN for each and keep up with the latest Fashion Coin news.\n" +
+                        "2. Create your own unique Crypto Name! on the blockchain and get 10,000 FSHN on the balance. More about crypto names here - https://telegra.ph/CRYPTO-NAME-creation-rules-06-07\n" +
+                        "3. Share this opportunity with your friends using unique referral link. You will be rewarded for each of your friends’ Crypto Name with 1,000 FSHN\n");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
@@ -57,7 +47,7 @@ public class SecondScreen implements TelegramEventHandler {
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText("Продолжить").setCallbackData(GOTOSECONDROUTER));
+        rowInline.add(new InlineKeyboardButton().setText("START").setCallbackData(GOTOSECONDROUTER));
         rowsInline.add(rowInline);
 
         inlineKeyboard.setKeyboard(rowsInline);

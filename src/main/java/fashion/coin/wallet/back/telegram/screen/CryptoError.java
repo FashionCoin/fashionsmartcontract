@@ -35,7 +35,7 @@ public class CryptoError implements TelegramEventHandler {
 
         SendMessage message = new SendMessage()
                 .setChatId(update.getMessage().getChatId())
-                .setText("Ваше имя не соответствует правилам, попробуйте еще раз");
+                .setText("Your name does not comply with the rules (https://telegra.ph/CRYPTO-NAME-creation-rules-06-07) , try again and send it ");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {

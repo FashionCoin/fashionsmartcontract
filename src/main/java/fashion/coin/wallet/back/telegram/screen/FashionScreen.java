@@ -31,8 +31,7 @@ public class FashionScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Зайди в Telegram-канал https://t.me/Fashioncoin и нажми “Присоединиться”, " +
-                        "чтобы получить 5,000 FSHN");
+                .setText("Join Fashion Coin Telegram channel https://t.me/Fashioncoin to be the first to know latest news about Fashion Coin and - get 5,000 FSHN");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
@@ -48,9 +47,9 @@ public class FashionScreen implements TelegramEventHandler {
 
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText("Готово").setCallbackData(TMFSHNDONE));
-        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOTHIRDROUTER));
-        rowInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
+        rowInline.add(new InlineKeyboardButton().setText("DONE").setCallbackData(TMFSHNDONE));
+        rowInline.add(new InlineKeyboardButton().setText("SKIP").setCallbackData(GOTOTHIRDROUTER));
+        rowInline.add(new InlineKeyboardButton().setText("MY BALANCE").setCallbackData(MYBALANCE));
         rowsInline.add(rowInline);
 
 

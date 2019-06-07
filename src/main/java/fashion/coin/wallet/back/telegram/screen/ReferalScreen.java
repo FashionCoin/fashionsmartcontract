@@ -35,12 +35,8 @@ public class ReferalScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(chatId)
                 .setReplyMarkup(startInlineKeyboard(userId.toString()))
-                .setText("Скопируй свою уникальную ссылку на бот и отправь ее своему другу. После " +
-                        "того, как твой друг заведет себе Crypto Name в нашем боте, ты получишь " +
-                        "1,000 FSHN на свой баланс, а твой друг 20,000 FSHN за создание СN. Мы не " +
-                        "ограничиваем тебя в количестве приглашений - больше друзей, больше " +
-                        "FSHN.\n" +
-                        "Твоя уникальная реферальная ссылка: {https://t.me/CryptoNameAirdropBot?start=" + userId.toString() + "} ");
+                .setText("Copy unique link to the bot and send it to your friend. After your friend has created his/her Crypto Name in this bot, you will receive 1,000 FSHN on your balance, and your friend 10,000 FSHN for creating Crypto Name. We do not limit you in the number of invitations - more friends, more FSHN.\n" +
+                        "Your unique referral link: https://t.me/CryptoNameAirdropBot?start=" + userId.toString() + " ");
 
         try {
             bot.execute(message);
@@ -56,14 +52,13 @@ public class ReferalScreen implements TelegramEventHandler {
 
 
         List<InlineKeyboardButton> rowOneInline = new ArrayList<>();
-        rowOneInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
+        rowOneInline.add(new InlineKeyboardButton().setText("MY BALANCE").setCallbackData(MYBALANCE));
         rowsInline.add(rowOneInline);
 
         List<InlineKeyboardButton> rowTwoInline = new ArrayList<>();
         rowTwoInline.add(new InlineKeyboardButton()
-                .setText("отправить реферальную ссылку")
-                .setSwitchInlineQuery("Привет, я зарегистрировал себе Crypto Name и получил 10 000 FSHN.\n" +
-                        "Рекомендую тебе сделать то же самое, по ссылке:\n" +
+                .setText("SEND UNIQUE REFERRAL LINK")
+                .setSwitchInlineQuery("Join to Crypto World with me! Create your unique Crypto Name on blockchain and get 10,000 FSHN. Use my link to join Crypto Name Bot by Fashion Coin:\n" +
                         "{https://t.me/CryptoNameAirdropBot?start=" + userId + "}")
         );
         rowsInline.add(rowTwoInline);

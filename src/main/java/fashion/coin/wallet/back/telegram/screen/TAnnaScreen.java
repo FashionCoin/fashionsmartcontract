@@ -30,8 +30,7 @@ public class TAnnaScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Зайди на телеграм аккаунт Анна К https://t.me/annakfashion и нажми " +
-                        "Присоединиться”, чтобы получить 5,000 FSHN");
+                .setText("Join Telegram channel Anna K, Co-founder and Co-creator of Fashion Coin https://t.me/annakfashion and get 5,000 FSHN");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
@@ -47,9 +46,9 @@ public class TAnnaScreen implements TelegramEventHandler {
 
 
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText("Готово").setCallbackData(TMANNADONE));
-        rowInline.add(new InlineKeyboardButton().setText("Пропустить").setCallbackData(GOTOFOURTHROUTER));
-        rowInline.add(new InlineKeyboardButton().setText("Мой баланс").setCallbackData(MYBALANCE));
+        rowInline.add(new InlineKeyboardButton().setText("DONE").setCallbackData(TMANNADONE));
+        rowInline.add(new InlineKeyboardButton().setText("SKIP").setCallbackData(GOTOFOURTHROUTER));
+        rowInline.add(new InlineKeyboardButton().setText("MY BALANCE").setCallbackData(MYBALANCE));
         rowsInline.add(rowInline);
 
 

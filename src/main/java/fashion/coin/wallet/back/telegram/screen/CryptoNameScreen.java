@@ -34,12 +34,7 @@ public class CryptoNameScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(chatId)
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Crypto Name позволяет каждому осуществлять платежи, участвовать в " +
-                        "голосовании, производить эмиссию и распределение криптографических " +
-                        "коинов - с самой широкой базой применения. Для создания Crypto Name ты " +
-                        "можешь буквы всех алфавитов мира, эмотиконы и дефис. Crypto Name " +
-                        "записывается на блокчейн и его нельзя изменить, поэтому прочитай " +
-                        "правила создания имен и выбери себе самое лучшее имя! ");
+                .setText("Choose your unique Crypto Name (feel free to read the Crypto Name native rules - https://telegra.ph/CRYPTO-NAME-creation-rules-06-07) ");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
@@ -52,12 +47,14 @@ public class CryptoNameScreen implements TelegramEventHandler {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 
-        List<InlineKeyboardButton> firstRowInline = new ArrayList<>();
-        firstRowInline.add(new InlineKeyboardButton().setText("Правила создания Crypto Name").setUrl("https://coin.fashion/single-2.html#section6"));
-        rowsInline.add(firstRowInline);
         List<InlineKeyboardButton> secondRowInline = new ArrayList<>();
-        secondRowInline.add(new InlineKeyboardButton().setText("Создать Crypto Name").setCallbackData(GOTOCREATENAMESCREEN));
+        secondRowInline.add(new InlineKeyboardButton().setText("CREATE CN").setCallbackData(GOTOCREATENAMESCREEN));
         rowsInline.add(secondRowInline);
+
+        List<InlineKeyboardButton> firstRowInline = new ArrayList<>();
+        firstRowInline.add(new InlineKeyboardButton().setText("CN RULES").setUrl("https://telegra.ph/CRYPTO-NAME-creation-rules-06-07"));
+        rowsInline.add(firstRowInline);
+
 
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;

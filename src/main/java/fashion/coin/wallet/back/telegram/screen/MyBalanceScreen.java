@@ -35,7 +35,7 @@ public class MyBalanceScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
 
-                .setText("Ваш баланс " + getBalance(update.getCallbackQuery().getFrom().getId().toString()) + " FSHN");
+                .setText("Your balance is " + getBalance(update.getCallbackQuery().getFrom().getId().toString()) + " FSHN");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {

@@ -42,16 +42,8 @@ public class FirstScreen implements TelegramEventHandler {
                 .setChatId(update.getMessage().getChatId())
 //                .setReplyMarkup(new ReplyKeyboardRemove())
                 .setReplyMarkup(startInlineKeyboard())
-                .setText("Мы рады тебя приветствовать в telegram-боте Fashion Coin. " +
-                        "Наша миссия дать каждому человеку или бренду в мире уникальное, защищенное, " +
-                        "удобное для чтения и произношения имя на блокчейне - Crypto Name, " +
-                        "которое сделает использование криптовалюты FSHN удобным и интуитивным. " +
-                        "Создав свое Crypto Name в нашем боте ты автоматически получишь 10,000 FSHN (10$) на баланс. " +
-                        "Также в этом боте ты сможешь заработать дополнительные FSHN за участие в реферальной программе " +
-                        "(1,000 FSHN за каждое новое созданное Crypto Name по твоей уникальной ссылке) " +
-                        "и 5,000 FSHN за фолловинг наших ресурсов " +
-                        "(подписывайся на нас и будь в курсе последних новостей Fashion Coin). " +
-                        "Больше деталей на сайте - https://coin.fashion ");
+                .setText("Hi! You are first to create your Crypto Name - real Decentralized ID in Crypto World! Your Crypto name is real, you own and control it. Nobody can’t steal, fake or delete it. \n" +
+                        "By creating your unique Crypto Name in this bot, you will be rewarded by FSHN on Fashion Wallet at the moment of its launch quite soon. More info about Fashion Coin here - http://bit.ly/31fMvRy\n");
 
         try {
             bot.execute(message);
@@ -66,7 +58,7 @@ public class FirstScreen implements TelegramEventHandler {
 
 
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
-            rowInline.add(new InlineKeyboardButton().setText("Start").setCallbackData(GOTOFIRSTROUTER));
+            rowInline.add(new InlineKeyboardButton().setText("NEXT").setCallbackData(GOTOFIRSTROUTER));
             rowsInline.add(rowInline);
 
 
