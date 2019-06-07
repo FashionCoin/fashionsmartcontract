@@ -87,8 +87,8 @@ public class ClientService {
 
     private boolean checkNewWallet(String walletAddress) {
         Client client = clientRepository.findClientByWalletAddress(walletAddress);
-        if (client != null || client.getId() != null) return false;
-        else return true;
+        if (client == null || client.getId() == null) return true;
+        else return false;
     }
 
     public ResultDTO trySignIn(SignInDTO data) {
