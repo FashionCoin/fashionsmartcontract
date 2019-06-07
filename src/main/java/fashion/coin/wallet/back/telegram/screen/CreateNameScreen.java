@@ -30,11 +30,13 @@ public class CreateNameScreen implements TelegramEventHandler {
 
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
-        Integer userId = update.getCallbackQuery().getFrom().getId();
+        Integer userId = update.hasMessage() ?
+                update.getMessage().getFrom().getId() :
+                update.getCallbackQuery().getFrom().getId();
         telegramDataService.setValue(userId.toString(), CURRENTSTEP, WAITNAME);
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
-                .setText("Введи и отправь свое Crypto Name");
+                .setText("Please, enter and send your Crypto Name");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {

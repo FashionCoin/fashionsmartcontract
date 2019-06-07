@@ -169,7 +169,7 @@ public class TelegramCheckService {
         String currentStep = dataService.getValue(userId.toString(), CURRENTSTEP);
         if (WAITINSTANNA.equals(currentStep)) {
             checkInstAnna(fashionBot, update);
-        }if (WAITINSTFASHION.equals(currentStep)) {
+        }else if (WAITINSTFASHION.equals(currentStep)) {
             checkInstFashion(fashionBot, update);
         } else if (WAITNAME.equals(currentStep)) {
             checkCryptoname(fashionBot, update);
@@ -281,7 +281,7 @@ public class TelegramCheckService {
                             if (step > 5 || (CryptoName != null && CryptoName.length() > 0)) {
                                 LastScreen.getInstance().execute(fashionBot, update);
                             } else {
-                                CreateNameScreen.getInstance().execute(fashionBot, update);
+                                CryptoNameScreen.getInstance().execute(fashionBot, update);
                             }
                         } else {
                             InstAnnaScreen.getInstance().execute(fashionBot, update);
