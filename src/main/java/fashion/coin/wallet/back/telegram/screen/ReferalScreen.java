@@ -59,7 +59,7 @@ public class ReferalScreen implements TelegramEventHandler {
         rowTwoInline.add(new InlineKeyboardButton()
                 .setText("SEND UNIQUE REFERRAL LINK")
                 .setSwitchInlineQuery("Join to Crypto World with me! Create your unique Crypto Name on blockchain and get 10,000 FSHN. Use my link to join Crypto Name Bot by Fashion Coin:\n" +
-                        "{https://t.me/CryptoNameAirdropBot?start=" + userId + "}")
+                        "https://t.me/CryptoNameAirdropBot?start=" + userId )
         );
         rowsInline.add(rowTwoInline);
 
