@@ -135,6 +135,9 @@ public class ClientService {
             if (client != null) return error100;
             if (data.getApikey() == null) return error107;
 
+
+            if(!checkUsingApiKey(data.getApikey())) return error117;
+
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
 
             clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey(), null));
@@ -143,6 +146,13 @@ public class ClientService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    private boolean checkUsingApiKey(String apikey) {
+
+        Client client = clientRepository.findClientByApikey(apikey);
+        if(client==null || client.getId()==null) return true;
+        else return false;
     }
 
 
@@ -300,6 +310,7 @@ public class ClientService {
     private static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
     private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 115);
     private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
+    private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
