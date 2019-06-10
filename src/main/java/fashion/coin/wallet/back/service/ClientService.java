@@ -356,15 +356,23 @@ public class ClientService {
     }
 
     public ResultDTO getWallet(GetWalletDTO data) {
-        Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
-        if (client == null) return error108;
-        return new ResultDTO(true, client.getWalletAddress(), 0);
+        try{
+            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            if (client == null) return error108;
+            return new ResultDTO(true, client.getWalletAddress(), 0);
+        }catch (Exception e){
+            return error108;
+        }
     }
 
     public ResultDTO getLogin(GetLoginDTO data) {
-        Client client = clientRepository.findClientByWalletAddress(data.getWallet());
-        if (client == null) return error108;
-        return new ResultDTO(true, client.getLogin(), 0);
+        try {
+            Client client = clientRepository.findClientByWalletAddress(data.getWallet());
+            if (client == null) return error108;
+            return new ResultDTO(true, client.getLogin(), 0);
+        }catch (Exception e){
+            return error108;
+        }
     }
 
     public List<Client> findAll() {

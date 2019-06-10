@@ -286,4 +286,34 @@ public class AIService {
         return result;
     }
 
+    public void printTransaction(String receiver, String amountStr) {
+        if (isReady()) {
+            BigDecimal floatamount = new BigDecimal(amountStr);
+            BigInteger amount = floatamount.movePointRight(3).toBigInteger();
+            BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
+            SignBuilder.init();
+            try {
+                String sign = SignBuilder.init()
+                        .setNetworkId(0)
+                        .setProtocolVersion(0)
+                        .setMessageId(1)
+                        .setServiceId(0)
+                        .addPublicKeyOrHash(pub_key)
+                        .addPublicKeyOrHash(receiver)
+                        .addUint64(amount)
+                        .addUint64(seed)
+                        .sign(priv_key);
+
+                String json = String.format(TRANSFER_COIN, pub_key, receiver, amount.toString(10), seed.toString(10), sign);
+                BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
+                TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
+                System.out.println(gson.toJson(transactionRequestDTO));
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("AI don't ready");
+        }
+    }
 }
