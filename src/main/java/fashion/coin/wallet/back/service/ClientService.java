@@ -98,7 +98,7 @@ public class ClientService {
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
-            if (client.getApikey().equals(data.getApikey())) return error109;
+            if (!client.getApikey().equals(data.getApikey())) return error109;
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
@@ -189,7 +189,7 @@ public class ClientService {
         int charArrayLength = charArray.length;
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
-            System.out.println(symbol + " " + (int) symbol);
+//            System.out.println(symbol + " " + (int) symbol);
             if (!Character.isHighSurrogate(symbol) && !Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
                     !(Character.isAlphabetic(symbol)) &&
