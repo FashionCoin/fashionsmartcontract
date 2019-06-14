@@ -359,6 +359,10 @@ public class ClientService {
         try{
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client == null) return error108;
+            String walletAddress = client.getWalletAddress();
+            if(walletAddress== null || walletAddress.length()==0 ){
+                return error101;
+            }
             return new ResultDTO(true, client.getWalletAddress(), 0);
         }catch (Exception e){
             return error108;
