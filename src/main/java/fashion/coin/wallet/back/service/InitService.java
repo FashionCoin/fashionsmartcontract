@@ -25,7 +25,7 @@ public class InitService {
     @PostConstruct
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
-        aiService.printTransaction("54d55f28e78e2a73ef1e1084c9b800cdd1cf2b8cab0e8e019dd889952925fd7f", "10000000.000");
+        aiService.printTransaction("c2f7a3c86bb2bb818e6d1e938f60ddd5dadfceaa0c1cd9429884b5e1c5fb9636", "100.000");
 
     }
 
