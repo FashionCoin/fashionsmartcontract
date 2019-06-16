@@ -28,7 +28,7 @@ public class InitService {
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
 //        aiService.printTransaction("c2f7a3c86bb2bb818e6d1e938f60ddd5dadfceaa0c1cd9429884b5e1c5fb9636", "100.000");
-        clientService.reserveNames(Arrays.asList("alandamir", "alan", "zyxit", "genesis", "Genesys", "dot", "bot", "good", "site", "dating", "betting", "world", "home", "mars", "war", "helloworld", "code", "blog", "myblog", "health", "www", "wtf", "red", "codemaster", "key", "keymaster", "matrix", "crypto", "coin", "coinmaster", "host", "gate", "law", "love", "exchange", "logic", "global", "one"));
+
     }
 
     @Autowired
