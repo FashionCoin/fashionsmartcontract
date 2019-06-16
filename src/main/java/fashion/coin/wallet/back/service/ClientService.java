@@ -148,6 +148,8 @@ public class ClientService {
         }
     }
 
+
+
     private boolean checkUsingApiKey(String apikey) {
 
         Client client = clientRepository.findClientByApikey(apikey);
@@ -526,5 +528,21 @@ public class ClientService {
         List<Client> clientList = clientRepository.findByCreateTimeBetween(start, end);
         if (clientList == null) clientList = new ArrayList<>();
         return clientList;
+    }
+
+    public void reserveNames(List<String> names) {
+        System.out.println("Reserve names");
+        for (String name : names){
+            try {
+                ReserveCryptoNameDTO data = new ReserveCryptoNameDTO();
+                data.setCryptoname(name);
+                String randomToken = getRandomToken(16);
+                data.setApikey(randomToken);
+                reserveName(data);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
+        System.out.println("End reserv");
     }
 }
