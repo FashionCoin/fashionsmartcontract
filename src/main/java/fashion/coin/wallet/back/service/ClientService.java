@@ -102,8 +102,9 @@ public class ClientService {
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
-            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
 
+            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
+// 3b722fc4cbcdbe05fa33e740d2e6c25bce557969503af0de15130d9034766a1b5d745f5050d72220986dc76c860a165a36e9e794f57c12632a664994b8023909
             if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
             client.setApikey(data.getApikey());
 
