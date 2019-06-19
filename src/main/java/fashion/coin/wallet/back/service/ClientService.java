@@ -103,7 +103,7 @@ public class ClientService {
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
-            if (client.getApikey().equals(data.getApikey())) return error109;
+            if (!checkUsingApiKey(data.getApikey())) return error117;
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
