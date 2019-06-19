@@ -21,5 +21,5 @@ public class FashionCoinWallet {
         return builder.build();
     }
 
-    public static final String HOST_NAME = "https://api.coin.fashion";
+
 }

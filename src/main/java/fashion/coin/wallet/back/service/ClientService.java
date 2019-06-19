@@ -14,6 +14,7 @@ import fashion.coin.wallet.back.repository.SetEmailRepository;
 import fashion.coin.wallet.back.utils.SignBuilder;
 import fashion.coin.wallet.back.utils.TweetNaCl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -22,7 +23,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static fashion.coin.wallet.back.FashionCoinWallet.HOST_NAME;
+
 import static fashion.coin.wallet.back.service.StatisticsService.*;
 import static java.lang.Character.isLetter;
 
@@ -48,6 +49,10 @@ public class ClientService {
     Gson gson;
 
     Random random = new Random();
+
+
+    @Value("${fashion.host}")
+    String HOST_NAME;
 
     public ResultDTO trySignUp(RegistrationRequestDTO data) {
         try {

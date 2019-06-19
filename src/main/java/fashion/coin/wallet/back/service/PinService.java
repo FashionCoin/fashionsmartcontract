@@ -4,9 +4,8 @@ import fashion.coin.wallet.back.dto.ChangePinDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import static fashion.coin.wallet.back.FashionCoinWallet.HOST_NAME;
 
 
 /**
@@ -24,12 +23,15 @@ public class PinService {
     ClientService clientService;
     EmailService emailService;
 
+    @Value("${fashion.host}")
+    String HOST;
+
     public ResultDTO restorePin(ChangePinDTO data) {
         try {
             Client client = clientService.findClientByApikey(data.getApikey());
             if (client == null) return error109;
             if (!client.getLogin().equals(data.getLogin())) return error109;
-            if(client.getEmail() == null){
+            if (client.getEmail() == null) {
                 return error110;
             }
             if (!client.getEmail().equals(data.getEmail())) {
@@ -37,7 +39,7 @@ public class PinService {
                 return error110;
             }
             emailService.sendMail(data.getEmail(), "Fashion Coin: Restore PIN", "For restore PIN click this link:<br/>" +
-                    "<a href='https://blockchainoffashion.com/restorepin?recovery=" + data.getRecovery() + "' >https://blockchainoffashion.com/restorepin?recovery=" + data.getRecovery() + "</a><br/>"
+                            "<a href='"+HOST+"/restorepin?recovery=" + data.getRecovery() + "' >"+HOST+"/restorepin?recovery=" + data.getRecovery() + "</a><br/>"
 //                    +"<br/>" +
 //                    "Or copy this secret code: "+ data.getRecovery()
             );
