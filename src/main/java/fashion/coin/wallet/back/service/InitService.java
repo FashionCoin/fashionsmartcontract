@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 /**
  * Created by JAVA-P on 23.10.2018.
@@ -27,8 +26,8 @@ public class InitService {
     @PostConstruct
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
-        aiService.printTransaction("b1803b8a0c196b7f3d433c9976bb3a328982b734f4be701a12065f1e8321827b", "100.000");
-
+//        aiService.printTransferTransaction("b1803b8a0c196b7f3d433c9976bb3a328982b734f4be701a12065f1e8321827b", "100.000");
+//aiService.printCreateWalletTransaction();
     }
 
     @Autowired

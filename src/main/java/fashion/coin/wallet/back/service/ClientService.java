@@ -98,10 +98,13 @@ public class ClientService {
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
-            if (!client.getApikey().equals(data.getApikey())) return error109;
+            if (client.getApikey().equals(data.getApikey())) return error109;
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
+
+
+
 
             if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
 // 3b722fc4cbcdbe05fa33e740d2e6c25bce557969503af0de15130d9034766a1b5d745f5050d72220986dc76c860a165a36e9e794f57c12632a664994b8023909
@@ -114,6 +117,7 @@ public class ClientService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+
     }
 
     private boolean checkSignature(String signedData, String publicKey) {

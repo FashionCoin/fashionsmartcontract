@@ -286,7 +286,7 @@ public class AIService {
         return result;
     }
 
-    public void printTransaction(String receiver, String amountStr) {
+    public void printTransferTransaction(String receiver, String amountStr) {
         if (isReady()) {
             BigDecimal floatamount = new BigDecimal(amountStr);
             BigInteger amount = floatamount.movePointRight(3).toBigInteger();
@@ -316,4 +316,5 @@ public class AIService {
             System.out.println("AI don't ready");
         }
     }
+
 }
