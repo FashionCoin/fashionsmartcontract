@@ -83,6 +83,11 @@ public class ClientService {
             }
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
+            //// FOR TESTING
+            if(!HOST_NAME.contains("api.coin.fashion")) {
+                aiService.printTransferTransaction(client.getWalletAddress(), "10000.00");
+            }
+            //// END FOR TESTING
             return created;
         } catch (Exception e) {
             e.printStackTrace();
