@@ -401,7 +401,12 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
-        Client client = clientRepository.findClientByLogin(data.getLogin().toLowerCase());
+        if(data.getApikey()==null) return
+        if(data.getCryptoname()==null) {
+            if()
+        }
+
+        Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
         if (client == null) return error108;
         if (client.getApikey() == null) return error107;
         if (!client.getApikey().equals(data.getApikey())) return 109;
