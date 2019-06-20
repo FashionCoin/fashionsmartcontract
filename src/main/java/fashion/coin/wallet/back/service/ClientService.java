@@ -204,7 +204,7 @@ public class ClientService {
 //            System.out.println(symbol + " " + (int) symbol);
             if (!Character.isHighSurrogate(symbol) && !Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
-                    !(Character.isAlphabetic(symbol)) &&
+                    !(Character.isAlphabetic(symbol) && Character.toLowerCase(symbol)==symbol) &&
                     symbol != '-') return false;
 
         }
@@ -312,7 +312,7 @@ public class ClientService {
     private static final ResultDTO error101 = new ResultDTO(false, "Wallet does not created", 101);
     private static final ResultDTO error102 = new ResultDTO(false, "This is brand name", 102);
     private static final ResultDTO error103 = new ResultDTO(false, "Public Key in transaction not equal wallet", 103);
-    private static final ResultDTO error104 = new ResultDTO(false, "Login must be lower case", 104);
+    private static final ResultDTO error104 = new ResultDTO(false, "Cryptoname must be lower case", 104);
     private static final ResultDTO error105 = new ResultDTO(false, "Emoji error, or short login", 105);
     private static final ResultDTO error106 = new ResultDTO(false, "Can't find pub_key param", 106);
     private static final ResultDTO error107 = new ResultDTO(false, "Can't find apikey param", 107);
@@ -323,6 +323,7 @@ public class ClientService {
     private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 115);
     private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
     private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
+    private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
@@ -356,7 +357,7 @@ public class ClientService {
 
     public ResultDTO checkEmail(CheckEmailDTO data) {
         try {
-            Client client = findByLogin(data.getLogin());
+            Client client = findByLogin(data.getCryptoname());
             if (client == null) return error108;
             if (!data.getApikey().equals(client.getApikey())) return error109;
             String email = client.getEmail();
@@ -401,9 +402,15 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
-        if(data.getApikey()==null) return
+        if(data.getApikey()==null) return error107;
         if(data.getCryptoname()==null) {
-            if()
+            Client client = findClientByApikey(data.getApikey());
+            if(client==null) return error108;
+            if(client.getWalletAddress()==null || client.getWalletAddress().length()==0){
+                return client;
+            }else{
+                return error118;
+            }
         }
 
         Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
