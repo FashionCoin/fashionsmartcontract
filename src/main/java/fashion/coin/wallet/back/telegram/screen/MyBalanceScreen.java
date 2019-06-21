@@ -44,7 +44,7 @@ public class MyBalanceScreen implements TelegramEventHandler {
     }
 
     private String getBalance(String userId) {
-        System.out.println("UserID = " + userId);
+//        System.out.println("UserID = " + userId);
         String balance = telegramDataService.getValue(userId, MYBALANCE);
         if (balance == null || balance.length() == 0) return "0";
         else return balance;
