@@ -57,6 +57,11 @@ public class ClientService {
     public ResultDTO trySignUp(RegistrationRequestDTO data) {
         try {
             System.out.println(gson.toJson(data));
+
+            if (data.getWalletAddress() == null || data.getWalletAddress().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+                return error101;
+            }
+
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (data.getApikey() == null) return error107;
             if (client != null) {
