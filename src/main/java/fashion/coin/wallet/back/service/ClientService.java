@@ -84,8 +84,10 @@ public class ClientService {
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
             //// FOR TESTING
+            System.out.println("10 000: "+HOST_NAME);
             if(!HOST_NAME.contains("api.coin.fashion")) {
-                aiService.printTransferTransaction(client.getWalletAddress(), "10000.00");
+                aiService.transfer( "10000.00",client.getWalletAddress());
+                System.out.println("10 000: sended");
             }
             //// END FOR TESTING
             return created;
