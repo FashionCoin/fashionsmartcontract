@@ -103,7 +103,7 @@ public class InstagramService {
                 }
 
                 nextMaxId = fr.getNext_max_id();
-                System.out.println(nextMaxId);
+//                System.out.println(nextMaxId);
                 if (nextMaxId == null) {
                     break;
                 }

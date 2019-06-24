@@ -57,6 +57,11 @@ public class ClientService {
     public ResultDTO trySignUp(RegistrationRequestDTO data) {
         try {
             System.out.println(gson.toJson(data));
+
+            if (data.getWalletAddress() == null || data.getWalletAddress().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+                return error101;
+            }
+
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (data.getApikey() == null) return error107;
             if (client != null) {
@@ -89,8 +94,10 @@ public class ClientService {
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
             //// FOR TESTING
-            if (!HOST_NAME.contains("api.coin.fashion")) {
-                aiService.printTransferTransaction(client.getWalletAddress(), "10000.00");
+            System.out.println("10 000: "+HOST_NAME);
+            if(!HOST_NAME.contains("api.coin.fashion")) {
+                aiService.transfer( "10000.00",client.getWalletAddress());
+                System.out.println("10 000: sended");
             }
             //// END FOR TESTING
             return created;
@@ -117,6 +124,8 @@ public class ClientService {
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
+
+
 
 
             if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
@@ -169,6 +178,7 @@ public class ClientService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
 
 
     private boolean checkUsingApiKey(String apikey) {
@@ -380,15 +390,15 @@ public class ClientService {
     }
 
     public ResultDTO getWallet(GetWalletDTO data) {
-        try {
+        try{
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client == null) return error108;
             String walletAddress = client.getWalletAddress();
-            if (walletAddress == null || walletAddress.length() == 0) {
+            if(walletAddress== null || walletAddress.length()==0 ){
                 return error101;
             }
             return new ResultDTO(true, client.getWalletAddress(), 0);
-        } catch (Exception e) {
+        }catch (Exception e){
             return error108;
         }
     }
@@ -398,7 +408,7 @@ public class ClientService {
             Client client = clientRepository.findClientByWalletAddress(data.getWallet());
             if (client == null) return error108;
             return new ResultDTO(true, client.getLogin(), 0);
-        } catch (Exception e) {
+        }catch (Exception e){
             return error108;
         }
     }
@@ -413,13 +423,13 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
-        if (data.getApikey() == null) return error107;
-        if (data.getCryptoname() == null) {
+        if(data.getApikey()==null) return error107;
+        if(data.getCryptoname()==null) {
             Client client = findClientByApikey(data.getApikey());
-            if (client == null) return error108;
-            if (client.getWalletAddress() == null || client.getWalletAddress().length() == 0) {
+            if(client==null) return error108;
+            if(client.getWalletAddress()==null || client.getWalletAddress().length()==0){
                 return client;
-            } else {
+            }else{
                 return error118;
             }
         }
@@ -565,14 +575,14 @@ public class ClientService {
 
     public void reserveNames(List<String> names) {
         System.out.println("Reserve names");
-        for (String name : names) {
+        for (String name : names){
             try {
                 ReserveCryptoNameDTO data = new ReserveCryptoNameDTO();
                 data.setCryptoname(name);
                 String randomToken = getRandomToken(16);
                 data.setApikey(randomToken);
                 reserveName(data);
-            } catch (Exception e) {
+            }catch (Exception e){
                 System.out.println(e.getMessage());
             }
         }

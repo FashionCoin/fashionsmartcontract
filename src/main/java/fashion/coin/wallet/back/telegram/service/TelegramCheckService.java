@@ -164,7 +164,7 @@ public class TelegramCheckService {
     public static final String WAITNAME = "waitCryptonameName";
 
     public void checkText(FashionBot fashionBot, Update update) {
-        System.out.println(update.getMessage().getText());
+//        System.out.println(update.getMessage().getText());
         Integer userId = update.getMessage().getFrom().getId();
         String currentStep = dataService.getValue(userId.toString(), CURRENTSTEP);
         if (WAITINSTANNA.equals(currentStep)) {

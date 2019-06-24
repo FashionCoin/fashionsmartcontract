@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,23 +27,38 @@ public class CurrencyService {
     private static final String apiUrl = "https://api.bitfinex.com/v1";
     private static final String USD_PRICE = "1000";
 
+    Map<String, LocalDateTime> lastUpdateMap = new HashMap<>();
+    Map<String, BigDecimal> lastRateMap = new HashMap();
+
+
     public List<String> getAvailableCrypts() {
         return Stream.of("USD", "BTC", "ETH").collect(Collectors.toList());
     }
 
 
     public BigDecimal getRateForCoin(String coinName) {
-        RestTemplate restTemplate = new RestTemplate();
-        System.out.println(coinName);
-        BitFinexRateDTO[] result = restTemplate.getForObject(apiUrl + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
-        BitFinexRateDTO last = result[0];
-        for (BitFinexRateDTO dto : result) {
-            if (dto.getTimestamp() > last.getTimestamp()) {
-                last = dto;
-            }
+
+        if (!lastUpdateMap.containsKey(coinName)) {
+            lastUpdateMap.put(coinName, LocalDateTime.now().minusMinutes(60));
         }
+        LocalDateTime lastUpdate = lastUpdateMap.get(coinName);
+
+        if (LocalDateTime.now().minusMinutes(5).compareTo(lastUpdate) > 0) {
+
+            RestTemplate restTemplate = new RestTemplate();
+            System.out.println(coinName);
+            BitFinexRateDTO[] result = restTemplate.getForObject(apiUrl + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
+            BitFinexRateDTO last = result[0];
+            for (BitFinexRateDTO dto : result) {
+                if (dto.getTimestamp() > last.getTimestamp()) {
+                    last = dto;
+                }
+            }
 //        System.out.println("LAST PRICE FOR "+coinName+" AT BITFINEX -> "+last.getPrice()+" USD");
-        return new BigDecimal(last.getPrice());
+            lastUpdateMap.put(coinName,LocalDateTime.now());
+            lastRateMap.put(coinName, new BigDecimal(last.getPrice()));
+        }
+        return lastRateMap.get(coinName);
     }
 
     public CurrencyDTO getCurrencyRate(String currency) {
@@ -54,11 +72,11 @@ public class CurrencyService {
     }
 
     public List<CurrencyDTO> getCurrencyList() {
-       List<CurrencyDTO> currencyDTOList = new ArrayList<>();
-        for(String currency : getAvailableCrypts()){
-           currencyDTOList.add(getCurrencyRate(currency));
-       }
-       return currencyDTOList;
+        List<CurrencyDTO> currencyDTOList = new ArrayList<>();
+        for (String currency : getAvailableCrypts()) {
+            currencyDTOList.add(getCurrencyRate(currency));
+        }
+        return currencyDTOList;
     }
 }
 
