@@ -37,6 +37,8 @@ public class Client implements Comparable<Client> {
     boolean showPhone;
     String realname;
 
+    String encryptedhash;
+
     @Column(unique = true)
     String walletAddress;
 
@@ -142,6 +144,14 @@ public class Client implements Comparable<Client> {
 
     public void setRealname(String realname) {
         this.realname = realname;
+    }
+
+    public String getEncryptedhash() {
+        return encryptedhash;
+    }
+
+    public void setEncryptedhash(String encryptedhash) {
+        this.encryptedhash = encryptedhash;
     }
 
     public String getWalletAddress() {

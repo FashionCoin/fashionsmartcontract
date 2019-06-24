@@ -81,10 +81,15 @@ public class ClientService {
             } else {
                 client.setWalletAddress(data.getWalletAddress());
             }
+
+            if (data.getEncryptedhash() != null) {
+                client.setEncryptedhash(data.getEncryptedhash());
+            }
+
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
             //// FOR TESTING
-            if(!HOST_NAME.contains("api.coin.fashion")) {
+            if (!HOST_NAME.contains("api.coin.fashion")) {
                 aiService.printTransferTransaction(client.getWalletAddress(), "10000.00");
             }
             //// END FOR TESTING
@@ -114,14 +119,16 @@ public class ClientService {
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
 
 
-
-
             if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
 // 3b722fc4cbcdbe05fa33e740d2e6c25bce557969503af0de15130d9034766a1b5d745f5050d72220986dc76c860a165a36e9e794f57c12632a664994b8023909
             if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
             client.setApikey(data.getApikey());
 
             clientRepository.save(client);
+
+            if (client.getEncryptedhash() != null) {
+                return new ResultDTO(true, "{\"encryptedhash\" : \"" + client.getEncryptedhash() + "\" }", 0);
+            }
             return validLogin;
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,7 +158,7 @@ public class ClientService {
             if (data.getApikey() == null) return error107;
 
 
-            if(!checkUsingApiKey(data.getApikey())) return error117;
+            if (!checkUsingApiKey(data.getApikey())) return error117;
 
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
 
@@ -164,11 +171,10 @@ public class ClientService {
     }
 
 
-
     private boolean checkUsingApiKey(String apikey) {
 
         Client client = clientRepository.findClientByApikey(apikey);
-        if(client==null || client.getId()==null) return true;
+        if (client == null || client.getId() == null) return true;
         else return false;
     }
 
@@ -209,7 +215,7 @@ public class ClientService {
 //            System.out.println(symbol + " " + (int) symbol);
             if (!Character.isHighSurrogate(symbol) && !Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
-                    !(Character.isAlphabetic(symbol) && Character.toLowerCase(symbol)==symbol) &&
+                    !(Character.isAlphabetic(symbol) && Character.toLowerCase(symbol) == symbol) &&
                     symbol != '-') return false;
 
         }
@@ -374,15 +380,15 @@ public class ClientService {
     }
 
     public ResultDTO getWallet(GetWalletDTO data) {
-        try{
+        try {
             Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
             if (client == null) return error108;
             String walletAddress = client.getWalletAddress();
-            if(walletAddress== null || walletAddress.length()==0 ){
+            if (walletAddress == null || walletAddress.length() == 0) {
                 return error101;
             }
             return new ResultDTO(true, client.getWalletAddress(), 0);
-        }catch (Exception e){
+        } catch (Exception e) {
             return error108;
         }
     }
@@ -392,7 +398,7 @@ public class ClientService {
             Client client = clientRepository.findClientByWalletAddress(data.getWallet());
             if (client == null) return error108;
             return new ResultDTO(true, client.getLogin(), 0);
-        }catch (Exception e){
+        } catch (Exception e) {
             return error108;
         }
     }
@@ -407,13 +413,13 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
-        if(data.getApikey()==null) return error107;
-        if(data.getCryptoname()==null) {
+        if (data.getApikey() == null) return error107;
+        if (data.getCryptoname() == null) {
             Client client = findClientByApikey(data.getApikey());
-            if(client==null) return error108;
-            if(client.getWalletAddress()==null || client.getWalletAddress().length()==0){
+            if (client == null) return error108;
+            if (client.getWalletAddress() == null || client.getWalletAddress().length() == 0) {
                 return client;
-            }else{
+            } else {
                 return error118;
             }
         }
@@ -559,14 +565,14 @@ public class ClientService {
 
     public void reserveNames(List<String> names) {
         System.out.println("Reserve names");
-        for (String name : names){
+        for (String name : names) {
             try {
                 ReserveCryptoNameDTO data = new ReserveCryptoNameDTO();
                 data.setCryptoname(name);
                 String randomToken = getRandomToken(16);
                 data.setApikey(randomToken);
                 reserveName(data);
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }

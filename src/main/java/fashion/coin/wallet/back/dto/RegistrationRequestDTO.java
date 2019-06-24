@@ -14,6 +14,7 @@ import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 public class RegistrationRequestDTO {
     String cryptoname;
     String apikey;
+    String encryptedhash;
     String walletAddress;
     BlockchainTransactionDTO blockchainTransaction;
 
@@ -31,6 +32,14 @@ public class RegistrationRequestDTO {
 
     public void setApikey(String apikey) {
         this.apikey = apikey;
+    }
+
+    public String getEncryptedhash() {
+        return encryptedhash;
+    }
+
+    public void setEncryptedhash(String encryptedhash) {
+        this.encryptedhash = encryptedhash;
     }
 
     public String getWalletAddress() {
