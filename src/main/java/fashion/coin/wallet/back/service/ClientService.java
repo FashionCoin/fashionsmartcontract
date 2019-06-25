@@ -75,7 +75,7 @@ public class ClientService {
             if (!pub_key.equals(data.getWalletAddress())) return error103;
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
 
-            if (!checkNewWallet(data.getWalletAddress())) return error116;
+            if (!checkNewWallet(data.getWalletAddress())) return error119;
 
             if (blockchainService.sendTransaction(data.getBlockchainTransaction()).length() == 0)
                 return error101;
@@ -342,6 +342,7 @@ public class ClientService {
     private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
     private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
     private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
+    private static final ResultDTO error119 = new ResultDTO(false, "Choose another picture. This photo has already been used", 119);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
