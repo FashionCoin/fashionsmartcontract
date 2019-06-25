@@ -54,7 +54,7 @@ public class ContactService {
     public Object addFirendsByPhone(AddFriendsDTO data) {
         try {
             if (!clientService.checkApiKey(data.getLogin(), data.getApikey())) return error109;
-            Client client = clientService.findByLogin(data.getLogin());
+            Client client = clientService.findByCryptoname(data.getLogin());
             if (data.getPhones() != null && !data.getPhones().isEmpty()) {
                 for (String phone : data.getPhones()) {
                     if(phone.length()<6) continue;
@@ -81,7 +81,7 @@ public class ContactService {
         if(contactList != null && !contactList.isEmpty()) {
             for (Contact contact : contactList) {
                 result.add(new ContactDTO(
-                        contact.getFriend().getLogin(),
+                        contact.getFriend().getCryptoname(),
                         contact.getFriend().getPhone(),
                         contact.getFriend().getWalletAddress(),
                         contact.getFriend().getAvatar()));
@@ -96,7 +96,7 @@ public class ContactService {
     public Object getContactList(AddFriendsDTO data) {
         try {
             if (!clientService.checkApiKey(data.getLogin(), data.getApikey())) return error109;
-            Client client = clientService.findByLogin(data.getLogin());
+            Client client = clientService.findByCryptoname(data.getLogin());
             return getAllContacts(client);
         } catch (Exception e) {
             e.printStackTrace();
@@ -107,8 +107,8 @@ public class ContactService {
     public Object addFirend(AddFriendDTO data) {
         try {
             if (!clientService.checkApiKey(data.getLogin(), data.getApikey())) return error109;
-            Client client = clientService.findByLogin(data.getLogin());
-            Client friend = clientService.findByLogin(data.getFriend());
+            Client client = clientService.findByCryptoname(data.getLogin());
+            Client friend = clientService.findByCryptoname(data.getFriend());
             if (friend == null) return error112;
             connectFriends(client, friend);
             return getAllContacts(client);
@@ -119,7 +119,7 @@ public class ContactService {
     }
 
     public void hidePhone(Client client) {
-        System.out.println("Togle hide phone for "+client.getLogin());
+        System.out.println("Togle hide phone for "+client.getCryptoname());
 
     }
 }

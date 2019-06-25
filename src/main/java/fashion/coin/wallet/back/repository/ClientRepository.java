@@ -16,7 +16,7 @@ import java.util.List;
  * All rights to the software code are owned by GateOn
  */
 public interface ClientRepository extends JpaRepository<Client,Long> {
-    Client findClientByLogin(String login);
+    Client findClientByCryptoname(String cryptoname);
     Client findClientByWalletAddress(String walletAddress);
     Client findClientByApikey(String apikey);
 //    Client findClientByEmail(String email);

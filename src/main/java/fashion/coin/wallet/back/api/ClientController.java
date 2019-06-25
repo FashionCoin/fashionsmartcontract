@@ -61,7 +61,7 @@ public class ClientController {
     @PostMapping("/api/v1/getlogin")
     @ResponseBody
     ResultDTO getWallet(@RequestBody GetLoginDTO data){
-        return clientService.getLogin(data);
+        return clientService.getCryptoname(data);
     }
 
 

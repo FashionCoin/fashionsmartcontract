@@ -1,7 +1,6 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
-import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 
@@ -244,7 +243,7 @@ public class AIService {
     private String pub_key = null;
 
     public void refillWallet(String login) {
-        Client client = clientService.findByLogin(login);
+        Client client = clientService.findByCryptoname(login);
         if (client != null) {
             transfer("300000", client.getWalletAddress());
         }

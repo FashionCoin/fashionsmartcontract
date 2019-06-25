@@ -11,17 +11,17 @@ package fashion.coin.wallet.back.dto;
  */
 public class ChangePinDTO {
 
-    String login;
+    String cryptoname;
     String apikey;
     String email;
     String recovery;
 
-    public String getLogin() {
-        return login;
+    public String getCryptoname() {
+        return cryptoname;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setCryptoname(String cryptoname) {
+        this.cryptoname = cryptoname;
     }
 
     public String getApikey() {

@@ -62,7 +62,7 @@ public class ClientService {
                 return error101;
             }
 
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (data.getApikey() == null) return error107;
             if (client != null) {
                 if (client.getApikey() != null && !client.getApikey().equals(data.getApikey()))
@@ -116,7 +116,7 @@ public class ClientService {
     public ResultDTO trySignIn(SignInDTO data) {
         try {
             System.out.println(gson.toJson(data));
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
@@ -160,7 +160,7 @@ public class ClientService {
     public ResultDTO reserveName(ReserveCryptoNameDTO data) {
         try {
             System.out.println(gson.toJson(data));
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) return error100;
             if (data.getApikey() == null) return error107;
 
@@ -188,7 +188,7 @@ public class ClientService {
 
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) return error100;
             if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
@@ -246,13 +246,13 @@ public class ClientService {
         return clientRepository.findClientByWalletAddress(walletAddress);
     }
 
-    public Client findByLogin(String login) {
-        return clientRepository.findClientByLogin(login.toLowerCase());
+    public Client findByCryptoname(String cryptoname) {
+        return clientRepository.findClientByCryptoname(cryptoname.toLowerCase());
     }
 
     public ResultDTO trySetEmail(SetEmailRequestDTO data) {
         try {
-            Client client = findByLogin(data.getLogin());
+            Client client = findByCryptoname(data.getLogin());
             if (client == null) return error108;
             if (!checkUnic(data.getEmail().toLowerCase())) return error114;
             if (!data.getApikey().equals(client.getApikey())) return error109;
@@ -376,7 +376,7 @@ public class ClientService {
 
     public ResultDTO checkEmail(CheckEmailDTO data) {
         try {
-            Client client = findByLogin(data.getCryptoname());
+            Client client = findByCryptoname(data.getCryptoname());
             if (client == null) return error108;
             if (!data.getApikey().equals(client.getApikey())) return error109;
             String email = client.getEmail();
@@ -389,7 +389,7 @@ public class ClientService {
 
     public ResultDTO getWallet(GetWalletDTO data) {
         try {
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client == null) return error108;
             String walletAddress = client.getWalletAddress();
             if (walletAddress == null || walletAddress.length() == 0) {
@@ -401,11 +401,11 @@ public class ClientService {
         }
     }
 
-    public ResultDTO getLogin(GetLoginDTO data) {
+    public ResultDTO getCryptoname(GetLoginDTO data) {
         try {
             Client client = clientRepository.findClientByWalletAddress(data.getWallet());
             if (client == null) return error108;
-            return new ResultDTO(true, client.getLogin(), 0);
+            return new ResultDTO(true, client.getCryptoname(), 0);
         } catch (Exception e) {
             return error108;
         }
@@ -434,7 +434,7 @@ public class ClientService {
             }
         }
 
-        Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+        Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
         if (client == null) return error108;
         System.out.println(gson.toJson(client));
         if (client.getApikey() == null) return error107;
@@ -446,13 +446,13 @@ public class ClientService {
         Client client = clientRepository.findClientByApikey(data.getApikey());
         if (client == null) return error109;
 
-        if (data.getLogin() != null) {
-            if (!data.getLogin().toLowerCase().equals(data.getLogin())) return error104;
-            if (!checkValidCryptoname(data.getLogin())) return error105;
+        if (data.getCryptoname() != null) {
+            if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
+            if (!checkValidCryptoname(data.getCryptoname())) return error105;
 
-            if (!client.getLogin().toLowerCase().equals(data.getLogin().toLowerCase())) {
+            if (!client.getCryptoname().toLowerCase().equals(data.getCryptoname().toLowerCase())) {
                 if (client.isLoginChanged()) return error113;
-                client.setLogin(data.getLogin().toLowerCase());
+                client.setCryptoname(data.getCryptoname().toLowerCase());
                 client.setLoginChanged(true);
             }
         }
@@ -490,7 +490,7 @@ public class ClientService {
     public boolean checkApiKey(String login, String apikey) {
         Client client = clientRepository.findClientByApikey(apikey);
         if (client == null) return false;
-        if (!client.getLogin().equals(login)) return false;
+        if (!client.getCryptoname().equals(login)) return false;
         return true;
     }
 
@@ -503,8 +503,8 @@ public class ClientService {
     }
 
 
-    public void setAvatar(String login, String path) {
-        Client client = clientRepository.findClientByLogin(login);
+    public void setAvatar(String cryptoname, String path) {
+        Client client = clientRepository.findClientByCryptoname(cryptoname);
         client.setAvatar(path);
         clientRepository.save(client);
     }
@@ -513,7 +513,7 @@ public class ClientService {
         try {
             System.out.println(gson.toJson(data));
             System.out.println(Bytes.asList(data.getCryptoname().getBytes()));
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) {
                 System.out.println(gson.toJson(error100));
                 return error100;
@@ -543,7 +543,7 @@ public class ClientService {
         try {
             System.out.println(gson.toJson(data));
             System.out.println(Bytes.asList(data.getCryptoname().getBytes()));
-            Client client = clientRepository.findClientByLogin(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) {
                 System.out.println(gson.toJson(error100));
                 return error100;

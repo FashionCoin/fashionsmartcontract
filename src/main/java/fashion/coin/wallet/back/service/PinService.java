@@ -30,7 +30,7 @@ public class PinService {
         try {
             Client client = clientService.findClientByApikey(data.getApikey());
             if (client == null) return error109;
-            if (!client.getLogin().equals(data.getLogin())) return error109;
+            if (!client.getCryptoname().equals(data.getCryptoname())) return error109;
             if (client.getEmail() == null) {
                 return error110;
             }

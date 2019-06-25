@@ -1,11 +1,5 @@
 package fashion.coin.wallet.back.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.math.BigDecimal;
-
 /**
  * Created by JAVA-P on 22.10.2018.
  */
@@ -19,8 +13,8 @@ import java.math.BigDecimal;
 public class ClientInfoDTO {
 
 
-    String login;
-    boolean loginChanged;
+    String cryptoname;
+    boolean cryptonameChanged;
     String apikey;
     String phone;
     boolean showPhone;
@@ -32,8 +26,8 @@ public class ClientInfoDTO {
     }
 
 
-    public String getLogin() {
-        return login;
+    public String getCryptoname() {
+        return cryptoname;
     }
 
     public String getApikey() {
@@ -44,16 +38,16 @@ public class ClientInfoDTO {
         this.apikey = apikey;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setCryptoname(String cryptoname) {
+        this.cryptoname = cryptoname;
     }
 
-    public boolean isLoginChanged() {
-        return loginChanged;
+    public boolean isCryptonameChanged() {
+        return cryptonameChanged;
     }
 
-    public void setLoginChanged(boolean loginChanged) {
-        this.loginChanged = loginChanged;
+    public void setCryptonameChanged(boolean cryptonameChanged) {
+        this.cryptonameChanged = cryptonameChanged;
     }
 
     public String getPhone() {

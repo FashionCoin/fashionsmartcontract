@@ -22,8 +22,8 @@ public class Client implements Comparable<Client> {
     @Id
     @GeneratedValue
     Long id;
-    @Column(unique = true)
-    String login;
+    @Column(unique = true, name = "login")
+    String cryptoname;
     @Column(unique = true)
     String apikey;
 
@@ -54,20 +54,20 @@ public class Client implements Comparable<Client> {
         this.walletBalance = BigDecimal.ZERO;
     }
 
-    public Client(String login, String email) {
-        this.login = login;
+    public Client(String cryptoname, String email) {
+        this.cryptoname = cryptoname;
         this.email = email;
         createTime = LocalDateTime.now();
     }
 
-    public Client(String login, Integer telegramId) {
-        this.login = login;
+    public Client(String cryptoname, Integer telegramId) {
+        this.cryptoname = cryptoname;
         this.telegramId = telegramId;
         createTime = LocalDateTime.now();
     }
 
-    public Client(String login, String apikey, String walletAddress) {
-        this.login = login;
+    public Client(String cryptoname, String apikey, String walletAddress) {
+        this.cryptoname = cryptoname;
         this.apikey = apikey;
         this.walletAddress = walletAddress;
         this.walletBalance = BigDecimal.ZERO;
@@ -82,12 +82,12 @@ public class Client implements Comparable<Client> {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
+    public String getCryptoname() {
+        return cryptoname;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setCryptoname(String cryptoname) {
+        this.cryptoname = cryptoname;
     }
 
     public boolean isLoginChanged() {

@@ -39,7 +39,7 @@ public class FiatService {
 
             List<Client> clientList = clientRepository.findClientsByPhoneEndingWith(data.getPhone().substring(1));
             if (clientList != null && clientList.size() == 1) {
-                return new CheckPhoneResponceDTO(true, clientList.get(0).getLogin());
+                return new CheckPhoneResponceDTO(true, clientList.get(0).getCryptoname());
             } else if (clientList != null) {
                 System.out.println("clientList.size() = " + clientList.size());
             }
@@ -54,9 +54,9 @@ public class FiatService {
         try {
             if (data == null) return new CheckNameResponceDTO(false, null);
 
-            Client client = clientRepository.findClientByLogin(data.getCryptoname());
-            if (client != null && client.getLogin() != null) {
-                return new CheckNameResponceDTO(true, client.getLogin());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            if (client != null && client.getCryptoname() != null) {
+                return new CheckNameResponceDTO(true, client.getCryptoname());
             }
 
         } catch (Exception e) {

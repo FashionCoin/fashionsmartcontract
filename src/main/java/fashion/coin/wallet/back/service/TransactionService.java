@@ -80,7 +80,7 @@ public class TransactionService {
             if (request.getReceiverWallet() != null) {
                 receiver = clientService.findByWallet(request.getReceiverWallet());
             } else if (request.getReceiverLogin() != null) {
-                receiver = clientService.findByLogin(request.getReceiverLogin());
+                receiver = clientService.findByCryptoname(request.getReceiverLogin());
             } else {
                 return error203;
             }
@@ -119,7 +119,7 @@ public class TransactionService {
     public static final String COIN_SCALE = "1000";
 
     public List<TransactionDTO> getList(TransactionListRequestDTO request) {
-        Client client = clientService.findByLogin(request.getLogin());
+        Client client = clientService.findByCryptoname(request.getLogin());
         if (client == null) return null;
         if (!client.getApikey().equals(request.getApikey())) return null;
         List<TransactionDTO> allTransaction = new ArrayList<>();
@@ -134,7 +134,7 @@ public class TransactionService {
     private List<TransactionDTO> adaptToDTO(List<TransactionCoins> transactionList, boolean isSended) {
         List<TransactionDTO> result = new ArrayList<>();
         for (TransactionCoins tx : transactionList) {
-            result.add(new TransactionDTO(tx.getTimestamp(), tx.getSender().getLogin(), tx.getReceiver().getLogin(),
+            result.add(new TransactionDTO(tx.getTimestamp(), tx.getSender().getCryptoname(), tx.getReceiver().getCryptoname(),
                     isSended ? tx.getAmount().negate() : tx.getAmount(),
                     tx.getTxhash()));
         }
