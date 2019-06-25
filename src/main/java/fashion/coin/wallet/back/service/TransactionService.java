@@ -35,7 +35,7 @@ public class TransactionService {
 
     public String createTransaction(Client sender, Client receiver, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
         TransactionCoins transactionCoins = new TransactionCoins(sender, receiver, amount);
-         String txhash = blockchainService.sendTransaction(blockchainTransaction);
+        String txhash = blockchainService.sendTransaction(blockchainTransaction);
         if (txhash != null) {
             transactionCoins.setTxhash(txhash);
             transactionRepository.save(transactionCoins);
@@ -98,7 +98,7 @@ public class TransactionService {
     }
 
     private boolean checkTransaction(Client sender, Client receiver, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
-
+        if (blockchainTransaction.getSignature() == null) return false;
         if (!blockchainTransaction.getBody().getFrom().equals(sender.getWalletAddress())) return false;
         if (!blockchainTransaction.getBody().getTo().equals(receiver.getWalletAddress())) return false;
         if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0)
@@ -120,13 +120,13 @@ public class TransactionService {
 
     public List<TransactionDTO> getList(TransactionListRequestDTO request) {
         Client client = clientService.findByLogin(request.getLogin());
-        if(client==null) return null;
-        if( !client.getApikey().equals(request.getApikey())) return null;
+        if (client == null) return null;
+        if (!client.getApikey().equals(request.getApikey())) return null;
         List<TransactionDTO> allTransaction = new ArrayList<>();
         List<TransactionCoins> sended = transactionRepository.findAllBySender(client);
         if (sended != null && !sended.isEmpty()) allTransaction.addAll(adaptToDTO(sended, true));
         List<TransactionCoins> received = transactionRepository.findAllByReceiver(client);
-        if (received != null && !received.isEmpty()) allTransaction.addAll(adaptToDTO(received,false));
+        if (received != null && !received.isEmpty()) allTransaction.addAll(adaptToDTO(received, false));
         Collections.sort(allTransaction);
         return allTransaction;
     }
