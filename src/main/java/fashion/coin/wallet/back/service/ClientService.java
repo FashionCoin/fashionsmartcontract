@@ -421,10 +421,12 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
+        System.out.println(gson.toJson(data));
         if (data.getApikey() == null) return error107;
         if (data.getCryptoname() == null) {
             Client client = findClientByApikey(data.getApikey());
             if (client == null) return error108;
+            System.out.println(gson.toJson(client));
             if (client.getWalletAddress() == null || client.getWalletAddress().length() == 0) {
                 return client;
             } else {
