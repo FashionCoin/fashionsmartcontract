@@ -343,6 +343,7 @@ public class ClientService {
     private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
     private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
     private static final ResultDTO error119 = new ResultDTO(false, "Please select another picture", 119);
+    private static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
@@ -458,6 +459,7 @@ public class ClientService {
         }
 
         if (data.getPhone() != null) {
+            if (checkUnicPhone(data.getPhone())) return error120;
             client.setPhone(data.getPhone());
         }
 
@@ -473,6 +475,11 @@ public class ClientService {
         }
         clientRepository.save(client);
         return client;
+    }
+
+    private boolean checkUnicPhone(String phone) {
+        List<Client> clientList = findByPhone(phone);
+        return (clientList == null || clientList.size() == 0);
     }
 
 
