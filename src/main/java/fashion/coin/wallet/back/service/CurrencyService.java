@@ -82,8 +82,8 @@ public class CurrencyService {
             BigDecimal rateLA = getRateForCoinLatoken("ETH");
             BigDecimal rateETH = getRateForCoinBitfinex("ETH");
 
-            System.out.println("rateLA " + rateLA);
-            System.out.println("rateETH " + rateETH);
+//            System.out.println("rateLA " + rateLA);
+//            System.out.println("rateETH " + rateETH);
 
             BigDecimal rate = BigDecimal.ONE.divide(rateLA.multiply(rateETH), 3, RoundingMode.HALF_UP);
             return new CurrencyDTO(currency, rate.setScale(3, RoundingMode.HALF_UP).toString());
@@ -120,14 +120,14 @@ public class CurrencyService {
 
 
             RestTemplate restTemplate = new RestTemplate();
-            System.out.println(coinName);
+//            System.out.println(coinName);
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
-            System.out.println(gson.toJson(result));
-            System.out.println(gson.toJson(result.getClose()));
+//            System.out.println(gson.toJson(result));
+//            System.out.println(gson.toJson(result.getClose()));
             lastUpdateLaMap.put(coinName, LocalDateTime.now());
             lastLaRateMap.put(coinName, new BigDecimal(result.getClose()));
         }
-        System.out.println(lastBfRateMap.get(coinName));
+//        System.out.println(lastBfRateMap.get(coinName));
         return lastLaRateMap.get(coinName);
     }
 
