@@ -23,6 +23,8 @@ public class InstagramService {
 
     Instagram4j instagram = null;
 
+    boolean firststart = true;
+
     @Value("${instgram.bot.username}")
     String username;
     @Value("${instgram.bot.password}")
@@ -37,7 +39,7 @@ public class InstagramService {
         pattern = Pattern.compile(USERNAME_PATTERN);
     }
 
-    public boolean validate(final String username){
+    public boolean validate(final String username) {
         matcher = pattern.matcher(username);
         return matcher.matches();
 
@@ -45,9 +47,11 @@ public class InstagramService {
 
     private void tryConnect() {
         try {
-
-            Thread.sleep(100000);
-
+            if (!firststart) {
+                Thread.sleep(100000);
+            }else{
+                firststart = false;
+            }
             // Login to instagram
             instagram = Instagram4j.builder().username(username).password(password).build();
             instagram.setup();
@@ -61,7 +65,7 @@ public class InstagramService {
         }
     }
 
-    public boolean checkFollowing(String instAccaunt,String followAccaunt) {
+    public boolean checkFollowing(String instAccaunt, String followAccaunt) {
 
         if (instagram == null || !instagram.isLoggedIn()) {
             tryConnect();
@@ -70,7 +74,7 @@ public class InstagramService {
         Long userId = null;
 
         try {
-            if(!validate(instAccaunt)) return false;
+            if (!validate(instAccaunt)) return false;
 
             InstagramSearchUsernameResult userResult = instagram.sendRequest(new InstagramSearchUsernameRequest(instAccaunt));
             if (userResult == null || userResult.getUser() == null || userResult.getUser().getUsername() == null
