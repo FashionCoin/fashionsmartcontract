@@ -1,6 +1,8 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,6 +27,10 @@ import java.util.stream.Stream;
  */
 @Service
 public class CurrencyService {
+    @Autowired
+    Gson gson;
+
+
     private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
     private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
 
@@ -68,18 +74,22 @@ public class CurrencyService {
 
     public CurrencyDTO getCurrencyRate(String currency) {
 
-        if(currency.equals("BTC") || currency.equals("ETH")){
+        if (currency.equals("BTC") || currency.equals("ETH")) {
             BigDecimal rateLA = getRateForCoinLatoken(currency);
-            BigDecimal rate = BigDecimal.ONE.divide(rateLA,3, RoundingMode.HALF_UP);
-            return new CurrencyDTO(currency, rate.setScale(3,RoundingMode.HALF_UP).toString());
-        } else if (currency.equals("USD")){
+            BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
+            return new CurrencyDTO(currency, rate.setScale(3, RoundingMode.HALF_UP).toString());
+        } else if (currency.equals("USD")) {
             BigDecimal rateLA = getRateForCoinLatoken("ETH");
             BigDecimal rateETH = getRateForCoinBitfinex("ETH");
-            BigDecimal rate = BigDecimal.ONE.divide(rateLA.multiply(rateETH),3, RoundingMode.HALF_UP);
-            return new CurrencyDTO(currency, rate.setScale(3,RoundingMode.HALF_UP).toString());
+
+            System.out.println("rateLA " + rateLA);
+            System.out.println("rateETH " + rateETH);
+
+            BigDecimal rate = BigDecimal.ONE.divide(rateLA.multiply(rateETH), 3, RoundingMode.HALF_UP);
+            return new CurrencyDTO(currency, rate.setScale(3, RoundingMode.HALF_UP).toString());
         } else {
-            System.out.println("Panic! Currency "+ currency + "not found");
-            return new CurrencyDTO(currency,"1");
+            System.out.println("Panic! Currency " + currency + "not found");
+            return new CurrencyDTO(currency, "1");
         }
 /*
         if (currency.equals("USD")) {
@@ -100,7 +110,7 @@ public class CurrencyService {
         return currencyDTOList;
     }
 
-    public BigDecimal getRateForCoinLatoken(String coinName){
+    public BigDecimal getRateForCoinLatoken(String coinName) {
         if (!lastUpdateLaMap.containsKey(coinName)) {
             lastUpdateLaMap.put(coinName, LocalDateTime.now().minusMinutes(60));
         }
@@ -110,9 +120,9 @@ public class CurrencyService {
 
 
             RestTemplate restTemplate = new RestTemplate();
-        System.out.println(coinName);
-        LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken+ "/FSHN" + coinName , LatokenRateDTO.class);
-
+            System.out.println(coinName);
+            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
+            System.out.println(gson.toJson(result));
             lastUpdateLaMap.put(coinName, LocalDateTime.now());
             lastLaRateMap.put(coinName, new BigDecimal(result.getClose()));
         }
