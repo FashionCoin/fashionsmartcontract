@@ -128,7 +128,7 @@ public class CurrencyService {
             lastLaRateMap.put(coinName, new BigDecimal(result.getClose()));
         }
         System.out.println(lastBfRateMap.get(coinName));
-        return lastBfRateMap.get(coinName);
+        return lastLaRateMap.get(coinName);
     }
 
 }
