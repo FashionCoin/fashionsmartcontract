@@ -342,7 +342,7 @@ public class ClientService {
     private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
     private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
     private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
-    private static final ResultDTO error119 = new ResultDTO(false, "Please select another another picture", 119);
+    private static final ResultDTO error119 = new ResultDTO(false, "Please select another picture", 119);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
