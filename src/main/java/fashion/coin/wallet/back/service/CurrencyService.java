@@ -123,9 +123,11 @@ public class CurrencyService {
             System.out.println(coinName);
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
             System.out.println(gson.toJson(result));
+            System.out.println(gson.toJson(result.getClose()));
             lastUpdateLaMap.put(coinName, LocalDateTime.now());
             lastLaRateMap.put(coinName, new BigDecimal(result.getClose()));
         }
+        System.out.println(lastBfRateMap.get(coinName));
         return lastBfRateMap.get(coinName);
     }
 
