@@ -459,7 +459,7 @@ public class ClientService {
         }
 
         if (data.getPhone() != null) {
-            if (checkUnicPhone(data.getPhone())) return error120;
+            if (!checkUnicPhone(data.getPhone())) return error120;
             client.setPhone(data.getPhone());
         }
 
