@@ -169,6 +169,7 @@ public class TelegramCheckService {
     public static final String WAITINSTANNA = "waitInstagramAnna";
     public static final String WAITINSTFASHION = "waitInstagramFashion";
     public static final String WAITNAME = "waitCryptonameName";
+    public static final String BULKSENDED = "bulkSended";
 
     public void checkText(FashionBot fashionBot, Update update) {
 //        System.out.println(update.getMessage().getText());
@@ -352,12 +353,14 @@ class LinkSender implements Runnable {
     private final ClientService clientService;
     private final FashionBot bot;
     private final TelegramCheckService telegramCheckService;
+    private final TelegramDataService telegramDataService;
 
 
     public LinkSender(TelegramCheckService telegramCheckService) {
         this.telegramCheckService = telegramCheckService;
         this.clientService = TelegramCheckService.getClientService();
         this.bot = TelegramCheckService.getBot();
+        this.telegramDataService = TelegramCheckService.getDataService();
     }
 
     @Override
@@ -371,25 +374,28 @@ class LinkSender implements Runnable {
                 String cryptoName = client.getCryptoname();
                 String balance = telegramCheckService.getBalance(chatId);
                 String apiKey = clientService.getApiKeyByTelegram(chatId);
+                String bulkSended = telegramDataService.getValue(chatId, TelegramCheckService.BULKSENDED);
+                if (bulkSended == null || !bulkSended.equals("true")) {
+                    SendMessage message = new SendMessage()
+                            .setChatId(chatId)
+                            .setText("Dear " + cryptoName + ", your balance on Crypto Name is " + balance + " FSHN. \n" +
+                                    "\n" +
+                                    "If you are an Android user, you can finish your Crypto Name registration and get your money right now:\n" +
+                                    "1. Install the latest of Fashion Wallet from here https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=api_key%3D" + apiKey + "\n" +
+                                    "2. When you open the app, you will see your Crypto Name " + cryptoName + ".\n" +
+                                    "3. Go ahead and choose any picture from your device as Mnemonic Pic to finish the registration. Mnemonic Pic is important, so please remember it.\n" +
+                                    "4. Set Pin code for your Fashion Wallet \n" +
+                                    "5. Congratulations! Your money is your wallet!\n" +
+                                    "\n" +
+                                    "If you are an iOS user, please wait for a little. When the app will appear in the App Store, we will send you a message with the right link.\n" +
+                                    "\n" +
+                                    "We are here to help you: support@coin.fashion\n");
 
-                SendMessage message = new SendMessage()
-                        .setChatId(chatId)
-                        .setText("Dear " + cryptoName + ", your balance on Crypto Name is " + balance + " FSHN. \n" +
-                                "\n" +
-                                "If you are an Android user, you can finish your Crypto Name registration and get your money right now:\n" +
-                                "1. Install the latest of Fashion Wallet from here https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=api_key%3D" + apiKey + "\n" +
-                                "2. When you open the app, you will see your Crypto Name " + cryptoName + ".\n" +
-                                "3. Go ahead and choose any picture from your device as Mnemonic Pic to finish the registration. Mnemonic Pic is important, so please remember it.\n" +
-                                "4. Set Pin code for your Fashion Wallet \n" +
-                                "5. Congratulations! Your money is your wallet!\n" +
-                                "\n" +
-                                "If you are an iOS user, please wait for a little. When the app will appear in the App Store, we will send you a message with the right link.\n" +
-                                "\n" +
-                                "We are here to help you: support@coin.fashion\n");
-
-                bot.execute(message);
-                System.out.println(cryptoName+" bulk sended");
-                Thread.sleep(1000);
+                    bot.execute(message);
+                    telegramDataService.setValue(chatId, TelegramCheckService.BULKSENDED, "true");
+                    System.out.println(cryptoName + " bulk sended");
+                    Thread.sleep(1000);
+                }
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
