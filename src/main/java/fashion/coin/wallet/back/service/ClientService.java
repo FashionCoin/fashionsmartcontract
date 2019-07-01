@@ -669,4 +669,11 @@ public class ClientService {
         }
         return "";
     }
+
+    public List<Client> findClientsForBulk() {
+        List<Client> clientList = clientRepository.findAllByRegisteredFrom("Telegramm");
+        clientList.removeIf(client -> (client.getWalletAddress() != null ||
+                client.getTelegramId() == null));
+        return clientList;
+    }
 }

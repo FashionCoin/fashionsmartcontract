@@ -26,4 +26,6 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
     List<Client> findClientsByPhoneEndingWith(String phone);
 
     List<Client> findByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Client> findAllByRegisteredFrom(String registeredFrom);
 }
