@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
 
@@ -109,7 +110,7 @@ public class TelegramCheckService {
         String isdone = dataService.getValue(userId.toString(), INSTANNANAME);
         if (!"done".equals(isdone)) {
             String userAccount = update.getMessage().getText();
-            boolean isSubscribe = checkSubscribeInstagram(userAccount,"annakfashion");
+            boolean isSubscribe = checkSubscribeInstagram(userAccount, "annakfashion");
             if (isSubscribe) {
                 increaceBalance(userId.toString(), "5000");
                 dataService.setValue(userId.toString(), INSTANNANAME, userAccount);
@@ -126,7 +127,7 @@ public class TelegramCheckService {
         String isdone = dataService.getValue(userId.toString(), INSTFASHIONNAME);
         if (!"done".equals(isdone)) {
             String userAccount = update.getMessage().getText();
-            boolean isSubscribe = checkSubscribeInstagram(userAccount,"fashioncoin");
+            boolean isSubscribe = checkSubscribeInstagram(userAccount, "fashioncoin");
             if (isSubscribe) {
                 increaceBalance(userId.toString(), "5000");
                 dataService.setValue(userId.toString(), INSTFASHIONNAME, userAccount);
@@ -147,8 +148,8 @@ public class TelegramCheckService {
     }
 
 
-    private boolean checkSubscribeInstagram(String userAccount,String followAccaunt) {
-        return instagramService.checkFollowing(userAccount,followAccaunt);
+    private boolean checkSubscribeInstagram(String userAccount, String followAccaunt) {
+        return instagramService.checkFollowing(userAccount, followAccaunt);
     }
 
     private final String EXPERIENCED = "experienced";
@@ -169,7 +170,7 @@ public class TelegramCheckService {
         String currentStep = dataService.getValue(userId.toString(), CURRENTSTEP);
         if (WAITINSTANNA.equals(currentStep)) {
             checkInstAnna(fashionBot, update);
-        }else if (WAITINSTFASHION.equals(currentStep)) {
+        } else if (WAITINSTFASHION.equals(currentStep)) {
             checkInstFashion(fashionBot, update);
         } else if (WAITNAME.equals(currentStep)) {
             checkCryptoname(fashionBot, update);
@@ -300,5 +301,16 @@ public class TelegramCheckService {
         }
 
 
+    }
+
+    public String getBalance(String userId) {
+        BigDecimal telegramBalance = clientService.getTelegramBalance(userId);
+        BigDecimal clientBalance = clientService.getClientBalanceByTelegram(userId);
+
+        return (clientBalance.add(telegramBalance)).toString();
+    }
+
+    public String getApiKey(String userId) {
+        return clientService.getApiKeyByTelegram(userId);
     }
 }

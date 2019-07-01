@@ -35,6 +35,12 @@ public class FirstScreen implements TelegramEventHandler {
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
 
+        System.out.println("From: "+ update.getMessage().getFrom());
+        System.out.println("ChatId: "+ update.getMessage().getChatId());
+        System.out.println("Chat.id: "+ update.getMessage().getChat().getId());
+        System.out.println("UserId: "+ update.getMessage().getFrom().getId());
+
+
         telegramCheckService.checkReferal(update);
 
 

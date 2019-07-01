@@ -105,18 +105,19 @@ public class ClientService {
             }
             //// END FOR TESTING
 
-            // TODO: Telegram Balance
-            BigDecimal balance = getTelegramBalance(client);
-            if (!balance.equals(BigDecimal.ZERO) && client.getWalletAddress() != null) {
-                boolean result = aiService.transfer(balance.toString(), client.getWalletAddress());
-                if (!result) {
-                    System.out.println("Error sending telegram money to client: \n" +
-                            gson.toJson(client));
-                } else {
-                    resetTelegramBalance(client);
+            if (client.getTelegramId() != null && client.getTelegramId() > 0) {
+                String userId = String.valueOf(client.getTelegramId());
+                BigDecimal balance = getTelegramBalance(userId);
+                if (!balance.equals(BigDecimal.ZERO) && client.getWalletAddress() != null) {
+                    boolean result = aiService.transfer(balance.toString(), client.getWalletAddress());
+                    if (!result) {
+                        System.out.println("Error sending telegram money to client: \n" +
+                                gson.toJson(client));
+                    } else {
+                        resetTelegramBalance(userId);
+                    }
                 }
             }
-
             return created;
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,23 +125,22 @@ public class ClientService {
         }
     }
 
-    private void resetTelegramBalance(Client client) {
+    private void resetTelegramBalance(String userId) {
 
-        if (client.getTelegramId() != null && client.getTelegramId() > 0) {
-            String myBalance = telegramDataService.getValue(String.valueOf(client.getTelegramId()), MYBALANCE);
-            if (myBalance != null && myBalance.length() > 0) {
-                BigDecimal balance = new BigDecimal(myBalance);
-                if(!balance.equals(BigDecimal.ZERO)) {
-                    telegramDataService.setValue(String.valueOf(client.getTelegramId()), OLDBALANCE, balance.toString());
-                    telegramDataService.setValue(String.valueOf(client.getTelegramId()), MYBALANCE, "0");
-                }
+
+        String myBalance = telegramDataService.getValue(userId, MYBALANCE);
+        if (myBalance != null && myBalance.length() > 0) {
+            BigDecimal balance = new BigDecimal(myBalance);
+            if (!balance.equals(BigDecimal.ZERO)) {
+                telegramDataService.setValue(userId, OLDBALANCE, balance.toString());
+                telegramDataService.setValue(userId, MYBALANCE, "0");
             }
         }
+
     }
 
-    private BigDecimal getTelegramBalance(Client client) {
-        if (client.getTelegramId() == null || client.getTelegramId() == 0) return BigDecimal.ZERO;
-        String myBalance = telegramDataService.getValue(String.valueOf(client.getTelegramId()), MYBALANCE);
+    public BigDecimal getTelegramBalance(String userId) {
+        String myBalance = telegramDataService.getValue(userId, MYBALANCE);
         if (myBalance == null || myBalance.length() == 0) return BigDecimal.ZERO;
         return new BigDecimal(myBalance);
     }
@@ -638,5 +638,35 @@ public class ClientService {
             }
         }
         System.out.println("End reserv");
+    }
+
+    public BigDecimal getClientBalanceByTelegram(String userId) {
+        try {
+            List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
+            if (clientList != null && clientList.size() == 1) {
+                Client client = clientList.get(0);
+                return client.getWalletBalance();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public String getApiKeyByTelegram(String userId) {
+        try {
+            List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
+            if (clientList != null && clientList.size() == 1) {
+                Client client = clientList.get(0);
+                if (client.getApikey() == null || client.getApikey().length() == 0) {
+                    client.setApikey(getRandomToken(16));
+                    clientRepository.save(client);
+                }
+                return client.getApikey();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
