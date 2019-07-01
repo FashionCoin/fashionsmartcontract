@@ -324,11 +324,16 @@ public class TelegramCheckService {
         return clientService.getApiKeyByTelegram(userId);
     }
 
-    public void startBulk() {
 
-        LinkSender linkSender = new LinkSender(this);
-        new Thread(linkSender).start();
-        System.out.println("Bulk started...");
+    boolean bulkStarted = false;
+
+    public void startBulk() {
+        if (!bulkStarted) {
+            bulkStarted = true;
+            LinkSender linkSender = new LinkSender(this);
+            new Thread(linkSender).start();
+            System.out.println("Bulk started...");
+        }
     }
 
     public void setBot(FashionBot fashionBot) {

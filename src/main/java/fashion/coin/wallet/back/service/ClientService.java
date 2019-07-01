@@ -645,7 +645,9 @@ public class ClientService {
             List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
             if (clientList != null && clientList.size() == 1) {
                 Client client = clientList.get(0);
-                return client.getWalletBalance();
+                BigDecimal walletBalance = client.getWalletBalance();
+                if(walletBalance==null) return BigDecimal.ZERO;
+                return walletBalance;
             }
         } catch (Exception e) {
             e.printStackTrace();
