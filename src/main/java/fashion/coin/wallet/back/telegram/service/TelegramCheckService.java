@@ -8,8 +8,10 @@ import fashion.coin.wallet.back.telegram.ContextProvider;
 import fashion.coin.wallet.back.telegram.FashionBot;
 import fashion.coin.wallet.back.telegram.screen.*;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,6 +25,7 @@ public class TelegramCheckService {
     private static TelegramDataService dataService = null;
     private static ClientService clientService = null;
     private static InstagramService instagramService = null;
+    private static FashionBot bot = null;
 
     private TelegramCheckService() {
     }
@@ -312,5 +315,20 @@ public class TelegramCheckService {
 
     public String getApiKey(String userId) {
         return clientService.getApiKeyByTelegram(userId);
+    }
+
+    public void startBulk() {
+        SendMessage message = new SendMessage()
+                .setChatId("252072764")
+                .setText("Test рассылка работает ок!");
+        try {
+            bot.execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setBot(FashionBot fashionBot) {
+        this.bot = fashionBot;
     }
 }

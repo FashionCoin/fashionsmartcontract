@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.telegram;
 
+import fashion.coin.wallet.back.telegram.service.TelegramCheckService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
@@ -21,8 +22,10 @@ public class BotConfig {
 //
 
 
+
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+
 
 
         return new CommandLineRunner() {
@@ -40,6 +43,9 @@ public class BotConfig {
                     FashionBot fashionBot = new FashionBot(botName, botToken);
 
                     botsApi.registerBot(fashionBot);
+
+                    TelegramCheckService telegramCheckService = TelegramCheckService.getInstance();
+                    telegramCheckService.setBot(fashionBot);
 
                 } catch (TelegramApiRequestException e) {
                     e.printStackTrace();
