@@ -11,6 +11,7 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.SetEmailRequest;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
+import fashion.coin.wallet.back.telegram.service.TelegramDataService;
 import fashion.coin.wallet.back.utils.SignBuilder;
 import fashion.coin.wallet.back.utils.TweetNaCl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import java.util.*;
 
 
 import static fashion.coin.wallet.back.service.StatisticsService.*;
+import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
+import static fashion.coin.wallet.back.telegram.FashionBot.OLDBALANCE;
 import static java.lang.Character.isLetter;
 
 /**
@@ -47,6 +50,7 @@ public class ClientService {
     MessagingService messagingService;
     AIService aiService;
     Gson gson;
+    TelegramDataService telegramDataService;
 
     Random random = new Random();
 
@@ -100,11 +104,45 @@ public class ClientService {
                 System.out.println("10 000: sended");
             }
             //// END FOR TESTING
+
+            // TODO: Telegram Balance
+            BigDecimal balance = getTelegramBalance(client);
+            if (!balance.equals(BigDecimal.ZERO) && client.getWalletAddress() != null) {
+                boolean result = aiService.transfer(balance.toString(), client.getWalletAddress());
+                if (!result) {
+                    System.out.println("Error sending telegram money to client: \n" +
+                            gson.toJson(client));
+                } else {
+                    resetTelegramBalance(client);
+                }
+            }
+
             return created;
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    private void resetTelegramBalance(Client client) {
+
+        if (client.getTelegramId() != null && client.getTelegramId() > 0) {
+            String myBalance = telegramDataService.getValue(String.valueOf(client.getTelegramId()), MYBALANCE);
+            if (myBalance != null && myBalance.length() > 0) {
+                BigDecimal balance = new BigDecimal(myBalance);
+                if(!balance.equals(BigDecimal.ZERO)) {
+                    telegramDataService.setValue(String.valueOf(client.getTelegramId()), OLDBALANCE, balance.toString());
+                    telegramDataService.setValue(String.valueOf(client.getTelegramId()), MYBALANCE, "0");
+                }
+            }
+        }
+    }
+
+    private BigDecimal getTelegramBalance(Client client) {
+        if (client.getTelegramId() == null || client.getTelegramId() == 0) return BigDecimal.ZERO;
+        String myBalance = telegramDataService.getValue(String.valueOf(client.getTelegramId()), MYBALANCE);
+        if (myBalance == null || myBalance.length() == 0) return BigDecimal.ZERO;
+        return new BigDecimal(myBalance);
     }
 
     private boolean checkNewWallet(String walletAddress) {
@@ -321,6 +359,11 @@ public class ClientService {
     @Autowired
     public void setGson(Gson gson) {
         this.gson = gson;
+    }
+
+    @Autowired
+    public void setTelegramDataService(TelegramDataService telegramDataService) {
+        this.telegramDataService = telegramDataService;
     }
 
     private static final ResultDTO created = new ResultDTO(true, "Account created", 0);

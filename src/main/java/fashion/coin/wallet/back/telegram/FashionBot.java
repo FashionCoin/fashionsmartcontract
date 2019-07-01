@@ -31,6 +31,7 @@ public class FashionBot extends TelegramLongPollingBot {
     public static final String TMANNANEXT = "telegramAnnaNext";
     public static final String INSTANNANEXT = "instagramAnnaNext";
     public static final String MYBALANCE = "myBalance";
+    public static final String OLDBALANCE = "oldBalance";
     public static final String CHECKEXISTSNAME = "checkExistsName";
 
 
