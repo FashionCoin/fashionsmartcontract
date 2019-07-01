@@ -313,6 +313,9 @@ public class TelegramCheckService {
         BigDecimal telegramBalance = clientService.getTelegramBalance(userId);
         BigDecimal clientBalance = clientService.getClientBalanceByTelegram(userId);
 
+        System.out.println(clientBalance);
+        System.out.println(telegramBalance);
+
         return (clientBalance.add(telegramBalance)).toString();
     }
 
@@ -385,7 +388,7 @@ class LinkSender implements Runnable {
                                 "We are here to help you: support@coin.fashion\n");
 
                 bot.execute(message);
-
+                System.out.println(cryptoName+" bulk sended");
                 Thread.sleep(1000);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
