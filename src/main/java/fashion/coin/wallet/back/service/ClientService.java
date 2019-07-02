@@ -289,8 +289,7 @@ public class ClientService {
         try {
             return clientRepository.findClientByCryptoname(cryptoname);
         }catch (Exception e){
-            System.out.println(e);
-
+            System.out.println(e.getMessage());
         }
         return null;
     }
