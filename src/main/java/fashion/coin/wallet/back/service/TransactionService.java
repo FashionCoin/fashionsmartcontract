@@ -84,8 +84,8 @@ public class TransactionService {
             else if (request.getReceiverLogin() != null) {
                 receiver = clientService.findByCryptoname(request.getReceiverLogin());
             } else {
-//                return error203;
-                receiver = null;
+                return error203;
+//                receiver = null;
             }
 
 
