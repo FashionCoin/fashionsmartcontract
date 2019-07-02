@@ -1,10 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
-import fashion.coin.wallet.back.dto.blockchain.FshnHistoryDTO;
-import fashion.coin.wallet.back.dto.blockchain.FshnHistoryTxDTO;
-import fashion.coin.wallet.back.dto.blockchain.ResponceDTO;
-import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
+import fashion.coin.wallet.back.dto.blockchain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +69,22 @@ public class BlockchainService {
         return new ArrayList<>();
     }
 
+    public BigDecimal getBalance(String walletAddress) {
+        try {
+            ResponseEntity<FshnBalanceInfoDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/info?pub_key=" + walletAddress,
+                    FshnBalanceInfoDTO.class);
+            if (responce == null || !responce.hasBody()) return BigDecimal.ZERO;
+            FshnBalanceInfoDTO balanceInfo = responce.getBody();
+            FshnBalanceDTO balanceDTO = balanceInfo.getResult();
+            if (balanceDTO == null) return BigDecimal.ZERO;
+            String balanceString = balanceDTO.balance;
+            return (new BigDecimal(balanceString)).movePointLeft(3);
+        } catch (Exception e) {
+            System.out.println("Don't get balance for " + walletAddress);
+            System.out.println(e.getMessage());
+        }
+        return BigDecimal.ZERO;
+    }
 
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {

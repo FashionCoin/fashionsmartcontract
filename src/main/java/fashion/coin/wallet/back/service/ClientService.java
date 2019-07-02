@@ -480,9 +480,19 @@ public class ClientService {
 
         Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
         if (client == null) return error108;
-        System.out.println(gson.toJson(client));
         if (client.getApikey() == null) return error107;
         if (!client.getApikey().equals(data.getApikey())) return error109;
+        updateBalance(client);
+        System.out.println(gson.toJson(client));
+        return client;
+    }
+
+    private Client updateBalance(Client client) {
+        BigDecimal balanceFromBlockchain =
+        blockchainService.getBalance(client.getWalletAddress());
+        if(balanceFromBlockchain.equals(client.getWalletBalance())) return client;
+        client.setWalletBalance(balanceFromBlockchain);
+        clientRepository.save(client);
         return client;
     }
 
@@ -517,6 +527,7 @@ public class ClientService {
             client.setRealname(data.getRealname());
         }
         clientRepository.save(client);
+        updateBalance(client);
         return client;
     }
 
