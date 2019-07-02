@@ -80,11 +80,16 @@ public class TransactionService {
             Client receiver;
             if (request.getReceiverWallet() != null) {
                 receiver = clientService.findByWallet(request.getReceiverWallet());
-            } else if (request.getReceiverLogin() != null) {
+            }
+            else if (request.getReceiverLogin() != null) {
                 receiver = clientService.findByCryptoname(request.getReceiverLogin());
             } else {
-                return error203;
+//                return error203;
+                receiver = null;
             }
+
+
+
             if (request.getBlockchainTransaction() == null) return error204;
             if (!checkTransaction(sender, receiver, amount, request.getBlockchainTransaction())) return error206;
             String txhash = createTransaction(sender, receiver, amount, request.getBlockchainTransaction());
@@ -101,7 +106,9 @@ public class TransactionService {
     private boolean checkTransaction(Client sender, Client receiver, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
         if (blockchainTransaction.getSignature() == null) return false;
         if (!blockchainTransaction.getBody().getFrom().equals(sender.getWalletAddress())) return false;
-        if (!blockchainTransaction.getBody().getTo().equals(receiver.getWalletAddress())) return false;
+        if(receiver!=null) {
+            if (!blockchainTransaction.getBody().getTo().equals(receiver.getWalletAddress())) return false;
+        }
         if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0)
             return false;
         return true;
