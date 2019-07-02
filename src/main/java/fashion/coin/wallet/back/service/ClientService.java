@@ -285,7 +285,14 @@ public class ClientService {
     }
 
     public Client findByCryptoname(String cryptoname) {
-        return clientRepository.findClientByCryptoname(cryptoname.toLowerCase());
+        if(cryptoname==null) return null;
+        try {
+            return clientRepository.findClientByCryptoname(cryptoname);
+        }catch (Exception e){
+            System.out.println(e);
+
+        }
+        return null;
     }
 
     public ResultDTO trySetEmail(SetEmailRequestDTO data) {
