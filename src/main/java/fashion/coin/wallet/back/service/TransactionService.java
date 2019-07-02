@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.dto.TransactionDTO;
 import fashion.coin.wallet.back.dto.TransactionListRequestDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
+import fashion.coin.wallet.back.dto.blockchain.FshnHistoryTxDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.TransactionCoins;
 import fashion.coin.wallet.back.repository.TransactionRepository;
@@ -123,10 +124,41 @@ public class TransactionService {
         if (client == null) return null;
         if (!client.getApikey().equals(request.getApikey())) return null;
         List<TransactionDTO> allTransaction = new ArrayList<>();
+
+        // TODO: rewrite
+        /*
         List<TransactionCoins> sended = transactionRepository.findAllBySender(client);
         if (sended != null && !sended.isEmpty()) allTransaction.addAll(adaptToDTO(sended, true));
         List<TransactionCoins> received = transactionRepository.findAllByReceiver(client);
         if (received != null && !received.isEmpty()) allTransaction.addAll(adaptToDTO(received, false));
+        //
+         */
+
+        List<FshnHistoryTxDTO> fshnHistoryTxList = blockchainService.getHistory(client.getWalletAddress());
+        for (FshnHistoryTxDTO fshnHistoryTx : fshnHistoryTxList) {
+            TransactionDTO transactionDTO = new TransactionDTO();
+            if (fshnHistoryTx.from.equals(client.getWalletAddress())) {
+                transactionDTO.setSender(client.getCryptoname());
+                String contragent = clientService.getClientByWallet(fshnHistoryTx.to);
+                if (contragent == null || contragent.length() == 0) {
+                    contragent = fshnHistoryTx.to;
+                }
+                transactionDTO.setReceiver(contragent);
+            } else {
+                transactionDTO.setReceiver(client.getCryptoname());
+                String contragent = clientService.getClientByWallet(fshnHistoryTx.from);
+                if (contragent == null || contragent.length() == 0) {
+                    contragent = fshnHistoryTx.from;
+                }
+                transactionDTO.setSender(contragent);
+            }
+            BigDecimal amount = (new BigDecimal(fshnHistoryTx.amount)).movePointLeft(3);
+            transactionDTO.setAmount(amount);
+            Long timestamp = Long.parseLong(fshnHistoryTx.time.secs) * 1000 + (fshnHistoryTx.time.nanos / 100000);
+            transactionDTO.setTimestamp(timestamp);
+            transactionDTO.setTxhash("");
+            allTransaction.add(transactionDTO);
+        }
         Collections.sort(allTransaction);
         return allTransaction;
     }

@@ -1,6 +1,8 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import fashion.coin.wallet.back.dto.blockchain.FshnHistoryDTO;
+import fashion.coin.wallet.back.dto.blockchain.FshnHistoryTxDTO;
 import fashion.coin.wallet.back.dto.blockchain.ResponceDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by JAVA-P on 22.10.2018.
@@ -32,13 +37,13 @@ public class BlockchainService {
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
-            System.out.println("url: "+BLOCKCHAIN_API_URI);
+            System.out.println("url: " + BLOCKCHAIN_API_URI);
             HttpHeaders headers = new HttpHeaders();
 
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<BlockchainTransactionDTO> request = new HttpEntity<>(blockchainTransaction, headers);
-            System.out.println(gson.toJson( blockchainTransaction));
-            ResponseEntity<ResponceDTO> responce = restTemplate.postForEntity(BLOCKCHAIN_API_URI, request, ResponceDTO.class);
+            System.out.println(gson.toJson(blockchainTransaction));
+            ResponseEntity<ResponceDTO> responce = restTemplate.postForEntity(BLOCKCHAIN_API_URI + "/wallets/transaction", request, ResponceDTO.class);
             if (!responce.hasBody()) return "";
             ResponceDTO responceBody = responce.getBody();
             System.out.println(responceBody);
@@ -48,6 +53,24 @@ public class BlockchainService {
         }
         return "";
     }
+
+    public List<FshnHistoryTxDTO> getHistory(String walletAddress) {
+        try {
+            ResponseEntity<FshnHistoryDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/history?pub_key=" + walletAddress,
+                    FshnHistoryDTO.class);
+            if (responce == null || !responce.hasBody()) return new ArrayList<>();
+            FshnHistoryDTO fshnHistory = responce.getBody();
+            if (fshnHistory == null || fshnHistory.getResult() == null) return new ArrayList<>();
+            List<FshnHistoryTxDTO> result = fshnHistory.getResult();
+            return result;
+        } catch (Exception e) {
+            System.out.println("Don't get history for " + walletAddress);
+            System.out.println(e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
+
 
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {

@@ -646,7 +646,7 @@ public class ClientService {
             if (clientList != null && clientList.size() == 1) {
                 Client client = clientList.get(0);
                 BigDecimal walletBalance = client.getWalletBalance();
-                if(walletBalance==null) return BigDecimal.ZERO;
+                if (walletBalance == null) return BigDecimal.ZERO;
                 return walletBalance;
             }
         } catch (Exception e) {
@@ -677,5 +677,17 @@ public class ClientService {
         clientList.removeIf(client -> (client.getWalletAddress() != null ||
                 client.getTelegramId() == null));
         return clientList;
+    }
+
+    public String getClientByWallet(String walletAddress) {
+        try {
+            Client client = clientRepository.findClientByWalletAddress(walletAddress);
+            if (client == null || client.getCryptoname() == null) return null;
+
+            return client.getCryptoname();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 }

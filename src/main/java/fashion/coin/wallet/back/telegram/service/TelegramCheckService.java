@@ -158,7 +158,7 @@ public class TelegramCheckService {
         return instagramService.checkFollowing(userAccount, followAccaunt);
     }
 
-    private final String EXPERIENCED = "experienced";
+    public final String EXPERIENCED = "experienced";
     private final String TELEGRAMFSHNDONE = "telegramFashionDone";
     private final String TANNADONE = "telegramAnnaDone";
     private final String INSTFASHIONNAME = "InstagramFashionDone";
@@ -380,7 +380,8 @@ class LinkSender implements Runnable {
                 String balance = telegramCheckService.getBalance(chatId);
                 String apiKey = clientService.getApiKeyByTelegram(chatId);
                 String bulkSended = telegramDataService.getValue(chatId, TelegramCheckService.BULKSENDED);
-                if (bulkSended == null || !bulkSended.equals("true")) {
+                String expirience = telegramDataService.getValue(chatId, telegramCheckService.EXPERIENCED);
+                if (expirience != null && expirience.length() > 0 && (bulkSended == null || !bulkSended.equals("true"))) {
                     SendMessage message = new SendMessage()
                             .setChatId(chatId)
                             .setText("Dear " + cryptoName + ", your balance on Crypto Name is " + balance + " FSHN. \n" +
@@ -399,7 +400,7 @@ class LinkSender implements Runnable {
                     bot.execute(message);
                     telegramDataService.setValue(chatId, TelegramCheckService.BULKSENDED, "true");
                     System.out.println(cryptoName + " bulk sended");
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 }
             } catch (TelegramApiException e) {
                 e.printStackTrace();
