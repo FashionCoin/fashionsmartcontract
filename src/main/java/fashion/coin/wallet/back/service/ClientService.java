@@ -493,6 +493,13 @@ public class ClientService {
         if(balanceFromBlockchain.equals(client.getWalletBalance())) return client;
         client.setWalletBalance(balanceFromBlockchain);
         clientRepository.save(client);
+        try {
+            messagingService.sendNotification("change_balance",
+                    client.getWalletBalance().toString(),
+                    "topic_" + client.getWalletAddress());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return client;
     }
 
