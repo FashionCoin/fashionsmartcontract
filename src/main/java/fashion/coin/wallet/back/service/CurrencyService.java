@@ -94,6 +94,7 @@ public class CurrencyService {
                 currencyRateRepository.save(currencyRate);
             }catch (Exception e){
                 System.out.println(e.getMessage());
+                currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
             }
         }
         if(currencyRate==null) return null;

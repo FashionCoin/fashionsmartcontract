@@ -8,4 +8,5 @@ import java.time.LocalDateTime;
 public interface CurrencyRateRepository extends JpaRepository<CurrencyRate,Long> {
 
     CurrencyRate findTopByCurrencyAndDateTimeIsAfter(String currency, LocalDateTime afterDateTime);
+    CurrencyRate findTopByCurrencyOrderByDateTimeDesc(String currency);
 }
