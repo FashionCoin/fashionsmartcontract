@@ -1,13 +1,18 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.api.client.http.HttpHeaders;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -98,8 +103,11 @@ public class CurrencyService {
     private BigDecimal getRateFromNBU(String currency) {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            List<NazbankDTO> result = restTemplate.getForObject(apiUrlNazbank, List.class);
-
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity entity = new HttpEntity(headers);
+            ResponseEntity<List> responce = restTemplate.exchange(apiUrlNazbank, HttpMethod.GET, entity, List.class, "json");
+            List<NazbankDTO> result = responce.getBody();
             result.removeIf(nazbankDTO -> !nazbankDTO.cc.equals(currency));
             NazbankDTO usd = result.get(0);
             return new BigDecimal(usd.rate);
