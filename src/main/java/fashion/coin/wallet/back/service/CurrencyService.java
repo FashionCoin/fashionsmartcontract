@@ -96,7 +96,7 @@ public class CurrencyService {
                 System.out.println(e.getMessage());
             }
         }
-        if(currency==null) return null;
+        if(currencyRate==null) return null;
         return new CurrencyDTO(currency,
                 currencyRate.getRate().setScale(3, RoundingMode.HALF_UP).toString());
     }
