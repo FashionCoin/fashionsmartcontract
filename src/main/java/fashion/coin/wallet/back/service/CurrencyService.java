@@ -16,10 +16,7 @@ import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,14 +100,12 @@ public class CurrencyService {
     private BigDecimal getRateFromNBU(String currency) {
         try {
             RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity entity = new HttpEntity(headers);
-            ResponseEntity<List> responce = restTemplate.exchange(apiUrlNazbank, HttpMethod.GET, entity, List.class, "json");
-            List<NazbankDTO> result = responce.getBody();
-            result.removeIf(nazbankDTO -> !nazbankDTO.cc.equals(currency));
-            NazbankDTO usd = result.get(0);
-            return new BigDecimal(usd.rate);
+
+            ArrayList<LinkedHashMap> responce = restTemplate.getForObject(apiUrlNazbank,ArrayList.class);
+
+            responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
+            Object usd = responce.get(0).get("rate");
+            return new BigDecimal((Double) usd).setScale(6,RoundingMode.HALF_UP);
 
         } catch (Exception e) {
             e.printStackTrace();
