@@ -2,6 +2,8 @@ package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
+import fashion.coin.wallet.back.entity.CurrencyRate;
+import fashion.coin.wallet.back.repository.CurrencyRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -30,76 +32,82 @@ public class CurrencyService {
     @Autowired
     Gson gson;
 
+    @Autowired
+    CurrencyRateRepository currencyRateRepository;
+
 
     private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
     private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
+    private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
 
     private static final String USD_PRICE = "1000";
 
-    Map<String, LocalDateTime> lastUpdateBfMap = new HashMap<>();
-    Map<String, BigDecimal> lastBfRateMap = new HashMap();
-    Map<String, LocalDateTime> lastUpdateLaMap = new HashMap<>();
-    Map<String, BigDecimal> lastLaRateMap = new HashMap();
-
+    LocalDateTime lastUpdate = LocalDateTime.now().minusDays(1);
 
     public List<String> getAvailableCrypts() {
-        return Stream.of("USD", "BTC", "ETH").collect(Collectors.toList());
+        return Stream.of("USD", "BTC", "ETH", "UAH").collect(Collectors.toList());
     }
 
 
     public BigDecimal getRateForCoinBitfinex(String coinName) {
-
-        if (!lastUpdateBfMap.containsKey(coinName)) {
-            lastUpdateBfMap.put(coinName, LocalDateTime.now().minusMinutes(60));
-        }
-        LocalDateTime lastUpdate = lastUpdateBfMap.get(coinName);
-
-        if (LocalDateTime.now().minusMinutes(5).compareTo(lastUpdate) > 0) {
-
-            RestTemplate restTemplate = new RestTemplate();
-            System.out.println(coinName);
-            BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
-            BitFinexRateDTO last = result[0];
-            for (BitFinexRateDTO dto : result) {
-                if (dto.getTimestamp() > last.getTimestamp()) {
-                    last = dto;
-                }
+        RestTemplate restTemplate = new RestTemplate();
+        System.out.println(coinName);
+        BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
+        BitFinexRateDTO last = result[0];
+        for (BitFinexRateDTO dto : result) {
+            if (dto.getTimestamp() > last.getTimestamp()) {
+                last = dto;
             }
-//        System.out.println("LAST PRICE FOR "+coinName+" AT BITFINEX -> "+last.getPrice()+" USD");
-            lastUpdateBfMap.put(coinName, LocalDateTime.now());
-            lastBfRateMap.put(coinName, new BigDecimal(last.getPrice()));
         }
-        return lastBfRateMap.get(coinName);
+        return new BigDecimal(last.getPrice());
     }
 
     public CurrencyDTO getCurrencyRate(String currency) {
 
-        if (currency.equals("BTC") || currency.equals("ETH")) {
-            BigDecimal rateLA = getRateForCoinLatoken(currency);
-            BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
-            return new CurrencyDTO(currency, rate.setScale(3, RoundingMode.HALF_UP).toString());
-        } else if (currency.equals("USD")) {
+        CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(currency, LocalDateTime.now().minusHours(1));
+        if (currencyRate == null) {
+
+            if (currency.equals("BTC") || currency.equals("ETH")) {
+                BigDecimal rateLA = getRateForCoinLatoken(currency);
+                BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
+                currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+            } else if (currency.equals("USD")) {
+
+                BigDecimal rate = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 3, RoundingMode.HALF_UP);
+
+/*  Bitfinex Version
             BigDecimal rateLA = getRateForCoinLatoken("ETH");
             BigDecimal rateETH = getRateForCoinBitfinex("ETH");
-
-//            System.out.println("rateLA " + rateLA);
-//            System.out.println("rateETH " + rateETH);
-
             BigDecimal rate = BigDecimal.ONE.divide(rateLA.multiply(rateETH), 3, RoundingMode.HALF_UP);
-            return new CurrencyDTO(currency, rate.setScale(3, RoundingMode.HALF_UP).toString());
-        } else {
-            System.out.println("Panic! Currency " + currency + "not found");
-            return new CurrencyDTO(currency, "1");
-        }
-/*
-        if (currency.equals("USD")) {
-            return new CurrencyDTO("USD", USD_PRICE);
-        } else {
-            BigDecimal rate = getRateForCoinBitfinex(currency);
-            rate = rate.multiply(new BigDecimal(USD_PRICE));
-            return new CurrencyDTO(currency, rate.toString());
-        }
  */
+                currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+            } else if (currency.equals("UAH")) {
+                BigDecimal rateUSD = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 6, RoundingMode.HALF_UP);
+                BigDecimal rate = rateUSD.divide(getRateFromNBU("USD"), 3, RoundingMode.HALF_UP);
+                currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+            } else {
+                System.out.println("Panic! Currency " + currency + "not found");
+                currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
+            }
+            currencyRateRepository.save(currencyRate);
+        }
+        return new CurrencyDTO(currency,
+                currencyRate.getRate().setScale(3, RoundingMode.HALF_UP).toString());
+    }
+
+    private BigDecimal getRateFromNBU(String currency) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            List<NazbankDTO> result = restTemplate.getForObject(apiUrlNazbank, List.class);
+
+            result.removeIf(nazbankDTO -> !nazbankDTO.cc.equals(currency));
+            NazbankDTO usd = result.get(0);
+            return new BigDecimal(usd.rate);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ONE;
     }
 
     public List<CurrencyDTO> getCurrencyList() {
@@ -111,24 +119,12 @@ public class CurrencyService {
     }
 
     public BigDecimal getRateForCoinLatoken(String coinName) {
-        if (!lastUpdateLaMap.containsKey(coinName)) {
-            lastUpdateLaMap.put(coinName, LocalDateTime.now().minusMinutes(60));
-        }
-        LocalDateTime lastUpdate = lastUpdateLaMap.get(coinName);
 
-        if (LocalDateTime.now().minusMinutes(5).compareTo(lastUpdate) > 0) {
+        RestTemplate restTemplate = new RestTemplate();
 
+        LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
 
-            RestTemplate restTemplate = new RestTemplate();
-//            System.out.println(coinName);
-            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
-//            System.out.println(gson.toJson(result));
-//            System.out.println(gson.toJson(result.getClose()));
-            lastUpdateLaMap.put(coinName, LocalDateTime.now());
-            lastLaRateMap.put(coinName, new BigDecimal(result.getClose()));
-        }
-//        System.out.println(lastBfRateMap.get(coinName));
-        return lastLaRateMap.get(coinName);
+        return new BigDecimal(result.getClose());
     }
 
 }
@@ -282,5 +278,58 @@ class LatokenRateDTO {
 
     public void setPriceChange(String priceChange) {
         this.priceChange = priceChange;
+    }
+}
+
+class NazbankDTO {
+
+    public Integer r030;
+
+    public String txt;
+
+    public Double rate;
+
+    public String cc;
+
+    public String exchangedate;
+
+    public Integer getR030() {
+        return r030;
+    }
+
+    public void setR030(Integer r030) {
+        this.r030 = r030;
+    }
+
+    public String getTxt() {
+        return txt;
+    }
+
+    public void setTxt(String txt) {
+        this.txt = txt;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
+    }
+
+    public String getCc() {
+        return cc;
+    }
+
+    public void setCc(String cc) {
+        this.cc = cc;
+    }
+
+    public String getExchangedate() {
+        return exchangedate;
+    }
+
+    public void setExchangedate(String exchangedate) {
+        this.exchangedate = exchangedate;
     }
 }
