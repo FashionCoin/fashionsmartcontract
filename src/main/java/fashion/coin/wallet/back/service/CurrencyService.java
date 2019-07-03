@@ -68,49 +68,54 @@ public class CurrencyService {
 
         CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(currency, LocalDateTime.now().minusHours(1));
         if (currencyRate == null) {
+            try {
+                if (currency.equals("BTC") || currency.equals("ETH")) {
+                    BigDecimal rateLA = getRateForCoinLatoken(currency);
+                    BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
+                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+                } else if (currency.equals("USD")) {
 
-            if (currency.equals("BTC") || currency.equals("ETH")) {
-                BigDecimal rateLA = getRateForCoinLatoken(currency);
-                BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
-                currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
-            } else if (currency.equals("USD")) {
-
-                BigDecimal rate = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 3, RoundingMode.HALF_UP);
+                    BigDecimal rate = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 3, RoundingMode.HALF_UP);
 
 /*  Bitfinex Version
             BigDecimal rateLA = getRateForCoinLatoken("ETH");
             BigDecimal rateETH = getRateForCoinBitfinex("ETH");
             BigDecimal rate = BigDecimal.ONE.divide(rateLA.multiply(rateETH), 3, RoundingMode.HALF_UP);
  */
-                currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
-            } else if (currency.equals("UAH")) {
-                BigDecimal rateUSD = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 6, RoundingMode.HALF_UP);
-                BigDecimal rate = rateUSD.divide(getRateFromNBU("USD"), 3, RoundingMode.HALF_UP);
-                currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
-            } else {
-                System.out.println("Panic! Currency " + currency + "not found");
-                currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
+                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+                } else if (currency.equals("UAH")) {
+                    BigDecimal rateUSD = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 6, RoundingMode.HALF_UP);
+                    BigDecimal rate = rateUSD.divide(getRateFromNBU("USD"), 3, RoundingMode.HALF_UP);
+                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+                } else {
+                    System.out.println("Panic! Currency " + currency + "not found");
+                    currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
+                }
+                currencyRateRepository.save(currencyRate);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
             }
-            currencyRateRepository.save(currencyRate);
         }
+        if(currency==null) return null;
         return new CurrencyDTO(currency,
                 currencyRate.getRate().setScale(3, RoundingMode.HALF_UP).toString());
     }
 
-    private BigDecimal getRateFromNBU(String currency) {
+    private BigDecimal getRateFromNBU(String currency) throws Exception {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
-            ArrayList<LinkedHashMap> responce = restTemplate.getForObject(apiUrlNazbank,ArrayList.class);
+            ArrayList<LinkedHashMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
 
             responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
             Object usd = responce.get(0).get("rate");
-            return new BigDecimal((Double) usd).setScale(6,RoundingMode.HALF_UP);
+            return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
-        return BigDecimal.ONE;
+
     }
 
     public List<CurrencyDTO> getCurrencyList() {
