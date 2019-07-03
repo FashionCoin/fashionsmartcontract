@@ -40,10 +40,10 @@ public class MyBalanceScreen implements TelegramEventHandler {
         SendMessage message = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
 
-                .setText("Your balance is " + getBalance(userId) + " FSHN \n" +
-                        "Finish your Crypto Name registration in Fashion Wallet DApp:\n" +
-                        "Google Play: https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=api_key%3D"+getApiKey(userId)+"\n" +
-                        "App Store: The link will be here soon, please come back to check it\n");
+                .setText("Your balance is " + getBalance(userId) + " FSHN \n") ;
+//                        "Finish your Crypto Name registration in Fashion Wallet DApp:\n" +
+//                        "Google Play: https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=api_key%3D"+getApiKey(userId)+"\n" +
+//                        "App Store: The link will be here soon, please come back to check it\n");
         try {
             bot.execute(message);
         } catch (TelegramApiException e) {
