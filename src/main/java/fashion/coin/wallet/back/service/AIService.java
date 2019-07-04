@@ -122,29 +122,41 @@ public class AIService {
 
     public void cryptoname(String cryptoname, String salt, String wallet) {
 
-        String name_hash = DigestUtils.sha256Hex(cryptoname + salt);
-        BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
-        SignBuilder.init();
-        try {
-            System.out.println(priv_key);
-            String sign = SignBuilder.init()
-                    .setNetworkId(0)
-                    .setProtocolVersion(0)
-                    .setMessageId(4)
-                    .setServiceId(0)
-                    .addPublicKeyOrHash(name_hash)
-                    .addPublicKeyOrHash(wallet)
-                    .addUint64(seed)
-                    .sign(priv_key);
 
-            String json = String.format(CRYPTO_NAME, name_hash, wallet, seed.toString(10), sign);
-            System.out.println(json);
-            BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
-            String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
-            System.out.println(tx_hash);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                String name_hash = DigestUtils.sha256Hex(cryptoname + salt);
+                BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
+                SignBuilder.init();
+                try {
+                    System.out.println("Sleep before register namr on blockchain");
+                    Thread.sleep(1000);
+                    System.out.println("Wake Up");
+//                    System.out.println(priv_key);
+                    String sign = SignBuilder.init()
+                            .setNetworkId(0)
+                            .setProtocolVersion(0)
+                            .setMessageId(4)
+                            .setServiceId(0)
+                            .addPublicKeyOrHash(name_hash)
+                            .addPublicKeyOrHash(wallet)
+                            .addUint64(seed)
+                            .sign(priv_key);
+
+                    String json = String.format(CRYPTO_NAME, name_hash, wallet, seed.toString(10), sign);
+                    System.out.println(json);
+                    BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
+                    String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
+                    System.out.println(tx_hash);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private TransactionRequestDTO createRequest(BlockchainTransactionDTO blockchainTransactionDTO) {
