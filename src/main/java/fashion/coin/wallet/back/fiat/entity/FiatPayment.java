@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.fiat.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 
 @Entity
@@ -10,8 +11,10 @@ public class FiatPayment {
     String id;
     Long timestamp;
     BigDecimal amount;
+    @Digits(integer = 19,fraction = 3)
     BigDecimal fee;
     String currency;
+    @Digits(integer = 19,fraction = 3)
     BigDecimal fshn;
     String phone;
     String cryptoname;
