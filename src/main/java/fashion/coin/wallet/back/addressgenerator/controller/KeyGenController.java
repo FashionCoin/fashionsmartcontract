@@ -50,7 +50,7 @@ public class KeyGenController {
         if (client.getWalletAddress() != null && client.getWalletAddress().length() > 0)
             return "This cryptoname already have wallet";
 
-        String apiKey = client.getApikey();
+        String apiKey = clientService.getApiKeyByCryptoname(client.getCryptoname());
 
         String page = String.format("<h1>Google</h1>" +
                         "<p><a href='https://api.coin.fashion/api/v1/google/refinstall?api_key=%s'>" +

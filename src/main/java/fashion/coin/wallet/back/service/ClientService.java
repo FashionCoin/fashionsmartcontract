@@ -282,9 +282,9 @@ public class ClientService {
     }
 
     public Client findByWallet(String walletAddress) {
-        try{
+        try {
             return clientRepository.findClientByWalletAddress(walletAddress);
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -712,6 +712,22 @@ public class ClientService {
             List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
             if (clientList != null && clientList.size() == 1) {
                 Client client = clientList.get(0);
+                if (client.getApikey() == null || client.getApikey().length() == 0) {
+                    client.setApikey(getRandomToken(16));
+                    clientRepository.save(client);
+                }
+                return client.getApikey();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public String getApiKeyByCryptoname(String cryptoname) {
+        try {
+            Client client = clientRepository.findClientByCryptoname(cryptoname);
+            if (client != null) {
                 if (client.getApikey() == null || client.getApikey().length() == 0) {
                     client.setApikey(getRandomToken(16));
                     clientRepository.save(client);
