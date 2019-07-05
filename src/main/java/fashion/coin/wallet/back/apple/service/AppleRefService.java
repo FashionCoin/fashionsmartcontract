@@ -26,7 +26,7 @@ public class AppleRefService {
             Client client = clientService.findClientByApikey(api_key);
 
             if (client != null) {
-                if (client.getWalletAddress() != null || client.getWalletAddress().length() > 0) return false;
+                if (client.getWalletAddress() != null && client.getWalletAddress().length() > 0) return false;
                 String cryptoName = client.getCryptoname();
 
                 AppleRefInstall appleRefInstall = new AppleRefInstall(
