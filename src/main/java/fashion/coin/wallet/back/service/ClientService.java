@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
+import fashion.coin.wallet.back.dto.blockchain.FshnBalanceDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.SetEmailRequest;
 import fashion.coin.wallet.back.repository.ClientRepository;
@@ -281,14 +282,18 @@ public class ClientService {
     }
 
     public Client findByWallet(String walletAddress) {
-        return clientRepository.findClientByWalletAddress(walletAddress);
+        try{
+            return clientRepository.findClientByWalletAddress(walletAddress);
+        }catch (Exception e){
+            return null;
+        }
     }
 
     public Client findByCryptoname(String cryptoname) {
-        if(cryptoname==null) return null;
+        if (cryptoname == null) return null;
         try {
             return clientRepository.findClientByCryptoname(cryptoname);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
@@ -439,8 +444,21 @@ public class ClientService {
 
     public ResultDTO getWallet(GetWalletDTO data) {
         try {
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
-            if (client == null) return error108;
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            if (client == null) {
+                // May be it is wallet:
+                client = clientRepository.findClientByWalletAddress(data.getCryptoname());
+                if (client == null) {
+                    // May be anonimous wallet:
+          /*
+                    String walletAddress = checkAnonimousWallet(data.getCryptoname());
+                    if (walletAddress != null && walletAddress.length() == 64) {
+                        return new ResultDTO(true, walletAddress, 0);
+                    }
+          */
+                    return error108;
+                }
+            }
             String walletAddress = client.getWalletAddress();
             if (walletAddress == null || walletAddress.length() == 0) {
                 return error101;
@@ -449,6 +467,18 @@ public class ClientService {
         } catch (Exception e) {
             return error108;
         }
+    }
+
+    private String checkAnonimousWallet(String address) {
+
+        FshnBalanceDTO walletInfo = blockchainService.getWalletInfo(address);
+        if (walletInfo != null && walletInfo.pubKey != null &&
+                !walletInfo.pubKey.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+            return walletInfo.pubKey;
+        } else {
+            return null;
+        }
+
     }
 
     public ResultDTO getCryptoname(GetLoginDTO data) {
@@ -495,8 +525,8 @@ public class ClientService {
 
     private Client updateBalance(Client client) {
         BigDecimal balanceFromBlockchain =
-        blockchainService.getBalance(client.getWalletAddress());
-        if(balanceFromBlockchain.equals(client.getWalletBalance())) return client;
+                blockchainService.getBalance(client.getWalletAddress());
+        if (balanceFromBlockchain.equals(client.getWalletBalance())) return client;
         client.setWalletBalance(balanceFromBlockchain);
         clientRepository.save(client);
 //        try {

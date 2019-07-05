@@ -77,35 +77,47 @@ public class TransactionService {
             BigDecimal amount = new BigDecimal(request.getAmount());
             if (sender.getWalletBalance().compareTo(amount) < 0) return error202;
 
-            Client receiver;
+            Client receiver = null;
+            String receiverWallet = request.getReceiverWallet();
             if (request.getReceiverWallet() != null) {
                 receiver = clientService.findByWallet(request.getReceiverWallet());
             } else if (request.getReceiverLogin() != null) {
                 receiver = clientService.findByCryptoname(request.getReceiverLogin());
             } else {
                 return error203;
-//                receiver = null;
+            }
+            /// For anonimous wallet disable:
+            if (receiver == null) return error203;
+            ///
+
+
+            if (receiver != null && !receiver.getWalletAddress().equals(receiverWallet)) {
+                System.out.println("receiver wallet: " + receiver.getWalletAddress());
+                System.out.println("request wallet: " + request.getReceiverWallet());
+                return error203;
             }
 
-
             if (request.getBlockchainTransaction() == null) return error204;
-            if (!checkTransaction(sender, receiver, amount, request.getBlockchainTransaction())) return error206;
+            if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction()))
+                return error206;
             String txhash = createTransaction(sender, receiver, amount, request.getBlockchainTransaction());
             if (txhash == null) return error205;
             clientService.addAmountToWallet(sender, amount.negate());
-            clientService.addAmountToWallet(receiver, amount);
-            contactService.connectFriends(sender, receiver);
+            if (receiver != null) {
+                clientService.addAmountToWallet(receiver, amount);
+                contactService.connectFriends(sender, receiver);
+            }
             return created;
         } catch (Exception e) {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
 
-    private boolean checkTransaction(Client sender, Client receiver, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
+    private boolean checkTransaction(String senderWallet, String receiverWallet, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
         if (blockchainTransaction.getSignature() == null) return false;
-        if (!blockchainTransaction.getBody().getFrom().equals(sender.getWalletAddress())) return false;
-        if (receiver != null) {
-            if (!blockchainTransaction.getBody().getTo().equals(receiver.getWalletAddress())) return false;
+        if (!blockchainTransaction.getBody().getFrom().equals(senderWallet)) return false;
+        if (receiverWallet != null) {
+            if (!blockchainTransaction.getBody().getTo().equals(receiverWallet)) return false;
         }
         if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0)
             return false;

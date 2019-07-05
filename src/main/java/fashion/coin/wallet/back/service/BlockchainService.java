@@ -71,11 +71,7 @@ public class BlockchainService {
 
     public BigDecimal getBalance(String walletAddress) {
         try {
-            ResponseEntity<FshnBalanceInfoDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/info?pub_key=" + walletAddress,
-                    FshnBalanceInfoDTO.class);
-            if (responce == null || !responce.hasBody()) return BigDecimal.ZERO;
-            FshnBalanceInfoDTO balanceInfo = responce.getBody();
-            FshnBalanceDTO balanceDTO = balanceInfo.getResult();
+            FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
             if (balanceDTO == null) return BigDecimal.ZERO;
             String balanceString = balanceDTO.balance;
             return (new BigDecimal(balanceString)).movePointLeft(3);
@@ -94,5 +90,20 @@ public class BlockchainService {
     @Autowired
     public void setGson(Gson gson) {
         this.gson = gson;
+    }
+
+    public FshnBalanceDTO getWalletInfo(String walletAddress) {
+        try {
+            ResponseEntity<FshnBalanceInfoDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/info?pub_key=" + walletAddress,
+                    FshnBalanceInfoDTO.class);
+            if (responce == null || !responce.hasBody()) return null;
+            FshnBalanceInfoDTO balanceInfo = responce.getBody();
+            FshnBalanceDTO balanceDTO = balanceInfo.getResult();
+            return balanceDTO;
+        } catch (Exception e) {
+            System.out.println("Don't get wallet info for " + walletAddress);
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }
