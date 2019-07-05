@@ -450,12 +450,10 @@ public class ClientService {
                 client = clientRepository.findClientByWalletAddress(data.getCryptoname());
                 if (client == null) {
                     // May be anonimous wallet:
-          /*
                     String walletAddress = checkAnonimousWallet(data.getCryptoname());
                     if (walletAddress != null && walletAddress.length() == 64) {
                         return new ResultDTO(true, walletAddress, 0);
                     }
-          */
                     return error108;
                 }
             }
