@@ -2,12 +2,15 @@ package fashion.coin.wallet.back.addressgenerator.controller;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.addressgenerator.service.GenerateKeyService;
+import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,8 +21,11 @@ public class KeyGenController {
     @Autowired
     GenerateKeyService generateKeyService;
 
+    @Autowired
+    ClientService clientService;
+
     @GetMapping("/keygen")
-    public String getPage(){
+    public String getPage() {
         return "keygen";
     }
 
@@ -27,12 +33,33 @@ public class KeyGenController {
     public String handleFileUpload(ModelMap modelMap, @RequestParam("file") MultipartFile file) {
 
         try {
-            modelMap.addAttribute("keypairs",generateKeyService.getKeyPairs(file.getInputStream()));
+            modelMap.addAttribute("keypairs", generateKeyService.getKeyPairs(file.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
         return "keylist";
+    }
+
+    @GetMapping("/service/api/getlinks")
+    @ResponseBody
+    String getLinks(@RequestParam String cryptoname) {
+        Client client = clientService.findByCryptoname(cryptoname);
+        if (client == null) return "Cryptoname " + cryptoname + " not found";
+        if (client.getWalletAddress() != null && client.getWalletAddress().length() > 0)
+            return "This cryptoname already have wallet";
+
+        String apiKey = client.getApikey();
+
+        String page = String.format("<h1>Google</h1>" +
+                        "<p><a href='https://api.coin.fashion/api/v1/google/refinstall?api_key=%s'>" +
+                        "https://api.coin.fashion/api/v1/google/refinstall?api_key=%s</a><p>" +
+                        "<h1>Apple</h1>" +
+                        "<p><a href='https://api.coin.fashion/api/v1/apple/refinstall?api_key=%s'>" +
+                        "https://api.coin.fashion/api/v1/apple/refinstall?api_key=%s</a><p>",
+                apiKey, apiKey, apiKey, apiKey);
+
+        return page;
     }
 }
