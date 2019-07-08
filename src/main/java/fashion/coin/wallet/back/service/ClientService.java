@@ -67,7 +67,7 @@ public class ClientService {
                 return error101;
             }
 
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (data.getApikey() == null) return error107;
             if (client != null) {
                 if (client.getApikey() != null && !client.getApikey().equals(data.getApikey()))
@@ -282,9 +282,9 @@ public class ClientService {
     }
 
     public Client findByWallet(String walletAddress) {
-        try{
+        try {
             return clientRepository.findClientByWalletAddress(walletAddress);
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -396,7 +396,7 @@ public class ClientService {
     private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
     private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
     private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
-    private static final ResultDTO error119 = new ResultDTO(false, "Please select another picture", 119);
+    private static final ResultDTO error119 = new ResultDTO(false, "This photo has already been used as a Mnemonic Pic for another Crypto Name. Please choose another photo.", 119);
     private static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
 
 
@@ -712,6 +712,22 @@ public class ClientService {
             List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
             if (clientList != null && clientList.size() == 1) {
                 Client client = clientList.get(0);
+                if (client.getApikey() == null || client.getApikey().length() == 0) {
+                    client.setApikey(getRandomToken(16));
+                    clientRepository.save(client);
+                }
+                return client.getApikey();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public String getApiKeyByCryptoname(String cryptoname) {
+        try {
+            Client client = clientRepository.findClientByCryptoname(cryptoname);
+            if (client != null) {
                 if (client.getApikey() == null || client.getApikey().length() == 0) {
                     client.setApikey(getRandomToken(16));
                     clientRepository.save(client);
