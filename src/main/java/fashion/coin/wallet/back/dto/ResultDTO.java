@@ -12,6 +12,7 @@ package fashion.coin.wallet.back.dto;
 public class ResultDTO {
    boolean result;
    String message;
+   String cryptoname;
    int error;
 
     public ResultDTO() {
@@ -45,5 +46,13 @@ public class ResultDTO {
 
     public void setError(int error) {
         this.error = error;
+    }
+
+    public String getCryptoname() {
+        return cryptoname;
+    }
+
+    public void setCryptoname(String cryptoname) {
+        this.cryptoname = cryptoname;
     }
 }

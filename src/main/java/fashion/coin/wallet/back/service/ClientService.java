@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 
@@ -227,7 +228,14 @@ public class ClientService {
 
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByApikey(data.getCryptoname());
+            if(client!= null) {
+                ResultDTO result = new ResultDTO(true,null , 0);
+                result.setCryptoname(client.getCryptoname());
+                return result;
+            }
+
+            client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) return error100;
             if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
