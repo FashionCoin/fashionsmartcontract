@@ -521,7 +521,7 @@ public class ClientService {
         return client;
     }
 
-    private Client updateBalance(Client client) {
+    public Client updateBalance(Client client) {
         BigDecimal balanceFromBlockchain =
                 blockchainService.getBalance(client.getWalletAddress());
         if (balanceFromBlockchain.equals(client.getWalletBalance())) return client;

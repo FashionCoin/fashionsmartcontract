@@ -75,6 +75,7 @@ public class TransactionService {
             Client sender = clientService.findByWallet(request.getSenderWallet());
             if (sender == null) return error201;
             BigDecimal amount = new BigDecimal(request.getAmount());
+            clientService.updateBalance(sender);
             if (sender.getWalletBalance().compareTo(amount) < 0) return error202;
 
             Client receiver = null;
