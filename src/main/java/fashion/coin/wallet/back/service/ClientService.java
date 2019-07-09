@@ -230,6 +230,7 @@ public class ClientService {
         try {
             Client client = clientRepository.findClientByApikey(data.getCryptoname());
             if(client!= null) {
+                if(client.getWalletAddress()!=null) return error105;
                 ResultDTO result = new ResultDTO(true,null , 0);
                 result.setCryptoname(client.getCryptoname());
                 return result;
