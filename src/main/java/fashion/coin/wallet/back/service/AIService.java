@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 
@@ -111,8 +112,11 @@ public class AIService {
             BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
             TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
             System.out.println(gson.toJson(transactionRequestDTO));
-            System.out.println(gson.toJson(transactionService.send(transactionRequestDTO)));
-            return true;
+
+ResultDTO resp =             transactionService.send(transactionRequestDTO);
+
+            System.out.println(gson.toJson(resp));
+            return resp.isResult();
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
