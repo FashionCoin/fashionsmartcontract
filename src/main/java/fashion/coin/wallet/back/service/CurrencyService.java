@@ -113,7 +113,7 @@ public class CurrencyService {
             return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             throw new Exception(e.getMessage());
         }
 
