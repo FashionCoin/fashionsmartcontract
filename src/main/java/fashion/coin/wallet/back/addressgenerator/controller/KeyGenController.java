@@ -52,19 +52,19 @@ public class KeyGenController {
 
         String apiKey = clientService.getApiKeyByCryptoname(client.getCryptoname());
 
-        String page = String.format("<h1>Android</h1>" +
-                        "<p><a href='https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=utm_source=reserve-cryptoname&utm_content=%s&utm_campaign=1'>" +
-                        "https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=utm_source=reserve-cryptoname&utm_content=%s&utm_campaign=1</a><p>" +
+        String page = "<h1>Android</h1>" +
+                        "<p><a href='https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=utm_source%3Dreserve-cryptoname%26utm_content%3D"+apiKey+"%26utm_campaign%3D1'>" +
+                        "https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=utm_source%3Dreserve-cryptoname%26utm_content%3D"+apiKey+"%26utm_campaign%3D1</a><p>" +
                         "<br/>" +
                         "<hr>" +
                         "<h1>Plan B:</h1><br/><hr>" +
                         "<h1>Google</h1>" +
-                        "<p><a href='https://api.coin.fashion/api/v1/google/refinstall?api_key=%s'>" +
-                        "https://api.coin.fashion/api/v1/google/refinstall?api_key=%s</a><p>" +
+                        "<p><a href='https://api.coin.fashion/api/v1/google/refinstall?api_key="+apiKey+"'>" +
+                        "https://api.coin.fashion/api/v1/google/refinstall?api_key="+apiKey+"</a><p>" +
                         "<h1>Apple</h1>" +
-                        "<p><a href='https://api.coin.fashion/api/v1/apple/refinstall?api_key=%s'>" +
-                        "https://api.coin.fashion/api/v1/apple/refinstall?api_key=%s</a><p>",
-                apiKey, apiKey, apiKey,  apiKey, apiKey, apiKey);
+                        "<p><a href='https://api.coin.fashion/api/v1/apple/refinstall?api_key="+apiKey+"'>" +
+                        "https://api.coin.fashion/api/v1/apple/refinstall?api_key="+apiKey+"</a><p>";
+
 
         return page;
     }
