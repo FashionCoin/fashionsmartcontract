@@ -230,7 +230,7 @@ public class ClientService {
         try {
             Client client = clientRepository.findClientByApikey(data.getCryptoname());
             if(client!= null) {
-                if(client.getWalletAddress()!=null) return error105;
+                if(client.getWalletAddress()!=null) return error117;
                 ResultDTO result = new ResultDTO(true,null , 0);
                 result.setCryptoname(client.getCryptoname());
                 return result;
@@ -403,7 +403,7 @@ public class ClientService {
     private static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
     private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 115);
     private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
-    private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey already using", 117);
+    private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey has already been used", 117);
     private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
     private static final ResultDTO error119 = new ResultDTO(false, "This photo has already been used as a Mnemonic Pic for another Crypto Name. Please choose another photo.", 119);
     private static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
