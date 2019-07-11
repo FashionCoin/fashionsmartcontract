@@ -37,7 +37,7 @@ public class TransactionService {
     public String createTransaction(Client sender, Client receiver, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
         TransactionCoins transactionCoins = new TransactionCoins(sender, receiver, amount);
         String txhash = blockchainService.sendTransaction(blockchainTransaction);
-        if (txhash != null) {
+        if (txhash != null && txhash.length()>0) {
             transactionCoins.setTxhash(txhash);
             transactionRepository.save(transactionCoins);
         }
@@ -102,7 +102,7 @@ public class TransactionService {
             if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction()))
                 return error206;
             String txhash = createTransaction(sender, receiver, amount, request.getBlockchainTransaction());
-            if (txhash == null) return error205;
+            if (txhash == null || txhash.length()==0) return error205;
             clientService.addAmountToWallet(sender, amount.negate());
             if (receiver != null) {
                 clientService.addAmountToWallet(receiver, amount);
