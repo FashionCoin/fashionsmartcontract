@@ -111,13 +111,26 @@ public class ClientService {
                 String userId = String.valueOf(client.getTelegramId());
                 BigDecimal balance = getTelegramBalance(userId);
                 if (!balance.equals(BigDecimal.ZERO) && client.getWalletAddress() != null) {
-                    boolean result = aiService.transfer(balance.toString(), client.getWalletAddress());
-                    if (!result) {
-                        System.out.println("Error sending telegram money to client: \n" +
-                                gson.toJson(client));
-                    } else {
-                        resetTelegramBalance(userId);
-                    }
+                    final String clientWallet = client.getWalletAddress();
+                    final String clientName = client.getCryptoname();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(2000);
+
+                                boolean result = aiService.transfer(balance.toString(), clientWallet);
+                                if (!result) {
+                                    System.out.println("Error sending telegram money to client: \n" +
+                                            gson.toJson(clientName));
+                                } else {
+                                    resetTelegramBalance(userId);
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                 }
             }
             return created;
@@ -229,9 +242,9 @@ public class ClientService {
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
             Client client = clientRepository.findClientByApikey(data.getCryptoname());
-            if(client!= null) {
-                if(client.getWalletAddress()!=null) return error117;
-                ResultDTO result = new ResultDTO(true,null , 0);
+            if (client != null) {
+                if (client.getWalletAddress() != null) return error117;
+                ResultDTO result = new ResultDTO(true, null, 0);
                 result.setCryptoname(client.getCryptoname());
                 return result;
             }

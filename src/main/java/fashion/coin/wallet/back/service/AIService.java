@@ -113,7 +113,7 @@ public class AIService {
             TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
             System.out.println(gson.toJson(transactionRequestDTO));
 
-ResultDTO resp =             transactionService.send(transactionRequestDTO);
+            ResultDTO resp = transactionService.send(transactionRequestDTO);
 
             System.out.println(gson.toJson(resp));
             return resp.isResult();
@@ -127,7 +127,7 @@ ResultDTO resp =             transactionService.send(transactionRequestDTO);
     public void cryptoname(String cryptoname, String salt, String wallet) {
 
 
-        new Thread(new Runnable(){
+        new Thread(new Runnable() {
 
             @Override
             public void run() {
