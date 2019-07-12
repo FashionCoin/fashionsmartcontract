@@ -35,24 +35,36 @@ public class MyBalanceScreen implements TelegramEventHandler {
 
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
-        
+
         String userId = update.getCallbackQuery().getFrom().getId().toString();
-        SendMessage message = new SendMessage()
+        SendMessage message1 = new SendMessage()
                 .setChatId(update.getCallbackQuery().getMessage().getChatId())
 
-                .setText("Your balance is " + getBalance(userId) + " FSHN \n") ;
-//                        "Finish your Crypto Name registration in Fashion Wallet DApp:\n" +
-//                        "Google Play: https://play.google.com/store/apps/details?id=wallet.fashion.coin&referrer=api_key%3D"+getApiKey(userId)+"\n" +
-//                        "App Store: The link will be here soon, please come back to check it\n");
+                .setText("Your balance is " + getBalance(userId) + " FSHN \n" +
+                "Finish your Crypto Name registration in Fashion Wallet DApp:\n" +
+                "Google Play:https://play.google.com/store/apps/details?id=wallet.fashion.coin\n" +
+                "App Store: The link will be here soon, please come back to check it\n" +
+                "Copy your secret code below and paste to Fashion Wallet while Sign UP:");
+
+        SendMessage message2 = new SendMessage()
+                .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                .setText(getApiKey(userId));
+
         try {
-            bot.execute(message);
+            bot.execute(message1);
+            bot.execute(message2);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
     private String getApiKey(String userId) {
-        return telegramCheckService.getApiKey(userId);
+
+        String apiKey = telegramCheckService.getApiKey(userId);
+        if (apiKey == null || apiKey.length() == 0)
+            apiKey = "You have already completed the registration of the Crypto Name";
+
+        return apiKey;
     }
 
     private String getBalance(String userId) {
@@ -62,7 +74,6 @@ public class MyBalanceScreen implements TelegramEventHandler {
         if (balance == null || balance.length() == 0) return "0";
         else return balance;
     }
-    
-    
+
 
 }
