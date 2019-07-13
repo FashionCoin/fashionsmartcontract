@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dt=$(date '+%d%m%Y%H%M');
+dt=$(date '+%Y%m%d%H%M');
 
 cd /var/log/fashion/
 mv smart.txt smart"$dt".txt
