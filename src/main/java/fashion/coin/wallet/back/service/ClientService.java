@@ -60,6 +60,9 @@ public class ClientService {
     @Value("${fashion.host}")
     String HOST_NAME;
 
+    @Value("${fashion.anonimous}")
+    Boolean anonimousSending;
+
     public ResultDTO trySignUp(RegistrationRequestDTO data) {
         try {
             System.out.println(gson.toJson(data));
@@ -475,6 +478,8 @@ public class ClientService {
                     String walletAddress = checkAnonimousWallet(data.getCryptoname());
                     if (walletAddress != null && walletAddress.length() == 64) {
                         return new ResultDTO(true, walletAddress, 0);
+                    }else if(anonimousSending && data.getCryptoname().length() == 64){
+                        return new ResultDTO(true, data.getCryptoname(), 0);
                     }
                     return error108;
                 }
