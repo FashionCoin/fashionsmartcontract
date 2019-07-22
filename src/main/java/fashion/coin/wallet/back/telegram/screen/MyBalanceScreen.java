@@ -40,10 +40,14 @@ public class MyBalanceScreen implements TelegramEventHandler {
                 update.getMessage().getFrom().getId().toString() :
                 update.getCallbackQuery().getFrom().getId().toString();
 
+        Long chatId = update.hasMessage() ?
+                update.getMessage().getChatId() :
+                update.getCallbackQuery().getMessage().getChatId();
+
         if (validUserId(userId)) {
 
             SendMessage message1 = new SendMessage()
-                    .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                    .setChatId(chatId)
 
                     .setText("Your balance is " + getBalance(userId) + " FSHN \n" +
                             "Finish your Crypto Name registration in Fashion Wallet DApp:\n" +
@@ -52,7 +56,7 @@ public class MyBalanceScreen implements TelegramEventHandler {
                             "Copy your secret code below and paste to Fashion Wallet while Sign UP:");
 
             SendMessage message2 = new SendMessage()
-                    .setChatId(update.getCallbackQuery().getMessage().getChatId())
+                    .setChatId(chatId)
                     .setText(getApiKey(userId));
 
             try {
