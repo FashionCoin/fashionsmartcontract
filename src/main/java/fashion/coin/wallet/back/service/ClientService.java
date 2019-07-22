@@ -246,7 +246,7 @@ public class ClientService {
         try {
             Client client = clientRepository.findClientByApikey(data.getCryptoname());
             if (client != null) {
-                if (client.getWalletAddress() != null) return error117;
+                if (client.getWalletAddress() != null) return error121;
                 ResultDTO result = new ResultDTO(true, null, 0);
                 result.setCryptoname(client.getCryptoname());
                 return result;
@@ -423,6 +423,7 @@ public class ClientService {
     private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
     private static final ResultDTO error119 = new ResultDTO(false, "This photo has already been used as a Mnemonic Pic for another Crypto Name. Please choose another photo.", 119);
     private static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
+    private static final ResultDTO error121 = new ResultDTO(false, "This Registration Code has already been used", 121);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
