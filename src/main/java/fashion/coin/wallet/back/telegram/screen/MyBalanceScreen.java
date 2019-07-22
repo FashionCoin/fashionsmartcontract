@@ -36,7 +36,9 @@ public class MyBalanceScreen implements TelegramEventHandler {
     @Override
     public void execute(TelegramLongPollingBot bot, Update update) {
 
-        String userId = update.getCallbackQuery().getFrom().getId().toString();
+        String userId = update.hasMessage() ?
+                update.getMessage().getFrom().getId().toString() :
+                update.getCallbackQuery().getFrom().getId().toString();
 
         if (validUserId(userId)) {
 
@@ -64,7 +66,7 @@ public class MyBalanceScreen implements TelegramEventHandler {
 
     private boolean validUserId(String userId) {
         String apiKey = telegramCheckService.getApiKey(userId);
-        return  (apiKey != null && apiKey.length() > 0);
+        return (apiKey != null && apiKey.length() > 0);
     }
 
     private String getApiKey(String userId) {
