@@ -41,10 +41,10 @@ public class CryptoWalletsService {
 
         if (data.getApikey() == null) return ClientService.error107;
         Client client = clientService.findClientByApikey(data.getApikey());
-        if (client == null) return ClientService.created;
+        if (client == null) return ClientService.error108;
 
         cryptoWalletsRepository.save(new CryptoWallets(client.getCryptoname(), data.getCurrency(), data.getWallet()));
-        return null;
+        return new ResultDTO(true,"Wallet saved",0);
     }
 
 
