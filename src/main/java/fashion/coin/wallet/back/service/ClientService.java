@@ -402,28 +402,28 @@ public class ClientService {
         this.telegramDataService = telegramDataService;
     }
 
-    private static final ResultDTO created = new ResultDTO(true, "Account created", 0);
-    private static final ResultDTO validLogin = new ResultDTO(true, "Login is valid", 0);
-    private static final ResultDTO mailSended = new ResultDTO(true, "Confirm mail sended", 0);
-    private static final ResultDTO error100 = new ResultDTO(false, "Client with this login exists", 100);
-    private static final ResultDTO error101 = new ResultDTO(false, "Wallet does not created", 101);
-    private static final ResultDTO error102 = new ResultDTO(false, "This is brand name", 102);
-    private static final ResultDTO error103 = new ResultDTO(false, "Public Key in transaction not equal wallet", 103);
-    private static final ResultDTO error104 = new ResultDTO(false, "Cryptoname must be lower case", 104);
-    private static final ResultDTO error105 = new ResultDTO(false, "Emoji error, or short login", 105);
-    private static final ResultDTO error106 = new ResultDTO(false, "Can't find pub_key param", 106);
-    private static final ResultDTO error107 = new ResultDTO(false, "Can't find apikey param", 107);
-    private static final ResultDTO error108 = new ResultDTO(false, "Client not found", 108);
-    private static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
-    private static final ResultDTO error113 = new ResultDTO(false, "Login has been changed once", 113);
-    private static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
-    private static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 115);
-    private static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
-    private static final ResultDTO error117 = new ResultDTO(false, "This ApiKey has already been used", 117);
-    private static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
-    private static final ResultDTO error119 = new ResultDTO(false, "This photo has already been used as a Mnemonic Pic for another Crypto Name. Please choose another photo.", 119);
-    private static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
-    private static final ResultDTO error121 = new ResultDTO(false, "This Registration Code has already been used", 121);
+    public static final ResultDTO created = new ResultDTO(true, "Account created", 0);
+    public static final ResultDTO validLogin = new ResultDTO(true, "Login is valid", 0);
+    public static final ResultDTO mailSended = new ResultDTO(true, "Confirm mail sended", 0);
+    public static final ResultDTO error100 = new ResultDTO(false, "Client with this login exists", 100);
+    public static final ResultDTO error101 = new ResultDTO(false, "Wallet does not created", 101);
+    public static final ResultDTO error102 = new ResultDTO(false, "This is brand name", 102);
+    public static final ResultDTO error103 = new ResultDTO(false, "Public Key in transaction not equal wallet", 103);
+    public static final ResultDTO error104 = new ResultDTO(false, "Cryptoname must be lower case", 104);
+    public static final ResultDTO error105 = new ResultDTO(false, "Emoji error, or short login", 105);
+    public static final ResultDTO error106 = new ResultDTO(false, "Can't find pub_key param", 106);
+    public static final ResultDTO error107 = new ResultDTO(false, "Can't find apikey param", 107);
+    public static final ResultDTO error108 = new ResultDTO(false, "Client not found", 108);
+    public static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
+    public static final ResultDTO error113 = new ResultDTO(false, "Login has been changed once", 113);
+    public static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
+    public static final ResultDTO error115 = new ResultDTO(false, "Not valid Signature", 115);
+    public static final ResultDTO error116 = new ResultDTO(false, "This wallet already exists", 116);
+    public static final ResultDTO error117 = new ResultDTO(false, "This ApiKey has already been used", 117);
+    public static final ResultDTO error118 = new ResultDTO(false, "Can't find client param", 118);
+    public static final ResultDTO error119 = new ResultDTO(false, "This photo has already been used as a Mnemonic Pic for another Crypto Name. Please choose another photo.", 119);
+    public static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
+    public static final ResultDTO error121 = new ResultDTO(false, "This Registration Code has already been used", 121);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
