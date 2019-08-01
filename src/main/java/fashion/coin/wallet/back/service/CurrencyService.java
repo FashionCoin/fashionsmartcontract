@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -31,6 +33,9 @@ import java.util.stream.Stream;
  */
 @Service
 public class CurrencyService {
+
+    Logger logger = LoggerFactory.getLogger(CurrencyService.class);
+
     @Autowired
     Gson gson;
 
@@ -53,7 +58,7 @@ public class CurrencyService {
 
     public BigDecimal getRateForCoinBitfinex(String coinName) {
         RestTemplate restTemplate = new RestTemplate();
-        System.out.println(coinName);
+       logger.info(coinName);
         BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
         BitFinexRateDTO last = result[0];
         for (BitFinexRateDTO dto : result) {
@@ -88,12 +93,12 @@ public class CurrencyService {
                     BigDecimal rate = rateUSD.divide(getRateFromNBU("USD"), 3, RoundingMode.HALF_UP);
                     currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
                 } else {
-                    System.out.println("Panic! Currency " + currency + "not found");
+                    logger.error("Panic! Currency " + currency + "not found");
                     currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
                 }
                 currencyRateRepository.save(currencyRate);
             }catch (Exception e){
-                System.out.println(e.getMessage());
+               logger.error(e.getMessage());
                 currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
             }
         }
@@ -113,7 +118,7 @@ public class CurrencyService {
             return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             throw new Exception(e.getMessage());
         }
 

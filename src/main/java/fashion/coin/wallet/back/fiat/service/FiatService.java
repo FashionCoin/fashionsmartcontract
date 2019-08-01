@@ -7,6 +7,8 @@ import fashion.coin.wallet.back.fiat.entity.FiatPayment;
 import fashion.coin.wallet.back.fiat.repository.FiatPaymentRepository;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.service.AIService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.List;
 
 @Service
 public class FiatService {
+
+    Logger logger = LoggerFactory.getLogger(FiatService.class);
 
     ClientRepository clientRepository;
     FiatPaymentRepository fiatPaymentRepository;
@@ -41,7 +45,7 @@ public class FiatService {
             if (clientList != null && clientList.size() == 1) {
                 return new CheckPhoneResponceDTO(true, clientList.get(0).getCryptoname());
             } else if (clientList != null) {
-                System.out.println("clientList.size() = " + clientList.size());
+                logger.error("clientList.size() = " + clientList.size());
             }
 
         } catch (Exception e) {
@@ -89,7 +93,7 @@ public class FiatService {
         try {
             if (!checkSignature(data)) return new PayResponceDTO(false, "Bad signature");
             FiatPayment payment = fiatPaymentRepository.findFiatPaymentById(data.getId());
-            System.out.println("payment = " + payment);
+            logger.info("payment = " + payment);
             if (payment == null) payment = new FiatPayment(
                     data.getId(),
                     data.getTimestamp(),
@@ -144,14 +148,14 @@ public class FiatService {
                             fiatSecretKey;
 
 
-            System.out.println(concatenatedString);
+           logger.info(concatenatedString);
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
             byte[] encodedhash = digest.digest(
                     concatenatedString.getBytes(StandardCharsets.UTF_8));
             String signature = new BigInteger(1, encodedhash).toString(16);
-            System.out.println(signature);
+            logger.info(signature);
             return signature.equals(data.getSignature());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -183,7 +187,7 @@ public class FiatService {
 
     public FiatPayment getPaymentStatus(PaymentStatusRequestDTO data) {
         FiatPayment fiatPayment = fiatPaymentRepository.getOne(data.getId());
-        System.out.println(gson.toJson(fiatPayment));
+       logger.info(gson.toJson(fiatPayment));
         return fiatPayment;
     }
 }
