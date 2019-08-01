@@ -472,6 +472,9 @@ public class ClientService {
         try {
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client == null) {
+                if(!anonimousSending){
+                    return error108;
+                }
                 // May be it is wallet:
                 client = clientRepository.findClientByWalletAddress(data.getCryptoname());
                 if (client == null) {
