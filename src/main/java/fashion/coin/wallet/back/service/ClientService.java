@@ -413,7 +413,7 @@ public class ClientService {
     public static final ResultDTO error105 = new ResultDTO(false, "Emoji error, or short login", 105);
     public static final ResultDTO error106 = new ResultDTO(false, "Can't find pub_key param", 106);
     public static final ResultDTO error107 = new ResultDTO(false, "Can't find apikey param", 107);
-    public static final ResultDTO error108 = new ResultDTO(false, "Client not found", 108);
+    public static final ResultDTO error108 = new ResultDTO(false, "Please, use crypto names to send FSHN", 108);
     public static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
     public static final ResultDTO error113 = new ResultDTO(false, "Login has been changed once", 113);
     public static final ResultDTO error114 = new ResultDTO(false, "This Email is already use", 114);
