@@ -45,56 +45,56 @@ public class FashionBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-//        System.out.println(update);
-        if (update.hasCallbackQuery()) {
-//            System.out.println(update.getCallbackQuery().getData());
-            if (update.getCallbackQuery().getData().equals(GOTOFSHNSCREEN)) {
-                FashionScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(GOTOFIRSTROUTER)) {
-                TelegramCheckService.getInstance().firstRouter(this, update, 0);
-            } else if (update.getCallbackQuery().getData().equals(GOTOSECONDROUTER)) {
-                TelegramCheckService.getInstance().firstRouter(this, update, 1);
-            } else if (update.getCallbackQuery().getData().equals(GOTOTHIRDROUTER)) {
-                TelegramCheckService.getInstance().firstRouter(this, update, 2);
-            } else if (update.getCallbackQuery().getData().equals(GOTOFOURTHROUTER)) {
-                TelegramCheckService.getInstance().firstRouter(this, update, 3);
-            } else if (update.getCallbackQuery().getData().equals(GOTOFIFTHROUTER)) {
-                TelegramCheckService.getInstance().firstRouter(this, update, 4);
-            } else if (update.getCallbackQuery().getData().equals(GOTOSIXROUTER)) {
-                TelegramCheckService.getInstance().firstRouter(this, update, 5);
-            } else if (update.getCallbackQuery().getData().equals(GOTOCREATENAMESCREEN)) {
-                TelegramCheckService.getInstance().checkExistsName(this, update);
-            } else if (update.getCallbackQuery().getData().equals(GOTOREFERALSCREEN)) {
-                ReferalScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(MYBALANCE)) {
-                MyBalanceScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(TMEFSHNNEXT)) {
-                TAnnaScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(TMANNANEXT)) {
-                InstAnnaScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(INSTANNANEXT)) {
-                CryptoNameScreen.getInstance().execute(this, update);
-            } else if (update.getCallbackQuery().getData().equals(TMFSHNDONE)) {
-                TelegramCheckService.getInstance().checkFashion(this, update);
-            } else if (update.getCallbackQuery().getData().equals(TMANNADONE)) {
-                TelegramCheckService.getInstance().checkTAnna(this, update);
-            } else if (update.getCallbackQuery().getData().equals(CHECKEXISTSNAME)) {
-                TelegramCheckService.getInstance().checkExistsName(this, update);
-            }
-
-        }
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            if (update.getMessage().getText().contains("/start")) {
-//                TelegramCheckService.getInstance().start(this,update);
-                FirstScreen.getInstance().execute(this, update);
-            } else {
-                TelegramCheckService.getInstance().checkText(this, update);
-            }
-
-        }
-
-
+        MyBalanceScreen.getInstance().execute(this, update);
     }
+
+//    @Override
+//    public void onUpdateReceived(Update update) {
+//        if (update.hasCallbackQuery()) {
+//            if (update.getCallbackQuery().getData().equals(GOTOFSHNSCREEN)) {
+//                FashionScreen.getInstance().execute(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOFIRSTROUTER)) {
+//                TelegramCheckService.getInstance().firstRouter(this, update, 0);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOSECONDROUTER)) {
+//                TelegramCheckService.getInstance().firstRouter(this, update, 1);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOTHIRDROUTER)) {
+//                TelegramCheckService.getInstance().firstRouter(this, update, 2);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOFOURTHROUTER)) {
+//                TelegramCheckService.getInstance().firstRouter(this, update, 3);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOFIFTHROUTER)) {
+//                TelegramCheckService.getInstance().firstRouter(this, update, 4);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOSIXROUTER)) {
+//                TelegramCheckService.getInstance().firstRouter(this, update, 5);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOCREATENAMESCREEN)) {
+//                TelegramCheckService.getInstance().checkExistsName(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(GOTOREFERALSCREEN)) {
+//                ReferalScreen.getInstance().execute(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(MYBALANCE)) {
+//                MyBalanceScreen.getInstance().execute(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(TMEFSHNNEXT)) {
+//                TAnnaScreen.getInstance().execute(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(TMANNANEXT)) {
+//                InstAnnaScreen.getInstance().execute(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(INSTANNANEXT)) {
+//                CryptoNameScreen.getInstance().execute(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(TMFSHNDONE)) {
+//                TelegramCheckService.getInstance().checkFashion(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(TMANNADONE)) {
+//                TelegramCheckService.getInstance().checkTAnna(this, update);
+//            } else if (update.getCallbackQuery().getData().equals(CHECKEXISTSNAME)) {
+//                TelegramCheckService.getInstance().checkExistsName(this, update);
+//            }
+//
+//        }
+//        if (update.hasMessage() && update.getMessage().hasText()) {
+//            if (update.getMessage().getText().contains("/start")) {
+//                FirstScreen.getInstance().execute(this, update);
+//            } else {
+//                TelegramCheckService.getInstance().checkText(this, update);
+//            }
+//
+//        }
+//    }
 
     @Override
     public String getBotUsername() {
