@@ -317,7 +317,9 @@ public class TelegramCheckService {
         System.out.println(clientBalance);
         System.out.println(telegramBalance);
 
-        return (clientBalance.add(telegramBalance)).toString();
+        if (clientBalance.equals(BigDecimal.ZERO)) return telegramBalance.toString();
+        else return clientBalance.toString();
+//        return (clientBalance.add(telegramBalance)).toString();
     }
 
     public String getApiKey(String userId) {

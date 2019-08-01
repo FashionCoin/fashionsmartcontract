@@ -139,7 +139,7 @@ public class TransactionService {
     private static final ResultDTO error200 = new ResultDTO(false, "Sender Wallet not found", 200);
     private static final ResultDTO error201 = new ResultDTO(false, "Sender not found", 201);
     private static final ResultDTO error202 = new ResultDTO(false, "Not enough money", 202);
-    private static final ResultDTO error203 = new ResultDTO(false, "Receiver not found", 203);
+    private static final ResultDTO error203 = new ResultDTO(false, "Please, use crypto names to send FSHN", 203);
     private static final ResultDTO error204 = new ResultDTO(false, "Blockchain transaction not found", 204);
     private static final ResultDTO error205 = new ResultDTO(false, "Blockchain transaction error", 205);
     private static final ResultDTO error206 = new ResultDTO(false, "Data of blockchain transaction does not match the parameters passed", 206);
