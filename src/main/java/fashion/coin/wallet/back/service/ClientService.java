@@ -472,9 +472,9 @@ public class ClientService {
         try {
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client == null) {
-                if(!anonimousSending){
-                    return error108;
-                }
+//                if(!anonimousSending){
+//                    return error108;
+//                }
                 // May be it is wallet:
                 client = clientRepository.findClientByWalletAddress(data.getCryptoname());
                 if (client == null) {
@@ -533,11 +533,11 @@ public class ClientService {
         System.out.println(gson.toJson(data));
         if (data.getApikey() == null) return error107;
         if (data.getCryptoname() == null) {
-            Client client = findClientByApikey(data.getApikey());
-            if (client == null) return error108;
+            Client clientByApikey = findClientByApikey(data.getApikey());
+            if (clientByApikey == null) return error108;
 
-            if (client.getWalletAddress() == null || client.getWalletAddress().length() == 0) {
-                return client;
+            if (clientByApikey.getWalletAddress() == null || clientByApikey.getWalletAddress().length() == 0) {
+                return clientByApikey;
             } else {
                 return error118;
             }
