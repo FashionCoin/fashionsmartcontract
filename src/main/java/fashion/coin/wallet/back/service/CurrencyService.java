@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.service;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.gson.Gson;
+import com.google.inject.internal.cglib.proxy.$Callback;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
@@ -58,7 +59,7 @@ public class CurrencyService {
 
     public BigDecimal getRateForCoinBitfinex(String coinName) {
         RestTemplate restTemplate = new RestTemplate();
-       logger.info(coinName);
+        logger.info(coinName);
         BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
         BitFinexRateDTO last = result[0];
         for (BitFinexRateDTO dto : result) {
@@ -71,7 +72,7 @@ public class CurrencyService {
 
     public CurrencyDTO getCurrencyRate(String currency) {
 
-        CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(currency, LocalDateTime.now().minusHours(1));
+        CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(currency, LocalDateTime.now().minusMinutes(1));
         if (currencyRate == null) {
             try {
                 if (currency.equals("BTC") || currency.equals("ETH")) {
@@ -97,12 +98,13 @@ public class CurrencyService {
                     currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
                 }
                 currencyRateRepository.save(currencyRate);
-            }catch (Exception e){
-               logger.error(e.getMessage());
+            } catch (Exception e) {
+                logger.error(e.getMessage());
                 currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+                e.printStackTrace();
             }
         }
-        if(currencyRate==null) return null;
+        if (currencyRate == null) return null;
         return new CurrencyDTO(currency,
                 currencyRate.getRate().setScale(3, RoundingMode.HALF_UP).toString());
     }
@@ -133,12 +135,16 @@ public class CurrencyService {
     }
 
     public BigDecimal getRateForCoinLatoken(String coinName) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
 
-        RestTemplate restTemplate = new RestTemplate();
+            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
 
-        LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
-
-        return new BigDecimal(result.getClose());
+            return new BigDecimal(result.getClose());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
