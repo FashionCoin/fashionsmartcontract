@@ -80,14 +80,8 @@ public class CurrencyService {
                     BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
                     currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
                 } else if (currency.equals("USD")) {
-
-                    BigDecimal rate = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 3, RoundingMode.HALF_UP);
-
-/*  Bitfinex Version
-            BigDecimal rateLA = getRateForCoinLatoken("ETH");
-            BigDecimal rateETH = getRateForCoinBitfinex("ETH");
-            BigDecimal rate = BigDecimal.ONE.divide(rateLA.multiply(rateETH), 3, RoundingMode.HALF_UP);
- */
+                    BigDecimal rateLA = getRateForCoinLatoken("USDT");
+                    BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
                     currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
                 } else if (currency.equals("UAH")) {
                     BigDecimal rateUSD = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 6, RoundingMode.HALF_UP);
@@ -139,7 +133,7 @@ public class CurrencyService {
             RestTemplate restTemplate = new RestTemplate();
 
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
-
+            logger.info("LA: " + gson.toJson(result));
             return new BigDecimal(result.getClose());
         } catch (Exception e) {
             e.printStackTrace();
