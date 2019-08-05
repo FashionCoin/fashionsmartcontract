@@ -9,6 +9,7 @@ import fashion.coin.wallet.back.repository.CurrencyRateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,7 +132,12 @@ public class CurrencyService {
 
     public BigDecimal getRateForCoinLatoken(String coinName) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
+            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+
+            RestTemplate restTemplate = restTemplateBuilder
+                    .setConnectTimeout(1000)
+                    .setReadTimeout(1000)
+                    .build();
 
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
             logger.info("LA: " + gson.toJson(result));
