@@ -43,6 +43,13 @@ public class ClientController {
     }
 
 
+    @PostMapping("/api/v1/checkclient")
+    @ResponseBody
+    ResultDTO checkClient(@RequestBody SignInDTO data){
+        return clientService.checkClient(data);
+    }
+
+
     @PostMapping("/api/v1/reservename")
     @ResponseBody
     ResultDTO reserveName(@RequestBody ReserveCryptoNameDTO data){
@@ -83,6 +90,8 @@ public class ClientController {
     ResultDTO registerCryptoname(@RequestBody  CryptonameEmailDTO data){
         return clientService.registerCryptoname( data);
     }
+
+
 
 
     @Autowired

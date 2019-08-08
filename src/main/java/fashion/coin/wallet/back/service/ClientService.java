@@ -16,6 +16,8 @@ import fashion.coin.wallet.back.repository.SetEmailRepository;
 import fashion.coin.wallet.back.telegram.service.TelegramDataService;
 import fashion.coin.wallet.back.utils.SignBuilder;
 import fashion.coin.wallet.back.utils.TweetNaCl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,8 @@ import static java.lang.Character.isLetter;
 @Service
 public class ClientService {
 
+    Logger logger = LoggerFactory.getLogger(ClientService.class);
+
     ClientRepository clientRepository;
     BlockchainService blockchainService;
     SetEmailRepository setEmailRepository;
@@ -65,7 +69,7 @@ public class ClientService {
 
     public ResultDTO trySignUp(RegistrationRequestDTO data) {
         try {
-            System.out.println(gson.toJson(data));
+            logger.info(gson.toJson(data));
 
             if (data.getWalletAddress() == null || data.getWalletAddress().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
                 return error101;
@@ -103,10 +107,10 @@ public class ClientService {
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
             //// FOR TESTING
-            System.out.println("10 000: " + HOST_NAME);
+            logger.info("10 000: " + HOST_NAME);
             if (!HOST_NAME.contains("api.coin.fashion")) {
                 aiService.transfer("10000.00", client.getWalletAddress());
-                System.out.println("10 000: sended");
+                logger.info("10 000: sended");
             }
             //// END FOR TESTING
 
@@ -124,7 +128,7 @@ public class ClientService {
 
                                 boolean result = aiService.transfer(balance.toString(), clientWallet);
                                 if (!result) {
-                                    System.out.println("Error sending telegram money to client: \n" +
+                                    logger.error("Error sending telegram money to client: \n" +
                                             gson.toJson(clientName));
                                 } else {
                                     resetTelegramBalance(userId);
@@ -169,10 +173,35 @@ public class ClientService {
         else return false;
     }
 
+
+    public ResultDTO checkClient(SignInDTO data) {
+        try {
+            logger.info(gson.toJson(data));
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            if (client == null) return error108;
+            if (data.getApikey() == null) return error107;
+
+            String apiKeyInSignature = data.getSignature().substring(128);
+            String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
+
+
+            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
+
+            if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
+
+            return validLogin;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+
+
     public ResultDTO trySignIn(SignInDTO data) {
         try {
-            System.out.println(gson.toJson(data));
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
+            logger.info(gson.toJson(data));
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
@@ -215,7 +244,7 @@ public class ClientService {
 
     public ResultDTO reserveName(ReserveCryptoNameDTO data) {
         try {
-            System.out.println(gson.toJson(data));
+            logger.info(gson.toJson(data));
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) return error100;
             if (data.getApikey() == null) return error107;
@@ -283,7 +312,7 @@ public class ClientService {
         int charArrayLength = charArray.length;
         for (int i = 0; i < charArrayLength; i++) {
             char symbol = charArray[i];
-//            System.out.println(symbol + " " + (int) symbol);
+
             if (!Character.isHighSurrogate(symbol) && !Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
                     !(Character.isAlphabetic(symbol) && Character.toLowerCase(symbol) == symbol) &&
@@ -319,7 +348,7 @@ public class ClientService {
         try {
             return clientRepository.findClientByCryptoname(cryptoname);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         }
         return null;
     }
@@ -442,9 +471,9 @@ public class ClientService {
     public boolean checkEmailToken(String token) {
         SetEmailRequest request = setEmailRepository.findByEmailVerificationCode(token);
         if (request == null) return false;
-        System.out.println(request.getDataTime());
-        System.out.println(LocalDateTime.now().minusDays(1));
-        System.out.println(request.getDataTime().compareTo(LocalDateTime.now().minusDays(1)));
+        logger.info(String.valueOf(request.getDataTime()));
+        logger.info(String.valueOf(LocalDateTime.now().minusDays(1)));
+        logger.info(String.valueOf(request.getDataTime().compareTo(LocalDateTime.now().minusDays(1))));
         if (!request.isStatus() && request.getDataTime().compareTo(LocalDateTime.now().minusDays(1)) > 0) {
             Client client = request.getClient();
             client.setEmail(request.getEmail());
@@ -530,7 +559,7 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
-        System.out.println(gson.toJson(data));
+        logger.info(gson.toJson(data));
         if (data.getApikey() == null) return error107;
         if (data.getCryptoname() == null) {
             Client clientByApikey = findClientByApikey(data.getApikey());
@@ -548,7 +577,7 @@ public class ClientService {
         if (client.getApikey() == null) return error107;
         if (!client.getApikey().equals(data.getApikey())) return error109;
         updateBalance(client);
-        System.out.println(gson.toJson(client));
+        logger.info(gson.toJson(client));
         return client;
     }
 
@@ -644,20 +673,20 @@ public class ClientService {
 
     public ResultDTO registerCryptoname(CryptonameEmailDTO data) {
         try {
-            System.out.println(gson.toJson(data));
-            System.out.println(Bytes.asList(data.getCryptoname().getBytes()));
+            logger.info(gson.toJson(data));
+            logger.info(String.valueOf(Bytes.asList(data.getCryptoname().getBytes())));
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) {
-                System.out.println(gson.toJson(error100));
+                logger.error(gson.toJson(error100));
                 return error100;
             }
             List<Client> clientList = clientRepository.findClientsByEmail(data.getEmail());
             if (clientList != null && clientList.size() > 0) {
-                System.out.println(gson.toJson(error114));
+                logger.error(gson.toJson(error114));
                 return error114;
             }
             if (!checkValidCryptoname(data.getCryptoname())) {
-                System.out.println(gson.toJson(error105));
+                logger.error(gson.toJson(error105));
                 return error105;
             }
             client = new Client(data.getCryptoname().toLowerCase(),
@@ -674,20 +703,20 @@ public class ClientService {
 
     public ResultDTO registerCryptoname(CryptonameTelegramDTO data) {
         try {
-            System.out.println(gson.toJson(data));
-            System.out.println(Bytes.asList(data.getCryptoname().getBytes()));
+            logger.info(gson.toJson(data));
+            logger.info(String.valueOf(Bytes.asList(data.getCryptoname().getBytes())));
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
             if (client != null) {
-                System.out.println(gson.toJson(error100));
+                logger.info(gson.toJson(error100));
                 return error100;
             }
             List<Client> clientList = clientRepository.findClientsByTelegramId(data.getTelegramId());
             if (clientList != null && clientList.size() > 0) {
-                System.out.println(gson.toJson(error114));
+                logger.info(gson.toJson(error114));
                 return error114;
             }
             if (!checkValidCryptoname(data.getCryptoname())) {
-                System.out.println(gson.toJson(error105));
+                logger.info(gson.toJson(error105));
                 return error105;
             }
             client = new Client(data.getCryptoname().toLowerCase(),
@@ -708,7 +737,7 @@ public class ClientService {
     }
 
     public void reserveNames(List<String> names) {
-        System.out.println("Reserve names");
+        logger.info("Reserve names");
         for (String name : names) {
             try {
                 ReserveCryptoNameDTO data = new ReserveCryptoNameDTO();
@@ -717,10 +746,10 @@ public class ClientService {
                 data.setApikey(randomToken);
                 reserveName(data);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                logger.error(e.getMessage());
             }
         }
-        System.out.println("End reserv");
+        logger.info("End reserv");
     }
 
     public BigDecimal getClientBalanceByTelegram(String userId) {
@@ -785,7 +814,7 @@ public class ClientService {
 
             return client.getCryptoname();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             return null;
         }
     }
