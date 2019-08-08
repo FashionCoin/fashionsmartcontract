@@ -3,12 +3,15 @@ package fashion.coin.wallet.back.telegram;
 
 import fashion.coin.wallet.back.telegram.screen.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 
 public class FashionBot extends TelegramLongPollingBot {
 
+    Logger logger = LoggerFactory.getLogger(FashionBot.class);
 
     private String botName;
 
@@ -30,6 +33,7 @@ public class FashionBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        logger.info(update.getMessage().toString());
         MyBalanceScreen.getInstance().execute(this, update);
     }
 
