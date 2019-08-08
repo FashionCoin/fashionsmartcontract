@@ -776,6 +776,7 @@ public class ClientService {
             if (clientList != null && clientList.size() == 1) {
                 logger.info("ClientList size: "+clientList.size());
                 Client client = clientList.get(0);
+                logger.info(client.getCryptoname());
                 if (client.getApikey() == null || client.getApikey().length() == 0) {
                     client.setApikey(getRandomToken(16));
                     clientRepository.save(client);
