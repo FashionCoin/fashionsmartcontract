@@ -6,6 +6,8 @@ import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.telegram.ContextProvider;
 import fashion.coin.wallet.back.telegram.FashionBot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.ChatMember;
@@ -22,6 +24,8 @@ import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
 
 
 public class TelegramCheckService {
+
+    Logger logger = LoggerFactory.getLogger(TelegramCheckService.class);
 
     private static TelegramCheckService service = null;
     private static TelegramDataService dataService = null;
@@ -150,6 +154,7 @@ public class TelegramCheckService {
     }
 
     public String getApiKey(String userId) {
+        logger.info("client service: "+ String.valueOf(clientService));
         return clientService.getApiKeyByTelegram(userId);
     }
 

@@ -769,18 +769,26 @@ public class ClientService {
 
     public String getApiKeyByTelegram(String userId) {
         try {
+            logger.info("Get API from Telegramm: "+ userId);
+
             List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
+
             if (clientList != null && clientList.size() == 1) {
+                logger.info("ClientList size: "+clientList.size());
                 Client client = clientList.get(0);
                 if (client.getApikey() == null || client.getApikey().length() == 0) {
                     client.setApikey(getRandomToken(16));
                     clientRepository.save(client);
                 }
                 return client.getApikey();
+            }else{
+                logger.info("ClientList size: 0");
             }
         } catch (Exception e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         }
+        logger.error("API key for Telegram not found");
         return "";
     }
 
