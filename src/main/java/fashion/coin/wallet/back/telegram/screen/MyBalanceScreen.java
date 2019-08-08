@@ -4,6 +4,8 @@ package fashion.coin.wallet.back.telegram.screen;
 import fashion.coin.wallet.back.telegram.ContextProvider;
 import fashion.coin.wallet.back.telegram.service.TelegramCheckService;
 import fashion.coin.wallet.back.telegram.service.TelegramDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,6 +16,7 @@ import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
 
 public class MyBalanceScreen implements TelegramEventHandler {
 
+    Logger logger = LoggerFactory.getLogger(MyBalanceScreen.class);
 
     TelegramDataService telegramDataService;
 
@@ -44,6 +47,9 @@ public class MyBalanceScreen implements TelegramEventHandler {
                 update.getMessage().getChatId() :
                 update.getCallbackQuery().getMessage().getChatId();
 
+        logger.info(userId);
+        logger.info(String.valueOf(chatId));
+
         if (validUserId(userId)) {
 
             SendMessage message1 = new SendMessage()
@@ -65,17 +71,21 @@ public class MyBalanceScreen implements TelegramEventHandler {
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
+        } else {
+            logger.error("User Id is invalid: " + userId);
         }
     }
 
     private boolean validUserId(String userId) {
         String apiKey = telegramCheckService.getApiKey(userId);
+        logger.info("API key: " + apiKey);
         return (apiKey != null && apiKey.length() > 0);
     }
 
     private String getApiKey(String userId) {
 
         String apiKey = telegramCheckService.getApiKey(userId);
+
         if (apiKey == null || apiKey.length() == 0)
             apiKey = "You have already completed the registration of the Crypto Name";
 
@@ -85,6 +95,7 @@ public class MyBalanceScreen implements TelegramEventHandler {
     private String getBalance(String userId) {
 
         String balance = telegramCheckService.getBalance(userId);
+        logger.info("Ballance: " + balance);
         if (balance == null || balance.length() == 0) return "0";
         else return balance;
     }
