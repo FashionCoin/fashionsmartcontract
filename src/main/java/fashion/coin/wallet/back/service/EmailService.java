@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,28 +13,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
+    Logger logger = LoggerFactory.getLogger(EmailService.class);
+
     @Autowired
     private JavaMailSender mailSender;
 
 
-
     public void sendMail(String recipient, String subject, String message) {
 
-        System.out.println("> Send email to: " + recipient);
+        logger.info("Try send email to: " + recipient);
 
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
             messageHelper.setTo(recipient);
             messageHelper.setSubject(subject);
-            messageHelper.setText(message,true);
+            messageHelper.setText(message, true);
         };
-        try {
 
+        logger.info("Mime prepare");
+        try {
             JavaMailSenderImpl senderImpl = (JavaMailSenderImpl) mailSender;
 
             mailSender.send(messagePreparator);
+            logger.info("Mail to " + recipient + " sended");
         } catch (MailException e) {
-            System.out.println("! FAIL ! Email didn't send");
+            logger.error("Email didn't send");
             e.printStackTrace();
         }
     }
