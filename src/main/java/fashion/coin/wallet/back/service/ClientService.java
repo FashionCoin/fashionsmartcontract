@@ -583,7 +583,7 @@ public class ClientService {
 
     public Client updateBalance(Client client) {
         BigDecimal balanceFromBlockchain =
-                blockchainService.getBalance(client.getWalletAddress());
+                blockchainService.getBalance(client.getWalletAddress(),client.getCryptoname());
         if (balanceFromBlockchain.equals(client.getWalletBalance())) return client;
         client.setWalletBalance(balanceFromBlockchain);
         clientRepository.save(client);

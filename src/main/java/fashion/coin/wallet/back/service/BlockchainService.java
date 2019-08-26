@@ -30,6 +30,8 @@ public class BlockchainService {
     private RestTemplate restTemplate;
     private Gson gson;
 
+    private AIService aiService;
+
     @Value("${fashion.blockchain.server}")
     public String BLOCKCHAIN_API_URI;
 
@@ -69,10 +71,13 @@ public class BlockchainService {
         return new ArrayList<>();
     }
 
-    public BigDecimal getBalance(String walletAddress) {
+    public BigDecimal getBalance(String walletAddress, String cryptoname) {
         try {
             FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
             if (balanceDTO == null) return BigDecimal.ZERO;
+            if(balanceDTO.nameHash.equals("0000000000000000000000000000000000000000000000000000000000000000")){
+                aiService.cryptoname(cryptoname,"",walletAddress);
+            }
             String balanceString = balanceDTO.balance;
             return (new BigDecimal(balanceString)).movePointLeft(3);
         } catch (Exception e) {
@@ -90,6 +95,11 @@ public class BlockchainService {
     @Autowired
     public void setGson(Gson gson) {
         this.gson = gson;
+    }
+
+    @Autowired
+    public void setAiService(AIService aiService) {
+        this.aiService = aiService;
     }
 
     public FshnBalanceDTO getWalletInfo(String walletAddress) {
