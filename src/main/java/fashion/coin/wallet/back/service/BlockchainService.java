@@ -2,6 +2,8 @@ package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.blockchain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -26,6 +28,8 @@ import java.util.List;
  */
 @Service
 public class BlockchainService {
+
+    Logger logger = LoggerFactory.getLogger(BlockchainService.class);
 
     private RestTemplate restTemplate;
     private Gson gson;
@@ -76,13 +80,15 @@ public class BlockchainService {
             FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
             if (balanceDTO == null) return BigDecimal.ZERO;
             if(balanceDTO.nameHash.equals("0000000000000000000000000000000000000000000000000000000000000000")){
+                logger.info(gson.toJson(balanceDTO));
                 aiService.cryptoname(cryptoname,"",walletAddress);
             }
+            logger.info(gson.toJson(balanceDTO));
             String balanceString = balanceDTO.balance;
             return (new BigDecimal(balanceString)).movePointLeft(3);
         } catch (Exception e) {
-            System.out.println("Don't get balance for " + walletAddress);
-            System.out.println(e.getMessage());
+            logger.error("Don't get balance for " + walletAddress);
+            logger.error(e.getMessage());
         }
         return BigDecimal.ZERO;
     }
