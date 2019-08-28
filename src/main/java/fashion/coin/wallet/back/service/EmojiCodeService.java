@@ -1,16 +1,22 @@
 package fashion.coin.wallet.back.service;
 
 import com.vdurmont.emoji.EmojiParser;
+import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.EmojiCode;
 import fashion.coin.wallet.back.repository.EmojiCodeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class EmojiCodeService {
+
+    Logger logger = LoggerFactory.getLogger(EmojiCodeService.class);
 
     @Value("${fashion.emojicode}")
     String[] emojiCodeList;
@@ -62,4 +68,24 @@ public class EmojiCodeService {
     }
 
 
+    public void registerClient(Client client, String codeCandidat) throws IllegalAccessException {
+        if (checkOneEmoji(client.getCryptoname())) {
+            String oneEmoji = checkEmojiCode(codeCandidat);
+            if (oneEmoji.equals(client.getCryptoname())) {
+                int colonePosition = codeCandidat.indexOf(":");
+
+                String emcode = codeCandidat.substring(0, colonePosition);
+                EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
+
+                    emojiCode.setClient(client.getId());
+                    emojiCode.setEmoji(oneEmoji);
+                    emojiCode.setUsed(LocalDateTime.now());
+                    emojiCodeRepository.save(emojiCode);
+            } else {
+                logger.error("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
+                throw new IllegalAccessException("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
+            }
+
+        }
+    }
 }

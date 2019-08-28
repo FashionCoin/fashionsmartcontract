@@ -263,6 +263,7 @@ public class ClientService {
             if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
 
             clientRepository.save(new Client(cryptoname, data.getApikey(), null));
+            emojiCodeService.registerClient(client, data.getCryptoname());
             return created;
         } catch (Exception e) {
             e.printStackTrace();
