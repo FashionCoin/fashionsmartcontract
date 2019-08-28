@@ -83,7 +83,8 @@ public class EmojiCodeService {
 
     public void registerClient(Client client, String codeCandidat) throws IllegalAccessException {
         logger.info("Client: " + gson.toJson(client));
-        if (checkOneEmoji(client.getCryptoname())) {
+
+        if (!client.getCryptoname().equals(codeCandidat) && checkOneEmoji(client.getCryptoname())) {
             String oneEmoji = checkEmojiCode(codeCandidat);
             if (oneEmoji.equals(client.getCryptoname())) {
                 int colonePosition = codeCandidat.indexOf(":");

@@ -259,7 +259,9 @@ public class ClientService {
 
     public ResultDTO reserveName(ReserveCryptoNameDTO data) {
         try {
-            logger.info(gson.toJson(data));
+            logger.info("Reserv Name "+gson.toJson(data));
+
+
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) return error100;
             if (data.getApikey() == null) return error107;
