@@ -39,7 +39,7 @@ public class Client implements Comparable<Client> {
 
     String encryptedhash;
 
-    @Column(unique = true)
+    @Column(unique = false)
     String walletAddress;
 
     @Column(precision = 30, scale = 3)

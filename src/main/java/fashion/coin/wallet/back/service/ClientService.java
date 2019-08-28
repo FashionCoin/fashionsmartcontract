@@ -10,6 +10,7 @@ import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.dto.blockchain.FshnBalanceDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.entity.EmojiCode;
 import fashion.coin.wallet.back.entity.SetEmailRequest;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
@@ -57,6 +58,7 @@ public class ClientService {
     AIService aiService;
     Gson gson;
     TelegramDataService telegramDataService;
+    EmojiCodeService emojiCodeService;
 
     Random random = new Random();
 
@@ -75,7 +77,11 @@ public class ClientService {
                 return error101;
             }
 
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+
+            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+
+            Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (data.getApikey() == null) return error107;
             if (client != null) {
                 if (client.getApikey() != null && !client.getApikey().equals(data.getApikey()))
@@ -92,10 +98,10 @@ public class ClientService {
 
             if (blockchainService.sendTransaction(data.getBlockchainTransaction()).length() == 0)
                 return error101;
-            aiService.cryptoname(data.getCryptoname().toLowerCase(), "", data.getWalletAddress());
+            aiService.cryptoname(cryptoname, "", data.getWalletAddress());
 
             if (client == null) {
-                client = new Client(data.getCryptoname().toLowerCase(), data.getApikey(), data.getWalletAddress());
+                client = new Client(cryptoname.toLowerCase(), data.getApikey(), data.getWalletAddress());
             } else {
                 client.setWalletAddress(data.getWalletAddress());
             }
@@ -197,7 +203,6 @@ public class ClientService {
     }
 
 
-
     public ResultDTO trySignIn(SignInDTO data) {
         try {
             logger.info(gson.toJson(data));
@@ -245,7 +250,7 @@ public class ClientService {
     public ResultDTO reserveName(ReserveCryptoNameDTO data) {
         try {
             logger.info(gson.toJson(data));
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) return error100;
             if (data.getApikey() == null) return error107;
 
@@ -254,7 +259,10 @@ public class ClientService {
 
             if (!checkValidCryptoname(data.getCryptoname())) return error105;
 
-            clientRepository.save(new Client(data.getCryptoname().toLowerCase(), data.getApikey(), null));
+            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+
+            clientRepository.save(new Client(cryptoname, data.getApikey(), null));
             return created;
         } catch (Exception e) {
             e.printStackTrace();
@@ -281,6 +289,11 @@ public class ClientService {
                 return result;
             }
 
+            String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            if (oneEmojiName != null && oneEmojiName.length() > 0) {
+                return validLogin;
+            }
+
             client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) return error100;
             if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
@@ -295,8 +308,11 @@ public class ClientService {
     private boolean checkValidCryptoname(String cryptoname) {
 
         if (cryptoname.length() < 1) return false;
-        Character ch = ((char) 65039);
-        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(ch.toString(), "");
+
+        if (emojiCodeService.checkEmojiCode(cryptoname) != null) return true;
+
+        char ch = ((char) 65039);
+        String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
 
         if (textWithoutEmoji.length() + textOnlyEmoji.size() > 25) return false;
@@ -431,6 +447,11 @@ public class ClientService {
         this.telegramDataService = telegramDataService;
     }
 
+    @Autowired
+    public void setEmojiCodeService(EmojiCodeService emojiCodeService) {
+        this.emojiCodeService = emojiCodeService;
+    }
+
     public static final ResultDTO created = new ResultDTO(true, "Account created", 0);
     public static final ResultDTO validLogin = new ResultDTO(true, "Login is valid", 0);
     public static final ResultDTO mailSended = new ResultDTO(true, "Confirm mail sended", 0);
@@ -511,7 +532,7 @@ public class ClientService {
                     String walletAddress = checkAnonimousWallet(data.getCryptoname());
                     if (walletAddress != null && walletAddress.length() == 64) {
                         return new ResultDTO(true, walletAddress, 0);
-                    }else if(anonimousSending && data.getCryptoname().length() == 64){
+                    } else if (anonimousSending && data.getCryptoname().length() == 64) {
                         return new ResultDTO(true, data.getCryptoname(), 0);
                     }
                     return error108;
@@ -583,7 +604,7 @@ public class ClientService {
 
     public Client updateBalance(Client client) {
         BigDecimal balanceFromBlockchain =
-                blockchainService.getBalance(client.getWalletAddress(),client.getCryptoname());
+                blockchainService.getBalance(client.getWalletAddress(), client.getCryptoname());
         if (balanceFromBlockchain.equals(client.getWalletBalance())) return client;
         client.setWalletBalance(balanceFromBlockchain);
         clientRepository.save(client);
@@ -769,12 +790,12 @@ public class ClientService {
 
     public String getApiKeyByTelegram(String userId) {
         try {
-            logger.info("Get API from Telegramm: "+ userId);
+            logger.info("Get API from Telegramm: " + userId);
 
             List<Client> clientList = clientRepository.findClientsByTelegramId(Integer.parseInt(userId));
 
             if (clientList != null && clientList.size() == 1) {
-                logger.info("ClientList size: "+clientList.size());
+                logger.info("ClientList size: " + clientList.size());
                 Client client = clientList.get(0);
                 logger.info(client.getCryptoname());
                 if (client.getApikey() == null || client.getApikey().length() == 0) {
@@ -782,7 +803,7 @@ public class ClientService {
                     clientRepository.save(client);
                 }
                 return client.getApikey();
-            }else{
+            } else {
                 logger.info("ClientList size: 0");
             }
         } catch (Exception e) {
