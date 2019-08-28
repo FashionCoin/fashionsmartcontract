@@ -87,7 +87,7 @@ public class EmojiCodeService {
         if (!client.getCryptoname().equals(codeCandidat) && checkOneEmoji(client.getCryptoname())) {
             String oneEmoji = checkEmojiCode(codeCandidat);
             if (oneEmoji.equals(client.getCryptoname())) {
-                int colonePosition = codeCandidat.indexOf(":");
+                int colonePosition = codeCandidat.indexOf("-");
 
                 String emcode = codeCandidat.substring(0, colonePosition);
                 EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
