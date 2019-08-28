@@ -79,13 +79,13 @@ public class BlockchainService {
         try {
             logger.info("walletAddress: :"+walletAddress+ "   cryptoname: "+ cryptoname);
             FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
-            logger.info("getWallet: "+ gson.toJson(balanceDTO));
+//            logger.info("getWallet: "+ gson.toJson(balanceDTO));
             if (balanceDTO == null) return BigDecimal.ZERO;
             if(balanceDTO.getName_hash().equals("0000000000000000000000000000000000000000000000000000000000000000")){
                 logger.info(gson.toJson(balanceDTO));
                 aiService.cryptoname(cryptoname,"",walletAddress);
             }
-            logger.info(gson.toJson(balanceDTO));
+//            logger.info(gson.toJson(balanceDTO));
             String balanceString = balanceDTO.balance;
             return (new BigDecimal(balanceString)).movePointLeft(3);
         } catch (Exception e) {
@@ -116,7 +116,7 @@ public class BlockchainService {
             ResponseEntity<FshnBalanceInfoDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/info?pub_key=" + walletAddress,
                     FshnBalanceInfoDTO.class);
             if (responce == null || !responce.hasBody()) return null;
-            logger.info(gson.toJson(responce));
+//            logger.info(gson.toJson(responce));
 
             FshnBalanceInfoDTO balanceInfo = responce.getBody();
             FshnBalanceDTO balanceDTO = balanceInfo.getResult();

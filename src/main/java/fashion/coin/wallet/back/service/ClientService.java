@@ -292,6 +292,7 @@ public class ClientService {
 
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
+            logger.info("Check Name: "+gson.toJson(data));
             Client client = clientRepository.findClientByApikey(data.getCryptoname());
             if (client != null) {
                 if (client.getWalletAddress() != null) return error121;
@@ -302,7 +303,10 @@ public class ClientService {
 
             String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname());
             if (oneEmojiName != null && oneEmojiName.length() > 0) {
-                return validLogin;
+                ResultDTO result = new ResultDTO(true, null, 0);
+                result.setCryptoname(client.getCryptoname());
+                return result;
+//                return validLogin;
             }
 
             client = clientRepository.findClientByCryptoname(data.getCryptoname());
