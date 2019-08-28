@@ -4,11 +4,11 @@ public class FshnBalanceDTO {
 
     public String balance;
 
-    public String nameHash;
+    public String name_hash;
 
-    public String pubKey;
+    public String pub_key;
 
-    public String refPrev;
+    public String ref_prev;
 
     public String getBalance() {
         return balance;
@@ -18,27 +18,27 @@ public class FshnBalanceDTO {
         this.balance = balance;
     }
 
-    public String getNameHash() {
-        return nameHash;
+    public String getName_hash() {
+        return name_hash;
     }
 
-    public void setNameHash(String nameHash) {
-        this.nameHash = nameHash;
+    public void setName_hash(String name_hash) {
+        this.name_hash = name_hash;
     }
 
-    public String getPubKey() {
-        return pubKey;
+    public String getPub_key() {
+        return pub_key;
     }
 
-    public void setPubKey(String pubKey) {
-        this.pubKey = pubKey;
+    public void setPub_key(String pub_key) {
+        this.pub_key = pub_key;
     }
 
-    public String getRefPrev() {
-        return refPrev;
+    public String getRef_prev() {
+        return ref_prev;
     }
 
-    public void setRefPrev(String refPrev) {
-        this.refPrev = refPrev;
+    public void setRef_prev(String ref_prev) {
+        this.ref_prev = ref_prev;
     }
 }

@@ -81,7 +81,7 @@ public class BlockchainService {
             FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
             logger.info("getWallet: "+ gson.toJson(balanceDTO));
             if (balanceDTO == null) return BigDecimal.ZERO;
-            if(balanceDTO.nameHash.equals("0000000000000000000000000000000000000000000000000000000000000000")){
+            if(balanceDTO.getName_hash().equals("0000000000000000000000000000000000000000000000000000000000000000")){
                 logger.info(gson.toJson(balanceDTO));
                 aiService.cryptoname(cryptoname,"",walletAddress);
             }
