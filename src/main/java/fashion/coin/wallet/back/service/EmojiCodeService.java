@@ -45,7 +45,7 @@ public class EmojiCodeService {
 
     String checkEmojiCode(String codeCandidat) {
         if (codeCandidat.contains(":")) {
-
+            logger.info("codeCandidat " + codeCandidat);
             refreshEmojilist();
 
             int colonePosition = codeCandidat.indexOf(":");
@@ -54,6 +54,7 @@ public class EmojiCodeService {
             EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
             if (emojiCode != null && emojiCode.getUsed() == null) {
                 String cryptoname = codeCandidat.substring(colonePosition + 1);
+                logger.info("checkCode: " + cryptoname);
                 if (checkOneEmoji(cryptoname)) return cryptoname;
             }
         }
@@ -61,19 +62,22 @@ public class EmojiCodeService {
     }
 
     private boolean checkOneEmoji(String cryptoname) {
-        if (cryptoname==null ||  cryptoname.length() < 1) return false;
+        if (cryptoname == null || cryptoname.length() < 1) return false;
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
-
-
+        logger.info("textWithoutEmoji.length() " + textWithoutEmoji.length());
+        logger.info("textOnlyEmoji.size() " + textOnlyEmoji.size());
+        if (textOnlyEmoji.size() == 1) {
+            logger.info(textOnlyEmoji.get(0));
+        }
         // Reserv:
         return textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1;
     }
 
 
     public void registerClient(Client client, String codeCandidat) throws IllegalAccessException {
-        logger.info("Client: "+gson.toJson(client));
+        logger.info("Client: " + gson.toJson(client));
         if (checkOneEmoji(client.getCryptoname())) {
             String oneEmoji = checkEmojiCode(codeCandidat);
             if (oneEmoji.equals(client.getCryptoname())) {
@@ -82,10 +86,10 @@ public class EmojiCodeService {
                 String emcode = codeCandidat.substring(0, colonePosition);
                 EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
 
-                    emojiCode.setClient(client.getId());
-                    emojiCode.setEmoji(oneEmoji);
-                    emojiCode.setUsed(LocalDateTime.now());
-                    emojiCodeRepository.save(emojiCode);
+                emojiCode.setClient(client.getId());
+                emojiCode.setEmoji(oneEmoji);
+                emojiCode.setUsed(LocalDateTime.now());
+                emojiCodeRepository.save(emojiCode);
             } else {
                 logger.error("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
                 throw new IllegalAccessException("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());

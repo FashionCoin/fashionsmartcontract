@@ -188,7 +188,7 @@ public class ClientService {
 
     public ResultDTO checkClient(SignInDTO data) {
         try {
-            logger.info("Chek client "+gson.toJson(data));
+            logger.info("Chek client " + gson.toJson(data));
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
@@ -211,7 +211,7 @@ public class ClientService {
 
     public ResultDTO trySignIn(SignInDTO data) {
         try {
-            logger.info("Sign in "+gson.toJson(data));
+            logger.info("Sign in " + gson.toJson(data));
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
             if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
@@ -267,7 +267,7 @@ public class ClientService {
 
             if (!checkUsingApiKey(data.getApikey())) return error117;
 
-            if (!checkValidCryptoname(data.getCryptoname())){
+            if (!checkValidCryptoname(data.getCryptoname())) {
                 logger.error("Reserv name");
                 return error105;
             }
@@ -278,7 +278,7 @@ public class ClientService {
 
             client = new Client(cryptoname, data.getApikey(), null);
             clientRepository.save(client);
-            logger.info("Register: "+data.getCryptoname());
+            logger.info("Register: " + data.getCryptoname());
             emojiCodeService.registerClient(client, data.getCryptoname());
             return created;
         } catch (Exception e) {
@@ -298,7 +298,7 @@ public class ClientService {
 
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
-            logger.info("Check Name: "+gson.toJson(data));
+            logger.info("Check Name: " + gson.toJson(data));
             Client client = clientRepository.findClientByApikey(data.getCryptoname());
             if (client != null) {
                 if (client.getWalletAddress() != null) return error121;
@@ -332,7 +332,7 @@ public class ClientService {
     private boolean checkValidCryptoname(String cryptoname) {
 
         if (cryptoname.length() < 1) return false;
-
+        logger.info(cryptoname);
         if (emojiCodeService.checkEmojiCode(cryptoname) != null) return true;
 
         char ch = ((char) 65039);
@@ -742,7 +742,7 @@ public class ClientService {
                 return error114;
             }
             if (!checkValidCryptoname(data.getCryptoname())) {
-                logger.error("register Cryptoname"+gson.toJson(error105));
+                logger.error("register Cryptoname" + gson.toJson(error105));
                 return error105;
             }
             client = new Client(data.getCryptoname().toLowerCase(),
@@ -772,7 +772,7 @@ public class ClientService {
                 return error114;
             }
             if (!checkValidCryptoname(data.getCryptoname())) {
-                logger.info("Register Name "+gson.toJson(error105));
+                logger.info("Register Name " + gson.toJson(error105));
                 return error105;
             }
             client = new Client(data.getCryptoname().toLowerCase(),
