@@ -310,11 +310,13 @@ public class ClientService {
             }
 
             String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            logger.info("one: "+oneEmojiName);
             if (oneEmojiName != null && oneEmojiName.length() > 0) {
-                ResultDTO result = new ResultDTO(true, null, 0);
-                result.setCryptoname(client.getCryptoname());
-                return result;
-//                return validLogin;
+//                ResultDTO result = new ResultDTO(true, null, 0);
+//                result.setCryptoname(client.getCryptoname());
+//                logger.info(gson.toJson(result));
+//                return result;
+                return validLogin;
             }
 
             client = clientRepository.findClientByCryptoname(data.getCryptoname());
