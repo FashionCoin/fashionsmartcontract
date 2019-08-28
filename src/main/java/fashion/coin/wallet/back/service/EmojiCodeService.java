@@ -44,11 +44,11 @@ public class EmojiCodeService {
     }
 
     String checkEmojiCode(String codeCandidat) {
-        if (codeCandidat.contains(":")) {
+        if (codeCandidat.contains("-")) {
             logger.info("codeCandidat " + codeCandidat);
             refreshEmojilist();
 
-            int colonePosition = codeCandidat.indexOf(":");
+            int colonePosition = codeCandidat.indexOf("-");
 
             String emcode = codeCandidat.substring(0, colonePosition);
             EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
@@ -62,6 +62,9 @@ public class EmojiCodeService {
     }
 
     private boolean checkOneEmoji(String cryptoname) {
+
+        return true;
+        /*
         if (cryptoname == null || cryptoname.length() < 1) return false;
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
@@ -73,6 +76,8 @@ public class EmojiCodeService {
         }
         // Reserv:
         return textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1;
+
+         */
     }
 
 
