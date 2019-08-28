@@ -77,7 +77,9 @@ public class BlockchainService {
 
     public BigDecimal getBalance(String walletAddress, String cryptoname) {
         try {
+            logger.info("walletAddress: :"+walletAddress+ "   cryptoname: "+ cryptoname);
             FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
+            logger.info("getWallet: "+ gson.toJson(balanceDTO));
             if (balanceDTO == null) return BigDecimal.ZERO;
             if(balanceDTO.nameHash.equals("0000000000000000000000000000000000000000000000000000000000000000")){
                 logger.info(gson.toJson(balanceDTO));
@@ -110,9 +112,12 @@ public class BlockchainService {
 
     public FshnBalanceDTO getWalletInfo(String walletAddress) {
         try {
+            logger.info(walletAddress);
             ResponseEntity<FshnBalanceInfoDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/info?pub_key=" + walletAddress,
                     FshnBalanceInfoDTO.class);
             if (responce == null || !responce.hasBody()) return null;
+            logger.info(gson.toJson(responce));
+
             FshnBalanceInfoDTO balanceInfo = responce.getBody();
             FshnBalanceDTO balanceDTO = balanceInfo.getResult();
             return balanceDTO;
