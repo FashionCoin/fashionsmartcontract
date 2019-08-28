@@ -112,6 +112,9 @@ public class ClientService {
 
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
+            emojiCodeService.registerClient(client, data.getCryptoname());
+
+
             //// FOR TESTING
             logger.info("10 000: " + HOST_NAME);
             if (!HOST_NAME.contains("api.coin.fashion")) {
