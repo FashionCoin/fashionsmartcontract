@@ -185,7 +185,7 @@ public class ClientService {
 
     public ResultDTO checkClient(SignInDTO data) {
         try {
-            logger.info(gson.toJson(data));
+            logger.info("Chek client "+gson.toJson(data));
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
@@ -208,8 +208,12 @@ public class ClientService {
 
     public ResultDTO trySignIn(SignInDTO data) {
         try {
-            logger.info(gson.toJson(data));
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            logger.info("Sign in "+gson.toJson(data));
+
+            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+
+            Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
@@ -587,8 +591,12 @@ public class ClientService {
         logger.info(gson.toJson(data));
         if (data.getApikey() == null) return error107;
         if (data.getCryptoname() == null) {
+
             Client clientByApikey = findClientByApikey(data.getApikey());
-            if (clientByApikey == null) return error108;
+            if (clientByApikey == null) {
+                logger.error(gson.toJson(data));
+                return error108;
+            }
 
             if (clientByApikey.getWalletAddress() == null || clientByApikey.getWalletAddress().length() == 0) {
                 return clientByApikey;
@@ -597,7 +605,11 @@ public class ClientService {
             }
         }
 
-        Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+        String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+        if (cryptoname == null) cryptoname = emojiCodeService.checkEmojiCode(data.getApikey());
+        if (cryptoname == null) cryptoname = data.getCryptoname();
+
+        Client client = clientRepository.findClientByCryptoname(cryptoname);
         if (client == null) return error108;
         if (client.getApikey() == null) return error107;
         if (!client.getApikey().equals(data.getApikey())) return error109;
