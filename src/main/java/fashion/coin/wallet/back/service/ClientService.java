@@ -559,9 +559,9 @@ public class ClientService {
     private String checkAnonimousWallet(String address) {
 
         FshnBalanceDTO walletInfo = blockchainService.getWalletInfo(address);
-        if (walletInfo != null && walletInfo.pubKey != null &&
-                !walletInfo.pubKey.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
-            return walletInfo.pubKey;
+        if (walletInfo != null && walletInfo.getPub_key() != null &&
+                !walletInfo.getPub_key().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+            return walletInfo.getPub_key();
         } else {
             return null;
         }
