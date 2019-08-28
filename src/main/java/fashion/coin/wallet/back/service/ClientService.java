@@ -92,7 +92,10 @@ public class ClientService {
             String pub_key = jsonTransaction.getBody().getPub_key();
             if (pub_key == null) return error106;
             if (!pub_key.equals(data.getWalletAddress())) return error103;
-            if (!checkValidCryptoname(data.getCryptoname())) return error105;
+            if (!checkValidCryptoname(data.getCryptoname())) {
+                logger.error("Sign Up");
+                return error105;
+            }
 
             if (!checkNewWallet(data.getWalletAddress())) return error119;
 
@@ -264,7 +267,10 @@ public class ClientService {
 
             if (!checkUsingApiKey(data.getApikey())) return error117;
 
-            if (!checkValidCryptoname(data.getCryptoname())) return error105;
+            if (!checkValidCryptoname(data.getCryptoname())){
+                logger.error("Reserv name");
+                return error105;
+            }
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
             if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
@@ -312,7 +318,10 @@ public class ClientService {
             client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) return error100;
             if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
-            if (!checkValidCryptoname(data.getCryptoname())) return error105;
+            if (!checkValidCryptoname(data.getCryptoname())) {
+                logger.error("Check name");
+                return error105;
+            }
             return validLogin;
         } catch (Exception e) {
             return new ResultDTO(false, e.getMessage(), -1);
@@ -647,7 +656,10 @@ public class ClientService {
 
         if (data.getCryptoname() != null) {
             if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
-            if (!checkValidCryptoname(data.getCryptoname())) return error105;
+            if (!checkValidCryptoname(data.getCryptoname())) {
+                logger.error("Client Info");
+                return error105;
+            }
 
             if (!client.getCryptoname().toLowerCase().equals(data.getCryptoname().toLowerCase())) {
                 if (client.isLoginChanged()) return error113;
@@ -730,7 +742,7 @@ public class ClientService {
                 return error114;
             }
             if (!checkValidCryptoname(data.getCryptoname())) {
-                logger.error(gson.toJson(error105));
+                logger.error("register Cryptoname"+gson.toJson(error105));
                 return error105;
             }
             client = new Client(data.getCryptoname().toLowerCase(),
@@ -760,7 +772,7 @@ public class ClientService {
                 return error114;
             }
             if (!checkValidCryptoname(data.getCryptoname())) {
-                logger.info(gson.toJson(error105));
+                logger.info("Register Name "+gson.toJson(error105));
                 return error105;
             }
             client = new Client(data.getCryptoname().toLowerCase(),
