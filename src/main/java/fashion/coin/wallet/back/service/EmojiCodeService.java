@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.EmojiCode;
@@ -23,6 +24,9 @@ public class EmojiCodeService {
 
     @Autowired
     EmojiCodeRepository emojiCodeRepository;
+
+    @Autowired
+    Gson gson;
 
 
     private boolean listIsRefreshed = false;
@@ -57,7 +61,7 @@ public class EmojiCodeService {
     }
 
     private boolean checkOneEmoji(String cryptoname) {
-        if (cryptoname.length() < 1) return false;
+        if (cryptoname==null ||  cryptoname.length() < 1) return false;
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
@@ -69,6 +73,7 @@ public class EmojiCodeService {
 
 
     public void registerClient(Client client, String codeCandidat) throws IllegalAccessException {
+        logger.info("Client: "+gson.toJson(client));
         if (checkOneEmoji(client.getCryptoname())) {
             String oneEmoji = checkEmojiCode(codeCandidat);
             if (oneEmoji.equals(client.getCryptoname())) {
