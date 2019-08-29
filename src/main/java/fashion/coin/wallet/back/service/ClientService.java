@@ -312,8 +312,8 @@ public class ClientService {
             logger.info("one: " + oneEmojiName);
             if (oneEmojiName != null && oneEmojiName.length() > 0) {
 
-                client = new Client(oneEmojiName, data.getCryptoname(), null);
-                clientRepository.save(client);
+//                client = new Client(oneEmojiName, data.getCryptoname(), null);
+//                clientRepository.save(client);
                 ResultDTO result = new ResultDTO(true, null, 0);
                 result.setCryptoname(oneEmojiName);
                 logger.info(gson.toJson(result));
