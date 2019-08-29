@@ -258,7 +258,7 @@ public class ClientService {
 
     public ResultDTO reserveName(ReserveCryptoNameDTO data) {
         try {
-            logger.info("Reserv Name "+gson.toJson(data));
+            logger.info("Reserv Name " + gson.toJson(data));
 
 
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
@@ -309,16 +309,16 @@ public class ClientService {
             }
 
             String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname());
-            logger.info("one: "+oneEmojiName);
+            logger.info("one: " + oneEmojiName);
             if (oneEmojiName != null && oneEmojiName.length() > 0) {
-//
-////                client = new Client(oneEmojiName,data.getCryptoname(),null);
-//
-//                ResultDTO result = new ResultDTO(true, null, 0);
-//                result.setCryptoname(oneEmojiName);
-//                logger.info(gson.toJson(result));
-//                return result;
-                return validLogin;
+
+                client = new Client(oneEmojiName, data.getCryptoname(), null);
+                clientRepository.save(client);
+                ResultDTO result = new ResultDTO(true, null, 0);
+                result.setCryptoname(oneEmojiName);
+                logger.info(gson.toJson(result));
+                return result;
+//                return validLogin;
             }
 
             client = clientRepository.findClientByCryptoname(data.getCryptoname());
@@ -340,7 +340,7 @@ public class ClientService {
         if (cryptoname.length() < 1) return false;
         logger.info(cryptoname);
         if (emojiCodeService.checkEmojiCode(cryptoname) != null) return true;
-        if(emojiCodeService.emojiAvaliable(cryptoname)) return true;
+        if (emojiCodeService.emojiAvaliable(cryptoname)) return true;
 
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
