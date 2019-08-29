@@ -54,11 +54,13 @@ public class EmojiCodeService {
             EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
             if (emojiCode != null && emojiCode.getWallet() == null) {
                 String cryptoname = codeCandidat.substring(colonePosition + 1);
-                logger.info("checkCode: " + cryptoname);
-                emojiCode.setEmoji(cryptoname);
-                emojiCode.setUsed(LocalDateTime.now());
-                emojiCodeRepository.save(emojiCode);
-                if (checkOneEmoji(cryptoname)) return cryptoname;
+                if (cryptoname != null && cryptoname.length() > 0) {
+                    logger.info("checkCode: " + cryptoname);
+                    emojiCode.setEmoji(cryptoname);
+                    emojiCode.setUsed(LocalDateTime.now());
+                    emojiCodeRepository.save(emojiCode);
+                    if (checkOneEmoji(cryptoname)) return cryptoname;
+                }
             }
         }
         return null;
