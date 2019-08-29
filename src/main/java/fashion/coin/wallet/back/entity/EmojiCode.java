@@ -17,6 +17,8 @@ public class EmojiCode {
     Long client;
     @Column(unique = true)
     String emoji;
+    @Column(unique = true)
+    String wallet;
 
     public EmojiCode() {
     }
@@ -64,5 +66,13 @@ public class EmojiCode {
 
     public void setEmoji(String emoji) {
         this.emoji = emoji;
+    }
+
+    public String getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(String wallet) {
+        this.wallet = wallet;
     }
 }

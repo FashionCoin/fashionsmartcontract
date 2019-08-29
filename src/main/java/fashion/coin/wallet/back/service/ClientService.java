@@ -78,8 +78,7 @@ public class ClientService {
             }
 
 
-            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
-            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+            String cryptoname = data.getCryptoname().toLowerCase();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (data.getApikey() == null) return error107;
@@ -115,7 +114,7 @@ public class ClientService {
 
             client.setRegisteredFrom(FROMMOBILE);
             clientRepository.save(client);
-            emojiCodeService.registerClient(client, data.getCryptoname());
+            emojiCodeService.registerClient(client);
 
 
             //// FOR TESTING
@@ -281,7 +280,7 @@ public class ClientService {
             client = new Client(cryptoname, data.getApikey(), null);
             clientRepository.save(client);
             logger.info("Register: " + data.getCryptoname());
-            emojiCodeService.registerClient(client, data.getCryptoname());
+//            emojiCodeService.registerClient(client);
             return created;
         } catch (Exception e) {
             e.printStackTrace();
@@ -312,8 +311,11 @@ public class ClientService {
             String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname());
             logger.info("one: "+oneEmojiName);
             if (oneEmojiName != null && oneEmojiName.length() > 0) {
+//
+////                client = new Client(oneEmojiName,data.getCryptoname(),null);
+//
 //                ResultDTO result = new ResultDTO(true, null, 0);
-//                result.setCryptoname(client.getCryptoname());
+//                result.setCryptoname(oneEmojiName);
 //                logger.info(gson.toJson(result));
 //                return result;
                 return validLogin;
@@ -338,6 +340,7 @@ public class ClientService {
         if (cryptoname.length() < 1) return false;
         logger.info(cryptoname);
         if (emojiCodeService.checkEmojiCode(cryptoname) != null) return true;
+        if(emojiCodeService.emojiAvaliable(cryptoname)) return true;
 
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");

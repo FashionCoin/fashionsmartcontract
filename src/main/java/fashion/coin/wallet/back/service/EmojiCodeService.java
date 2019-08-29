@@ -44,17 +44,20 @@ public class EmojiCodeService {
     }
 
     String checkEmojiCode(String codeCandidat) {
-        if (codeCandidat.contains("-")) {
+        if (codeCandidat.contains(":")) {
             logger.info("codeCandidat " + codeCandidat);
             refreshEmojilist();
 
-            int colonePosition = codeCandidat.indexOf("-");
+            int colonePosition = codeCandidat.indexOf(":");
 
             String emcode = codeCandidat.substring(0, colonePosition);
             EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
-            if (emojiCode != null && emojiCode.getUsed() == null) {
+            if (emojiCode != null && emojiCode.getWallet() == null) {
                 String cryptoname = codeCandidat.substring(colonePosition + 1);
                 logger.info("checkCode: " + cryptoname);
+                emojiCode.setEmoji(cryptoname);
+                emojiCode.setUsed(LocalDateTime.now());
+                emojiCodeRepository.save(emojiCode);
                 if (checkOneEmoji(cryptoname)) return cryptoname;
             }
         }
@@ -81,26 +84,44 @@ public class EmojiCodeService {
     }
 
 
-    public void registerClient(Client client, String codeCandidat) throws IllegalAccessException {
+    public void registerClient(Client client) throws IllegalAccessException {
         logger.info("Client: " + gson.toJson(client));
 
-        if (!client.getCryptoname().equals(codeCandidat) && checkOneEmoji(client.getCryptoname())) {
-            String oneEmoji = checkEmojiCode(codeCandidat);
-            if (oneEmoji.equals(client.getCryptoname())) {
-                int colonePosition = codeCandidat.indexOf("-");
+        String cryptoname = client.getCryptoname();
+        EmojiCode emojiCode = emojiCodeRepository.findByEmoji(cryptoname);
+        if (emojiCode == null) return;
+        if (emojiCode.getWallet() != null && emojiCode.getWallet().length() > 0) return;
+        if (client.getWalletAddress() == null || client.getWalletAddress().length() == 0) return;
+        emojiCode.setWallet(client.getWalletAddress());
+        emojiCode.setClient(client.getId());
+        emojiCodeRepository.save(emojiCode);
+        logger.info("Client oneEmoji registered");
+//
+//        if (!client.getCryptoname().equals(codeCandidat) && checkOneEmoji(client.getCryptoname())) {
+//            String oneEmoji = checkEmojiCode(codeCandidat);
+//            if (oneEmoji.equals(client.getCryptoname())) {
+//                int colonePosition = codeCandidat.indexOf(":");
+//
+//                String emcode = codeCandidat.substring(0, colonePosition);
+//                EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
+//
+//                emojiCode.setClient(client.getId());
+//                emojiCode.setEmoji(oneEmoji);
+//                emojiCode.setUsed(LocalDateTime.now());
+//                emojiCodeRepository.save(emojiCode);
+//            } else {
+//                logger.error("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
+//                throw new IllegalAccessException("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
+//            }
 
-                String emcode = codeCandidat.substring(0, colonePosition);
-                EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
+    }
 
-                emojiCode.setClient(client.getId());
-                emojiCode.setEmoji(oneEmoji);
-                emojiCode.setUsed(LocalDateTime.now());
-                emojiCodeRepository.save(emojiCode);
-            } else {
-                logger.error("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
-                throw new IllegalAccessException("codeCandidat: " + codeCandidat + "  client name: " + client.getCryptoname());
-            }
+    public boolean emojiAvaliable(String cryptoname) {
 
-        }
+        EmojiCode emojiCode = emojiCodeRepository.findByEmoji(cryptoname);
+        if (emojiCode == null) return false;
+        if (emojiCode.getWallet() != null && emojiCode.getWallet().length() > 0) return false;
+        return true;
     }
 }
+
