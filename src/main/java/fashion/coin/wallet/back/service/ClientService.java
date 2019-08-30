@@ -79,7 +79,7 @@ public class ClientService {
 
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
-            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase().trim();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (data.getApikey() == null) return error107;
@@ -189,7 +189,7 @@ public class ClientService {
     public ResultDTO checkClient(SignInDTO data) {
         try {
             logger.info("Chek client " + gson.toJson(data));
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
             if (client == null) return error108;
             if (data.getApikey() == null) return error107;
 
@@ -214,7 +214,7 @@ public class ClientService {
             logger.info("Sign in " + gson.toJson(data));
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
-            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+            if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (client == null) return error108;
