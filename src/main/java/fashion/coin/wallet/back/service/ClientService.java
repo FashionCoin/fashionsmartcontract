@@ -305,7 +305,7 @@ public class ClientService {
             if (client != null) {
                 if (client.getWalletAddress() != null) return error121;
                 ResultDTO result = new ResultDTO(true, null, 0);
-                result.setCryptoname(client.getCryptoname().trim());
+                result.setCryptoname(data.getCryptoname());
                 return result;
             }
 
