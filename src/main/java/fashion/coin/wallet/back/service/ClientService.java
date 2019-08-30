@@ -637,6 +637,7 @@ public class ClientService {
         if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
         Client client = clientRepository.findClientByCryptoname(cryptoname);
+        logger.info("Client info: "+client);
         if (client == null) return error108;
         if (client.getApikey() == null) return error107;
         if (!client.getApikey().equals(data.getApikey())) return error109;
