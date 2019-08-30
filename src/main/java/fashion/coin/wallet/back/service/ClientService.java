@@ -309,7 +309,7 @@ public class ClientService {
                 return result;
             }
 
-            String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            String oneEmojiName = emojiCodeService.checkEmojiCode(data.getCryptoname().trim());
             logger.info("one: " + oneEmojiName);
             if (oneEmojiName != null && oneEmojiName.length() > 0) {
 
@@ -322,10 +322,10 @@ public class ClientService {
 //                return validLogin;
             }
 
-            client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
             if (client != null) return error100;
-            if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
-            if (!checkValidCryptoname(data.getCryptoname())) {
+            if (!data.getCryptoname().toLowerCase().trim().equals(data.getCryptoname().trim())) return error104;
+            if (!checkValidCryptoname(data.getCryptoname().trim())) {
                 logger.error("Check name");
                 return error105;
             }
