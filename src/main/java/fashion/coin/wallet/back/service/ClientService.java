@@ -631,7 +631,7 @@ public class ClientService {
 
         String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
         if (cryptoname == null) cryptoname = emojiCodeService.checkEmojiCode(data.getApikey());
-        if (cryptoname == null) cryptoname = data.getCryptoname();
+        if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
         Client client = clientRepository.findClientByCryptoname(cryptoname);
         if (client == null) return error108;
