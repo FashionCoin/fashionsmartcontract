@@ -301,11 +301,14 @@ public class ClientService {
     public ResultDTO checkName(CheckCryptoNameDTO data) {
         try {
             logger.info("Check Name: " + gson.toJson(data));
+            logger.info("data.getCryptoname().trim(): " + data.getCryptoname().trim());
             Client client = clientRepository.findClientByApikey(data.getCryptoname().trim());
+            logger.info("client: "+gson.toJson(client));
             if (client != null) {
                 if (client.getWalletAddress() != null) return error121;
                 ResultDTO result = new ResultDTO(true, null, 0);
                 result.setCryptoname(data.getCryptoname());
+                logger.info(gson.toJson(result));
                 return result;
             }
 
