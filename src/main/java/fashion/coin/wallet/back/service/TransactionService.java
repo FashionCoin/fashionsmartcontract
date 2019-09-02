@@ -10,6 +10,8 @@ import fashion.coin.wallet.back.dto.blockchain.FshnHistoryTxDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.TransactionCoins;
 import fashion.coin.wallet.back.repository.TransactionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ import java.util.*;
  */
 @Service
 public class TransactionService {
+
+    Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     TransactionRepository transactionRepository;
     BlockchainService blockchainService;
@@ -147,9 +151,12 @@ public class TransactionService {
     public static final String COIN_SCALE = "1000";
 
     public List<TransactionDTO> getList(TransactionListRequestDTO request) {
-        Client client = clientService.findByCryptoname(request.getLogin());
-        if (client == null) return null;
-        if (!client.getApikey().equals(request.getApikey())) return null;
+
+        logger.info(gson.toJson(request));
+
+        Client client = clientService.findByCryptoname(request.getLogin().trim());
+        if (client == null) return new ArrayList<>();
+        if (!client.getApikey().equals(request.getApikey())) return new ArrayList<>();
         List<TransactionDTO> allTransaction = new ArrayList<>();
 
         // TODO: rewrite

@@ -32,7 +32,7 @@ public class CryptoWalletsService {
     ClientService clientService;
 
     public String getWalletByCryptoname(String cryptoname, String currency) {
-        CryptoWallets cryptoWallets = cryptoWalletsRepository.findTopByCryptonameAndCurrency(cryptoname, currency);
+        CryptoWallets cryptoWallets = cryptoWalletsRepository.findTopByCryptonameAndCurrency(cryptoname.trim(), currency);
         if (cryptoWallets == null) return "";
         else return cryptoWallets.getWallet();
     }
@@ -43,13 +43,13 @@ public class CryptoWalletsService {
         Client client = clientService.findClientByApikey(data.getApikey());
         if (client == null) return ClientService.error108;
 
-        cryptoWalletsRepository.save(new CryptoWallets(client.getCryptoname(), data.getCurrency(), data.getWallet()));
+        cryptoWalletsRepository.save(new CryptoWallets(client.getCryptoname().trim(), data.getCurrency(), data.getWallet()));
         return new ResultDTO(true,"Wallet saved",0);
     }
 
 
     public List<CryptoWallets> getWallets(GetWalletsByNameDTO data) {
-        List<CryptoWallets> cryptoWallets = cryptoWalletsRepository.findAllByCryptoname(data.getCryptoname());
+        List<CryptoWallets> cryptoWallets = cryptoWalletsRepository.findAllByCryptoname(data.getCryptoname().trim());
         if (cryptoWallets == null) return new ArrayList<>();
         return cryptoWallets;
 
