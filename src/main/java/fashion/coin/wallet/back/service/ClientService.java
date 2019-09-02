@@ -552,7 +552,7 @@ public class ClientService {
 
     public ResultDTO getWallet(GetWalletDTO data) {
         try {
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
             if (client == null) {
 //                if(!anonimousSending){
 //                    return error108;

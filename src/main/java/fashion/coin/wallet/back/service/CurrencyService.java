@@ -97,7 +97,7 @@ public class CurrencyService {
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
         if (currencyRate == null) return null;
