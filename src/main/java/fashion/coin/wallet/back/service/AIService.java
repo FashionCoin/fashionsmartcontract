@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -9,12 +10,15 @@ import fashion.coin.wallet.back.dto.blockchain.ResponceDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.utils.SignBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 
 /**
@@ -29,10 +33,13 @@ import java.math.BigInteger;
 @Service
 public class AIService {
 
+    Logger logger = LoggerFactory.getLogger(AIService.class);
+
     BlockchainService blockchainService;
     ClientService clientService;
     TransactionService transactionService;
     SettingsService settingsService;
+    CurrencyService currencyService;
     Gson gson;
 
 
@@ -51,10 +58,10 @@ public class AIService {
                     .addPublicKeyOrHash(pub_key)
                     .sign(priv_key);
             String json = String.format(CREATE_WALLET, pub_key, sign);
-            System.out.println(json);
+            logger.info(json);
             BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
             String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
-            System.out.println(tx_hash);
+            logger.info(tx_hash);
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -79,7 +86,7 @@ public class AIService {
             String json = String.format(SET_ROOT, left_right.toString(10), pub_key, seed.toString(10), sign);
             BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
             String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
-            System.out.println(tx_hash);
+            logger.info(tx_hash);
             responce.setTx_hash(tx_hash);
 
             return responce;
@@ -111,11 +118,11 @@ public class AIService {
             String json = String.format(TRANSFER_COIN, pub_key, receiver, amount.toString(10), seed.toString(10), sign);
             BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
             TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
-            System.out.println(gson.toJson(transactionRequestDTO));
+            logger.info(gson.toJson(transactionRequestDTO));
 
             ResultDTO resp = transactionService.send(transactionRequestDTO);
 
-            System.out.println(gson.toJson(resp));
+            logger.info(gson.toJson(resp));
             return resp.isResult();
 
         } catch (UnsupportedEncodingException e) {
@@ -135,9 +142,9 @@ public class AIService {
                 BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
                 SignBuilder.init();
                 try {
-                    System.out.println("Sleep before register namr on blockchain");
+                    logger.info("Sleep before register namr on blockchain");
                     Thread.sleep(1000);
-                    System.out.println("Wake Up");
+                    logger.info("Wake Up");
 //                    System.out.println(priv_key);
                     String sign = SignBuilder.init()
                             .setNetworkId(0)
@@ -150,10 +157,13 @@ public class AIService {
                             .sign(priv_key);
 
                     String json = String.format(CRYPTO_NAME, name_hash, wallet, seed.toString(10), sign);
-                    System.out.println(json);
+                    logger.info(json);
                     BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
                     String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
-                    System.out.println(tx_hash);
+                    logger.info(tx_hash);
+
+                    tenDollarBonus(wallet);
+
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -161,6 +171,21 @@ public class AIService {
                 }
             }
         }).start();
+    }
+
+    private void tenDollarBonus(String wallet) {
+        try {
+            logger.info("Bonus $10");
+            CurrencyDTO currencyDTO = currencyService.getCurrencyRate("USD");
+            BigDecimal usdRate = new BigDecimal(currencyDTO.getRate()); // $1
+            BigDecimal amount = usdRate.multiply(BigDecimal.TEN).setScale(3, RoundingMode.HALF_UP); // $10
+            logger.info("Send " + amount + " FSHN to " + wallet);
+            transfer(amount.toString(), wallet);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private TransactionRequestDTO createRequest(BlockchainTransactionDTO blockchainTransactionDTO) {
@@ -252,6 +277,11 @@ public class AIService {
         this.settingsService = settingsService;
     }
 
+    @Autowired
+    public void setCurrencyService(CurrencyService currencyService) {
+        this.currencyService = currencyService;
+    }
+
     private static final String AI_PUB_KEY = "AI public key";
     private static final String AI_PRIV_KEY = "AI private key";
 
@@ -322,13 +352,13 @@ public class AIService {
                 String json = String.format(TRANSFER_COIN, pub_key, receiver, amount.toString(10), seed.toString(10), sign);
                 BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
                 TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
-                System.out.println(gson.toJson(transactionRequestDTO));
+                logger.info(gson.toJson(transactionRequestDTO));
 
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("AI don't ready");
+            logger.error("AI don't ready");
         }
     }
 
