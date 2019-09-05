@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 
+import fashion.coin.wallet.back.dto.blockchain.FshnBalanceDTO;
 import fashion.coin.wallet.back.dto.blockchain.ResponceDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.utils.SignBuilder;
@@ -145,6 +146,13 @@ public class AIService {
                     logger.info("Sleep before register namr on blockchain");
                     Thread.sleep(1000);
                     logger.info("Wake Up");
+
+               FshnBalanceDTO fshnBalanceDTO =     blockchainService.getWalletInfo(wallet);
+               if(!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")){
+                   logger.info("Name "+cryptoname+" is already registered for "+wallet);
+                   return;
+               }
+
 //                    System.out.println(priv_key);
                     String sign = SignBuilder.init()
                             .setNetworkId(0)

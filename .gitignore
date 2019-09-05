@@ -29,3 +29,5 @@
 /.idea/
 fashionwallet.iml
 /src/main/resources/application.properties
+/fashion/
+
