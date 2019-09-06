@@ -173,7 +173,7 @@ public class AIService {
                         Thread.sleep(1000);
                         logger.info("Wake Up");
                         FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
-                        if (fshnBalanceDTO.getPub_key() != null
+                        if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
                                 && fshnBalanceDTO.getPub_key().equals(wallet)) {
                             isWalletExists = true;
                         }
