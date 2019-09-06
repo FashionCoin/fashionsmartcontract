@@ -118,13 +118,6 @@ public class ClientService {
             emojiCodeService.registerClient(client);
 
 
-            //// FOR TESTING
-            logger.info("10 000: " + HOST_NAME);
-            if (!HOST_NAME.contains("api.coin.fashion")) {
-                aiService.transfer("10000.00", client.getWalletAddress());
-                logger.info("10 000: sended");
-            }
-            //// END FOR TESTING
 
             if (client.getTelegramId() != null && client.getTelegramId() > 0) {
                 String userId = String.valueOf(client.getTelegramId());
@@ -138,7 +131,7 @@ public class ClientService {
                             try {
                                 Thread.sleep(2000);
 
-                                boolean result = aiService.transfer(balance.toString(), clientWallet);
+                                boolean result = aiService.transfer(balance.toString(), clientWallet, AIService.AIWallets.MONEYBAG);
                                 if (!result) {
                                     logger.error("Error sending telegram money to client: \n" +
                                             gson.toJson(clientName));

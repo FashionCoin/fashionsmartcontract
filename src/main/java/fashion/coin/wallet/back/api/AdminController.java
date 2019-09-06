@@ -28,12 +28,12 @@ public class AdminController {
 
     Gson gson;
 
-    @PostMapping("/setkeys")
-    @ResponseBody
-    ResponceDTO setKeys(@RequestBody SetAiKeysDTO keys) {
-        System.out.println(keys);
-        return aiService.setKeys(keys.getPub_key(), keys.getPriv_key());
-    }
+//    @PostMapping("/setkeys")
+//    @ResponseBody
+//    ResponceDTO setKeys(@RequestBody SetAiKeysDTO keys) {
+//        System.out.println(keys);
+//        return aiService.setKeys(keys.getPub_key(), keys.getPriv_key());
+//    }
 
     @Autowired
     public void setAiService(AIService aiService) {
