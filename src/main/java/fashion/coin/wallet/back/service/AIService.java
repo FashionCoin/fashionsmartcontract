@@ -167,9 +167,18 @@ public class AIService {
                 BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
                 SignBuilder.init();
                 try {
-                    logger.info("Sleep before register namr on blockchain");
-                    Thread.sleep(1000);
-                    logger.info("Wake Up");
+                    boolean isWalletExists = false;
+                    do {
+                        logger.info("Sleep before register name on blockchain");
+                        Thread.sleep(1000);
+                        logger.info("Wake Up");
+                        FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
+                        if (fshnBalanceDTO.getPub_key() != null
+                                && fshnBalanceDTO.getPub_key().equals(wallet)) {
+                            isWalletExists = true;
+                        }
+                        logger.info("isWalletExists = " + String.valueOf(isWalletExists));
+                    } while (!isWalletExists);
 
                     FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
                     if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
@@ -212,7 +221,7 @@ public class AIService {
             BigDecimal usdRate = new BigDecimal(currencyDTO.getRate()); // $1
             BigDecimal amount = usdRate.multiply(BigDecimal.TEN).setScale(3, RoundingMode.HALF_UP); // $10
             logger.info("Send " + amount + " FSHN to " + wallet);
-            transfer(amount.toString(), wallet,AIWallets.MONEYBAG);
+            transfer(amount.toString(), wallet, AIWallets.MONEYBAG);
 
         } catch (Exception e) {
             logger.error(e.getMessage());
