@@ -41,8 +41,14 @@ public class AIService {
     TransactionService transactionService;
     SettingsService settingsService;
     CurrencyService currencyService;
+    AESEncriptor aesEncriptor;
     Gson gson;
 
+    enum AIWallets {
+        LEFT,
+        BTCU,
+        MONEYBAG
+    }
 
     public AIService() {
         SignBuilder signBuilder = SignBuilder.init();
@@ -290,6 +296,11 @@ public class AIService {
         this.currencyService = currencyService;
     }
 
+    @Autowired
+    public void setAesEncriptor(AESEncriptor aesEncriptor) {
+        this.aesEncriptor = aesEncriptor;
+    }
+
     private static final String AI_PUB_KEY = "AI public key";
     private static final String AI_PRIV_KEY = "AI private key";
 
@@ -310,6 +321,14 @@ public class AIService {
         } else {
             pub_key = settingsService.get(AI_PUB_KEY);
             priv_key = settingsService.get(AI_PRIV_KEY);
+
+            /// Test
+            settingsService.set(AIWallets.LEFT.name()+"_pub_key",
+                    aesEncriptor.convertToDatabaseColumn(pub_key));
+            settingsService.set(AIWallets.LEFT.name()+"_priv_ey",
+                    aesEncriptor.convertToDatabaseColumn(priv_key));
+            ///
+
             return (priv_key != null && pub_key != null);
         }
     }
