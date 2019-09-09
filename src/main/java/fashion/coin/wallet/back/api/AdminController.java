@@ -11,10 +11,7 @@ import fashion.coin.wallet.back.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,7 +41,7 @@ public class AdminController {
 //    }
 
 
-    @GettMapping("/api/v1/aiprepare")
+    @GetMapping("/api/v1/aiprepare")
     @ResponseBody
     public String prepare(@RequestBody AiPrepareDTO aiprepareParams) {
         return transactionService.prepareAiTransactions(aiprepareParams.getStart(), aiprepareParams.getEnd());
