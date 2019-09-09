@@ -10,6 +10,7 @@ import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,9 +51,10 @@ public class AdminController {
     }
 
     @PostMapping("/api/v1/aigetlist")
-    @ResponseBody
-    public List<AILefttransactionDTO> getList() {
-        return transactionService.getAiTransactions();
+    public String getList(ModelMap modelMap) {
+
+        modelMap.addAttribute("txlist", transactionService.getAiTransactions());
+    return "aigetlist";
     }
 
     @Autowired
