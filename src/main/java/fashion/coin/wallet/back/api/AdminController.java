@@ -41,13 +41,13 @@ public class AdminController {
 //    }
 
 
-    @GetMapping("/api/v1/aiprepare")
+    @PostMapping("/api/v1/aiprepare")
     @ResponseBody
     public String prepare(@RequestBody AiPrepareDTO aiprepareParams) {
         return transactionService.prepareAiTransactions(aiprepareParams.getStart(), aiprepareParams.getEnd());
     }
 
-    @PostMapping("/api/v1/aigetlist")
+    @GetMapping("/api/v1/aigetlist")
     public String getList(ModelMap modelMap) {
 
         modelMap.addAttribute("txlist", transactionService.getAiTransactions());
