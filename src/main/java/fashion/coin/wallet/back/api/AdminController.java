@@ -44,7 +44,7 @@ public class AdminController {
 //    }
 
 
-    @PostMapping("/api/v1/aiprepare")
+    @GettMapping("/api/v1/aiprepare")
     @ResponseBody
     public String prepare(@RequestBody AiPrepareDTO aiprepareParams) {
         return transactionService.prepareAiTransactions(aiprepareParams.getStart(), aiprepareParams.getEnd());
