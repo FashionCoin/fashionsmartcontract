@@ -3,7 +3,6 @@ package fashion.coin.wallet.back.service;
 
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
-
 import com.vdurmont.emoji.EmojiParser;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -12,7 +11,7 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.SetEmailRequest;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
-import fashion.coin.wallet.back.telegram.service.TelegramDataService;
+
 import fashion.coin.wallet.back.utils.SignBuilder;
 import fashion.coin.wallet.back.utils.TweetNaCl;
 import org.slf4j.Logger;
@@ -21,17 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
 
-
 import static fashion.coin.wallet.back.service.StatisticsService.*;
-import static fashion.coin.wallet.back.telegram.FashionBot.MYBALANCE;
-import static fashion.coin.wallet.back.telegram.FashionBot.OLDBALANCE;
-import static java.lang.Character.isLetter;
+import static fashion.coin.wallet.back.service.TelegramDataService.MYBALANCE;
+import static fashion.coin.wallet.back.service.TelegramDataService.OLDBALANCE;
+
 
 /**
  * Created by JAVA-P on 22.10.2018.
@@ -127,7 +124,18 @@ public class ClientService {
                         @Override
                         public void run() {
                             try {
-                                Thread.sleep(2000);
+                                boolean isWalletExists = false;
+                                do {
+                                    logger.info("Sleep before telegramm bonus");
+                                    Thread.sleep(1000);
+                                    logger.info("Wake Up");
+                                    FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(clientWallet);
+                                    if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
+                                            && fshnBalanceDTO.getPub_key().equals(clientWallet)) {
+                                        isWalletExists = true;
+                                    }
+                                    logger.info("isWalletExists = " + String.valueOf(isWalletExists));
+                                } while (!isWalletExists);
 
                                 boolean result = aiService.transfer(balance.toString(), clientWallet, AIService.AIWallets.MONEYBAG);
                                 if (!result) {
@@ -151,7 +159,6 @@ public class ClientService {
     }
 
     private void resetTelegramBalance(String userId) {
-
 
         String myBalance = telegramDataService.getValue(userId, MYBALANCE);
         if (myBalance != null && myBalance.length() > 0) {
