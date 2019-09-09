@@ -48,6 +48,10 @@ public class AIService {
 
     Map<String, String> keyStore = new HashMap<>();
 
+    public  String getAiWallet() {
+        return getPubKey(AIWallets.LEFT);
+    }
+
     public enum AIWallets {
         LEFT,
         BTCU,

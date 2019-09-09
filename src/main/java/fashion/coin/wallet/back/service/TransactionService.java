@@ -1,10 +1,8 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
-import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.dto.TransactionDTO;
-import fashion.coin.wallet.back.dto.TransactionListRequestDTO;
-import fashion.coin.wallet.back.dto.TransactionRequestDTO;
+import com.google.inject.internal.asm.$ClassTooLargeException;
+import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.dto.blockchain.FshnHistoryTxDTO;
 import fashion.coin.wallet.back.entity.Client;
@@ -17,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 /**
@@ -37,6 +37,7 @@ public class TransactionService {
     BlockchainService blockchainService;
     ClientService clientService;
     ContactService contactService;
+    AIService aiService;
     Gson gson;
 
     @Value("${fashion.anonimous}")
@@ -79,6 +80,11 @@ public class TransactionService {
     @Autowired
     public void setContactService(ContactService contactService) {
         this.contactService = contactService;
+    }
+
+    @Autowired
+    public void setAiService(AIService aiService) {
+        this.aiService = aiService;
     }
 
     public ResultDTO send(TransactionRequestDTO request) {
@@ -143,7 +149,7 @@ public class TransactionService {
     private static final ResultDTO error200 = new ResultDTO(false, "Sender Wallet not found", 200);
     private static final ResultDTO error201 = new ResultDTO(false, "Sender not found", 201);
     private static final ResultDTO error202 = new ResultDTO(false, "Not enough money", 202);
-    private static final ResultDTO error203 = new ResultDTO(false, "Please, use crypto names to send FSHN",203);
+    private static final ResultDTO error203 = new ResultDTO(false, "Please, use crypto names to send FSHN", 203);
     private static final ResultDTO error204 = new ResultDTO(false, "Blockchain transaction not found", 204);
     private static final ResultDTO error205 = new ResultDTO(false, "Blockchain transaction error", 205);
     private static final ResultDTO error206 = new ResultDTO(false, "Data of blockchain transaction does not match the parameters passed", 206);
@@ -205,5 +211,52 @@ public class TransactionService {
                     tx.getTxhash()));
         }
         return result;
+    }
+
+
+    List<AILefttransactionDTO> resultHistory = new ArrayList<>();
+
+    public List<AILefttransactionDTO> getAiTransactions() {
+        return resultHistory;
+    }
+
+
+    public String prepareAiTransactions(long start, long end) {
+        logger.info("Prepare in");
+        new Thread(() -> {
+            try {
+
+                logger.info("Prepare start new Thread");
+                List<FshnHistoryTxDTO> history = blockchainService.getHistory(aiService.getAiWallet());
+                logger.info("Geted history. Size: " + history.size());
+                for (FshnHistoryTxDTO fshnHistoryTx : history) {
+
+                    Long txTime = Long.parseLong(fshnHistoryTx.time.secs);
+
+                    if (txTime > start && txTime < end) {
+                        AILefttransactionDTO aiLefttransactionDTO = new AILefttransactionDTO();
+                        BigDecimal amount = new BigDecimal(fshnHistoryTx.amount).movePointLeft(3);
+                        LocalDateTime time = LocalDateTime.ofEpochSecond(txTime, 0, ZoneOffset.UTC);
+                        String from = clientService.getClientByWallet(fshnHistoryTx.from);
+                        if (from == null) from = fshnHistoryTx.from;
+                        String to = clientService.getClientByWallet(fshnHistoryTx.to);
+                        if (to == null) to = fshnHistoryTx.to;
+                        aiLefttransactionDTO.setAmount(amount);
+                        aiLefttransactionDTO.setFrom(from);
+                        aiLefttransactionDTO.setTo(to);
+                        aiLefttransactionDTO.setTime(time);
+                        resultHistory.add(aiLefttransactionDTO);
+                    }
+                }
+                logger.info("Result size: " + resultHistory.size());
+
+                logger.info("Prepare end");
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
+
+        return "Ok";
     }
 }
