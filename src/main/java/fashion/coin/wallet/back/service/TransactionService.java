@@ -225,7 +225,7 @@ public class TransactionService {
         logger.info("Prepare in");
         new Thread(() -> {
             try {
-
+                resultHistory = new ArrayList<>();
                 logger.info("Prepare start new Thread");
                 List<FshnHistoryTxDTO> history = blockchainService.getHistory(aiService.getAiWallet());
                 logger.info("Geted history. Size: " + history.size());
