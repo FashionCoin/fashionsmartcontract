@@ -221,19 +221,31 @@ public class TransactionService {
     }
 
 
-    public String prepareAiTransactions(long start, long end) {
+    public String prepareAiTransactions(AiPrepareDTO params) {
         logger.info("Prepare in");
+        logger.info(gson.toJson(params));
         new Thread(() -> {
             try {
+
+                String wallet = params.getWallet();
+                if(wallet == null || wallet.length()==0){
+                    Client client = clientService.findByCryptoname(params.getCryptoname());
+                    if(client!=null){
+                        wallet = client.getWalletAddress();
+                    }else{
+                        return;
+                    }
+                }
+
                 resultHistory = new ArrayList<>();
                 logger.info("Prepare start new Thread");
-                List<FshnHistoryTxDTO> history = blockchainService.getHistory(aiService.getAiWallet());
+                List<FshnHistoryTxDTO> history = blockchainService.getHistory(wallet);
                 logger.info("Geted history. Size: " + history.size());
                 for (FshnHistoryTxDTO fshnHistoryTx : history) {
 
                     Long txTime = Long.parseLong(fshnHistoryTx.time.secs);
 
-                    if (txTime > start && txTime < end) {
+                    if (txTime > params.getStart() && txTime < params.getEnd()) {
                         AILefttransactionDTO aiLefttransactionDTO = new AILefttransactionDTO();
                         BigDecimal amount = new BigDecimal(fshnHistoryTx.amount).movePointLeft(3);
                         LocalDateTime time = LocalDateTime.ofEpochSecond(txTime, 0, ZoneOffset.UTC);
