@@ -264,7 +264,8 @@ public class TransactionService {
 
                 logger.info("Prepare end");
             } catch (Exception e) {
-                logger.error(e.getMessage());
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
                 e.printStackTrace();
             }
         }).start();

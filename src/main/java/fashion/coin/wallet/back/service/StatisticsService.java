@@ -74,6 +74,7 @@ public class StatisticsService {
             logger.info("Mail sended");
 
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }

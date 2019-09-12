@@ -95,7 +95,8 @@ public class CurrencyService {
                 }
                 currencyRateRepository.save(currencyRate);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
                 currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
 //                e.printStackTrace();
             }
@@ -116,6 +117,7 @@ public class CurrencyService {
             return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
 
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             throw new Exception(e.getMessage());
         }

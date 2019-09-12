@@ -397,6 +397,7 @@ public class ClientService {
         try {
             return clientRepository.findClientByCryptoname(cryptoname);
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
         }
         return null;
@@ -812,7 +813,8 @@ public class ClientService {
                 data.setApikey(randomToken);
                 reserveName(data);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
             }
         }
         logger.info("End reserv");
@@ -852,6 +854,7 @@ public class ClientService {
                 logger.info("ClientList size: 0");
             }
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }
@@ -889,6 +892,7 @@ public class ClientService {
 
             return client.getCryptoname();
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             return null;
         }

@@ -228,6 +228,7 @@ public class AIService {
             transfer(amount.toString(), wallet, AIWallets.MONEYBAG);
 
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }

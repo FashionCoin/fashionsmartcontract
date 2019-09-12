@@ -37,6 +37,7 @@ public class EmailService {
             mailSender.send(messagePreparator);
             logger.info("Mail to " + recipient + " sended");
         } catch (MailException e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error("Email didn't send");
             e.printStackTrace();
         }

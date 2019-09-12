@@ -89,6 +89,7 @@ public class BlockchainService {
             String balanceString = balanceDTO.balance;
             return (new BigDecimal(balanceString)).movePointLeft(3);
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error("Don't get balance for " + walletAddress);
             logger.error(e.getMessage());
         }

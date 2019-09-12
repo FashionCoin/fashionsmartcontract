@@ -1,9 +1,12 @@
 package fashion.coin.wallet.back.redirectpage.controller;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.PhoneModelDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
+import fashion.coin.wallet.back.redirectpage.service.RefcodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,15 +21,26 @@ public class RedirectPageController {
 
     Logger logger = LoggerFactory.getLogger(RedirectPageController.class);
 
+    @Autowired
+    RefcodeService refcodeService;
+
+    @Autowired
+    Gson gson;
+
     @PostMapping("/api/v1/phonemodel")
     @ResponseBody
-    public ResultDTO getPhoneModel(@RequestBody PhoneModelDTO phoneModel){
+    public ResultDTO setPhoneModel(@RequestBody PhoneModelDTO phoneModel, HttpServletRequest request) {
 
 
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        logger.info(ipAddress + " : " + gson.toJson(phoneModel));
+        refcodeService.setPhoneModel(phoneModel, ipAddress);
 
-        return new ResultDTO(true,"Ok",0);
+        return new ResultDTO(true, "Ok", 0);
     }
-
 
 
     @GetMapping("/reflink/{refcode}")
@@ -65,6 +79,7 @@ public class RedirectPageController {
 
             logger.info("redirest to https://coin.fashion/");
         } catch (Exception e) {
+            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }
