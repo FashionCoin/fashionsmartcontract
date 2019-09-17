@@ -22,6 +22,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 
 /**
@@ -158,6 +159,8 @@ public class AIService {
         }
     }
 
+    Random random = new Random();
+
     public void cryptoname(String cryptoname, String salt, String wallet) {
 
         String pub_key = getPubKey(AIWallets.LEFT);
@@ -174,7 +177,7 @@ public class AIService {
                     boolean isWalletExists = false;
                     do {
                         logger.info("Sleep before register name on blockchain");
-                        Thread.sleep(10000);
+                        Thread.sleep(random.nextInt(10000));
                         logger.info("Wake Up");
                         FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
                         if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
@@ -183,7 +186,7 @@ public class AIService {
                         }
                         logger.info("isWalletExists = " + String.valueOf(isWalletExists));
                     } while (!isWalletExists);
-
+                    Thread.sleep(random.nextInt(10000));
                     FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
                     if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000") ||
                             new BigDecimal(fshnBalanceDTO.balance).compareTo(BigDecimal.ZERO) > 0) {
