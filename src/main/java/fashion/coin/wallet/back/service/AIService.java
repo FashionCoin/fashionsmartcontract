@@ -181,7 +181,7 @@ public class AIService {
                     boolean isWalletExists = false;
                     do {
                         logger.info("Sleep before register name on blockchain");
-                        Thread.sleep(random.nextInt(10000));
+                        Thread.sleep(1000);
                         logger.info("Wake Up");
                         FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
                         if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
@@ -190,10 +190,9 @@ public class AIService {
                         }
                         logger.info("isWalletExists = " + String.valueOf(isWalletExists));
                     } while (!isWalletExists);
-                    Thread.sleep(random.nextInt(10000));
+
                     FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
-                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000") ||
-                            new BigDecimal(fshnBalanceDTO.balance).compareTo(BigDecimal.ZERO) > 0) {
+                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000") ) {
                         logger.info("Name " + cryptoname + " is already registered for " + wallet);
                         logger.info("Balance " + cryptoname + " is " + fshnBalanceDTO.balance);
                         return;
@@ -229,13 +228,6 @@ public class AIService {
 
     private void tenDollarBonus(String wallet) {
         try {
-            Thread.sleep(random.nextInt(10000));
-            FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
-            if (new BigDecimal(fshnBalanceDTO.balance).compareTo(BigDecimal.ZERO) > 0) {
-                logger.info("Balance  is " + fshnBalanceDTO.balance);
-                return;
-            }
-
             logger.info("Bonus $10");
             CurrencyDTO currencyDTO = currencyService.getCurrencyRate("USD");
             BigDecimal usdRate = new BigDecimal(currencyDTO.getRate()); // $1
