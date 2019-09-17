@@ -225,6 +225,13 @@ public class AIService {
 
     private void tenDollarBonus(String wallet) {
         try {
+            Thread.sleep(random.nextInt(10000));
+            FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
+            if (new BigDecimal(fshnBalanceDTO.balance).compareTo(BigDecimal.ZERO) > 0) {
+                logger.info("Balance  is " + fshnBalanceDTO.balance);
+                return;
+            }
+
             logger.info("Bonus $10");
             CurrencyDTO currencyDTO = currencyService.getCurrencyRate("USD");
             BigDecimal usdRate = new BigDecimal(currencyDTO.getRate()); // $1
