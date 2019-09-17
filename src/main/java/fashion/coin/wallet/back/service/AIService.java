@@ -193,7 +193,7 @@ public class AIService {
                     } while (!isWalletExists);
 
                     FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
-                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000") ) {
+                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
                         logger.info("Name " + cryptoname + " is already registered for " + wallet);
                         logger.info("Balance " + cryptoname + " is " + fshnBalanceDTO.balance);
                         return;
@@ -236,9 +236,10 @@ public class AIService {
             logger.info("Send " + amount + " FSHN to " + wallet);
             transfer(amount.toString(), wallet, AIWallets.MONEYBAG, 10000);
             Client client = clientService.findByWallet(wallet);
-                messagingService.sendNotification("change_balance",
-                        client.getWalletBalance().toString(),
-                        "topic_" + client.getWalletAddress());
+            clientService.updateBalance(client);
+            messagingService.sendNotification("change_balance",
+                    client.getWalletBalance().toString(),
+                    "topic_" + client.getWalletAddress());
 
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
