@@ -159,9 +159,12 @@ public class TransactionService {
     public List<TransactionDTO> getList(TransactionListRequestDTO request) {
 
         logger.info(gson.toJson(request));
+        Client client = null;
+        if (request.getLogin() != null) {
+            client = clientService.findByCryptoname(request.getLogin().trim());
+            if (client == null) return new ArrayList<>();
+        }
 
-        Client client = clientService.findByCryptoname(request.getLogin().trim());
-        if (client == null) return new ArrayList<>();
         if (!client.getApikey().equals(request.getApikey())) return new ArrayList<>();
         List<TransactionDTO> allTransaction = new ArrayList<>();
 
@@ -228,11 +231,11 @@ public class TransactionService {
             try {
 
                 String wallet = params.getWallet();
-                if(wallet == null || wallet.length()==0){
+                if (wallet == null || wallet.length() == 0) {
                     Client client = clientService.findByCryptoname(params.getCryptoname());
-                    if(client!=null){
+                    if (client != null) {
                         wallet = client.getWalletAddress();
-                    }else{
+                    } else {
                         return;
                     }
                 }
@@ -264,8 +267,8 @@ public class TransactionService {
 
                 logger.info("Prepare end");
             } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
-            logger.error(e.getMessage());
+                logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+                logger.error(e.getMessage());
                 e.printStackTrace();
             }
         }).start();

@@ -121,6 +121,10 @@ public class AIService {
 
 
     public boolean transfer(String amountStr, String receiver, AIWallets sender) {
+        return transfer(amountStr, receiver, sender, System.currentTimeMillis());
+    }
+
+    public boolean transfer(String amountStr, String receiver, AIWallets sender, long seedLong) {
 
 
         String pub_key = getPubKey(sender);
@@ -129,7 +133,7 @@ public class AIService {
         BigDecimal floatamount = new BigDecimal(amountStr);
 //        BigInteger amount = new BigInteger(amountStr + "000", 10);
         BigInteger amount = floatamount.movePointRight(3).toBigInteger();
-        BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
+        BigInteger seed = new BigInteger(String.valueOf(seedLong));
         SignBuilder.init();
         try {
             String sign = SignBuilder.init()
@@ -237,7 +241,7 @@ public class AIService {
             BigDecimal usdRate = new BigDecimal(currencyDTO.getRate()); // $1
             BigDecimal amount = usdRate.multiply(BigDecimal.TEN).setScale(3, RoundingMode.HALF_UP); // $10
             logger.info("Send " + amount + " FSHN to " + wallet);
-            transfer(amount.toString(), wallet, AIWallets.MONEYBAG);
+            transfer(amount.toString(), wallet, AIWallets.MONEYBAG, 10000);
 
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
