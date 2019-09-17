@@ -52,6 +52,8 @@ public class TransactionService {
         String txhash = blockchainService.sendTransaction(blockchainTransaction);
         if (!anonimousSending && transactionCoins != null && txhash != null && txhash.length() > 0) {
             transactionCoins.setTxhash(txhash);
+           List<TransactionCoins> list= transactionRepository.findAllByTxhash(txhash);
+            if(list != null && list.size()>0) return txhash;
             transactionRepository.save(transactionCoins);
         }
         return txhash;
