@@ -45,6 +45,7 @@ public class AIService {
     SettingsService settingsService;
     CurrencyService currencyService;
     AESEncriptor aesEncriptor;
+    MessagingService messagingService;
     Gson gson;
 
     Map<String, String> keyStore = new HashMap<>();
@@ -234,6 +235,10 @@ public class AIService {
             BigDecimal amount = usdRate.multiply(BigDecimal.TEN).setScale(3, RoundingMode.HALF_UP); // $10
             logger.info("Send " + amount + " FSHN to " + wallet);
             transfer(amount.toString(), wallet, AIWallets.MONEYBAG, 10000);
+            Client client = clientService.findByWallet(wallet);
+                messagingService.sendNotification("change_balance",
+                        client.getWalletBalance().toString(),
+                        "topic_" + client.getWalletAddress());
 
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
@@ -339,6 +344,11 @@ public class AIService {
     @Autowired
     public void setAesEncriptor(AESEncriptor aesEncriptor) {
         this.aesEncriptor = aesEncriptor;
+    }
+
+    @Autowired
+    public void setMessagingService(MessagingService messagingService) {
+        this.messagingService = messagingService;
     }
 
     String getPubKey(AIWallets wallet) {
