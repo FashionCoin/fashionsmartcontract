@@ -48,7 +48,7 @@ public class AIService {
 
     Map<String, String> keyStore = new HashMap<>();
 
-    public  String getAiWallet() {
+    public String getAiWallet() {
         return getPubKey(AIWallets.LEFT);
     }
 
@@ -185,8 +185,10 @@ public class AIService {
                     } while (!isWalletExists);
 
                     FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
-                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000") ||
+                            new BigDecimal(fshnBalanceDTO.balance).compareTo(BigDecimal.ZERO) > 0) {
                         logger.info("Name " + cryptoname + " is already registered for " + wallet);
+                        logger.info("Balance " + cryptoname + " is " + fshnBalanceDTO.balance);
                         return;
                     }
 
@@ -228,7 +230,7 @@ public class AIService {
             transfer(amount.toString(), wallet, AIWallets.MONEYBAG);
 
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }
