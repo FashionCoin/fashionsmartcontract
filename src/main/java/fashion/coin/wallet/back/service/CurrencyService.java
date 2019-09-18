@@ -45,10 +45,15 @@ public class CurrencyService {
     @Autowired
     CurrencyRateRepository currencyRateRepository;
 
+    @Autowired
+    SettingsService settingsService;
+
 
     private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
     private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
     private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+    private static final String LASTRATE = "lastrate";
+
 
     private static final String USD_PRICE = "1000";
 
@@ -95,8 +100,8 @@ public class CurrencyService {
                 }
                 currencyRateRepository.save(currencyRate);
             } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
-            logger.error(e.getMessage());
+                logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+                logger.error(e.getMessage());
                 currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
 //                e.printStackTrace();
             }
@@ -117,7 +122,7 @@ public class CurrencyService {
             return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
 
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             throw new Exception(e.getMessage());
         }
@@ -126,8 +131,20 @@ public class CurrencyService {
 
     public List<CurrencyDTO> getCurrencyList() {
         List<CurrencyDTO> currencyDTOList = new ArrayList<>();
-        for (String currency : getAvailableCrypts()) {
-            currencyDTOList.add(getCurrencyRate(currency));
+        try {
+            for (String currency : getAvailableCrypts()) {
+                currencyDTOList.add(getCurrencyRate(currency));
+            }
+        } catch (Exception e) {
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
+        }
+        if (currencyDTOList.size() == 0) {
+            String json = settingsService.get(LASTRATE);
+            currencyDTOList = gson.fromJson(json, List.class);
+            logger.info("Read from base: "+gson.toJson(currencyDTOList));
+        } else {
+            settingsService.set(LASTRATE, gson.toJson(currencyDTOList));
         }
         return currencyDTOList;
     }
