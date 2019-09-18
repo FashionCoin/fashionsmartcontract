@@ -24,7 +24,9 @@ public class SettingsService {
     }
 
     public Settings set(String key, String value) {
-        Settings settings = new Settings(key, value);
+        Settings settings = settingsRepository.findOneByKey(key);
+        if(settings==null) settings = new Settings(key, value);
+        else settings.setValue(value);
         settingsRepository.save(settings);
         return settings;
     }
