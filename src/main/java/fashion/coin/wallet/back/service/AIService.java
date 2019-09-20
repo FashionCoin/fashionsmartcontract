@@ -23,6 +23,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -164,10 +165,12 @@ public class AIService {
         }
     }
 
-    Random random = new Random();
+    ConcurrentHashMap<String, String> blockKey = new ConcurrentHashMap<>();
 
     public void cryptoname(String cryptoname, String salt, String wallet) {
 
+        if (blockKey.containsKey(wallet)) return;
+        else blockKey.put(wallet, cryptoname);
         String pub_key = getPubKey(AIWallets.LEFT);
         String priv_key = getPrivKey(AIWallets.LEFT);
 
@@ -196,6 +199,7 @@ public class AIService {
                     if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
                         logger.info("Name " + cryptoname + " is already registered for " + wallet);
                         logger.info("Balance " + cryptoname + " is " + fshnBalanceDTO.balance);
+                        if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
                         return;
                     }
 
@@ -217,6 +221,8 @@ public class AIService {
                     logger.info(tx_hash);
 
                     tenDollarBonus(wallet);
+                    if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
+                    return;
 
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -240,7 +246,7 @@ public class AIService {
             messagingService.sendNotification("change_balance",
                     client.getWalletBalance().toString(),
                     "topic_" + client.getWalletAddress());
-
+            if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
