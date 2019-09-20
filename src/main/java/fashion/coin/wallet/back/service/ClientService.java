@@ -83,6 +83,12 @@ public class ClientService {
                     return error100;
             }
 
+            if(client == null) {
+                client = clientRepository.findClientByApikey(data.getApikey());
+                if(client != null)
+                    return error117;
+            }
+
             BlockchainTransactionDTO jsonTransaction = data.getBlockchainTransaction();
             String pub_key = jsonTransaction.getBody().getPub_key();
             if (pub_key == null) return error106;
@@ -109,6 +115,7 @@ public class ClientService {
             }
 
             client.setRegisteredFrom(FROMMOBILE);
+
             clientRepository.save(client);
             emojiCodeService.registerClient(client);
 
