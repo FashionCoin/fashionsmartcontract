@@ -59,6 +59,9 @@ public class CurrencyService {
 
     LocalDateTime lastUpdate = LocalDateTime.now().minusDays(1);
 
+    Map<String, BigDecimal> lastLatokenPrice = new HashMap<>();
+
+
     public List<String> getAvailableCrypts() {
         return Stream.of("USD", "BTC", "ETH", "UAH").collect(Collectors.toList());
     }
@@ -142,7 +145,7 @@ public class CurrencyService {
         if (currencyDTOList.size() == 0) {
             String json = settingsService.get(LASTRATE);
             currencyDTOList = gson.fromJson(json, List.class);
-            logger.info("Read from base: "+gson.toJson(currencyDTOList));
+            logger.info("Read from base: " + gson.toJson(currencyDTOList));
         } else {
             settingsService.set(LASTRATE, gson.toJson(currencyDTOList));
         }
@@ -150,6 +153,8 @@ public class CurrencyService {
     }
 
     public BigDecimal getRateForCoinLatoken(String coinName) {
+        BigDecimal rate = null;
+
         try {
             RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
 
@@ -160,11 +165,18 @@ public class CurrencyService {
 
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
             logger.info("LA: " + gson.toJson(result));
-            return new BigDecimal(result.getClose());
+            if (result != null) {
+                rate = new BigDecimal(result.getClose());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        if (rate != null) {
+            lastLatokenPrice.put(coinName, rate);
+        } else {
+            rate = lastLatokenPrice.get(coinName);
+        }
+        return rate;
     }
 
 }
