@@ -190,6 +190,7 @@ public class CurrencyService {
                                 currency, beforeTime);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, currencyRate.getRate().toString());
                 currencyList.add(currencyDTO);
+                logger.info(gson.toJson(currencyRate));
             }
             logger.info("currencyList.size()=" + currencyList.size());
         } catch (Exception e) {
