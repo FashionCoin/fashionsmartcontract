@@ -179,6 +179,23 @@ public class CurrencyService {
         return rate;
     }
 
+    public List<CurrencyDTO> getCurrencyHistory(LocalDateTime beforeTime) {
+        List<CurrencyDTO> currencyList = new ArrayList<>();
+        List<String> crypts = getAvailableCrypts();
+        try {
+            for (String currency : crypts) {
+                CurrencyRate currencyRate =
+                        currencyRateRepository.findTopByCurrencyAndDateTimeIsBeforeOrderByDateTime(
+                                currency, beforeTime);
+                CurrencyDTO currencyDTO = new CurrencyDTO(currency, currencyRate.getRate().toString());
+                currencyList.add(currencyDTO);
+            }
+        } catch (Exception e) {
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
+        }
+        return currencyList;
+    }
 }
 
 class BitFinexRateDTO {

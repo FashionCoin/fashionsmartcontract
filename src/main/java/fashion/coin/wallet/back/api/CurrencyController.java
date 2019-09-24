@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by JAVA-P on 24.10.2018.
@@ -35,6 +38,16 @@ public class CurrencyController {
     @ResponseBody
     CurrencyDTO getCurrencyRate(@RequestBody String currency) {
         return currencyService.getCurrencyRate(currency);
+    }
+
+    @PostMapping("/api/v1/currencyhistory")
+    @ResponseBody
+    List<CurrencyDTO> getCurrencyHistory(@RequestBody Map<String,Long> params) {
+        if(params.containsKey("time")){
+            Long time = params.get("time");
+            return currencyService.getCurrencyHistory(LocalDateTime.ofEpochSecond(time,0, ZoneOffset.UTC));
+        }
+        return currencyService.getCurrencyList();
     }
 
     @Autowired
