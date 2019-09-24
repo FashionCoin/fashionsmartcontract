@@ -186,7 +186,7 @@ public class CurrencyService {
             logger.info("Before Time: " + beforeTime);
             for (String currency : crypts) {
                 CurrencyRate currencyRate =
-                        currencyRateRepository.findTopByCurrencyAndDateTimeIsBeforeOrderByDateTimeDesc(
+                        currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(
                                 currency, beforeTime);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, currencyRate.getRate().toString());
                 currencyList.add(currencyDTO);
