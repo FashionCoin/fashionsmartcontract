@@ -8,6 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
+import static java.time.Duration.ofSeconds;
+
 @SpringBootApplication
 @EnableScheduling
 public class FashionCoinWallet {
@@ -17,8 +21,12 @@ public class FashionCoinWallet {
     }
 
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+
+        return restTemplateBuilder
+                .setConnectTimeout(500000)
+                .setReadTimeout(500000)
+                .build();
     }
 
 
