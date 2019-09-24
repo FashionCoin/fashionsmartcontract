@@ -9,5 +9,5 @@ public interface CurrencyRateRepository extends JpaRepository<CurrencyRate,Long>
 
     CurrencyRate findTopByCurrencyAndDateTimeIsAfter(String currency, LocalDateTime afterDateTime);
     CurrencyRate findTopByCurrencyOrderByDateTimeDesc(String currency);
-    CurrencyRate findTopByCurrencyAndDateTimeIsBeforeOrderByDateTime(String currency, LocalDateTime beforeTime);
+    CurrencyRate findTopByCurrencyAndDateTimeIsBeforeOrderByDateTimeDesc(String currency, LocalDateTime beforeTime);
 }
