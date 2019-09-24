@@ -1,25 +1,17 @@
 package fashion.coin.wallet.back.service;
 
-import com.google.api.client.http.HttpHeaders;
 import com.google.gson.Gson;
-import com.google.inject.internal.cglib.proxy.$Callback;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,6 +40,9 @@ public class CurrencyService {
     @Autowired
     SettingsService settingsService;
 
+    @Autowired
+    RestTemplate restTemplate;
+
 
     private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
     private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
@@ -68,7 +63,7 @@ public class CurrencyService {
 
 
     public BigDecimal getRateForCoinBitfinex(String coinName) {
-        RestTemplate restTemplate = new RestTemplate();
+
         logger.info(coinName);
         BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
         BitFinexRateDTO last = result[0];
@@ -116,7 +111,7 @@ public class CurrencyService {
 
     private BigDecimal getRateFromNBU(String currency) throws Exception {
         try {
-            RestTemplate restTemplate = new RestTemplate();
+
 
             ArrayList<LinkedHashMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
 
@@ -156,12 +151,7 @@ public class CurrencyService {
         BigDecimal rate = null;
 
         try {
-            RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
 
-            RestTemplate restTemplate = restTemplateBuilder
-                    .setConnectTimeout(1000)
-                    .setReadTimeout(1000)
-                    .build();
 
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
             logger.info("LA: " + gson.toJson(result));
