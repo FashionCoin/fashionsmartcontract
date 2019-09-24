@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +41,8 @@ public class RedirectPageController {
 
 
     @GetMapping("/reflink/{refcode}")
-    public void redirectPageExecute(HttpServletRequest request, HttpServletResponse responce) {
+    public void redirectPageExecute(HttpServletRequest request, HttpServletResponse responce,
+                                    @PathVariable String refcode) {
 
         try {
 
@@ -78,6 +76,9 @@ public class RedirectPageController {
             responce.sendRedirect("https://coin.fashion/");
 
             logger.info("redirest to https://coin.fashion/");
+
+            refcodeService.saveRefCode(refcode,ipAddress,toReturn.name(),userAgent);
+
         } catch (Exception e) {
             logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());

@@ -27,7 +27,7 @@ public class RefcodeService {
     ClientService clientService;
 
 
-    Refcode saveRefCode(String code, String ip, String os, String useragent) {
+   public Refcode saveRefCode(String code, String ip, String os, String useragent) {
         Refcode refcode = new Refcode(code, ip, os, useragent);
         refcodeRepository.save(refcode);
         return refcode;
