@@ -3,6 +3,8 @@ package fashion.coin.wallet.back.api;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.service.CurrencyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import java.util.Map;
  */
 @Controller
 public class CurrencyController {
+    Logger logger = LoggerFactory.getLogger(CurrencyController.class);
 
     CurrencyService currencyService;
 
@@ -45,6 +48,7 @@ public class CurrencyController {
     List<CurrencyDTO> getCurrencyHistory(@RequestBody Map<String,Long> params) {
         if(params.containsKey("time")){
             Long time = params.get("time");
+            logger.info("time:"+time);
             return currencyService.getCurrencyHistory(LocalDateTime.ofEpochSecond(time,0, ZoneOffset.UTC));
         }
         return currencyService.getCurrencyList();

@@ -183,6 +183,7 @@ public class CurrencyService {
         List<CurrencyDTO> currencyList = new ArrayList<>();
         List<String> crypts = getAvailableCrypts();
         try {
+            logger.info("Before Time: " + beforeTime);
             for (String currency : crypts) {
                 CurrencyRate currencyRate =
                         currencyRateRepository.findTopByCurrencyAndDateTimeIsBeforeOrderByDateTime(
@@ -190,6 +191,7 @@ public class CurrencyService {
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, currencyRate.getRate().toString());
                 currencyList.add(currencyDTO);
             }
+            logger.info("currencyList.size()=" + currencyList.size());
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
