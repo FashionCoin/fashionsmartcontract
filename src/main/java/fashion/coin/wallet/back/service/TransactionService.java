@@ -165,6 +165,9 @@ public class TransactionService {
         if (request.getLogin() != null) {
             client = clientService.findByCryptoname(request.getLogin().trim());
             if (client == null) return new ArrayList<>();
+        }else {
+            logger.error("Login is empty: "+gson.toJson(request));
+            return  new ArrayList<>();
         }
 
         if (!client.getApikey().equals(request.getApikey())) return new ArrayList<>();

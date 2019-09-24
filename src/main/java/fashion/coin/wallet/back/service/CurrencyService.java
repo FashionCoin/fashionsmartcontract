@@ -169,7 +169,8 @@ public class CurrencyService {
                 rate = new BigDecimal(result.getClose());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
         }
         if (rate != null) {
             lastLatokenPrice.put(coinName, rate);
