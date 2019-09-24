@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
@@ -113,7 +114,7 @@ public class CurrencyService {
         try {
 
 
-            ArrayList<LinkedHashMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
+            ArrayList<LinkedTreeMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
 
             responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
             Object usd = responce.get(0).get("rate");
