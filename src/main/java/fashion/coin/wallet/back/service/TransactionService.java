@@ -52,8 +52,8 @@ public class TransactionService {
         String txhash = blockchainService.sendTransaction(blockchainTransaction);
         if (!anonimousSending && transactionCoins != null && txhash != null && txhash.length() > 0) {
             transactionCoins.setTxhash(txhash);
-           List<TransactionCoins> list= transactionRepository.findAllByTxhash(txhash);
-            if(list != null && list.size()>0) return txhash;
+            List<TransactionCoins> list = transactionRepository.findAllByTxhash(txhash);
+            if (list != null && list.size() > 0) return txhash;
             transactionRepository.save(transactionCoins);
         }
         return txhash;
@@ -159,21 +159,21 @@ public class TransactionService {
     public static final String COIN_SCALE = "1000";
 
     public List<TransactionDTO> getList(TransactionListRequestDTO request) {
+        try {
+            logger.info(gson.toJson(request));
+            Client client = null;
+            if (request.getLogin() != null) {
+                client = clientService.findByCryptoname(request.getLogin().trim());
+                if (client == null) return new ArrayList<>();
+            } else {
+                logger.error("Login is empty: " + gson.toJson(request));
+                return new ArrayList<>();
+            }
 
-        logger.info(gson.toJson(request));
-        Client client = null;
-        if (request.getLogin() != null) {
-            client = clientService.findByCryptoname(request.getLogin().trim());
-            if (client == null) return new ArrayList<>();
-        }else {
-            logger.error("Login is empty: "+gson.toJson(request));
-            return  new ArrayList<>();
-        }
+            if (!client.getApikey().equals(request.getApikey())) return new ArrayList<>();
+            List<TransactionDTO> allTransaction = new ArrayList<>();
 
-        if (!client.getApikey().equals(request.getApikey())) return new ArrayList<>();
-        List<TransactionDTO> allTransaction = new ArrayList<>();
-
-        // TODO: rewrite
+            // TODO: rewrite
         /*
         List<TransactionCoins> sended = transactionRepository.findAllBySender(client);
         if (sended != null && !sended.isEmpty()) allTransaction.addAll(adaptToDTO(sended, true));
@@ -182,33 +182,39 @@ public class TransactionService {
         //
          */
 
-        List<FshnHistoryTxDTO> fshnHistoryTxList = blockchainService.getHistory(client.getWalletAddress());
-        for (FshnHistoryTxDTO fshnHistoryTx : fshnHistoryTxList) {
-            TransactionDTO transactionDTO = new TransactionDTO();
-            if (fshnHistoryTx.from.equals(client.getWalletAddress())) {
-                transactionDTO.setSender(client.getCryptoname());
-                String contragent = clientService.getClientByWallet(fshnHistoryTx.to);
-                if (contragent == null || contragent.length() == 0) {
-                    contragent = fshnHistoryTx.to;
+            List<FshnHistoryTxDTO> fshnHistoryTxList = blockchainService.getHistory(client.getWalletAddress());
+            for (FshnHistoryTxDTO fshnHistoryTx : fshnHistoryTxList) {
+                TransactionDTO transactionDTO = new TransactionDTO();
+                if (fshnHistoryTx.from.equals(client.getWalletAddress())) {
+                    transactionDTO.setSender(client.getCryptoname());
+                    String contragent = clientService.getClientByWallet(fshnHistoryTx.to);
+                    if (contragent == null || contragent.length() == 0) {
+                        contragent = fshnHistoryTx.to;
+                    }
+                    transactionDTO.setReceiver(contragent);
+                } else {
+                    transactionDTO.setReceiver(client.getCryptoname());
+                    String contragent = clientService.getClientByWallet(fshnHistoryTx.from);
+                    if (contragent == null || contragent.length() == 0) {
+                        contragent = fshnHistoryTx.from;
+                    }
+                    transactionDTO.setSender(contragent);
                 }
-                transactionDTO.setReceiver(contragent);
-            } else {
-                transactionDTO.setReceiver(client.getCryptoname());
-                String contragent = clientService.getClientByWallet(fshnHistoryTx.from);
-                if (contragent == null || contragent.length() == 0) {
-                    contragent = fshnHistoryTx.from;
-                }
-                transactionDTO.setSender(contragent);
+                BigDecimal amount = (new BigDecimal(fshnHistoryTx.amount)).movePointLeft(3);
+                transactionDTO.setAmount(amount);
+                Long timestamp = Long.parseLong(fshnHistoryTx.time.secs) * 1000 + (fshnHistoryTx.time.nanos / 100000);
+                transactionDTO.setTimestamp(timestamp);
+                transactionDTO.setTxhash("");
+                allTransaction.add(transactionDTO);
             }
-            BigDecimal amount = (new BigDecimal(fshnHistoryTx.amount)).movePointLeft(3);
-            transactionDTO.setAmount(amount);
-            Long timestamp = Long.parseLong(fshnHistoryTx.time.secs) * 1000 + (fshnHistoryTx.time.nanos / 100000);
-            transactionDTO.setTimestamp(timestamp);
-            transactionDTO.setTxhash("");
-            allTransaction.add(transactionDTO);
+            Collections.sort(allTransaction);
+            return allTransaction;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+
         }
-        Collections.sort(allTransaction);
-        return allTransaction;
+        return new ArrayList<>();
     }
 
     private List<TransactionDTO> adaptToDTO(List<TransactionCoins> transactionList, boolean isSended) {
