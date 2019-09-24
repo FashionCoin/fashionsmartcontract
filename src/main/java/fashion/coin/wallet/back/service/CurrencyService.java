@@ -152,10 +152,8 @@ public class CurrencyService {
         BigDecimal rate = null;
 
         try {
-
-
             LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
-            logger.info("LA: " + gson.toJson(result));
+//            logger.info("LA: " + gson.toJson(result));
             if (result != null) {
                 rate = new BigDecimal(result.getClose());
             }
