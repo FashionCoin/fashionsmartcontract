@@ -114,6 +114,17 @@ public class ClientService {
                 client.setEncryptedhash(data.getEncryptedhash());
             }
 
+/*          IMPORTANT! Do not delete!
+
+            //generating encrypted seed
+            String secretKey = result.get("priv_key");
+            byte[] secretKeyBytes = SignBuilder.hexStringToByteArray(secretKey);
+            byte[] key = Arrays.copyOfRange(secretKeyBytes, 0, 16);
+            byte[] vi = Arrays.copyOfRange(secretKeyBytes, 16, 32);
+
+            String sha256Encrypted = AESEncriptor.encrypt(sha256, key, vi);
+*/
+
             client.setRegisteredFrom(FROMMOBILE);
 
             clientRepository.save(client);
