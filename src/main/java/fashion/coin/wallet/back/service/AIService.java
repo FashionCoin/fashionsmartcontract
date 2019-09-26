@@ -220,7 +220,7 @@ public class AIService {
                     String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
                     logger.info(tx_hash);
 
-                    tenDollarBonus(wallet);
+//                    tenDollarBonus(wallet);
                     if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
                     return;
 
