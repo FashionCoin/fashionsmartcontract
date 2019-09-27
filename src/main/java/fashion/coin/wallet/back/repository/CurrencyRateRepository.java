@@ -15,7 +15,7 @@ public interface CurrencyRateRepository extends JpaRepository<CurrencyRate, Long
 
     CurrencyRate findTopByCurrencyAndDateTimeIsBeforeOrderByDateTimeDesc(String currency, LocalDateTime beforeTime);
 
-    @Query(value = "SELECT avg(currency_rate.rate) FROM currency_rate WHERE currency=?1 AND date_time BETWEEN ?2+' 00:00:00' AND ?2+' 23:59:59'",
+    @Query(value = "SELECT avg(currency_rate.rate) FROM currency_rate WHERE currency=?1 AND date_time BETWEEN ?2  AND ?3 ",
             nativeQuery = true)
-    double getAverageCurrency(String currency, String date);
+    double getAverageCurrency(String currency, String startDate, String endDate);
 }
