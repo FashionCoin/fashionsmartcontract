@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,6 +53,7 @@ public class CurrencyService {
     private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
     private static final String LASTRATE = "lastrate";
 
+    DecimalFormat df = new DecimalFormat("#.00000000");
 
     private static final String USD_PRICE = "1000";
 
@@ -193,18 +195,19 @@ public class CurrencyService {
         return currencyList;
     }
 
+
+
     public List<CurrencyDTO> getAverageByDate(String date) {
         List<CurrencyDTO> currencyList = new ArrayList<>();
         List<String> crypts = getAvailableCrypts();
         try {
-            LocalDate test = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
             logger.info("Average for: " + date);
             LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00",DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59",DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
                 BigDecimal rate = BigDecimal.valueOf(currencyRateRepository.getAverageCurrency(currency,
                         dateStart, dateEnd));
-                CurrencyDTO currencyDTO = new CurrencyDTO(currency, rate.toString());
+                CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format( rate));
                 currencyList.add(currencyDTO);
                 logger.info(gson.toJson(currencyDTO));
             }
