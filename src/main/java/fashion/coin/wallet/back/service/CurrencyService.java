@@ -200,7 +200,7 @@ public class CurrencyService {
             LocalDate test = LocalDate.parse(date,DateTimeFormatter.ISO_DATE);
             logger.info("Average for: " + date);
             for (String currency : crypts) {
-                BigDecimal rate = currencyRateRepository.getAverageCurrency(currency, date);
+                BigDecimal rate = BigDecimal.valueOf( currencyRateRepository.getAverageCurrency(currency, date));
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, rate.toString());
                 currencyList.add(currencyDTO);
                 logger.info(gson.toJson(currencyDTO));
