@@ -17,5 +17,5 @@ public interface CurrencyRateRepository extends JpaRepository<CurrencyRate, Long
 
     @Query(value = "SELECT avg(currency_rate.rate) FROM currency_rate WHERE currency=?1 AND date_time BETWEEN ?2  AND ?3 ",
             nativeQuery = true)
-    double getAverageCurrency(String currency, String startDate, String endDate);
+    double getAverageCurrency(String currency, LocalDateTime startDate, LocalDateTime endDate);
 }

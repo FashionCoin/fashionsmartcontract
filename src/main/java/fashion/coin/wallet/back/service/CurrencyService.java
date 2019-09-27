@@ -199,10 +199,11 @@ public class CurrencyService {
         try {
             LocalDate test = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
             logger.info("Average for: " + date);
+            LocalDateTime dateStart = LocalDateTime.parse(date + " 00:00:00");
+            LocalDateTime dateEnd = LocalDateTime.parse(date + " 23:59:59");
             for (String currency : crypts) {
                 BigDecimal rate = BigDecimal.valueOf(currencyRateRepository.getAverageCurrency(currency,
-                        date + " 00:00:00",
-                        date + " 23:59:59"));
+                        dateStart, dateEnd));
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, rate.toString());
                 currencyList.add(currencyDTO);
                 logger.info(gson.toJson(currencyDTO));
