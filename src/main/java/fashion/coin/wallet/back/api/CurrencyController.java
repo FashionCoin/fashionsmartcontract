@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +54,16 @@ public class CurrencyController {
         }
         return currencyService.getCurrencyList();
     }
+
+    @PostMapping("/api/v1/currencyavg")
+    @ResponseBody
+    List<CurrencyDTO> getCurrencyAverage(@RequestBody Map<String,String> params) {
+        if(params.containsKey("date")){
+            return currencyService.getAverageByDate(params.get("date"));
+        }
+        return new ArrayList<>();
+    }
+
 
     @Autowired
     public void setCurrencyService(CurrencyService currencyService) {

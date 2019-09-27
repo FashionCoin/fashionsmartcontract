@@ -13,7 +13,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -183,6 +185,26 @@ public class CurrencyService {
                 logger.info(gson.toJson(currencyRate));
             }
             logger.info("currencyList.size()=" + currencyList.size());
+        } catch (Exception e) {
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
+            e.printStackTrace();
+        }
+        return currencyList;
+    }
+
+    public List<CurrencyDTO> getAverageByDate(String date) {
+        List<CurrencyDTO> currencyList = new ArrayList<>();
+        List<String> crypts = getAvailableCrypts();
+        try {
+            LocalDate test = LocalDate.parse(date,DateTimeFormatter.ISO_DATE);
+            logger.info("Average for: " + date);
+            for (String currency : crypts) {
+                BigDecimal rate = currencyRateRepository.getAverageCurrency(currency, date);
+                CurrencyDTO currencyDTO = new CurrencyDTO(currency, rate.toString());
+                currencyList.add(currencyDTO);
+                logger.info(gson.toJson(currencyDTO));
+            }
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
