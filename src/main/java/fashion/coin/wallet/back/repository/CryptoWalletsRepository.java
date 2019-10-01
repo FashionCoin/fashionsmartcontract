@@ -2,6 +2,9 @@ package fashion.coin.wallet.back.repository;
 
 import fashion.coin.wallet.back.entity.CryptoWallets;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +24,11 @@ public interface CryptoWalletsRepository extends JpaRepository<CryptoWallets, Lo
     CryptoWallets findTopByCryptonameAndCurrency(String cryptoname, String currency);
 
     CryptoWallets findTopByCurrencyAndWallet(String currency, String wallet);
+
+    @Modifying
+    @Transactional
+    @Query("delete from CryptoWallets cw where cw.currency = ?1 and  cw.cryptoname = ?2 ")
+    void deleteByCurrencyAndCryptoname(String currency, String cryptoname);
 
 
 }
