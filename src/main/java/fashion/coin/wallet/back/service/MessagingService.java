@@ -34,7 +34,7 @@ public class MessagingService {
     private static final String BODY = "body";
     private static final String TOPIC = "topic";
 
-    private static final String GOOGLE_CREDENTIALS_PATH = "/opt/walletback/firebase/fshn-wallet-3ce46f67b574.json";
+    private static final String GOOGLE_CREDENTIALS_PATH = "/opt/walletback/firebase/fshn-wallet-54f3cee3ccc0.json";
 
 
     public String sendNotification(String title, String body, String to) {
