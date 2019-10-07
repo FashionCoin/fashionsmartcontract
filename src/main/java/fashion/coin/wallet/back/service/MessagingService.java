@@ -23,6 +23,7 @@ public class MessagingService {
 
     private static final String PROJECT_ID = "fshn-wallet";
     private static final String BASE_URL = "https://fcm.googleapis.com";
+//    private static final String FCM_SEND_ENDPOINT = "/v1/projects/%s/messages:send";
     private static final String FCM_SEND_ENDPOINT = "/v1/projects/%s/messages:send";
     private static final String URL = BASE_URL + FCM_SEND_ENDPOINT;
 
@@ -34,7 +35,7 @@ public class MessagingService {
     private static final String BODY = "body";
     private static final String TOPIC = "topic";
 
-    private static final String GOOGLE_CREDENTIALS_PATH = "/opt/walletback/firebase/fshn-wallet-firebase-adminsdk-hlfp2-352376f465.json";
+    private static final String GOOGLE_CREDENTIALS_PATH = "/opt/walletback/firebase/fshn-wallet-firebase-adminsdk-hlfp2-d8e79e620f.json";
 
 
     public String sendNotification(String title, String body, String to) {
