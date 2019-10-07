@@ -21,7 +21,7 @@ public class MessagingService {
 
     private Gson gson;
 
-    private static final String PROJECT_ID = "fc-wallet";
+    private static final String PROJECT_ID = "fshn-wallet";
     private static final String BASE_URL = "https://fcm.googleapis.com";
     private static final String FCM_SEND_ENDPOINT = "/v1/projects/%s/messages:send";
     private static final String URL = BASE_URL + FCM_SEND_ENDPOINT;
