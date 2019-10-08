@@ -4,6 +4,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.Scanner;
 
 @Service
 public class MessagingService {
+
+    Logger logger = LoggerFactory.getLogger(MessagingService.class);
 
     private Gson gson;
 
@@ -60,7 +64,7 @@ public class MessagingService {
 
        jNotificationMessage.add(MESSAGE_KEY, messagePayload);
 
-        System.out.println(gson.toJson(jNotificationMessage) + "\n");
+       logger.info(gson.toJson(jNotificationMessage) + "\n");
 
         return jNotificationMessage;
     }
@@ -134,12 +138,12 @@ public class MessagingService {
 
             if (responseCode == 200) {
                 response = inputstreamToString(connection.getInputStream());
-                System.out.println("Message sent to Firebase for delivery, response:");
-                System.out.println(response);
+             logger.info("Message sent to Firebase for delivery, response:");
+                logger.info(response);
             } else {
-                System.out.println("Unable to send message to Firebase:");
+                logger.error("Unable to send message to Firebase:");
                 response = inputstreamToString(connection.getErrorStream());
-                System.out.println(response);
+                logger.error(response);
             }
             return response;
         } catch (Exception e) {
