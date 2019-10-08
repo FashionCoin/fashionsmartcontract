@@ -52,7 +52,7 @@ public class MessagingService {
 
         JsonObject messagePayload = jNotificationMessage.get(MESSAGE_KEY).getAsJsonObject();
 
-//        messagePayload.add("data", buildDataOverridePayload(title, body));
+        messagePayload.add("data", buildDataOverridePayload(title, body));
 
         messagePayload.add("android", buildAndroidOverridePayload());
 
@@ -114,8 +114,7 @@ public class MessagingService {
     private JsonObject buildApsOverridePayload(String title, String body) {
         JsonObject badgePayload = new JsonObject();
         badgePayload.addProperty("badge", 1);
-        badgePayload.addProperty("title", title );
-        badgePayload.addProperty("body", body );
+        badgePayload.add("alert", buildDataOverridePayload(title,body));
         badgePayload.addProperty("sound", "default");
 
         JsonObject apsPayload = new JsonObject();
@@ -123,6 +122,8 @@ public class MessagingService {
 
         return apsPayload;
     }
+
+
 
     private String sendMessage(JsonObject fcmMessage, String projectId){
         try {
