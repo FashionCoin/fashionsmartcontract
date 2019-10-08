@@ -48,13 +48,13 @@ public class MessagingService {
 
         JsonObject messagePayload = jNotificationMessage.get(MESSAGE_KEY).getAsJsonObject();
 
-        messagePayload.add("data", buildDataOverridePayload(title, body));
+//        messagePayload.add("data", buildDataOverridePayload(title, body));
 
         messagePayload.add("android", buildAndroidOverridePayload());
 
         JsonObject apnsPayload = new JsonObject();
         apnsPayload.add("headers", buildApnsHeadersOverridePayload());
-        apnsPayload.add("payload", buildApsOverridePayload());
+        apnsPayload.add("payload", buildApsOverridePayload(title, body));
 
         messagePayload.add("apns", apnsPayload); // Apple Push Notification Service specific options.
 
@@ -107,9 +107,12 @@ public class MessagingService {
         return apnsHeaders;
     }
 
-    private JsonObject buildApsOverridePayload() {
+    private JsonObject buildApsOverridePayload(String title, String body) {
         JsonObject badgePayload = new JsonObject();
         badgePayload.addProperty("badge", 1);
+        badgePayload.addProperty("title", title );
+        badgePayload.addProperty("body", body );
+        badgePayload.addProperty("sound", "default");
 
         JsonObject apsPayload = new JsonObject();
         apsPayload.add("aps", badgePayload);
