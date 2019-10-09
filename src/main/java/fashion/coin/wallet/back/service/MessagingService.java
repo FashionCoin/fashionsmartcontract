@@ -113,7 +113,6 @@ public class MessagingService {
 
     private JsonObject buildApsOverridePayload(String title, String body) {
         JsonObject badgePayload = new JsonObject();
-        badgePayload.addProperty("badge", 1);
         badgePayload.add("alert", buildDataOverridePayload(title,body));
         badgePayload.addProperty("sound", "default");
 
