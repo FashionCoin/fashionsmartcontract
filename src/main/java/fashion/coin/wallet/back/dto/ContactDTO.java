@@ -15,14 +15,16 @@ public class ContactDTO {
     String phone;
     String walletAddress;
     String avatar;
+    boolean avaExists;
 
     public ContactDTO() {
     }
 
-    public ContactDTO(String login, String phone, String walletAddress, String avatar) {
+    public ContactDTO(String login, String phone, String walletAddress, String avatar, boolean avaExists) {
         this.login = login;
         this.phone = phone;
         this.walletAddress = walletAddress;
+        this.avaExists = avaExists;
     }
 
     public String getLogin() {
@@ -55,5 +57,13 @@ public class ContactDTO {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public boolean isAvaExists() {
+        return avaExists;
+    }
+
+    public void setAvaExists(boolean avaExists) {
+        this.avaExists = avaExists;
     }
 }

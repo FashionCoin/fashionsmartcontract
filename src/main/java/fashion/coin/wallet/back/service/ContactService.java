@@ -84,7 +84,8 @@ public class ContactService {
                         contact.getFriend().getCryptoname(),
                         contact.getFriend().getPhone(),
                         contact.getFriend().getWalletAddress(),
-                        contact.getFriend().getAvatar()));
+                        contact.getFriend().getAvatar(),
+                        contact.getFriend().avaExists()));
             }
         }
         return result;
