@@ -71,21 +71,29 @@ public class ClientService {
             if (data.getWalletAddress() == null || data.getWalletAddress().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
                 return error101;
             }
-
-
-            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
-            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase().trim();
-
-            Client client = clientRepository.findClientByCryptoname(cryptoname);
-            if (data.getApikey() == null) return error107;
-            if (client != null) {
-                if (client.getApikey() != null && !client.getApikey().equals(data.getApikey()))
-                    return error100;
+            String cryptoname = null;
+            Client client;
+// Вход из ботов по apiKey
+            client = clientRepository.findClientByApikey(data.getCryptoname());
+            if (client != null && (client.getWalletAddress() == null || client.getWalletAddress().length() == 0)) {
+                cryptoname = client.getCryptoname();
             }
-
-            if(client == null) {
+            //
+            if (cryptoname == null) {
+                cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+                if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase().trim();
+            }
+            if (client == null) {
+                client = clientRepository.findClientByCryptoname(cryptoname);
+                if (data.getApikey() == null) return error107;
+                if (client != null) {
+                    if (client.getApikey() != null && !client.getApikey().equals(data.getApikey()))
+                        return error100;
+                }
+            }
+            if (client == null) {
                 client = clientRepository.findClientByApikey(data.getApikey());
-                if(client != null)
+                if (client != null)
                     return error117;
             }
 
@@ -129,7 +137,6 @@ public class ClientService {
 
             clientRepository.save(client);
             emojiCodeService.registerClient(client);
-
 
 
             if (client.getTelegramId() != null && client.getTelegramId() > 0) {
@@ -319,7 +326,7 @@ public class ClientService {
             logger.info("Check Name: " + gson.toJson(data));
             logger.info("data.getCryptoname().trim(): " + data.getCryptoname().trim());
             Client client = clientRepository.findClientByApikey(data.getCryptoname().trim());
-            logger.info("client: "+gson.toJson(client));
+            logger.info("client: " + gson.toJson(client));
             if (client != null) {
                 if (client.getWalletAddress() != null) return error121;
                 ResultDTO result = new ResultDTO(true, null, 0);
@@ -415,7 +422,7 @@ public class ClientService {
         try {
             return clientRepository.findClientByCryptoname(cryptoname);
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
         }
         return null;
@@ -654,7 +661,7 @@ public class ClientService {
         if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
         Client client = clientRepository.findClientByCryptoname(cryptoname);
-        logger.info("Client info: "+client);
+        logger.info("Client info: " + client);
         if (client == null) return error108;
         if (client.getApikey() == null) return error107;
         if (!client.getApikey().equals(data.getApikey())) return error109;
@@ -831,8 +838,8 @@ public class ClientService {
                 data.setApikey(randomToken);
                 reserveName(data);
             } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
-            logger.error(e.getMessage());
+                logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+                logger.error(e.getMessage());
             }
         }
         logger.info("End reserv");
@@ -872,7 +879,7 @@ public class ClientService {
                 logger.info("ClientList size: 0");
             }
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }
@@ -910,7 +917,7 @@ public class ClientService {
 
             return client.getCryptoname();
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             return null;
         }
