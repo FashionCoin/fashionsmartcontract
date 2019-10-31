@@ -330,7 +330,7 @@ public class ClientService {
             if (client != null) {
                 if (client.getWalletAddress() != null) return error121;
                 ResultDTO result = new ResultDTO(true, null, 0);
-                result.setCryptoname(data.getCryptoname());
+                result.setCryptoname(client.getCryptoname());
                 logger.info(gson.toJson(result));
                 return result;
             }
