@@ -87,10 +87,12 @@ public class CurrencyService {
             try {
                 if (currency.equals("BTC") || currency.equals("ETH")) {
                     BigDecimal rateLA = getRateForCoinLatoken(currency);
+                    logger.info("LA "+currency+": "+rateLA);
                     BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
                     currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
                 } else if (currency.equals("USD")) {
                     BigDecimal rateLA = getRateForCoinLatoken("USDT");
+                    logger.info("LA "+currency+": "+rateLA);
                     BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
                     currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
                 } else if (currency.equals("UAH")) {
