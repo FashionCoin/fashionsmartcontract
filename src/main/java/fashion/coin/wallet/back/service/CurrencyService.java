@@ -49,7 +49,8 @@ public class CurrencyService {
 
 
     private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
-    private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
+//    private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
+    private static final String apiUrlLatoken = "https://api.latoken.com/v2/ticker";
     private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
     private static final String LASTRATE = "lastrate";
 
@@ -158,10 +159,10 @@ public class CurrencyService {
         BigDecimal rate = null;
 
         try {
-            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
+            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN/" + coinName, LatokenRateDTO.class);
 //            logger.info("LA: " + gson.toJson(result));
             if (result != null) {
-                rate = new BigDecimal(result.getClose());
+                rate = new BigDecimal(result.lastPrice);
             }
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
@@ -293,6 +294,20 @@ class BitFinexRateDTO {
 
 class LatokenRateDTO {
 
+    public String symbol;
+    public String baseCurrency;
+    public String quoteCurrency;
+    public String volume24h;
+    public String volume7d;
+    public String change24h;
+    public String change7d;
+    public String lastPrice;
+
+}
+
+/*
+class LatokenRateDTO {
+
     public Integer pairId;
 
     public String symbol;
@@ -373,7 +388,7 @@ class LatokenRateDTO {
         this.priceChange = priceChange;
     }
 }
-
+*/
 class NazbankDTO {
 
     public Integer r030;
