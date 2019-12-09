@@ -47,7 +47,8 @@ public class CurrencyService {
 
 
     private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
-    private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
+//    private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
+    private static final String apiUrlLatoken = "https://api.latoken.com/v2/ticker";
     private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
 
     private static final String USD_PRICE = "1000";
@@ -139,9 +140,9 @@ public class CurrencyService {
                     .setReadTimeout(1000)
                     .build();
 
-            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN" + coinName, LatokenRateDTO.class);
+            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN/" + coinName, LatokenRateDTO.class);
             logger.info("LA: " + gson.toJson(result));
-            return new BigDecimal(result.getClose());
+            return new BigDecimal(result.lastPrice);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -219,88 +220,102 @@ class BitFinexRateDTO {
     }
 }
 
-class LatokenRateDTO {
-
-    public Integer pairId;
+class  LatokenRateDTO {
 
     public String symbol;
-
-    public String volume;
-
-    public String open;
-
-    public String low;
-
-    public String high;
-
-    public String close;
-
-    public String priceChange;
-
-    public Integer getPairId() {
-        return pairId;
-    }
-
-    public void setPairId(Integer pairId) {
-        this.pairId = pairId;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String getVolume() {
-        return volume;
-    }
-
-    public void setVolume(String volume) {
-        this.volume = volume;
-    }
-
-    public String getOpen() {
-        return open;
-    }
-
-    public void setOpen(String open) {
-        this.open = open;
-    }
-
-    public String getLow() {
-        return low;
-    }
-
-    public void setLow(String low) {
-        this.low = low;
-    }
-
-    public String getHigh() {
-        return high;
-    }
-
-    public void setHigh(String high) {
-        this.high = high;
-    }
-
-    public String getClose() {
-        return close;
-    }
-
-    public void setClose(String close) {
-        this.close = close;
-    }
-
-    public String getPriceChange() {
-        return priceChange;
-    }
-
-    public void setPriceChange(String priceChange) {
-        this.priceChange = priceChange;
-    }
+    public String baseCurrency;
+    public String quoteCurrency;
+    public String volume24h;
+    public String volume7d;
+    public String change24h;
+    public String change7d;
+    public String lastPrice;
 }
+
+
+//
+//class LatokenRateDTO {
+//
+//    public Integer pairId;
+//
+//    public String symbol;
+//
+//    public String volume;
+//
+//    public String open;
+//
+//    public String low;
+//
+//    public String high;
+//
+//    public String close;
+//
+//    public String priceChange;
+//
+//    public Integer getPairId() {
+//        return pairId;
+//    }
+//
+//    public void setPairId(Integer pairId) {
+//        this.pairId = pairId;
+//    }
+//
+//    public String getSymbol() {
+//        return symbol;
+//    }
+//
+//    public void setSymbol(String symbol) {
+//        this.symbol = symbol;
+//    }
+//
+//    public String getVolume() {
+//        return volume;
+//    }
+//
+//    public void setVolume(String volume) {
+//        this.volume = volume;
+//    }
+//
+//    public String getOpen() {
+//        return open;
+//    }
+//
+//    public void setOpen(String open) {
+//        this.open = open;
+//    }
+//
+//    public String getLow() {
+//        return low;
+//    }
+//
+//    public void setLow(String low) {
+//        this.low = low;
+//    }
+//
+//    public String getHigh() {
+//        return high;
+//    }
+//
+//    public void setHigh(String high) {
+//        this.high = high;
+//    }
+//
+//    public String getClose() {
+//        return close;
+//    }
+//
+//    public void setClose(String close) {
+//        this.close = close;
+//    }
+//
+//    public String getPriceChange() {
+//        return priceChange;
+//    }
+//
+//    public void setPriceChange(String priceChange) {
+//        this.priceChange = priceChange;
+//    }
+//}
 
 class NazbankDTO {
 
