@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Fshn</title>
+</head>
+<body>
+
+<table border="1" >
+    <tr>
+        <td>time</td>
+        <td>from</td>
+        <td>to</td>
+        <td>amount</td>
+    </tr>
+    <tr th:each="txOne : ${txlist}">
+        <td th:text="${txOne.time}"></td>
+        <td th:text="${txOne.from}"></td>
+        <td th:text="${txOne.to}"></td>
+        <td th:text="${txOne.amount}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

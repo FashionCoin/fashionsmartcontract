@@ -1,4 +1,4 @@
-package fashion.coin.wallet.back.telegram.entity;
+package fashion.coin.wallet.back.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -1,9 +1,6 @@
 package fashion.coin.wallet.back.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -178,6 +175,11 @@ public class Client implements Comparable<Client> {
         this.avatar = avatar;
     }
 
+    @Transient
+    public boolean avaExosts() {
+        return (this.avatar != null && this.avatar.length() > 0);
+    }
+
     public Integer getTelegramId() {
         return telegramId;
     }
@@ -192,6 +194,10 @@ public class Client implements Comparable<Client> {
 
     public void setRegisteredFrom(String registeredFrom) {
         this.registeredFrom = registeredFrom;
+    }
+
+    public boolean avaExists() {
+        return (avatar != null && avatar.length() > 0);
     }
 
     @Override

@@ -1,6 +1,7 @@
-package fashion.coin.wallet.back.telegram.repository;
+package fashion.coin.wallet.back.repository;
 
-import fashion.coin.wallet.back.telegram.entity.TelegramBotData;
+import fashion.coin.wallet.back.entity.TelegramBotData;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TelegramBotRepository extends JpaRepository<TelegramBotData, Long> {

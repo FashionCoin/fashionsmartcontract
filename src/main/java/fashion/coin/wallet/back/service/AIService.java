@@ -20,6 +20,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -41,14 +45,30 @@ public class AIService {
     TransactionService transactionService;
     SettingsService settingsService;
     CurrencyService currencyService;
+    AESEncriptor aesEncriptor;
+    MessagingService messagingService;
     Gson gson;
 
+    Map<String, String> keyStore = new HashMap<>();
+
+    public String getAiWallet() {
+        return getPubKey(AIWallets.LEFT);
+    }
+
+    public enum AIWallets {
+        LEFT,
+        BTCU,
+        MONEYBAG
+    }
 
     public AIService() {
         SignBuilder signBuilder = SignBuilder.init();
     }
 
     public void createNewWallet() {
+
+        String pub_key = getPubKey(AIWallets.LEFT);
+        String priv_key = getPrivKey(AIWallets.LEFT);
 
         try {
             String sign = SignBuilder.init()
@@ -70,6 +90,10 @@ public class AIService {
     }
 
     public ResponceDTO setRoot() {
+
+        String pub_key = getPubKey(AIWallets.LEFT);
+        String priv_key = getPrivKey(AIWallets.LEFT);
+
         ResponceDTO responce = new ResponceDTO();
         try {
             Gson gson = new Gson();
@@ -98,11 +122,20 @@ public class AIService {
     }
 
 
-    public boolean transfer(String amountStr, String receiver) {
+    public boolean transfer(String amountStr, String receiver, AIWallets sender) {
+        return transfer(amountStr, receiver, sender, System.currentTimeMillis());
+    }
+
+    public boolean transfer(String amountStr, String receiver, AIWallets sender, long seedLong) {
+
+
+        String pub_key = getPubKey(sender);
+        String priv_key = getPrivKey(sender);
+
         BigDecimal floatamount = new BigDecimal(amountStr);
 //        BigInteger amount = new BigInteger(amountStr + "000", 10);
         BigInteger amount = floatamount.movePointRight(3).toBigInteger();
-        BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
+        BigInteger seed = new BigInteger(String.valueOf(seedLong));
         SignBuilder.init();
         try {
             String sign = SignBuilder.init()
@@ -132,8 +165,14 @@ public class AIService {
         }
     }
 
+    ConcurrentHashMap<String, String> blockKey = new ConcurrentHashMap<>();
+
     public void cryptoname(String cryptoname, String salt, String wallet) {
 
+        if (blockKey.containsKey(wallet)) return;
+        else blockKey.put(wallet, cryptoname);
+        String pub_key = getPubKey(AIWallets.LEFT);
+        String priv_key = getPrivKey(AIWallets.LEFT);
 
         new Thread(new Runnable() {
 
@@ -143,15 +182,26 @@ public class AIService {
                 BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
                 SignBuilder.init();
                 try {
-                    logger.info("Sleep before register namr on blockchain");
-                    Thread.sleep(1000);
-                    logger.info("Wake Up");
+                    boolean isWalletExists = false;
+                    do {
+                        logger.info("Sleep before register name on blockchain");
+                        Thread.sleep(1000);
+                        logger.info("Wake Up");
+                        FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
+                        if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
+                                && fshnBalanceDTO.getPub_key().equals(wallet)) {
+                            isWalletExists = true;
+                        }
+                        logger.info("isWalletExists = " + String.valueOf(isWalletExists));
+                    } while (!isWalletExists);
 
-               FshnBalanceDTO fshnBalanceDTO =     blockchainService.getWalletInfo(wallet);
-               if(!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")){
-                   logger.info("Name "+cryptoname+" is already registered for "+wallet);
-                   return;
-               }
+                    FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
+                    if (!fshnBalanceDTO.name_hash.equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+                        logger.info("Name " + cryptoname + " is already registered for " + wallet);
+                        logger.info("Balance " + cryptoname + " is " + fshnBalanceDTO.balance);
+                        if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
+                        return;
+                    }
 
 //                    System.out.println(priv_key);
                     String sign = SignBuilder.init()
@@ -170,7 +220,9 @@ public class AIService {
                     String tx_hash = blockchainService.sendTransaction(blockchainTransactionDTO);
                     logger.info(tx_hash);
 
-                    tenDollarBonus(wallet);
+//                    tenDollarBonus(wallet);
+                    if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
+                    return;
 
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -188,9 +240,15 @@ public class AIService {
             BigDecimal usdRate = new BigDecimal(currencyDTO.getRate()); // $1
             BigDecimal amount = usdRate.multiply(BigDecimal.TEN).setScale(3, RoundingMode.HALF_UP); // $10
             logger.info("Send " + amount + " FSHN to " + wallet);
-            transfer(amount.toString(), wallet);
-
+            transfer(amount.toString(), wallet, AIWallets.MONEYBAG, 10000);
+            Client client = clientService.findByWallet(wallet);
+            clientService.updateBalance(client);
+            messagingService.sendNotification("change_balance",
+                    client.getWalletBalance().toString(),
+                    "topic_" + client.getWalletAddress());
+            if (blockKey.containsKey(wallet)) blockKey.remove(wallet);
         } catch (Exception e) {
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }
@@ -290,11 +348,58 @@ public class AIService {
         this.currencyService = currencyService;
     }
 
+    @Autowired
+    public void setAesEncriptor(AESEncriptor aesEncriptor) {
+        this.aesEncriptor = aesEncriptor;
+    }
+
+    @Autowired
+    public void setMessagingService(MessagingService messagingService) {
+        this.messagingService = messagingService;
+    }
+
+    String getPubKey(AIWallets wallet) {
+        return getKey(false, wallet);
+    }
+
+    String getPrivKey(AIWallets wallets) {
+        return getKey(true, wallets);
+    }
+
+
+    String getKey(boolean isPrivate, AIWallets wallet) {
+        try {
+            String settingsKey = wallet.name() + (isPrivate ? "_priv_key" : "_pub_key");
+            if (keyStore.containsKey(settingsKey)
+                    && keyStore.get(settingsKey) != null
+                    && keyStore.get(settingsKey).length() > 0
+            ) {
+                return keyStore.get(settingsKey);
+            }
+            String encryptedKey = settingsService.get(settingsKey);
+            if (encryptedKey == null) {
+                logger.error("Key " + settingsKey + " not found in DB");
+                return null;
+            }
+            String key = aesEncriptor.convertToEntityAttribute(encryptedKey);
+            keyStore.put(settingsKey, key);
+            return key;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        return null;
+    }
+
+
+  /*
     private static final String AI_PUB_KEY = "AI public key";
     private static final String AI_PRIV_KEY = "AI private key";
 
+
     private String priv_key = null;
     private String pub_key = null;
+
 
     public void refillWallet(String login) {
         Client client = clientService.findByCryptoname(login);
@@ -310,6 +415,14 @@ public class AIService {
         } else {
             pub_key = settingsService.get(AI_PUB_KEY);
             priv_key = settingsService.get(AI_PRIV_KEY);
+
+            /// Test
+            settingsService.set(AIWallets.LEFT.name()+"_pub_key",
+                    aesEncriptor.convertToDatabaseColumn(pub_key));
+            settingsService.set(AIWallets.LEFT.name()+"_priv_ey",
+                    aesEncriptor.convertToDatabaseColumn(priv_key));
+            ///
+
             return (priv_key != null && pub_key != null);
         }
     }
@@ -339,35 +452,5 @@ public class AIService {
         return result;
     }
 
-    public void printTransferTransaction(String receiver, String amountStr) {
-        if (isReady()) {
-            BigDecimal floatamount = new BigDecimal(amountStr);
-            BigInteger amount = floatamount.movePointRight(3).toBigInteger();
-            BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
-            SignBuilder.init();
-            try {
-                String sign = SignBuilder.init()
-                        .setNetworkId(0)
-                        .setProtocolVersion(0)
-                        .setMessageId(1)
-                        .setServiceId(0)
-                        .addPublicKeyOrHash(pub_key)
-                        .addPublicKeyOrHash(receiver)
-                        .addUint64(amount)
-                        .addUint64(seed)
-                        .sign(priv_key);
-
-                String json = String.format(TRANSFER_COIN, pub_key, receiver, amount.toString(10), seed.toString(10), sign);
-                BlockchainTransactionDTO blockchainTransactionDTO = gson.fromJson(json, BlockchainTransactionDTO.class);
-                TransactionRequestDTO transactionRequestDTO = createRequest(blockchainTransactionDTO);
-                logger.info(gson.toJson(transactionRequestDTO));
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        } else {
-            logger.error("AI don't ready");
-        }
-    }
-
+ */
 }

@@ -38,13 +38,19 @@ public class CryptoWalletsService {
     }
 
     public ResultDTO saveWallet(AddWalletDTO data) {
+        try {
+            if (data.getApikey() == null) return ClientService.error107;
+            Client client = clientService.findClientByApikey(data.getApikey());
+            if (client == null) return ClientService.error108;
 
-        if (data.getApikey() == null) return ClientService.error107;
-        Client client = clientService.findClientByApikey(data.getApikey());
-        if (client == null) return ClientService.error108;
+            cryptoWalletsRepository.deleteByCurrencyAndCryptoname(data.getCurrency(), client.getCryptoname().trim());
+            cryptoWalletsRepository.save(new CryptoWallets(client.getCryptoname().trim(), data.getCurrency(), data.getWallet()));
+            return new ResultDTO(true, "Wallet saved", 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
 
-        cryptoWalletsRepository.save(new CryptoWallets(client.getCryptoname().trim(), data.getCurrency(), data.getWallet()));
-        return new ResultDTO(true,"Wallet saved",0);
     }
 
 

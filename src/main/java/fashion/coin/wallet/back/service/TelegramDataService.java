@@ -1,13 +1,17 @@
-package fashion.coin.wallet.back.telegram.service;
+package fashion.coin.wallet.back.service;
 
-
-import fashion.coin.wallet.back.telegram.entity.TelegramBotData;
-import fashion.coin.wallet.back.telegram.repository.TelegramBotRepository;
+import fashion.coin.wallet.back.entity.TelegramBotData;
+import fashion.coin.wallet.back.repository.TelegramBotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TelegramDataService {
+
+
+    public static final String MYBALANCE = "myBalance";
+    public static final String OLDBALANCE = "oldBalance";
+
 
     @Autowired
     TelegramBotRepository telegramBotRepository;
@@ -32,7 +36,5 @@ public class TelegramDataService {
             telegramBotRepository.save(botData);
         }
     }
-
-
 
 }

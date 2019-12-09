@@ -4,6 +4,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,13 @@ import java.util.Scanner;
 @Service
 public class MessagingService {
 
+    Logger logger = LoggerFactory.getLogger(MessagingService.class);
+
     private Gson gson;
 
-    private static final String PROJECT_ID = "fc-wallet";
+    private static final String PROJECT_ID = "fshn-wallet";
     private static final String BASE_URL = "https://fcm.googleapis.com";
+//    private static final String FCM_SEND_ENDPOINT = "/v1/projects/%s/messages:send";
     private static final String FCM_SEND_ENDPOINT = "/v1/projects/%s/messages:send";
     private static final String URL = BASE_URL + FCM_SEND_ENDPOINT;
 
@@ -34,7 +39,7 @@ public class MessagingService {
     private static final String BODY = "body";
     private static final String TOPIC = "topic";
 
-    private static final String GOOGLE_CREDENTIALS_PATH = "/opt/walletback/firebase/fshn-wallet-firebase-adminsdk-hlfp2-21cf947ac3.json";
+    private static final String GOOGLE_CREDENTIALS_PATH = "/opt/walletback/firebase/fshn-wallet-firebase-adminsdk-hlfp2-d8e79e620f.json";
 
 
     public String sendNotification(String title, String body, String to) {
@@ -53,13 +58,13 @@ public class MessagingService {
 
         JsonObject apnsPayload = new JsonObject();
         apnsPayload.add("headers", buildApnsHeadersOverridePayload());
-        apnsPayload.add("payload", buildApsOverridePayload());
+        apnsPayload.add("payload", buildApsOverridePayload(title, body));
 
         messagePayload.add("apns", apnsPayload); // Apple Push Notification Service specific options.
 
        jNotificationMessage.add(MESSAGE_KEY, messagePayload);
 
-        System.out.println(gson.toJson(jNotificationMessage) + "\n");
+       logger.info(gson.toJson(jNotificationMessage) + "\n");
 
         return jNotificationMessage;
     }
@@ -106,15 +111,18 @@ public class MessagingService {
         return apnsHeaders;
     }
 
-    private JsonObject buildApsOverridePayload() {
+    private JsonObject buildApsOverridePayload(String title, String body) {
         JsonObject badgePayload = new JsonObject();
-        badgePayload.addProperty("badge", 1);
+        badgePayload.add("alert", buildDataOverridePayload(title,body));
+        badgePayload.addProperty("sound", "default");
 
         JsonObject apsPayload = new JsonObject();
         apsPayload.add("aps", badgePayload);
 
         return apsPayload;
     }
+
+
 
     private String sendMessage(JsonObject fcmMessage, String projectId){
         try {
@@ -130,12 +138,12 @@ public class MessagingService {
 
             if (responseCode == 200) {
                 response = inputstreamToString(connection.getInputStream());
-                System.out.println("Message sent to Firebase for delivery, response:");
-                System.out.println(response);
+             logger.info("Message sent to Firebase for delivery, response:");
+                logger.info(response);
             } else {
-                System.out.println("Unable to send message to Firebase:");
+                logger.error("Unable to send message to Firebase:");
                 response = inputstreamToString(connection.getErrorStream());
-                System.out.println(response);
+                logger.error(response);
             }
             return response;
         } catch (Exception e) {
