@@ -47,6 +47,9 @@ public class Client implements Comparable<Client> {
     String registeredFrom; // Telegramm, Web, Mobile
     LocalDateTime createTime;
 
+    @Column(name = "banned", columnDefinition = "boolean default false", nullable = false)
+    boolean banned = false;
+
     public Client() {
         this.walletBalance = BigDecimal.ZERO;
     }
@@ -173,6 +176,14 @@ public class Client implements Comparable<Client> {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
 
     @Transient

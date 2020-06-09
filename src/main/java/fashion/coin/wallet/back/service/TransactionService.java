@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import static fashion.coin.wallet.back.service.ClientService.error122;
+
 /**
  * Created by JAVA-P on 23.10.2018.
  */
@@ -94,6 +96,7 @@ public class TransactionService {
             if (request.getSenderWallet() == null) return error200;
             Client sender = clientService.findByWallet(request.getSenderWallet());
             if (sender == null) return error201;
+            if(sender.isBanned()) return error122;
             BigDecimal amount = new BigDecimal(request.getAmount());
             clientService.updateBalance(sender);
             if (sender.getWalletBalance().compareTo(amount) < 0) return error202;
@@ -118,6 +121,8 @@ public class TransactionService {
                 System.out.println("request wallet: " + request.getReceiverWallet());
                 return error203;
             }
+
+            if(receiver != null && receiver.isBanned()) return error122;
 
             if (request.getBlockchainTransaction() == null) return error204;
             if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction()))

@@ -241,6 +241,7 @@ public class ClientService {
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (client == null) return error108;
+            if(client.isBanned()) return error122;
             if (data.getApikey() == null) return error107;
 
             if (!checkUsingApiKey(data.getApikey())) return error117;
@@ -533,6 +534,7 @@ public class ClientService {
     public static final ResultDTO error119 = new ResultDTO(false, "This photo has already been used as a Mnemonic Pic for another Crypto Name. Please choose another photo.", 119);
     public static final ResultDTO error120 = new ResultDTO(false, "This phone already using", 120);
     public static final ResultDTO error121 = new ResultDTO(false, "This Registration Code has already been used", 121);
+    public static final ResultDTO error122 = new ResultDTO(false, "Banned", 122);
 
 
     public void addAmountToWallet(Client client, BigDecimal amount) {
@@ -648,6 +650,8 @@ public class ClientService {
                 logger.error(gson.toJson(data));
                 return error108;
             }
+
+            if(clientByApikey.isBanned()) return error122;
 
             if (clientByApikey.getWalletAddress() == null || clientByApikey.getWalletAddress().length() == 0) {
                 return clientByApikey;
