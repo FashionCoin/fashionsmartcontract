@@ -365,7 +365,10 @@ public class ClientService {
 
     private boolean checkValidCryptoname(String cryptoname) {
 
-        if (cryptoname.length() < 1) return false;
+        if (cryptoname.length() < 1) {
+            logger.error("So short");
+            return false;
+        }
         logger.info(cryptoname);
         if (emojiCodeService.checkEmojiCode(cryptoname) != null) return true;
         if (emojiCodeService.emojiAvaliable(cryptoname)) return true;
@@ -374,13 +377,22 @@ public class ClientService {
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
         List<String> textOnlyEmoji = EmojiParser.extractEmojis(cryptoname);
 
-        if (textWithoutEmoji.length() + textOnlyEmoji.size() > 25) return false;
+        if (textWithoutEmoji.length() + textOnlyEmoji.size() > 25) {
+            logger.error("So long");
+            return false;
+        }
 
         // Reserv:
-        if (textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1) return false;
+        if (textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1) {
+            logger.error("textOnlyEmoji == 1");
+            return false;
+        }
 
         int codePointCount = textWithoutEmoji.codePointCount(0, textWithoutEmoji.length());
-        if (codePointCount == 1 && codePointCount < textWithoutEmoji.length()) return false;
+        if (codePointCount == 1 && codePointCount < textWithoutEmoji.length()){
+            logger.error("One letter");
+            return false;
+        }
 
 
         char[] charArray = textWithoutEmoji.toCharArray();
@@ -391,7 +403,10 @@ public class ClientService {
             if (!Character.isHighSurrogate(symbol) && !Character.isLowSurrogate(symbol) &&
                     !(Character.isLetter(symbol) && Character.isLowerCase(symbol)) &&
                     !(Character.isAlphabetic(symbol) && Character.toLowerCase(symbol) == symbol) &&
-                    symbol != '-') return false;
+                    symbol != '-') {
+                logger.error("Eroor rullers");
+                return false;
+            }
 
         }
         return true;
