@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+
+
 /**
  * Created by JAVA-P on 23.10.2018.
  */
@@ -91,8 +94,6 @@ public class ContactService {
         return result;
     }
 
-    private static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
-    private static final ResultDTO error112 = new ResultDTO(false, "Friend not found", 112);
 
     public Object getContactList(AddFriendsDTO data) {
         try {

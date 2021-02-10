@@ -1,7 +1,6 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
-import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.dto.blockchain.FshnHistoryTxDTO;
@@ -17,9 +16,11 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import static fashion.coin.wallet.back.service.ClientService.error122;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 /**
  * Created by JAVA-P on 23.10.2018.
@@ -153,13 +154,6 @@ public class TransactionService {
 
 
     private static final ResultDTO created = new ResultDTO(true, "Transaction sended", 0);
-    private static final ResultDTO error200 = new ResultDTO(false, "Sender Wallet not found", 200);
-    private static final ResultDTO error201 = new ResultDTO(false, "Sender not found", 201);
-    private static final ResultDTO error202 = new ResultDTO(false, "Not enough money", 202);
-    private static final ResultDTO error203 = new ResultDTO(false, "Please, use crypto names to send FSHN", 203);
-    private static final ResultDTO error204 = new ResultDTO(false, "Blockchain transaction not found", 204);
-    private static final ResultDTO error205 = new ResultDTO(false, "Blockchain transaction error", 205);
-    private static final ResultDTO error206 = new ResultDTO(false, "Data of blockchain transaction does not match the parameters passed", 206);
 
     public static final String COIN_SCALE = "1000";
 

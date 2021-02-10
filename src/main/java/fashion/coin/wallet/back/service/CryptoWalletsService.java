@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+
 /**
  * Created by JAVA-P on 24.07.2019.
  */
@@ -39,9 +41,9 @@ public class CryptoWalletsService {
 
     public ResultDTO saveWallet(AddWalletDTO data) {
         try {
-            if (data.getApikey() == null) return ClientService.error107;
+            if (data.getApikey() == null) return error107;
             Client client = clientService.findClientByApikey(data.getApikey());
-            if (client == null) return ClientService.error108;
+            if (client == null) return error108;
 
             cryptoWalletsRepository.deleteByCurrencyAndCryptoname(data.getCurrency(), client.getCryptoname().trim());
             cryptoWalletsRepository.save(new CryptoWallets(client.getCryptoname().trim(), data.getCurrency(), data.getWallet()));

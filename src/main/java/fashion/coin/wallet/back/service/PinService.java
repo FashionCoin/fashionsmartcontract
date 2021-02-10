@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+
 
 /**
  * Created by JAVA-P on 01.11.2018.
@@ -62,7 +64,4 @@ public class PinService {
 
     private static final ResultDTO mailSended = new ResultDTO(true, "Mail sended", 0);
 
-    private static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
-    private static final ResultDTO error110 = new ResultDTO(false, "Unknown  email", 110);
-    private static final ResultDTO error111 = new ResultDTO(false, "Email is not confirmed", 111);
 }
