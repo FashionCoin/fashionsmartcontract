@@ -626,15 +626,11 @@ public class ClientService {
 
     public ResultDTO getWallets(GetWalletsDTO data) {
         try {
-            Map<String,Client> clients = new HashMap<>();
+            Map<String,String> clients = new HashMap<>();
             for(String cryptoname : data.getCryptonames()){
                 Client client = clientRepository.findClientByCryptoname(cryptoname.trim());
-                if (client != null) {
-                    Client wallet = new Client();
-                    wallet.setAvatar(client.getAvatar());
-                    wallet.setCryptoname(client.getCryptoname());
-                    wallet.setWalletAddress(client.getWalletAddress());
-                    clients.put(cryptoname,wallet);
+                if (client != null && client.getWalletAddress() != null) {
+                    clients.put(cryptoname,client.getWalletAddress());
                 }
             }
 
