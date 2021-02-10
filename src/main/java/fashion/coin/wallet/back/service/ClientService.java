@@ -624,6 +624,26 @@ public class ClientService {
         }
     }
 
+    public ResultDTO getWallets(GetWalletsDTO data) {
+        try {
+            Map<String,Client> clients = new HashMap<>();
+            for(String cryptoname : data.getCryptonames()){
+                Client client = clientRepository.findClientByCryptoname(cryptoname.trim());
+                if (client != null) {
+                    Client wallet = new Client();
+                    wallet.setAvatar(client.getAvatar());
+                    wallet.setCryptoname(client.getCryptoname());
+                    wallet.setWalletAddress(client.getWalletAddress());
+                    clients.put(cryptoname,wallet);
+                }
+            }
+
+            return new ResultDTO(true, clients, 0);
+        } catch (Exception e) {
+            return error108;
+        }
+    }
+
     private String checkAnonimousWallet(String address) {
 
         FshnBalanceDTO walletInfo = blockchainService.getWalletInfo(address);

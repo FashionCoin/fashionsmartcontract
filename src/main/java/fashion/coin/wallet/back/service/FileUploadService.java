@@ -32,7 +32,7 @@ public class FileUploadService {
 
     ClientService clientService;
 
-    public ResultDTO uploadFile(MultipartFile multipartFile, String login, String apikey) {
+    public ResultDTO uploadAvatar(MultipartFile multipartFile, String login, String apikey) {
         try {
             if(!clientService.checkApiKey(login,apikey)) return error109;
             Client client = clientService.findByCryptoname(login);
@@ -54,5 +54,23 @@ public class FileUploadService {
     @Autowired
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
+    }
+
+    public ResultDTO uploadPicture(MultipartFile multipartFile, String login, String apikey) {
+
+        try {
+            if(!clientService.checkApiKey(login,apikey)) return error109;
+            Client client = clientService.findByCryptoname(login);
+            InputStream inputStream = multipartFile.getInputStream();
+
+            Path path = Paths.get(AVATARS_PATH + "/" + client.getWalletAddress() );
+            Files.copy(inputStream, path, REPLACE_EXISTING);
+            clientService.setAvatar(login,AVATARS_EXTERNAL_PATH+ "/" + client.getWalletAddress());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+        return new ResultDTO(true, "Avatar saveded", 0);
     }
 }

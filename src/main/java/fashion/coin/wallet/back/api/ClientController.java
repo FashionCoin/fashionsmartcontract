@@ -1,7 +1,10 @@
 package fashion.coin.wallet.back.api;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.service.ClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class ClientController {
+
+    @Autowired
+    Gson gson;
+
+    Logger logger = LoggerFactory.getLogger(ClientController.class);
 
     ClientService clientService;
 
@@ -61,6 +69,15 @@ public class ClientController {
     @ResponseBody
     ResultDTO getWallet(@RequestBody GetWalletDTO data){
         return clientService.getWallet(data);
+    }
+
+
+    @PostMapping("/api/v1/getwallets")
+    @ResponseBody
+    ResultDTO getWallet(@RequestBody Object json){
+        GetWalletsDTO data = gson.fromJson(String.valueOf(json),GetWalletsDTO.class);
+        logger.info(gson.toJson(data));
+        return clientService.getWallets(data);
     }
 
 

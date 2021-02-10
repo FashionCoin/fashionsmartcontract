@@ -1,8 +1,6 @@
 package fashion.coin.wallet.back.service;
 
 
-import fashion.coin.wallet.back.entity.Settings;
-import fashion.coin.wallet.back.repository.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +10,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.AttributeConverter;
 import java.security.Key;
 import java.util.Base64;
-import java.util.List;
 import java.util.Random;
 
 
