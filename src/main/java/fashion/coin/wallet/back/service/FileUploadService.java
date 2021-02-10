@@ -81,34 +81,8 @@ public class FileUploadService {
     }
 
     public ResultDTO uploadNftPicture(MultipartFile multipartFile, String login, String apikey) {
-
-        Long nftId = 0L;
-        try {
-            if (!clientService.checkApiKey(login, apikey)) return error109;
-            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            String contentType = multipartFile.getContentType();
-            Long size = multipartFile.getSize();
-            String fileExtension = getExtensionByStringHandling(originalFilename).orElse("");
-            Path copyLocation = Paths.get(NFT_PATH + File.separator + originalFilename);
-            Files.copy(multipartFile.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
-
-            MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
-            String shaChecksum = getFileChecksum(shaDigest, copyLocation.toFile());
-            Path newName = Paths.get(NFT_PATH + File.separator + shaChecksum + fileExtension);
-            if (newName.toFile().exists()) {
-                logger.info("{} exists", newName.toString());
-                Files.delete(copyLocation);
-                return error123;
-            }
-            Files.move(copyLocation, copyLocation.resolveSibling(newName));
-            NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
-            nftFileRepository.save(nftFile);
-            nftId = nftFile.getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResultDTO(false, e.getMessage(), -1);
-        }
-        return new ResultDTO(true, String.valueOf(nftId), 0);
+        if (!clientService.checkApiKey(login, apikey)) return error109;
+        return saveNft(multipartFile);
     }
 
 
@@ -148,5 +122,33 @@ public class FileUploadService {
         return Optional.ofNullable(filename)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(filename.lastIndexOf(".")));
+    }
+
+    public ResultDTO saveNft(MultipartFile multipartFile) {
+        try {
+            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            String contentType = multipartFile.getContentType();
+            Long size = multipartFile.getSize();
+            String fileExtension = getExtensionByStringHandling(originalFilename).orElse("");
+            Path copyLocation = Paths.get(NFT_PATH + File.separator + originalFilename);
+            Files.copy(multipartFile.getInputStream(), copyLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
+            String shaChecksum = getFileChecksum(shaDigest, copyLocation.toFile());
+            Path newName = Paths.get(NFT_PATH + File.separator + shaChecksum + fileExtension);
+            if (newName.toFile().exists()) {
+                logger.info("{} exists", newName.toString());
+                Files.delete(copyLocation);
+                return error123;
+            }
+            Files.move(copyLocation, copyLocation.resolveSibling(newName));
+            NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
+            nftFileRepository.save(nftFile);
+            return new ResultDTO(true,nftFile,0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
     }
 }
