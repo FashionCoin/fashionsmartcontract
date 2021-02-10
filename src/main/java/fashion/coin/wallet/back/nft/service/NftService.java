@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
 
@@ -50,13 +51,15 @@ public class NftService {
         Client client = clientService.findByCryptoname(login);
         Nft nft = new Nft();
         nft.setAuthorId(client.getId());
+        nft.setAuthorName(client.getCryptoname());
         nft.setOwnerId(client.getId());
+        nft.setOwnerName(client.getCryptoname());
         nft.setTitle(title);
         nft.setDescription(description);
         nft.setFaceValue(faceValue);
         nft.setCreativeValue(creativeValue);
         nft.setFileName(nftFile.getFilename());
-
+        nft.setLocalDateTime(LocalDateTime.now());
         nftRepository.save(nft);
         return new ResultDTO(true, nft, 0);
     }
