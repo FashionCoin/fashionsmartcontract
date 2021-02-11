@@ -33,11 +33,11 @@ public class EmailService {
         logger.info("Mime prepare");
         try {
             JavaMailSenderImpl senderImpl = (JavaMailSenderImpl) mailSender;
-
-            mailSender.send(messagePreparator);
+            logger.error("Email disable! EmailService.java line:37");
+//            mailSender.send(messagePreparator);
             logger.info("Mail to " + recipient + " sended");
         } catch (MailException e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error("Email didn't send");
             e.printStackTrace();
         }
