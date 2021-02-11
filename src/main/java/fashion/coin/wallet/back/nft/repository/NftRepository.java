@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface NftRepository extends JpaRepository<Nft, Long> {
 
-    List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDesc(LocalDateTime localDateTime);
+//    List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDesc(LocalDateTime localDateTime);
 
 //
 //    @Query(value = "SELECT * FROM Nft  WHERE local_date_time < ?1 ORDER BY local_date_time LIMIT ?2", nativeQuery = true)
