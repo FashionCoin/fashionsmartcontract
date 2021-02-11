@@ -21,7 +21,7 @@ public class Nft {
     String authorName;
     Long ownerId;
     String ownerName;
-//    LocalDateTime localDateTime;
+    LocalDateTime localDateTime;
     Long proofs;
 
     public Nft() {
@@ -106,14 +106,14 @@ public class Nft {
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
     }
-//
-//    public LocalDateTime getLocalDateTime() {
-//        return localDateTime;
-//    }
-//
-//    public void setLocalDateTime(LocalDateTime localDateTime) {
-//        this.localDateTime = localDateTime;
-//    }
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
 
     public Long getProofs() {
         return proofs;
