@@ -13,7 +13,7 @@ public class FeedNftController {
 
     FeedService feedService;
 
-    @PostMapping("/vi/nft/feed")
+    @PostMapping("/api/v1/nft/feed")
     @ResponseBody
     ResultDTO feedNft(FeedNftRequestDTO request){
 

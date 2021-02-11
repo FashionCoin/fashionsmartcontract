@@ -35,7 +35,7 @@ public class FeedService {
     Nft lastActualNft = null;
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
-
+        logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
         Client client = clientService.findByCryptonameAndApiKey(request.getCryptoname(), request.getApikey());
 
         if (client == null && !request.getFeedType().equals(MAIN_FEED)) {
