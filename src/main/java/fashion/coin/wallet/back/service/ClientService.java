@@ -764,10 +764,11 @@ public class ClientService {
         return true;
     }
     public Client findByCryptonameAndApiKey(String cryptoname, String apikey) {
-        Client client = clientRepository.findOneByApikey(apikey);
-        if (client == null) return null;
-        if (!client.getCryptoname().equals(cryptoname)) return null;
-        return client;
+        List<Client> clientList = clientRepository.findByApikey(apikey);
+
+        if (clientList == null || clientList.size()==0) return null;
+        if (!clientList.get(0).getCryptoname().equals(cryptoname)) return null;
+        return clientList.get(0);
     }
 
     public List<Client> findByPhone(String phone) {
