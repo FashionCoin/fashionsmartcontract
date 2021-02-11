@@ -31,7 +31,7 @@ public class FeedService {
     NftRepository nftRepository;
 
     private List<Nft> mainFeed = new ArrayList<>();
-    LocalDateTime lastUpdateFeed = LocalDateTime.of(1970, 1, 1, 0, 0);
+    Long lastUpdateFeed = 0L;
     Nft lastActualNft = null;
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
@@ -78,17 +78,17 @@ public class FeedService {
         try {
             if (mainFeed.size() >= toIndex) {
                 Nft last = mainFeed.get(toIndex - 1);
-                if (lastActualNft == null || lastActualNft.getLocalDateTime().isAfter(last.getLocalDateTime())) {
+                if (lastActualNft == null || lastActualNft.getTimestamp() > last.getTimestamp()) {
                     lastActualNft = last;
                 }
             }
 
-            if (lastUpdateFeed.plusDays(1).isBefore(LocalDateTime.now())
+            if (lastUpdateFeed + 100000L < System.currentTimeMillis()
                     && lastActualNft != null) {
                 List<Nft> newList = mainFeed.subList(0, mainFeed.indexOf(lastActualNft) + 1);
                 mainFeed = newList;
                 lastActualNft = null;
-                lastUpdateFeed = LocalDateTime.now();
+                lastUpdateFeed = System.currentTimeMillis();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,12 +96,14 @@ public class FeedService {
     }
 
     private void getFeedTail(int elements) {
-        LocalDateTime lastNftTime = LocalDateTime.now();
+        Long lastNftTime = System.currentTimeMillis();
         if (mainFeed.size() > 1) {
-            lastNftTime = mainFeed.get(mainFeed.size() - 1).getLocalDateTime();
+            lastNftTime = mainFeed.get(mainFeed.size() - 1).getTimestamp();
         }
         List<Nft> oldNfts = nftRepository.findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(lastNftTime, elements);
-        mainFeed.addAll(oldNfts);
+        if(oldNfts != null && oldNfts.size()>0){
+            mainFeed.addAll(oldNfts);
+        }
     }
 
     @Autowired
