@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.nft.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -15,7 +16,7 @@ public class FeedNftController {
 
     @PostMapping("/api/v1/nft/feed")
     @ResponseBody
-    ResultDTO feedNft(FeedNftRequestDTO request){
+    ResultDTO feedNft(@RequestBody FeedNftRequestDTO request){
 
         return feedService.getFeed(request);
 
