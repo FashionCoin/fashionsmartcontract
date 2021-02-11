@@ -12,8 +12,8 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
 //    List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDesc(LocalDateTime localDateTime);
 
 
-//    @Query(value = "SELECT * FROM Nft  WHERE local_date_time < ?1 ORDER BY local_date_time LIMIT ?2", nativeQuery = true)
-//    List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(LocalDateTime localDateTime, int limit);
+    @Query(value = "SELECT * FROM Nft  WHERE local_date_time < ?1 ORDER BY local_date_time LIMIT ?2", nativeQuery = true)
+    List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(LocalDateTime localDateTime, int limit);
 
 
 }
