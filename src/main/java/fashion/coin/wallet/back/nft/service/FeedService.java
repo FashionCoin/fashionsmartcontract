@@ -78,9 +78,9 @@ public class FeedService {
         try {
             if (mainFeed.size() >= toIndex) {
                 Nft last = mainFeed.get(toIndex - 1);
-                if (lastActualNft == null || lastActualNft.getLocalDateTime().isAfter(last.getLocalDateTime())) {
-                    lastActualNft = last;
-                }
+//                if (lastActualNft == null || lastActualNft.getLocalDateTime().isAfter(last.getLocalDateTime())) {
+//                    lastActualNft = last;
+//                }
             }
 
             if (lastUpdateFeed.plusDays(1).isBefore(LocalDateTime.now())
@@ -96,12 +96,12 @@ public class FeedService {
     }
 
     private void getFeedTail(int elements) {
-        LocalDateTime lastNftTime = LocalDateTime.now();
-        if (mainFeed.size() > 1) {
-            lastNftTime = mainFeed.get(mainFeed.size() - 1).getLocalDateTime();
-        }
-        List<Nft> oldNfts = nftRepository.findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(lastNftTime, elements);
-        mainFeed.addAll(oldNfts);
+//        LocalDateTime lastNftTime = LocalDateTime.now();
+//        if (mainFeed.size() > 1) {
+//            lastNftTime = mainFeed.get(mainFeed.size() - 1).getLocalDateTime();
+//        }
+//        List<Nft> oldNfts = nftRepository.findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(lastNftTime, elements);
+//        mainFeed.addAll(oldNfts);
     }
 
     @Autowired
