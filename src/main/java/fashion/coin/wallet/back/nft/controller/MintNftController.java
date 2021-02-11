@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 
 @Controller
-public class FileStorageController {
+public class MintNftController {
 
-    Logger logger = LoggerFactory.getLogger(FileStorageController.class);
+    Logger logger = LoggerFactory.getLogger(MintNftController.class);
 
     @Autowired
     FileUploadService fileUploadService;

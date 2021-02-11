@@ -28,6 +28,9 @@ public class ErrorDictionary {
     public static final ResultDTO error121 = new ResultDTO(false, "This Registration Code has already been used", 121);
     public static final ResultDTO error122 = new ResultDTO(false, "Banned", 122);
     public static final ResultDTO error123 = new ResultDTO(false, "This file is already exists", 123);
+    public static final ResultDTO error124 = new ResultDTO(false, "Only Main feeds for guest users", 124);
+    public static final ResultDTO error125 = new ResultDTO(false, "Use one of feed types: main, proof, proofs", 125);
+    public static final ResultDTO error126 = new ResultDTO(false, "Illegal page or perPage", 126);
 
 
     public static final ResultDTO error200 = new ResultDTO(false, "Sender Wallet not found", 200);

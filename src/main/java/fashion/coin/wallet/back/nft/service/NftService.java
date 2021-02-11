@@ -60,6 +60,7 @@ public class NftService {
         nft.setCreativeValue(creativeValue);
         nft.setFileName(nftFile.getFilename());
         nft.setLocalDateTime(LocalDateTime.now());
+        nft.setProofs(0L);
         nftRepository.save(nft);
         return new ResultDTO(true, nft, 0);
     }

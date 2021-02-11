@@ -763,6 +763,12 @@ public class ClientService {
         if (!client.getCryptoname().equals(login)) return false;
         return true;
     }
+    public Client findByCryptonameAndApiKey(String cryptoname, String apikey) {
+        Client client = clientRepository.findClientByApikey(apikey);
+        if (client == null) return null;
+        if (!client.getCryptoname().equals(cryptoname)) return null;
+        return client;
+    }
 
     public List<Client> findByPhone(String phone) {
         return clientRepository.findClientsByPhone(phone);
