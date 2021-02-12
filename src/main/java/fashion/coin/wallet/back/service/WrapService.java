@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Hash;
@@ -30,9 +31,11 @@ public class WrapService {
     long nonce;
 
     // Temporary address on Rinkebuy
+    @Value("${wfshn.contract.address}")
     String contractAddress = "0xeE46C11660Aca35cEE8Eb889596c61D132Ef3dba";
 
     // Temporary owner Private Key
+    @Value("${wfshn.owner.priv.key}")
     String ownerPrivKey = "3fcb55529e04677892012f28fa6a4c44f7fd0d82ce054418487b9e0af820e0f9";
 
 

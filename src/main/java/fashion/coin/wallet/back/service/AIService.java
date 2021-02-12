@@ -360,6 +360,7 @@ public class AIService {
 
     public boolean isMoneyBagWallet(String walletAddress){
         String moneyBagWallet = getPubKey(AIWallets.MONEYBAG);
+        logger.info("MonneyBag Wallet: {}",moneyBagWallet);
         return moneyBagWallet.equals(walletAddress);
     }
 
