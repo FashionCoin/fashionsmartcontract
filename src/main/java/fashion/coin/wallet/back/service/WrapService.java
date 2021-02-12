@@ -3,8 +3,10 @@ package fashion.coin.wallet.back.service;
 import com.google.gson.Gson;
 import com.sun.xml.fastinfoset.Encoder;
 import fashion.coin.wallet.back.dto.ResultDTO;
+import fashion.coin.wallet.back.dto.UnwrapRequestDTO;
 import fashion.coin.wallet.back.dto.WrappedRequestDTO;
 import fashion.coin.wallet.back.dto.WrappedResponseDTO;
+import fashion.coin.wallet.back.entity.Client;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,7 @@ import org.web3j.utils.Numeric;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error207;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 @Service
 public class WrapService {
@@ -30,6 +32,7 @@ public class WrapService {
 
     TransactionService transactionService;
     AIService aiService;
+    ClientService clientService;
 
     long nonce;
 
@@ -161,5 +164,28 @@ public class WrapService {
     @Autowired
     public void setGson(Gson gson) {
         this.gson = gson;
+    }
+
+    @Autowired
+    public void setClientService(ClientService clientService) {
+        this.clientService = clientService;
+    }
+
+    public ResultDTO unwrap(UnwrapRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) return error109;
+// TODO: check transaction in Ethereum blockchain
+            logger.info("TX Ethereum hash: {}", request.getTransactionHash());
+            boolean result = aiService.transfer(request.getAmount(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG);
+            if (result) {
+                return new ResultDTO(true, "Unwrap ok!", 0);
+            } else {
+                return error205;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }
