@@ -1,6 +1,6 @@
 package fashion.coin.wallet.back.service;
 
-import com.sun.xml.internal.fastinfoset.Encoder;
+import com.sun.xml.fastinfoset.Encoder;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.WrappedRequestDTO;
 import fashion.coin.wallet.back.dto.WrappedResponseDTO;
