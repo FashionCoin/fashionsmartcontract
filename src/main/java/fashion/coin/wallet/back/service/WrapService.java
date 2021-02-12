@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.gson.Gson;
 import com.sun.xml.fastinfoset.Encoder;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.WrappedRequestDTO;
@@ -25,6 +26,8 @@ public class WrapService {
 
     Logger logger = LoggerFactory.getLogger(WrapService.class);
 
+    Gson gson;
+
     TransactionService transactionService;
     AIService aiService;
 
@@ -41,15 +44,17 @@ public class WrapService {
 
     public ResultDTO wrap(WrappedRequestDTO request) {
         try {
+            logger.info(gson.toJson(request));
             if (!aiService.isMoneyBagWallet(request.getTransactionRequestDTO().getReceiverWallet())) {
                 return error207;
             }
-
+            logger.info("receiver ok!");
             ResultDTO result = transactionService.send(request.getTransactionRequestDTO());
+            logger.info(gson.toJson(result));
             if (result.isResult()) {
 
                 int amount = Integer.parseInt(request.getTransactionRequestDTO().getBlockchainTransaction().getBody().getAmount());
-
+                logger.info("Amount: {}", amount);
                 WrappedResponseDTO resp = signPayment(request.getEthereumWallet(),
                         amount,
                         getNonce(),
@@ -59,9 +64,11 @@ public class WrapService {
                 return new ResultDTO(true, resp, 0);
 
             } else {
+
                 return result;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
@@ -149,5 +156,10 @@ public class WrapService {
     @Autowired
     public void setAiService(AIService aiService) {
         this.aiService = aiService;
+    }
+
+    @Autowired
+    public void setGson(Gson gson) {
+        this.gson = gson;
     }
 }
