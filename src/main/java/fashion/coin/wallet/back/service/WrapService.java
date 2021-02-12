@@ -32,16 +32,16 @@ public class WrapService {
 
     // Temporary address on Rinkebuy
     @Value("${wfshn.contract.address}")
-    String contractAddress = "0xeE46C11660Aca35cEE8Eb889596c61D132Ef3dba";
+    String contractAddress;
 
     // Temporary owner Private Key
     @Value("${wfshn.owner.priv.key}")
-    String ownerPrivKey = "3fcb55529e04677892012f28fa6a4c44f7fd0d82ce054418487b9e0af820e0f9";
+    String ownerPrivKey;
 
 
     public ResultDTO wrap(WrappedRequestDTO request) {
         try {
-            if(!aiService.isMoneyBagWallet( request.getTransactionRequestDTO().getReceiverWallet())) {
+            if (!aiService.isMoneyBagWallet(request.getTransactionRequestDTO().getReceiverWallet())) {
                 return error207;
             }
 
@@ -56,7 +56,7 @@ public class WrapService {
                         contractAddress
                 );
 
-                return new ResultDTO(true,resp,0);
+                return new ResultDTO(true, resp, 0);
 
             } else {
                 return result;
