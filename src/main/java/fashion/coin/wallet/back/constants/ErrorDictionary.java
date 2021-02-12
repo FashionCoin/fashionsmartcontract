@@ -40,5 +40,6 @@ public class ErrorDictionary {
     public static final ResultDTO error204 = new ResultDTO(false, "Blockchain transaction not found", 204);
     public static final ResultDTO error205 = new ResultDTO(false, "Blockchain transaction error", 205);
     public static final ResultDTO error206 = new ResultDTO(false, "Data of blockchain transaction does not match the parameters passed", 206);
+    public static final ResultDTO error207 = new ResultDTO(false, "Receiver wallet must be MoneyBag", 207);
 
 }

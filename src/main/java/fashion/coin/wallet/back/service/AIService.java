@@ -358,6 +358,11 @@ public class AIService {
         this.messagingService = messagingService;
     }
 
+    public boolean isMoneyBagWallet(String walletAddress){
+        String moneyBagWallet = getPubKey(AIWallets.MONEYBAG);
+        return moneyBagWallet.equals(walletAddress);
+    }
+
     String getPubKey(AIWallets wallet) {
         return getKey(false, wallet);
     }
