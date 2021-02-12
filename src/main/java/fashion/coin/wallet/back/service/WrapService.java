@@ -7,6 +7,8 @@ import fashion.coin.wallet.back.dto.UnwrapRequestDTO;
 import fashion.coin.wallet.back.dto.WrappedRequestDTO;
 import fashion.coin.wallet.back.dto.WrappedResponseDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.entity.WrapLog;
+import fashion.coin.wallet.back.repository.WrapLogRepository;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,9 @@ import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -33,6 +37,7 @@ public class WrapService {
     TransactionService transactionService;
     AIService aiService;
     ClientService clientService;
+    WrapLogRepository wrapLogRepository;
 
     long nonce;
 
@@ -63,7 +68,8 @@ public class WrapService {
                         getNonce(),
                         contractAddress
                 );
-
+                wrapLogRepository.save(new WrapLog(true, amount, request.getTransactionRequestDTO().getSenderWallet(),
+                        request.getEthereumWallet()));
                 return new ResultDTO(true, resp, 0);
 
             } else {
@@ -171,14 +177,26 @@ public class WrapService {
         this.clientService = clientService;
     }
 
+    @Autowired
+    public void setWrapLogRepository(WrapLogRepository wrapLogRepository) {
+        this.wrapLogRepository = wrapLogRepository;
+    }
+
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) return error109;
+            if (transactionExists(request.getTransactionHash())) {
+                return error208;
+            }
 // TODO: check transaction in Ethereum blockchain
             logger.info("TX Ethereum hash: {}", request.getTransactionHash());
             boolean result = aiService.transfer(request.getAmount(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG);
             if (result) {
+                BigDecimal floatamount = new BigDecimal(request.getAmount());
+                BigInteger amount = floatamount.movePointRight(3).toBigInteger();
+                wrapLogRepository.save(new WrapLog(false, amount.longValue(), client.getWalletAddress(),
+                        request.getEthereumWallet(), request.getTransactionHash()));
                 return new ResultDTO(true, "Unwrap ok!", 0);
             } else {
                 return error205;
@@ -187,5 +205,10 @@ public class WrapService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    private boolean transactionExists(String transactionHash) {
+        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
+        return (wrapLogList != null && wrapLogList.size() > 0);
     }
 }
