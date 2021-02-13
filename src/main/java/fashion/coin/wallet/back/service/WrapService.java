@@ -351,6 +351,9 @@ public class WrapService {
             wfshNhistory.setIncome(true);
         }
         if (!events.getAddressFrom().equals(NULL_ADDRESS) && !events.getAddressTo().equals(NULL_ADDRESS)) {
+            logger.info(events.getAddressFrom());
+            logger.info(events.getAddressTo());
+            logger.info(NULL_ADDRESS);
             wfshNhistory.setTransfer(true);
             String contragent = wfshNhistory.isIncome() ? events.getAddressFrom() : events.getAddressTo();
             wfshNhistory.setWallet(contragent);
