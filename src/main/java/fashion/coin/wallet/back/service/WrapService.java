@@ -218,6 +218,7 @@ public class WrapService {
 
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
+            updateEthereumEventd();
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) return error109;
             if (transactionExists(request.getTransactionHash())) {
