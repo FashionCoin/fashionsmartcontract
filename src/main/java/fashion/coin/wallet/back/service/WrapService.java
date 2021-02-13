@@ -2,27 +2,32 @@ package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
 import com.sun.xml.fastinfoset.Encoder;
-import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.dto.UnwrapRequestDTO;
-import fashion.coin.wallet.back.dto.WrappedRequestDTO;
-import fashion.coin.wallet.back.dto.WrappedResponseDTO;
+import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.WrapLog;
+import fashion.coin.wallet.back.entity.WrappedTokenEvents;
+import fashion.coin.wallet.back.repository.TokenEventsRepository;
 import fashion.coin.wallet.back.repository.WrapLogRepository;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.tomcat.util.buf.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.web3j.abi.datatypes.Address;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.Hash;
+import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
@@ -33,13 +38,19 @@ public class WrapService {
     Logger logger = LoggerFactory.getLogger(WrapService.class);
 
     Gson gson;
+    RestTemplate restTemplate;
 
     TransactionService transactionService;
     AIService aiService;
     ClientService clientService;
     WrapLogRepository wrapLogRepository;
+    TokenEventsRepository tokenEventsRepository;
 
     long nonce;
+
+    public static final String MINT = "mint";
+    public static final String TRANSFER = "transfer";
+    public static final String BURN = "burn";
 
     // Temporary address on Rinkebuy
     @Value("${wfshn.contract.address}")
@@ -48,6 +59,9 @@ public class WrapService {
     // Temporary owner Private Key
     @Value("${wfshn.owner.priv.key}")
     String ownerPrivKey;
+
+    @Value("${etherscan.api.key}")
+    String apiKey;
 
 
     public ResultDTO wrap(WrappedRequestDTO request) {
@@ -182,6 +196,16 @@ public class WrapService {
         this.wrapLogRepository = wrapLogRepository;
     }
 
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    @Autowired
+    public void setTokenEventsRepository(TokenEventsRepository tokenEventsRepository) {
+        this.tokenEventsRepository = tokenEventsRepository;
+    }
+
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
@@ -211,4 +235,65 @@ public class WrapService {
         List<WrapLog> wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
         return (wrapLogList != null && wrapLogList.size() > 0);
     }
+
+
+    private WrappedTokenEvents convertToEvent(EthEventDTO result) {
+        WrappedTokenEvents event = new WrappedTokenEvents();
+        event.setTransactionHash(result.getTransactionHash());
+        event.setBlockNumber(hexToLong(result.getBlockNumber()));
+        event.setTimeStamp(hexToLong(result.getTimeStamp()));
+        event.setAmount(hexToLong(result.getData()));
+        event.setAddressFrom(hexToAddress(result.getTopics().get(1)));
+        event.setAddressTo(hexToAddress(result.getTopics().get(2)));
+        event.setType(hexToType(result.getTopics()));
+        return event;
+    }
+
+    private String hexToType(List<String> topics) {
+        if (topics.get(1).equals("0x0000000000000000000000000000000000000000000000000000000000000000")
+                && !topics.get(2).equals("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+            return MINT;
+        } else if (!topics.get(1).equals("0x0000000000000000000000000000000000000000000000000000000000000000")
+                && !topics.get(2).equals("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+            return TRANSFER;
+        } else if (!topics.get(1).equals("0x0000000000000000000000000000000000000000000000000000000000000000")
+                && topics.get(2).equals("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+            return BURN;
+        } else {
+            return "";
+        }
+    }
+
+    private Long hexToLong(String hexString) {
+        hexString = hexString.replace("0x", "");
+        byte[] byteArray = HexUtils.fromHexString(hexString);
+        BigInteger bigInteger = new BigInteger(byteArray);
+        return bigInteger.longValue();
+    }
+
+    private String hexToAddress(String hexString) {
+        Address address = new Address(hexString);
+        return Keys.toChecksumAddress(address.toString());
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    public void updateEthereumEventd() {
+        long lastBlock = 8058516;
+        WrappedTokenEvents lastEvent = tokenEventsRepository.findFirstOrderByBlockNumberDesc();
+        if (lastEvent != null) {
+            lastBlock = lastEvent.blockNumber;
+        }
+
+        EventsDTO responce = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&" +
+                        "fromBlock=" + lastBlock + "&toBlock=latest&" +
+                        "address=" + contractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
+                        "apikey=" + apiKey,
+                EventsDTO.class);
+
+        for (EthEventDTO result : responce.getResult()) {
+            tokenEventsRepository.save(convertToEvent(result));
+        }
+        logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size());
+    }
+
 }
