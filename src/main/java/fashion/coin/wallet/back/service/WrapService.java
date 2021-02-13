@@ -55,6 +55,7 @@ public class WrapService {
     public static final String TRANSFER = "transfer";
     public static final String BURN = "burn";
     public static final String NULL_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000000";
+    public static final String SHORT_NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
     // Temporary address on Rinkebuy
     @Value("${wfshn.contract.address}")
@@ -350,10 +351,10 @@ public class WrapService {
         if (events.getAddressTo().equals(address)) {
             wfshNhistory.setIncome(true);
         }
-        if (!events.getAddressFrom().equals(NULL_ADDRESS) && !events.getAddressTo().equals(NULL_ADDRESS)) {
+        if (!events.getAddressFrom().equals(SHORT_NULL_ADDRESS) && !events.getAddressTo().equals(SHORT_NULL_ADDRESS)) {
             logger.info(events.getAddressFrom());
             logger.info(events.getAddressTo());
-            logger.info(NULL_ADDRESS);
+            logger.info(SHORT_NULL_ADDRESS);
             wfshNhistory.setTransfer(true);
             String contragent = wfshNhistory.isIncome() ? events.getAddressFrom() : events.getAddressTo();
             wfshNhistory.setWallet(contragent);
