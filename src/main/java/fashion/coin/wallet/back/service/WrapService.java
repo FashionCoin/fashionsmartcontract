@@ -263,7 +263,7 @@ public class WrapService {
             event = tokenEventsRepository.findById(transactionHash).orElse(null);
             if (event == null) {
                 try {
-                    Thread.sleep((i+1)*100);
+                    Thread.sleep((i+1)*1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -319,7 +319,7 @@ public class WrapService {
         return Keys.toChecksumAddress(address.toString());
     }
 
-    @Scheduled(cron = "0 * * * * *")
+//    @Scheduled(cron = "0 * * * * *")
     public void updateEthereumEventd() {
         long lastBlock = 8058516;
         WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction();
@@ -343,6 +343,7 @@ public class WrapService {
         try {
             Client client = clientService.findClientByApikey(apiKey);
             if (client == null) return error109;
+            updateEthereumEventd();
             String hexAddress = cryptoWalletsService.getWalletByCryptoname(client.getCryptoname(), "ETH");
 
             String address = hexToAddress(hexAddress);
