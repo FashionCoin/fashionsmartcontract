@@ -321,22 +321,28 @@ public class WrapService {
 
 //    @Scheduled(cron = "0 * * * * *")
     public void updateEthereumEventd() {
-        long lastBlock = 8058516;
-        WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction();
-        if (lastEvent != null) {
-            lastBlock = lastEvent.blockNumber;
+        try {
+
+            long lastBlock = 8058516;
+            WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction();
+            if (lastEvent != null) {
+                lastBlock = lastEvent.blockNumber;
+            }
+
+            EventsDTO responce = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&" +
+                            "fromBlock=" + lastBlock + "&toBlock=latest&" +
+                            "address=" + contractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
+                            "apikey=" + apiKey,
+                    EventsDTO.class);
+
+            for (EthEventDTO result : responce.getResult()) {
+                tokenEventsRepository.save(convertToEvent(result));
+            }
+            logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size() - 1);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        EventsDTO responce = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&" +
-                        "fromBlock=" + lastBlock + "&toBlock=latest&" +
-                        "address=" + contractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
-                        "apikey=" + apiKey,
-                EventsDTO.class);
-
-        for (EthEventDTO result : responce.getResult()) {
-            tokenEventsRepository.save(convertToEvent(result));
-        }
-        logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size() - 1);
     }
 
     public ResultDTO getWalletHistoy(String apiKey) {
