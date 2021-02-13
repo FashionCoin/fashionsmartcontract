@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TokenEventsRepository extends JpaRepository<WrappedTokenEvents,String> {
 
-    WrappedTokenEvents findFirstOrderByBlockNumberDesc();
+    WrappedTokenEvents findFirstOrderByBlockNumber();
 
 }
