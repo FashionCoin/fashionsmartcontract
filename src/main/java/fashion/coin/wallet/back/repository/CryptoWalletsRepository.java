@@ -31,4 +31,5 @@ public interface CryptoWalletsRepository extends JpaRepository<CryptoWallets, Lo
     void deleteByCurrencyAndCryptoname(String currency, String cryptoname);
 
 
+
 }

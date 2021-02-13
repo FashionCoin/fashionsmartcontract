@@ -39,6 +39,8 @@ public class CryptoWalletsService {
         else return cryptoWallets.getWallet();
     }
 
+
+
     public ResultDTO saveWallet(AddWalletDTO data) {
         try {
             if (data.getApikey() == null) return error107;
@@ -69,5 +71,11 @@ public class CryptoWalletsService {
         if (cryptoWallets == null) return new ResultDTO(false, "Cryptoname not found", 523);
 
         return new ResultDTO(true, cryptoWallets.getCryptoname(), 0);
+    }
+
+    public String getCryptoname(String currency, String address) {
+        CryptoWallets cryptoWallets = cryptoWalletsRepository.findTopByCurrencyAndWallet(currency, address);
+        if (cryptoWallets == null) return null;
+        return cryptoWallets.getCryptoname();
     }
 }

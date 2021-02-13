@@ -28,7 +28,9 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -45,12 +47,14 @@ public class WrapService {
     ClientService clientService;
     WrapLogRepository wrapLogRepository;
     TokenEventsRepository tokenEventsRepository;
+    CryptoWalletsService cryptoWalletsService;
 
     long nonce;
 
     public static final String MINT = "mint";
     public static final String TRANSFER = "transfer";
     public static final String BURN = "burn";
+    public static final String NULL_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
     // Temporary address on Rinkebuy
     @Value("${wfshn.contract.address}")
@@ -206,6 +210,11 @@ public class WrapService {
         this.tokenEventsRepository = tokenEventsRepository;
     }
 
+    @Autowired
+    public void setCryptoWalletsService(CryptoWalletsService cryptoWalletsService) {
+        this.cryptoWalletsService = cryptoWalletsService;
+    }
+
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
@@ -264,14 +273,14 @@ public class WrapService {
     }
 
     private String hexToType(List<String> topics) {
-        if (topics.get(1).equals("0x0000000000000000000000000000000000000000000000000000000000000000")
-                && !topics.get(2).equals("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+        if (topics.get(1).equals(NULL_ADDRESS)
+                && !topics.get(2).equals(NULL_ADDRESS)) {
             return MINT;
-        } else if (!topics.get(1).equals("0x0000000000000000000000000000000000000000000000000000000000000000")
-                && !topics.get(2).equals("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+        } else if (!topics.get(1).equals(NULL_ADDRESS)
+                && !topics.get(2).equals(NULL_ADDRESS)) {
             return TRANSFER;
-        } else if (!topics.get(1).equals("0x0000000000000000000000000000000000000000000000000000000000000000")
-                && topics.get(2).equals("0x0000000000000000000000000000000000000000000000000000000000000000")) {
+        } else if (!topics.get(1).equals(NULL_ADDRESS)
+                && topics.get(2).equals(NULL_ADDRESS)) {
             return BURN;
         } else {
             return "";
@@ -309,5 +318,70 @@ public class WrapService {
         }
         logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size() - 1);
     }
+
+    public ResultDTO getWalletHistoy(String apiKey) {
+        try {
+            Client client = clientService.findClientByApikey(apiKey);
+            if (client == null) return error109;
+            String hexAddress = cryptoWalletsService.getWalletByCryptoname(client.getCryptoname(), "ETH");
+
+            String address = hexToAddress(hexAddress);
+            List<WrappedTokenEvents> fullHistory = getHistory(address);
+            Long balance = 0L;
+            List<WFSHNhistory> wfshNhistoryList = new ArrayList<>();
+            for (WrappedTokenEvents events : fullHistory) {
+                balance += getBalance(events, address);
+                wfshNhistoryList.add(convertToWalletHistory(events, address));
+            }
+            WFSHNwallet wfshNwallet = new WFSHNwallet();
+            wfshNwallet.setBalance(balance);
+            wfshNwallet.setHistory(wfshNhistoryList);
+            return new ResultDTO(true, wfshNwallet, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+    private WFSHNhistory convertToWalletHistory(WrappedTokenEvents events, String address) {
+        WFSHNhistory wfshNhistory = new WFSHNhistory();
+        wfshNhistory.setTimestamp(events.getTimeStamp());
+        wfshNhistory.setAmount(events.getAmount());
+        if (events.getAddressTo().equals(address)) {
+            wfshNhistory.setIncome(true);
+        }
+        if (!events.getAddressFrom().equals(NULL_ADDRESS) && !events.getAddressTo().equals(NULL_ADDRESS)) {
+            wfshNhistory.setTransfer(true);
+            String contragent = wfshNhistory.isIncome() ? events.getAddressFrom() : events.getAddressTo();
+            wfshNhistory.setWallet(contragent);
+            Client client = clientService.findClientByCurrencyWallet("ETH", contragent);
+            if (client != null) {
+                wfshNhistory.setCryptoname(client.getCryptoname());
+                wfshNhistory.setFshnPubKey(client.getWalletAddress());
+                wfshNhistory.setAvatar(client.getAvatar());
+            }
+        }
+        return wfshNhistory;
+
+    }
+
+    private Long getBalance(WrappedTokenEvents events, String address) {
+        if (events.getAddressFrom().equals(address)) {
+            return 0 - events.getAmount();
+        } else if (events.getAddressTo().equals(address)) {
+            return events.getAmount();
+        } else {
+            logger.error("Addres not found");
+            return 0L;
+        }
+    }
+
+
+    private List<WrappedTokenEvents> getHistory(String address) {
+        List<WrappedTokenEvents> eventsList = tokenEventsRepository.findByAddressFromOrAddressTo(address, address);
+        eventsList.sort((o1, o2) -> (o2.getTimeStamp().compareTo(o1.getTimeStamp())));
+        return eventsList;
+    }
+
 
 }

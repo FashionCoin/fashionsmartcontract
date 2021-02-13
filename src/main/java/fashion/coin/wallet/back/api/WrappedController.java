@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.api;
 
+import fashion.coin.wallet.back.dto.ApiKeyDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.UnwrapRequestDTO;
 import fashion.coin.wallet.back.dto.WrappedRequestDTO;
@@ -21,19 +22,24 @@ public class WrappedController {
 
     @PostMapping("/api/v1/wrap")
     @ResponseBody
-    ResultDTO wrap(@RequestBody WrappedRequestDTO request){
+    ResultDTO wrap(@RequestBody WrappedRequestDTO request) {
         logger.info("wrap");
         return wrapService.wrap(request);
     }
 
     @PostMapping("/api/v1/unwrap")
     @ResponseBody
-    ResultDTO unwrap(@RequestBody UnwrapRequestDTO request){
+    ResultDTO unwrap(@RequestBody UnwrapRequestDTO request) {
         logger.info("unwrap");
         return wrapService.unwrap(request);
     }
 
-
+    @PostMapping("/api/v1/history")
+    @ResponseBody
+    ResultDTO history(@RequestBody ApiKeyDTO apiKeyDTO) {
+        logger.info("Get Ethereum History");
+        return wrapService.getWalletHistoy(apiKeyDTO.getApikey());
+    }
 
 
     @Autowired

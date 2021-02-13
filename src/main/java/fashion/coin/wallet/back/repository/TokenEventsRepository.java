@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface TokenEventsRepository extends JpaRepository<WrappedTokenEvents,String> {
+public interface TokenEventsRepository extends JpaRepository<WrappedTokenEvents, String> {
 
     @Query(value = "SELECT * FROM wrapped_token_events ORDER BY block_number DESC LIMIT 1", nativeQuery = true)
     WrappedTokenEvents findByLastTransaction();
+
+    List<WrappedTokenEvents> findByAddressFromOrAddressTo(String from, String to);
 
 }

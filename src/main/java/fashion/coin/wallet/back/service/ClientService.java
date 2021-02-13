@@ -55,6 +55,7 @@ public class ClientService {
     Gson gson;
     TelegramDataService telegramDataService;
     EmojiCodeService emojiCodeService;
+    CryptoWalletsService cryptoWalletsService;
 
     Random random = new Random();
 
@@ -242,7 +243,7 @@ public class ClientService {
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (client == null) return error108;
-            if(client.isBanned()) return error122;
+            if (client.isBanned()) return error122;
             if (data.getApikey() == null) return error107;
 
             if (!checkUsingApiKey(data.getApikey())) return error117;
@@ -390,7 +391,7 @@ public class ClientService {
         }
 
         int codePointCount = textWithoutEmoji.codePointCount(0, textWithoutEmoji.length());
-        if (codePointCount == 1 && codePointCount < textWithoutEmoji.length()){
+        if (codePointCount == 1 && codePointCount < textWithoutEmoji.length()) {
             logger.error("One letter");
             return false;
         }
@@ -528,6 +529,12 @@ public class ClientService {
         this.emojiCodeService = emojiCodeService;
     }
 
+    @Autowired
+    public void setCryptoWalletsService(CryptoWalletsService cryptoWalletsService) {
+        this.cryptoWalletsService = cryptoWalletsService;
+    }
+
+
     public static final ResultDTO created = new ResultDTO(true, "Account created", 0);
     public static final ResultDTO validLogin = new ResultDTO(true, "Login is valid", 0);
     public static final ResultDTO mailSended = new ResultDTO(true, "Confirm mail sended", 0);
@@ -607,11 +614,11 @@ public class ClientService {
 
     public ResultDTO getWallets(GetWalletsDTO data) {
         try {
-            Map<String,String> clients = new HashMap<>();
-            for(String cryptoname : data.getCryptonames()){
+            Map<String, String> clients = new HashMap<>();
+            for (String cryptoname : data.getCryptonames()) {
                 Client client = clientRepository.findClientByCryptoname(cryptoname.trim());
                 if (client != null && client.getWalletAddress() != null) {
-                    clients.put(cryptoname,client.getWalletAddress());
+                    clients.put(cryptoname, client.getWalletAddress());
                 }
             }
 
@@ -663,7 +670,7 @@ public class ClientService {
                 return error108;
             }
 
-            if(clientByApikey.isBanned()) return error122;
+            if (clientByApikey.isBanned()) return error122;
 
             if (clientByApikey.getWalletAddress() == null || clientByApikey.getWalletAddress().length() == 0) {
                 return clientByApikey;
@@ -763,10 +770,11 @@ public class ClientService {
         if (!client.getCryptoname().equals(login)) return false;
         return true;
     }
+
     public Client findByCryptonameAndApiKey(String cryptoname, String apikey) {
         List<Client> clientList = clientRepository.findByApikey(apikey);
 
-        if (clientList == null || clientList.size()==0) return null;
+        if (clientList == null || clientList.size() == 0) return null;
         if (!clientList.get(0).getCryptoname().equals(cryptoname)) return null;
         return clientList.get(0);
     }
@@ -944,5 +952,12 @@ public class ClientService {
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    public Client findClientByCurrencyWallet(String currency, String address) {
+        String cryptoname = cryptoWalletsService.getCryptoname(currency, address);
+        if (cryptoname == null) return null;
+        Client client = findByCryptoname(cryptoname);
+        return client;
     }
 }
