@@ -257,7 +257,18 @@ public class WrapService {
     }
 
     private boolean transactionExists(String transactionHash) {
-        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
+        List<WrapLog> wrapLogList = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
+            if (wrapLogList != null && wrapLogList.size() > 0) break;
+            try {
+                Thread.sleep((i + 1) * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         return (wrapLogList != null && wrapLogList.size() > 0);
     }
 
