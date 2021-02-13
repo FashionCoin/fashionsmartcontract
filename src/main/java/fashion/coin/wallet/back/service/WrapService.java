@@ -225,10 +225,11 @@ public class WrapService {
                 return error208;
             }
 
-            WrappedTokenEvents event = tokenEventsRepository.findById(request.getTransactionHash()).orElse(null);
-            if (event == null) {
+            if(!eventExists(request.getTransactionHash())){
                 return error209;
             }
+            WrappedTokenEvents event = tokenEventsRepository.findById(request.getTransactionHash()).orElse(null);
+
             BigDecimal floatamount = new BigDecimal(request.getAmount());
             BigInteger amount = floatamount.movePointRight(3).toBigInteger();
             if (amount.longValue() != event.getAmount()) {
@@ -256,19 +257,25 @@ public class WrapService {
         }
     }
 
-    private boolean transactionExists(String transactionHash) {
-        List<WrapLog> wrapLogList = new ArrayList<>();
-
-        for (int i = 0; i < 100; i++) {
-            wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
-            if (wrapLogList != null && wrapLogList.size() > 0) break;
-            try {
-                Thread.sleep((i + 1) * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    private boolean eventExists(String transactionHash) {
+        WrappedTokenEvents event = null;
+        for (int i = 0; i < 100 ; i++) {
+            event = tokenEventsRepository.findById(transactionHash).orElse(null);
+            if (event == null) {
+                try {
+                    Thread.sleep((i+1)*100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                break;
             }
         }
+        return (event != null);
+    }
 
+    private boolean transactionExists(String transactionHash) {
+        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
         return (wrapLogList != null && wrapLogList.size() > 0);
     }
 
