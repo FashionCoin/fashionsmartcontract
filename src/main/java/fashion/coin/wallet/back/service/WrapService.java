@@ -213,12 +213,26 @@ public class WrapService {
             if (transactionExists(request.getTransactionHash())) {
                 return error208;
             }
-// TODO: check transaction in Ethereum blockchain
+
+            WrappedTokenEvents event = tokenEventsRepository.findById(request.getTransactionHash()).orElse(null);
+            if (event == null) {
+                return error209;
+            }
+            BigDecimal floatamount = new BigDecimal(request.getAmount());
+            BigInteger amount = floatamount.movePointRight(3).toBigInteger();
+            if (amount.longValue() != event.getAmount()) {
+                logger.error("Amount {} != {}", amount.longValue(), event.getAmount());
+                return error210;
+            }
+            if (!event.getType().equals(BURN)) {
+                return error211;
+            }
+
+
             logger.info("TX Ethereum hash: {}", request.getTransactionHash());
             boolean result = aiService.transfer(request.getAmount(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG);
             if (result) {
-                BigDecimal floatamount = new BigDecimal(request.getAmount());
-                BigInteger amount = floatamount.movePointRight(3).toBigInteger();
+
                 wrapLogRepository.save(new WrapLog(false, amount.longValue(), client.getWalletAddress(),
                         request.getEthereumWallet(), request.getTransactionHash()));
                 return new ResultDTO(true, "Unwrap ok!", 0);
@@ -293,7 +307,7 @@ public class WrapService {
         for (EthEventDTO result : responce.getResult()) {
             tokenEventsRepository.save(convertToEvent(result));
         }
-        logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size());
+        logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size() - 1);
     }
 
 }
