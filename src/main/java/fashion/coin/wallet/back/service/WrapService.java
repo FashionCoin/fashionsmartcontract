@@ -279,10 +279,10 @@ public class WrapService {
     @Scheduled(cron = "0 * * * * *")
     public void updateEthereumEventd() {
         long lastBlock = 8058516;
-//        WrappedTokenEvents lastEvent = tokenEventsRepository.findFirstOrderByBlockNumberDesc();
-//        if (lastEvent != null) {
-//            lastBlock = lastEvent.blockNumber;
-//        }
+        WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction();
+        if (lastEvent != null) {
+            lastBlock = lastEvent.blockNumber;
+        }
 
         EventsDTO responce = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&" +
                         "fromBlock=" + lastBlock + "&toBlock=latest&" +
