@@ -218,7 +218,7 @@ public class WrapService {
 
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
-            updateEthereumEventd();
+
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) return error109;
             if (transactionExists(request.getTransactionHash())) {
@@ -259,11 +259,12 @@ public class WrapService {
 
     private boolean eventExists(String transactionHash) {
         WrappedTokenEvents event = null;
-        for (int i = 0; i < 100 ; i++) {
+        for (int i = 1000; i < 100000 ; i+=500) {
+            updateEthereumEventd();
             event = tokenEventsRepository.findById(transactionHash).orElse(null);
             if (event == null) {
                 try {
-                    Thread.sleep((i+1)*1000);
+                    Thread.sleep(i);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
