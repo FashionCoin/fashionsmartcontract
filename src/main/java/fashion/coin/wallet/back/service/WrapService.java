@@ -324,13 +324,13 @@ public class WrapService {
     public void updateEthereumEventd() {
         try {
 
-            long lastBlock = 8058516;
+            long lastBlock = 11866190;
             WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction();
             if (lastEvent != null) {
                 lastBlock = lastEvent.blockNumber;
             }
 
-            EventsDTO responce = restTemplate.getForObject("https://api-rinkeby.etherscan.io/api?module=logs&action=getLogs&" +
+            EventsDTO responce = restTemplate.getForObject("https://api.etherscan.io/api?module=logs&action=getLogs&" +
                             "fromBlock=" + lastBlock + "&toBlock=latest&" +
                             "address=" + contractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
                             "apikey=" + apiKey,
