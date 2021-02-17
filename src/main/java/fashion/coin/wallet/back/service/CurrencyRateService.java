@@ -139,7 +139,7 @@ public class CurrencyRateService {
             lastUpdate = LocalDateTime.now();
             ArrayList<LinkedTreeMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
 
-            responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
+            responce.removeIf(listEntity -> !listEntity.get("cc").equals("USD"));
             logger.info("Nazbank: {}", gson.toJson(responce));
             String usdUah = String.valueOf(responce.get(0).get("rate"));
             BigDecimal rate = new BigDecimal(usdUah);
