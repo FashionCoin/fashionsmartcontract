@@ -615,6 +615,11 @@ public class ClientService {
 
     public ResultDTO getWallets(GetWalletsDTO data) {
         try {
+            Client quested = clientRepository.findClientByApikey(data.getApikey());
+            if(quested==null){
+                return error109;
+            }
+
             Map<String, ContactDTO> clients = new HashMap<>();
             for (String cryptoname : data.getCryptonames()) {
                 Client client = clientRepository.findClientByCryptoname(cryptoname.trim());
