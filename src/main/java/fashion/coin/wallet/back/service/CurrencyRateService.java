@@ -1,6 +1,9 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import fashion.coin.wallet.back.entity.CurrencyRate;
+import fashion.coin.wallet.back.repository.CurrencyRateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,29 +35,66 @@ public class CurrencyRateService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    CurrencyService currencyService;
+
+    @Autowired
+    CurrencyRateRepository currencyRateRepository;
+
     @Value("${currency.coinmarketcap.api.key}")
     String cmcApiKey;
 
-    public static final String cmcLink = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";
+    private static final String cmcLink = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";
+    private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
 
+    static LocalDateTime lastUpdate = LocalDateTime.now();
+    Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
 
-//    @Scheduled(cron = "0 * * * * *")
-    public void TestExchangeRate() {
+    @Scheduled(cron = "0 * * * * *")
+    public void updateExchangeRate() {
         try {
-            logger.info("TestExchangeRate");
-            logger.info(String.valueOf(getUsdExchangeRate("BTC")));
-            Thread.sleep(1000);
-            logger.info(String.valueOf(getUsdExchangeRate("ETH")));
-            Thread.sleep(1000);
-            logger.info(String.valueOf(getUsdExchangeRate("FSHN")));
+            List<String> crypts = currencyService.getAvailableCrypts();
+            for(String currency : crypts){
+                CurrencyRate currencyRate = new CurrencyRate();
+                currencyRate.setCurrency(currency);
+                currencyRate.setRate(getFshnExchangeRate(currency).setScale(6));
+                currencyRate.setDateTime(LocalDateTime.now());
+                currencyRateRepository.save(currencyRate);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
+    BigDecimal getFshnExchangeRate(String currency) {
+        BigDecimal fshnUsd = getUsdExchangeRate("FSHN");
+        if (currency.equals("USD")) {
+            return BigDecimal.ONE.divide(fshnUsd, 3, RoundingMode.HALF_UP);
+        } else if (currency.equals("ETH") || currency.equals("BTC")) {
+            BigDecimal curUsd = getUsdExchangeRate(currency);
+            return curUsd.divide(fshnUsd, 3, RoundingMode.HALF_UP);
+        } else if (currency.equals("UAH")) {
+            BigDecimal usdUah = getRateFromNBU(currency);
+            return BigDecimal.ONE.divide(usdUah.multiply(fshnUsd), 3, RoundingMode.HALF_UP);
+        } else {
+            logger.error("Currency: {}", currency);
+        }
+        return BigDecimal.ONE;
+    }
+
     BigDecimal getUsdExchangeRate(String currency) {
         try {
+            if (!lastExchangeRate.containsKey(currency)) {
+                lastExchangeRate.put(currency, BigDecimal.ONE);
+            }
+
+            if (lastUpdate.plusSeconds(10).isAfter(LocalDateTime.now())) {
+                logger.info("Last update: {}", lastUpdate);
+//                return lastExchangeRate.get(currency);
+                Thread.sleep(10000);
+            }
+
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-CMC_PRO_API_KEY", cmcApiKey);
 
@@ -59,33 +103,64 @@ public class CurrencyRateService {
             Map<String, String> params = new HashMap<String, String>();
             params.put("symbol", currency);
 
-            ResponseEntity<CmcDTO> result = restTemplate.exchange(cmcLink, HttpMethod.GET, entity, CmcDTO.class, params);
+            lastUpdate = LocalDateTime.now();
+            ResponseEntity<CmcDTO> result = restTemplate.exchange(cmcLink + "?symbol=" + currency, HttpMethod.GET, entity, CmcDTO.class, params);
 
             if (result.getStatusCode().isError()) {
-                return null;
+                logger.error(result.getStatusCode().toString());
+                return lastExchangeRate.get(currency);
             }
 
             CmcDTO rate = result.getBody();
             logger.info("Coinmarcetcap: {}", gson.toJson(rate));
 
-            return new BigDecimal(rate.data.get(currency).quote.get("USD").price);
-
+            BigDecimal usdRate = new BigDecimal(rate.data.get(currency).quote.get("USD").price);
+            lastExchangeRate.put(currency, usdRate);
+            return usdRate;
         } catch (Exception e) {
             e.printStackTrace();
 
         }
-        return null;
+        return lastExchangeRate.get(currency);
+    }
+
+    private BigDecimal getRateFromNBU(String currency) {
+        try {
+            if (!lastExchangeRate.containsKey(currency)) {
+                lastExchangeRate.put(currency, BigDecimal.ONE);
+            }
+
+            if (lastUpdate.plusSeconds(10).isAfter(LocalDateTime.now())) {
+                logger.info("Last update: {}", lastUpdate);
+//                return lastExchangeRate.get(currency);
+                Thread.sleep(10000);
+            }
+
+            lastUpdate = LocalDateTime.now();
+            ArrayList<LinkedTreeMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
+
+            responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
+            String usdUah = String.valueOf(responce.get(0).get("rate"));
+            BigDecimal rate = new BigDecimal(usdUah);
+            lastExchangeRate.put(currency, rate);
+            return rate;
+
+        } catch (Exception e) {
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+            logger.error(e.getMessage());
+        }
+        return lastExchangeRate.get(currency);
     }
 
 
-    class CmcDTO {
+    static class CmcDTO {
 
         public Status status;
         public Map<String, CurrencyDTO> data;
 
     }
 
-    class CurrencyDTO {
+    static class CurrencyDTO {
 
         public Long id;
         public String name;
@@ -95,7 +170,7 @@ public class CurrencyRateService {
     }
 
 
-    class Status {
+    static class Status {
 
         public String timestamp;
         public Long errorCode;
@@ -106,9 +181,9 @@ public class CurrencyRateService {
 
     }
 
-    class FiatDTO {
+    static class FiatDTO {
 
-        public Double price;
+        public String price;
         public Double volume24h;
         public Double percentChange1h;
         public Double percentChange24h;

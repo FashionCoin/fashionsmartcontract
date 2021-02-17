@@ -48,92 +48,94 @@ public class CurrencyService {
     RestTemplate restTemplate;
 
 
-    private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
-//    private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
-    private static final String apiUrlLatoken = "https://api.latoken.com/v2/ticker";
-    private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+//    private static final String apiUrlBitfinex = "https://api.bitfinex.com/v1";
+////    private static final String apiUrlLatoken = "https://api.latoken.com/api/v1/MarketData/ticker";
+//    private static final String apiUrlLatoken = "https://api.latoken.com/v2/ticker";
+//    private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
     private static final String LASTRATE = "lastrate";
 
     DecimalFormat df = new DecimalFormat("#.00000000");
-
-    private static final String USD_PRICE = "1000";
-
-    LocalDateTime lastUpdate = LocalDateTime.now().minusDays(1);
-
-    Map<String, BigDecimal> lastLatokenPrice = new HashMap<>();
+//
+//    private static final String USD_PRICE = "1000";
+//
+//    LocalDateTime lastUpdate = LocalDateTime.now().minusDays(1);
+//
+//    Map<String, BigDecimal> lastLatokenPrice = new HashMap<>();
 
 
     public List<String> getAvailableCrypts() {
         return Stream.of("USD", "BTC", "ETH", "UAH").collect(Collectors.toList());
     }
 
-
-    public BigDecimal getRateForCoinBitfinex(String coinName) {
-
-        logger.info(coinName);
-        BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
-        BitFinexRateDTO last = result[0];
-        for (BitFinexRateDTO dto : result) {
-            if (dto.getTimestamp() > last.getTimestamp()) {
-                last = dto;
-            }
-        }
-        return new BigDecimal(last.getPrice());
-    }
+//
+//    public BigDecimal getRateForCoinBitfinex(String coinName) {
+//
+//        logger.info(coinName);
+//        BitFinexRateDTO[] result = restTemplate.getForObject(apiUrlBitfinex + "/trades/" + coinName + "usd", BitFinexRateDTO[].class);
+//        BitFinexRateDTO last = result[0];
+//        for (BitFinexRateDTO dto : result) {
+//            if (dto.getTimestamp() > last.getTimestamp()) {
+//                last = dto;
+//            }
+//        }
+//        return new BigDecimal(last.getPrice());
+//    }
 
     public CurrencyDTO getCurrencyRate(String currency) {
-
-        CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(currency, LocalDateTime.now().minusMinutes(1));
-        if (currencyRate == null) {
-            try {
-                if (currency.equals("BTC") || currency.equals("ETH")) {
-                    BigDecimal rateLA = getRateForCoinLatoken(currency);
-                    logger.info("LA "+currency+": "+rateLA);
-                    BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
-                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
-                } else if (currency.equals("USD")) {
-                    BigDecimal rateLA = getRateForCoinLatoken("USDT");
-                    logger.info("LA "+currency+": "+rateLA);
-                    BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
-                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
-                } else if (currency.equals("UAH")) {
-                    BigDecimal rateUSD = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 6, RoundingMode.HALF_UP);
-                    BigDecimal rate = rateUSD.divide(getRateFromNBU("USD"), 3, RoundingMode.HALF_UP);
-                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
-                } else {
-                    logger.error("Panic! Currency " + currency + "not found");
-                    currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
-                }
-                currencyRateRepository.save(currencyRate);
-            } catch (Exception e) {
-                logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
-                logger.error(e.getMessage());
-                currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
-//                e.printStackTrace();
-            }
-        }
-        if (currencyRate == null) return null;
+        CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
         return new CurrencyDTO(currency,
                 currencyRate.getRate().setScale(3, RoundingMode.HALF_UP).toString());
+//        CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(currency, LocalDateTime.now().minusMinutes(1));
+//        if (currencyRate == null) {
+//            try {
+//                if (currency.equals("BTC") || currency.equals("ETH")) {
+//                    BigDecimal rateLA = getRateForCoinLatoken(currency);
+//                    logger.info("LA "+currency+": "+rateLA);
+//                    BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
+//                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+//                } else if (currency.equals("USD")) {
+//                    BigDecimal rateLA = getRateForCoinLatoken("USDT");
+//                    logger.info("LA "+currency+": "+rateLA);
+//                    BigDecimal rate = BigDecimal.ONE.divide(rateLA, 3, RoundingMode.HALF_UP);
+//                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+//                } else if (currency.equals("UAH")) {
+//                    BigDecimal rateUSD = BigDecimal.ONE.divide(getRateForCoinLatoken("USDT"), 6, RoundingMode.HALF_UP);
+//                    BigDecimal rate = rateUSD.divide(getRateFromNBU("USD"), 3, RoundingMode.HALF_UP);
+//                    currencyRate = new CurrencyRate(currency, rate.setScale(6, RoundingMode.HALF_UP), LocalDateTime.now());
+//                } else {
+//                    logger.error("Panic! Currency " + currency + "not found");
+//                    currencyRate = new CurrencyRate(currency, BigDecimal.ONE, LocalDateTime.now());
+//                }
+//                currencyRateRepository.save(currencyRate);
+//            } catch (Exception e) {
+//                logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+//                logger.error(e.getMessage());
+//                currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+////                e.printStackTrace();
+//            }
+//        }
+//        if (currencyRate == null) return null;
+//        return new CurrencyDTO(currency,
+//                currencyRate.getRate().setScale(3, RoundingMode.HALF_UP).toString());
     }
-
-    private BigDecimal getRateFromNBU(String currency) throws Exception {
-        try {
-
-
-            ArrayList<LinkedTreeMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
-
-            responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
-            Object usd = responce.get(0).get("rate");
-            return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
-
-        } catch (Exception e) {
-            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
-            logger.error(e.getMessage());
-            throw new Exception(e.getMessage());
-        }
-
-    }
+//
+//    private BigDecimal getRateFromNBU(String currency) throws Exception {
+//        try {
+//
+//
+//            ArrayList<LinkedTreeMap> responce = restTemplate.getForObject(apiUrlNazbank, ArrayList.class);
+//
+//            responce.removeIf(listEntity -> !listEntity.get("cc").equals(currency));
+//            Object usd = responce.get(0).get("rate");
+//            return new BigDecimal((Double) usd).setScale(6, RoundingMode.HALF_UP);
+//
+//        } catch (Exception e) {
+//            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+//            logger.error(e.getMessage());
+//            throw new Exception(e.getMessage());
+//        }
+//
+//    }
 
     public List<CurrencyDTO> getCurrencyList() {
         List<CurrencyDTO> currencyDTOList = new ArrayList<>();
@@ -155,26 +157,26 @@ public class CurrencyService {
         return currencyDTOList;
     }
 
-    public BigDecimal getRateForCoinLatoken(String coinName) {
-        BigDecimal rate = null;
-
-        try {
-            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN/" + coinName, LatokenRateDTO.class);
-//            logger.info("LA: " + gson.toJson(result));
-            if (result != null) {
-                rate = new BigDecimal(result.lastPrice);
-            }
-        } catch (Exception e) {
-            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
-            logger.error(e.getMessage());
-        }
-        if (rate != null) {
-            lastLatokenPrice.put(coinName, rate);
-        } else {
-            rate = lastLatokenPrice.get(coinName);
-        }
-        return rate;
-    }
+//    public BigDecimal getRateForCoinLatoken(String coinName) {
+//        BigDecimal rate = null;
+//
+//        try {
+//            LatokenRateDTO result = restTemplate.getForObject(apiUrlLatoken + "/FSHN/" + coinName, LatokenRateDTO.class);
+////            logger.info("LA: " + gson.toJson(result));
+//            if (result != null) {
+//                rate = new BigDecimal(result.lastPrice);
+//            }
+//        } catch (Exception e) {
+//            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
+//            logger.error(e.getMessage());
+//        }
+//        if (rate != null) {
+//            lastLatokenPrice.put(coinName, rate);
+//        } else {
+//            rate = lastLatokenPrice.get(coinName);
+//        }
+//        return rate;
+//    }
 
     public List<CurrencyDTO> getCurrencyHistory(LocalDateTime beforeTime) {
         List<CurrencyDTO> currencyList = new ArrayList<>();
@@ -199,18 +201,17 @@ public class CurrencyService {
     }
 
 
-
     public List<CurrencyDTO> getAverageByDate(String date) {
         List<CurrencyDTO> currencyList = new ArrayList<>();
         List<String> crypts = getAvailableCrypts();
         try {
             logger.info("Average for: " + date);
-            LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00",DateTimeFormatter.ISO_DATE_TIME);
-            LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59",DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
                 BigDecimal rate = BigDecimal.valueOf(currencyRateRepository.getAverageCurrency(currency,
                         dateStart, dateEnd));
-                CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format( rate));
+                CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format(rate));
                 currencyList.add(currencyDTO);
                 logger.info(gson.toJson(currencyDTO));
             }
@@ -222,7 +223,7 @@ public class CurrencyService {
         return currencyList;
     }
 }
-
+/*
 class BitFinexRateDTO {
     Long timestamp;
     Long tid;
@@ -389,6 +390,8 @@ class LatokenRateDTO {
     }
 }
 */
+
+/*
 class NazbankDTO {
 
     public Integer r030;
@@ -441,3 +444,6 @@ class NazbankDTO {
         this.exchangedate = exchangedate;
     }
 }
+
+
+*/
