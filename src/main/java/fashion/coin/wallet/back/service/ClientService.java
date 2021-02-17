@@ -8,6 +8,7 @@ import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.dto.blockchain.FshnBalanceDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.entity.Contact;
 import fashion.coin.wallet.back.entity.SetEmailRequest;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.repository.SetEmailRepository;
@@ -614,11 +615,14 @@ public class ClientService {
 
     public ResultDTO getWallets(GetWalletsDTO data) {
         try {
-            Map<String, String> clients = new HashMap<>();
+            Map<String, ContactDTO> clients = new HashMap<>();
             for (String cryptoname : data.getCryptonames()) {
                 Client client = clientRepository.findClientByCryptoname(cryptoname.trim());
                 if (client != null && client.getWalletAddress() != null) {
-                    clients.put(cryptoname, client.getWalletAddress());
+
+
+
+                    clients.put(cryptoname, toContact( client));
                 }
             }
 
@@ -626,6 +630,17 @@ public class ClientService {
         } catch (Exception e) {
             return error108;
         }
+    }
+
+    private ContactDTO toContact(Client client) {
+
+        ContactDTO contactDTO = new ContactDTO();
+        contactDTO.setLogin(client.getCryptoname());
+        contactDTO.setWalletAddress(client.getWalletAddress());
+        contactDTO.setAvatar(client.getAvatar());
+        contactDTO.setAvaExists(client.avaExists());
+        contactDTO.setPhone(client.getPhone());
+        return contactDTO;
     }
 
     private String checkAnonimousWallet(String address) {
