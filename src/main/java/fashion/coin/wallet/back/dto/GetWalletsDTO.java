@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetWalletsDTO {
-
+    String apikey;
    List<String> cryptonames = new ArrayList<>();
 
     public List<String> getCryptonames() {
