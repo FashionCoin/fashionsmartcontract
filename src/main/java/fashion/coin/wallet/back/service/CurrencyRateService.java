@@ -34,7 +34,7 @@ public class CurrencyRateService {
     public static final String cmcLink = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";
 
 
-    @Scheduled(cron = "0 * * * * *")
+//    @Scheduled(cron = "0 * * * * *")
     public void TestExchangeRate() {
         try {
             logger.info("TestExchangeRate");
