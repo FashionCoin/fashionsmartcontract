@@ -52,4 +52,9 @@ public class InitService {
     public void setAiService(AIService aiService) {
         this.aiService = aiService;
     }
+
+    @Autowired
+    public void setCurrencyRateService(CurrencyRateService currencyRateService) {
+        this.currencyRateService = currencyRateService;
+    }
 }
