@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -50,6 +51,10 @@ public class CurrencyRateService {
     static LocalDateTime lastUpdate = LocalDateTime.now();
     Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
 
+
+
+
+
     @Scheduled(cron = "0 */20 * * * *")
     public void updateExchangeRate() {
         try {
@@ -72,8 +77,10 @@ public class CurrencyRateService {
 
     BigDecimal getFshnExchangeRate(String currency) {
         BigDecimal fshnUsd = lastExchangeRate.get(currency);
+        logger.info("lastExchangeRate1: {}",gson.toJson(lastExchangeRate));
         if (currency.equals("USD")) {
             fshnUsd = getUsdExchangeRate("FSHN");
+            logger.info("lastExchangeRate2: {}",gson.toJson(lastExchangeRate));
             return BigDecimal.ONE.divide(fshnUsd, 3, RoundingMode.HALF_UP);
         } else if (currency.equals("ETH") || currency.equals("BTC")) {
             BigDecimal curUsd = getUsdExchangeRate(currency);

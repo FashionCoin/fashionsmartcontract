@@ -23,11 +23,14 @@ public class InitService {
 
     AIService aiService;
 
+    CurrencyRateService currencyRateService;
+
     @PostConstruct
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
 //        aiService.printTransferTransaction("b1803b8a0c196b7f3d433c9976bb3a328982b734f4be701a12065f1e8321827b", "100.000");
 //aiService.printCreateWalletTransaction();
+        currencyRateService.updateExchangeRate();
     }
 
     @Autowired
