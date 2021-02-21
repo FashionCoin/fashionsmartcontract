@@ -76,7 +76,7 @@ public class CurrencyRateService {
 
 
     BigDecimal getFshnExchangeRate(String currency) {
-        BigDecimal fshnUsd = lastExchangeRate.get(currency);
+        BigDecimal fshnUsd = lastExchangeRate.get("FSHN");
         logger.info("lastExchangeRate1: {}",gson.toJson(lastExchangeRate));
         if (currency.equals("USD")) {
             fshnUsd = getUsdExchangeRate("FSHN");
