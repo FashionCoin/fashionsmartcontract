@@ -83,13 +83,24 @@ public class CurrencyRateService {
         } else {
             logger.error("Currency: {}", currency);
         }
-        return BigDecimal.ONE;
+
+      CurrencyRate rate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+        if(rate== null) {
+            return BigDecimal.ONE;
+        }else{
+            return rate.getRate();
+        }
     }
 
     BigDecimal getUsdExchangeRate(String currency) {
         try {
             if (!lastExchangeRate.containsKey(currency)) {
-                lastExchangeRate.put(currency, BigDecimal.ONE);
+                CurrencyRate rate  = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+                if(rate== null) {
+                    lastExchangeRate.put(currency, BigDecimal.ONE);
+                }else{
+                    lastExchangeRate.put(currency, rate.getRate());
+                }
             }
 
             if (lastUpdate.plusSeconds(600).isAfter(LocalDateTime.now())) {
@@ -130,7 +141,12 @@ public class CurrencyRateService {
     private BigDecimal getRateFromNBU(String currency) {
         try {
             if (!lastExchangeRate.containsKey(currency)) {
-                lastExchangeRate.put(currency, BigDecimal.ONE);
+                CurrencyRate rate  = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+                if(rate== null) {
+                    lastExchangeRate.put(currency, BigDecimal.ONE);
+                }else{
+                    lastExchangeRate.put(currency, rate.getRate());
+                }
             }
 
             if (lastUpdate.plusSeconds(600).isAfter(LocalDateTime.now())) {
