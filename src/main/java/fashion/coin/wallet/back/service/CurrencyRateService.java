@@ -105,8 +105,9 @@ public class CurrencyRateService {
 
             if (lastUpdate.plusSeconds(600).isAfter(LocalDateTime.now())) {
                 logger.info("Last update: {}", lastUpdate);
-//                return lastExchangeRate.get(currency);
-                Thread.sleep(600000);
+                return lastExchangeRate.get(currency);
+
+//                Thread.sleep(600000);
             }
 
             HttpHeaders headers = new HttpHeaders();
@@ -151,8 +152,8 @@ public class CurrencyRateService {
 
             if (lastUpdate.plusSeconds(600).isAfter(LocalDateTime.now())) {
                 logger.info("Last update: {}", lastUpdate);
-//                return lastExchangeRate.get(currency);
-                Thread.sleep(600000);
+                return lastExchangeRate.get(currency);
+//                Thread.sleep(600000);
             }
 
             lastUpdate = LocalDateTime.now();
