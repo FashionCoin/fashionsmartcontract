@@ -59,7 +59,9 @@ public class CurrencyRateService {
                 currencyRate.setCurrency(currency);
                 currencyRate.setRate(getFshnExchangeRate(currency).setScale(6));
                 currencyRate.setDateTime(LocalDateTime.now());
-                currencyRateRepository.save(currencyRate);
+                if(!currencyRate.getRate().equals(BigDecimal.ONE)){
+                    currencyRateRepository.save(currencyRate);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
