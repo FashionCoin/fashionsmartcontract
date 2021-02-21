@@ -50,7 +50,7 @@ public class CurrencyRateService {
     static LocalDateTime lastUpdate = LocalDateTime.now();
     Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void updateExchangeRate() {
         try {
             List<String> crypts = currencyService.getAvailableCrypts();
