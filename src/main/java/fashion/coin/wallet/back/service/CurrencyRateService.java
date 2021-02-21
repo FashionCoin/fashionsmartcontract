@@ -50,7 +50,7 @@ public class CurrencyRateService {
     static LocalDateTime lastUpdate = LocalDateTime.now();
     Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
 
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 */20 * * * *")
     public void updateExchangeRate() {
         try {
             List<String> crypts = currencyService.getAvailableCrypts();
@@ -71,8 +71,9 @@ public class CurrencyRateService {
 
 
     BigDecimal getFshnExchangeRate(String currency) {
-        BigDecimal fshnUsd = getUsdExchangeRate("FSHN");
+        BigDecimal fshnUsd = lastExchangeRate.get(currency);
         if (currency.equals("USD")) {
+            fshnUsd = getUsdExchangeRate("FSHN");
             return BigDecimal.ONE.divide(fshnUsd, 3, RoundingMode.HALF_UP);
         } else if (currency.equals("ETH") || currency.equals("BTC")) {
             BigDecimal curUsd = getUsdExchangeRate(currency);
@@ -103,11 +104,11 @@ public class CurrencyRateService {
                 }
             }
 
-            if (lastUpdate.plusSeconds(600).isAfter(LocalDateTime.now())) {
+            if (lastUpdate.plusSeconds(300).isAfter(LocalDateTime.now())) {
                 logger.info("Last update: {}", lastUpdate);
-                return lastExchangeRate.get(currency);
+//                return lastExchangeRate.get(currency);
 
-//                Thread.sleep(600000);
+                Thread.sleep(300000);
             }
 
             HttpHeaders headers = new HttpHeaders();
@@ -150,10 +151,10 @@ public class CurrencyRateService {
                 }
             }
 
-            if (lastUpdate.plusSeconds(600).isAfter(LocalDateTime.now())) {
+            if (lastUpdate.plusSeconds(300).isAfter(LocalDateTime.now())) {
                 logger.info("Last update: {}", lastUpdate);
-                return lastExchangeRate.get(currency);
-//                Thread.sleep(600000);
+//                return lastExchangeRate.get(currency);
+                Thread.sleep(300000);
             }
 
             lastUpdate = LocalDateTime.now();
