@@ -89,10 +89,10 @@ public class CurrencyRateService {
                 lastExchangeRate.put(currency, BigDecimal.ONE);
             }
 
-            if (lastUpdate.plusSeconds(10).isAfter(LocalDateTime.now())) {
+            if (lastUpdate.plusSeconds(120).isAfter(LocalDateTime.now())) {
                 logger.info("Last update: {}", lastUpdate);
 //                return lastExchangeRate.get(currency);
-                Thread.sleep(10000);
+                Thread.sleep(120000);
             }
 
             HttpHeaders headers = new HttpHeaders();
@@ -130,10 +130,10 @@ public class CurrencyRateService {
                 lastExchangeRate.put(currency, BigDecimal.ONE);
             }
 
-            if (lastUpdate.plusSeconds(10).isAfter(LocalDateTime.now())) {
+            if (lastUpdate.plusSeconds(120).isAfter(LocalDateTime.now())) {
                 logger.info("Last update: {}", lastUpdate);
 //                return lastExchangeRate.get(currency);
-                Thread.sleep(10000);
+                Thread.sleep(120000);
             }
 
             lastUpdate = LocalDateTime.now();

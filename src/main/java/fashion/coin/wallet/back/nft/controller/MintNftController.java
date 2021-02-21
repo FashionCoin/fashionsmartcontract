@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.nft.controller;
 
 import fashion.coin.wallet.back.dto.ResultDTO;
+import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.nft.service.NftService;
 import fashion.coin.wallet.back.service.FileUploadService;
 import org.slf4j.Logger;
@@ -32,10 +33,12 @@ public class MintNftController {
                          @RequestParam String title,
                          @RequestParam String description,
                          @RequestParam BigDecimal faceValue,
-                         @RequestParam BigDecimal creativeValue) {
+                         @RequestParam BigDecimal creativeValue,
+                         @RequestParam BlockchainTransactionDTO blockchainTransaction) {
         logger.info(multipartFile.getOriginalFilename());
 
-        return nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue);
+        return nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
+                blockchainTransaction);
 
 //        return fileUploadService.uploadNftPicture(multipartFile, login, apikey);
     }

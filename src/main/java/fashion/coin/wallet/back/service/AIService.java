@@ -364,7 +364,7 @@ public class AIService {
         return moneyBagWallet.equals(walletAddress);
     }
 
-    String getPubKey(AIWallets wallet) {
+   public String getPubKey(AIWallets wallet) {
         return getKey(false, wallet);
     }
 
