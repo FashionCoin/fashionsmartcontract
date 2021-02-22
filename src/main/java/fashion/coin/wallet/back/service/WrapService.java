@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.web3j.abi.datatypes.Address;
@@ -28,9 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -57,11 +54,11 @@ public class WrapService {
     public static final String NULL_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000000";
     public static final String SHORT_NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-    // Temporary address on Rinkebuy
+
     @Value("${wfshn.contract.address}")
     String contractAddress;
 
-    // Temporary owner Private Key
+
     @Value("${wfshn.owner.priv.key}")
     String ownerPrivKey;
 
@@ -72,7 +69,7 @@ public class WrapService {
     public ResultDTO wrap(WrappedRequestDTO request) {
         try {
             logger.info(gson.toJson(request));
-            if (!aiService.isMoneyBagWallet(request.getTransactionRequestDTO().getReceiverWallet())) {
+            if (!aiService.isDiamondWallet(request.getTransactionRequestDTO().getReceiverWallet())) {
                 return error207;
             }
             logger.info("receiver ok!");
@@ -242,7 +239,7 @@ public class WrapService {
 
 
             logger.info("TX Ethereum hash: {}", request.getTransactionHash());
-            boolean result = aiService.transfer(request.getAmount(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG);
+            boolean result = aiService.transfer(request.getAmount(), client.getWalletAddress(), AIService.AIWallets.DIAMOND);
             if (result) {
 
                 wrapLogRepository.save(new WrapLog(false, amount.longValue(), client.getWalletAddress(),

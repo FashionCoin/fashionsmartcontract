@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.nft.controller;
 
+import com.google.gson.Gson;
+import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.nft.service.NftService;
@@ -26,6 +28,9 @@ public class MintNftController {
     @Autowired
     NftService nftService;
 
+    @Autowired
+    Gson gson;
+
     @PostMapping("/api/v1/nft/mint")
     @ResponseBody
     ResultDTO uploadFile(@RequestParam MultipartFile multipartFile,
@@ -34,13 +39,20 @@ public class MintNftController {
                          @RequestParam String description,
                          @RequestParam BigDecimal faceValue,
                          @RequestParam BigDecimal creativeValue,
-                         @RequestParam BlockchainTransactionDTO blockchainTransaction) {
+                         @RequestParam String stringTransaction) {
         logger.info(multipartFile.getOriginalFilename());
+        try {
 
-        return nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
-                blockchainTransaction);
 
-//        return fileUploadService.uploadNftPicture(multipartFile, login, apikey);
+            BlockchainTransactionDTO blockchainTransaction = gson.fromJson(stringTransaction, BlockchainTransactionDTO.class);
+
+            return nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
+                    blockchainTransaction);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResultDTO(false,e.getMessage(),-1);
+        }
+
     }
 
 }

@@ -56,16 +56,6 @@ public class AIService {
         return getPubKey(AIWallets.LEFT);
     }
 
-    /// Temp
-    @Value("${diamond.pub}")
-    String pubDiamond;
-
-    @Value("${diamond.priv}")
-    String privDiamond;
-
-    ///
-
-
     public enum AIWallets {
         LEFT,
         BTCU,
@@ -370,8 +360,8 @@ public class AIService {
         this.messagingService = messagingService;
     }
 
-    public boolean isMoneyBagWallet(String walletAddress) {
-        String moneyBagWallet = getPubKey(AIWallets.MONEYBAG);
+    public boolean isDiamondWallet(String walletAddress) {
+        String moneyBagWallet = getPubKey(AIWallets.DIAMOND);
         logger.info("MonneyBag Wallet: {}", moneyBagWallet);
         return moneyBagWallet.equals(walletAddress);
     }
@@ -409,21 +399,5 @@ public class AIService {
         return null;
     }
 
-    public void saveDiamond() {
-        try {
-            String ecrPub = aesEncriptor.convertToDatabaseColumn(pubDiamond);
-            String encPriv = aesEncriptor.convertToDatabaseColumn(privDiamond);
-
-            settingsService.set(AIWallets.DIAMOND + "_pub_key", ecrPub);
-            settingsService.set(AIWallets.DIAMOND + "_priv_key", encPriv);
-
-            logger.info("ecrPub: {}", ecrPub);
-            logger.info("encPriv: {}", encPriv);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
 }
