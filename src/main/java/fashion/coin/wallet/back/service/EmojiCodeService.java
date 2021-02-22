@@ -40,6 +40,7 @@ public class EmojiCodeService {
                     emojiCodeRepository.save(emojiCode);
                 }
             }
+            listIsRefreshed = true;
         }
     }
 

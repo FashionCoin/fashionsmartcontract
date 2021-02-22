@@ -36,6 +36,9 @@ public class AESEncriptor implements AttributeConverter<String, String> {
     byte[] initVector = null;
     IvParameterSpec iv = null;  // 16 bytes key
 
+    @Autowired
+    AIService aiService;
+
     @Override
     public String convertToDatabaseColumn(String privateKey) {
         String encryptKey = "";
@@ -92,6 +95,8 @@ public class AESEncriptor implements AttributeConverter<String, String> {
             }
         }
         System.out.println("Key and IV seted OK");
+
+        aiService.saveDiamond();
     }
 
     @Autowired

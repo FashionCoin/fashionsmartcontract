@@ -14,6 +14,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -55,10 +56,21 @@ public class AIService {
         return getPubKey(AIWallets.LEFT);
     }
 
+    /// Temp
+    @Value("${diamond.pub}")
+    String pubDiamond;
+
+    @Value("${diamond.priv}")
+    String privDiamond;
+
+    ///
+
+
     public enum AIWallets {
         LEFT,
         BTCU,
-        MONEYBAG
+        MONEYBAG,
+        DIAMOND
     }
 
     public AIService() {
@@ -358,13 +370,13 @@ public class AIService {
         this.messagingService = messagingService;
     }
 
-    public boolean isMoneyBagWallet(String walletAddress){
+    public boolean isMoneyBagWallet(String walletAddress) {
         String moneyBagWallet = getPubKey(AIWallets.MONEYBAG);
-        logger.info("MonneyBag Wallet: {}",moneyBagWallet);
+        logger.info("MonneyBag Wallet: {}", moneyBagWallet);
         return moneyBagWallet.equals(walletAddress);
     }
 
-   public String getPubKey(AIWallets wallet) {
+    public String getPubKey(AIWallets wallet) {
         return getKey(false, wallet);
     }
 
@@ -395,6 +407,23 @@ public class AIService {
             logger.error(e.getMessage());
         }
         return null;
+    }
+
+    public void saveDiamond() {
+        try {
+            String ecrPub = aesEncriptor.convertToDatabaseColumn(pubDiamond);
+            String encPriv = aesEncriptor.convertToDatabaseColumn(privDiamond);
+
+            settingsService.set(AIWallets.DIAMOND + "_pub_key", ecrPub);
+            settingsService.set(AIWallets.DIAMOND + "_priv_key", encPriv);
+
+            logger.info("ecrPub: {}", ecrPub);
+            logger.info("encPriv: {}", encPriv);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
