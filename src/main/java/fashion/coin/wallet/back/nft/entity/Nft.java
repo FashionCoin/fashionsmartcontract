@@ -21,6 +21,7 @@ public class Nft {
     String authorName;
     Long ownerId;
     String ownerName;
+    String ownerWallet;
     Long timestamp;
     Long proofs;
 
@@ -105,6 +106,14 @@ public class Nft {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public String getOwnerWallet() {
+        return ownerWallet;
+    }
+
+    public void setOwnerWallet(String ownerWallet) {
+        this.ownerWallet = ownerWallet;
     }
 
     public Long getTimestamp() {

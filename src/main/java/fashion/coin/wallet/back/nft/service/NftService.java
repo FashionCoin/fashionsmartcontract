@@ -105,6 +105,7 @@ public class NftService {
         nft.setAuthorName(client.getCryptoname());
         nft.setOwnerId(client.getId());
         nft.setOwnerName(client.getCryptoname());
+        nft.setOwnerWallet(client.getWalletAddress());
         nft.setTitle(title);
         nft.setDescription(description);
         nft.setFaceValue(faceValue);
@@ -149,6 +150,7 @@ public class NftService {
             nftHistory.setTimestamp(System.currentTimeMillis());
             nft.setOwnerId(clientTo.getId());
             nft.setOwnerName(clientTo.getCryptoname());
+            nft.setOwnerWallet(clientTo.getWalletAddress());
             nftRepository.save(nft);
             nftHistoryRepository.save(nftHistory);
 
