@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.CommentsRequestDTO;
 import fashion.coin.wallet.back.nft.dto.HistoryNftRequestDTO;
+import fashion.coin.wallet.back.nft.dto.NewValueRequestDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
@@ -151,6 +152,7 @@ public class NftService {
             nft.setOwnerId(clientTo.getId());
             nft.setOwnerName(clientTo.getCryptoname());
             nft.setOwnerWallet(clientTo.getWalletAddress());
+            nft.setCanChangeValue(true);
             nftRepository.save(nft);
             nftHistoryRepository.save(nftHistory);
 
@@ -198,5 +200,10 @@ public class NftService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+
+    public ResultDTO setNewValue(NewValueRequestDTO request) {
+        return new ResultDTO(false, "", -1);
     }
 }

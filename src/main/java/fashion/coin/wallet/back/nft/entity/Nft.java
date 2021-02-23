@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -24,6 +25,8 @@ public class Nft {
     String ownerWallet;
     Long timestamp;
     Long proofs;
+    @Column(name ="can_change_value", columnDefinition="boolean default false",nullable = false)
+    boolean canChangeValue;
 
     public Nft() {
     }
@@ -130,5 +133,13 @@ public class Nft {
 
     public void setProofs(Long proofs) {
         this.proofs = proofs;
+    }
+
+    public boolean isCanChangeValue() {
+        return canChangeValue;
+    }
+
+    public void setCanChangeValue(boolean canChangeValue) {
+        this.canChangeValue = canChangeValue;
     }
 }
