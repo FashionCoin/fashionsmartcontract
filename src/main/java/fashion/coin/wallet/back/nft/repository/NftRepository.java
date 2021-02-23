@@ -16,4 +16,5 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
     List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(Long timestamp, int limit);
 
 
+    List<Nft> findByFileName(String filename);
 }

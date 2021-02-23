@@ -136,14 +136,15 @@ public class FileUploadService {
             MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
             String shaChecksum = getFileChecksum(shaDigest, copyLocation.toFile());
             Path newName = Paths.get(NFT_PATH + File.separator + shaChecksum + fileExtension);
+            NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
             if (newName.toFile().exists()) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
-                return error123;
+            }else{
+                Files.move(copyLocation, copyLocation.resolveSibling(newName));
+                nftFileRepository.save(nftFile);
             }
-            Files.move(copyLocation, copyLocation.resolveSibling(newName));
-            NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
-            nftFileRepository.save(nftFile);
+
             return new ResultDTO(true,nftFile,0);
         } catch (Exception e) {
             e.printStackTrace();

@@ -17,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.error123;
 
 @Service
 public class NftService {
@@ -67,6 +69,12 @@ public class NftService {
         ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
         if (!resultDTO.isResult()) return resultDTO;
         NftFile nftFile = (NftFile) resultDTO.getData();
+
+        List<Nft> nftList = nftRepository.findByFileName(nftFile.getFilename());
+        if (nftList != null && nftList.size() > 0) {
+            return error123;
+        }
+
         Client client = clientService.findByCryptoname(login);
 
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
