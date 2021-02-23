@@ -6,11 +6,15 @@ import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
+import fashion.coin.wallet.back.nft.entity.NftHistory;
+import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.FileUploadService;
 import fashion.coin.wallet.back.service.TransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +23,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error123;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 @Service
 public class NftService {
+
+    Logger logger = LoggerFactory.getLogger(NftService.class);
 
 
     NftRepository nftRepository;
@@ -35,6 +40,8 @@ public class NftService {
     AIService aiService;
 
     TransactionService transactionService;
+
+    NftHistoryRepository nftHistoryRepository;
 
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
@@ -59,6 +66,11 @@ public class NftService {
     @Autowired
     public void setTransactionService(TransactionService transactionService) {
         this.transactionService = transactionService;
+    }
+
+    @Autowired
+    public void setNftHistoryRepository(NftHistoryRepository nftHistoryRepository) {
+        this.nftHistoryRepository = nftHistoryRepository;
     }
 
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
@@ -99,5 +111,48 @@ public class NftService {
         nft.setProofs(0L);
         nftRepository.save(nft);
         return new ResultDTO(true, nft, 0);
+    }
+
+    public ResultDTO buy(Long nftId, TransactionRequestDTO transactionRequest) {
+
+        try {
+
+            Client clientFrom = clientService.findByWallet(transactionRequest.getBlockchainTransaction().getBody().getTo());
+            Client clientTo = clientService.findByWallet(transactionRequest.getBlockchainTransaction().getBody().getFrom());
+            Nft nft = nftRepository.getOne(nftId);
+
+            BigDecimal amount = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount());
+            amount = amount.movePointLeft(3);
+
+            logger.info("Client From: {}", clientFrom);
+            logger.info("Client: To {}", clientTo);
+            logger.info("Nft: {}", nft);
+            logger.info("Amount: {}", amount);
+
+            if (nft.getCreativeValue().compareTo(amount) != 0) {
+                return error212;
+            }
+
+            NftHistory nftHistory = new NftHistory();
+            nftHistory.setCryptonameFrom(clientFrom.getCryptoname());
+            nftHistory.setCryptonameTo(clientTo.getCryptoname());
+            nftHistory.setNftId(nft.getId());
+            nftHistory.setAmount(amount);
+
+            ResultDTO result = transactionService.send(transactionRequest);
+            if (!result.isResult()) {
+                return result;
+            }
+            nftHistory.setTimestamp(System.currentTimeMillis());
+            nft.setOwnerId(clientTo.getId());
+            nft.setOwnerName(clientTo.getCryptoname());
+            nftRepository.save(nft);
+            nftHistoryRepository.save(nftHistory);
+
+            return new ResultDTO(true, nftHistory, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }

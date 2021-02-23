@@ -361,9 +361,9 @@ public class AIService {
     }
 
     public boolean isDiamondWallet(String walletAddress) {
-        String moneyBagWallet = getPubKey(AIWallets.DIAMOND);
-        logger.info("MonneyBag Wallet: {}", moneyBagWallet);
-        return moneyBagWallet.equals(walletAddress);
+        String diamondWallet = getPubKey(AIWallets.DIAMOND);
+        logger.info("Diamond Wallet: {}", diamondWallet);
+        return diamondWallet.equals(walletAddress);
     }
 
     public String getPubKey(AIWallets wallet) {
