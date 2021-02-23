@@ -1,8 +1,7 @@
 package fashion.coin.wallet.back.nft.controller;
 
 import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.nft.dto.CommentsRequestDTO;
-import fashion.coin.wallet.back.nft.dto.FeedNftRequestDTO;
+import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.NewValueRequestDTO;
 import fashion.coin.wallet.back.nft.service.NftService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class NftController {
 
     @PostMapping("/api/v1/nft/one")
     @ResponseBody
-    ResultDTO getNft(@RequestBody CommentsRequestDTO request){
+    ResultDTO getNft(@RequestBody NftRequestDTO request){
         return nftService.getOneNft(request);
     }
 
@@ -29,5 +28,15 @@ public class NftController {
     ResultDTO newValue(@RequestBody NewValueRequestDTO request){
         return nftService.setNewValue(request);
     }
+
+
+    @PostMapping("/api/v1/nft/burn")
+    @ResponseBody
+    ResultDTO burnNft(@RequestBody NftRequestDTO request){
+        return nftService.burnNft(request);
+    }
+
+
+
 
 }

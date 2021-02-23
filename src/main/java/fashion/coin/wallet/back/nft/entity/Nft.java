@@ -28,6 +28,9 @@ public class Nft {
     @Column(name ="can_change_value", columnDefinition="boolean default false",nullable = false)
     boolean canChangeValue;
 
+    @Column(name ="burned", columnDefinition="boolean default false",nullable = false)
+    boolean isBurned;
+
     public Nft() {
     }
 
@@ -141,5 +144,13 @@ public class Nft {
 
     public void setCanChangeValue(boolean canChangeValue) {
         this.canChangeValue = canChangeValue;
+    }
+
+    public boolean isBurned() {
+        return isBurned;
+    }
+
+    public void setBurned(boolean burned) {
+        isBurned = burned;
     }
 }

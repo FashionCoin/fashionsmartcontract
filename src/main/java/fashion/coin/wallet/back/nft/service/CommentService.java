@@ -2,7 +2,7 @@ package fashion.coin.wallet.back.nft.service;
 
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
-import fashion.coin.wallet.back.nft.dto.CommentsRequestDTO;
+import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.NewCommentNftDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftComment;
@@ -56,7 +56,7 @@ public class CommentService {
         }
     }
 
-    public ResultDTO getCommentList(CommentsRequestDTO request) {
+    public ResultDTO getCommentList(NftRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {

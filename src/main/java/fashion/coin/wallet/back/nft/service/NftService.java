@@ -4,7 +4,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
-import fashion.coin.wallet.back.nft.dto.CommentsRequestDTO;
+import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.HistoryNftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.NewValueRequestDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -185,7 +185,7 @@ public class NftService {
         return nftRepository.getOne(nftId);
     }
 
-    public ResultDTO getOneNft(CommentsRequestDTO request) {
+    public ResultDTO getOneNft(NftRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
@@ -233,5 +233,39 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    public ResultDTO burnNft(NftRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            Nft nft = nftRepository.getOne(request.getNftId());
+            if (nft == null) {
+                return error213;
+            }
+            if (!nft.getOwnerId().equals(client.getId())) {
+                return error214;
+            }
+
+            boolean result = aiService.transfer(nft.getFaceValue().toString(), nft.getOwnerWallet(), AIService.AIWallets.MONEYBAG);
+            if (result) {
+                nft.setOwnerId(null);
+                nft.setOwnerWallet(null);
+                nft.setOwnerName(null);
+                nft.setCreativeValue(BigDecimal.ZERO);
+                nft.setBurned(true);
+                nft.setFaceValue(BigDecimal.ZERO);
+                nftRepository.save(nft);
+                return new ResultDTO(true, nft, 0);
+            } else {
+                return error205;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }

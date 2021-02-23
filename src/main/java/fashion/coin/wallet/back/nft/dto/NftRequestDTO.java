@@ -1,6 +1,6 @@
 package fashion.coin.wallet.back.nft.dto;
 
-public class CommentsRequestDTO {
+public class NftRequestDTO {
 
     String apikey;
     Long nftId;

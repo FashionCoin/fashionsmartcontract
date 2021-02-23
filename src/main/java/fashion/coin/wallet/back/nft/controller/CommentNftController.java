@@ -1,8 +1,7 @@
 package fashion.coin.wallet.back.nft.controller;
 
 import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.nft.dto.BuyNftDTO;
-import fashion.coin.wallet.back.nft.dto.CommentsRequestDTO;
+import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.NewCommentNftDTO;
 import fashion.coin.wallet.back.nft.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class CommentNftController {
 
     @PostMapping("/api/v1/nft/comments")
     @ResponseBody
-    ResultDTO newComment(@RequestBody CommentsRequestDTO request) {
+    ResultDTO newComment(@RequestBody NftRequestDTO request) {
         return commentService.getCommentList(request);
     }
 
