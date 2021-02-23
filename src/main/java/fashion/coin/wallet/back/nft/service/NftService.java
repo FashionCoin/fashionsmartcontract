@@ -204,6 +204,34 @@ public class NftService {
 
 
     public ResultDTO setNewValue(NewValueRequestDTO request) {
-        return new ResultDTO(false, "", -1);
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            Nft nft = nftRepository.getOne(request.getNftId());
+            if (nft == null) {
+                return error213;
+            }
+            if (!nft.getOwnerId().equals(client.getId())) {
+                return error214;
+            }
+            if (!nft.isCanChangeValue()) {
+                return error216;
+            }
+            if (nft.getCreativeValue().compareTo(request.getCreativeValue()) < 0
+                    || nft.getFaceValue().compareTo(request.getFaceValue()) < 0) {
+                return error215;
+            }
+            nft.setCreativeValue(request.getCreativeValue());
+            nft.setFaceValue(request.getFaceValue());
+            nft.setCanChangeValue(false);
+            nftRepository.save(nft);
+            return new ResultDTO(true, nft, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
     }
 }

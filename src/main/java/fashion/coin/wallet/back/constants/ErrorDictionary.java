@@ -47,5 +47,8 @@ public class ErrorDictionary {
     public static final ResultDTO error211 = new ResultDTO(false, "This is not BURN transaction", 211);
     public static final ResultDTO error212 = new ResultDTO(false, "NFT creative value not equal transaction amount", 212);
     public static final ResultDTO error213 = new ResultDTO(false, "NFT not found", 213);
+    public static final ResultDTO error214 = new ResultDTO(false, "Client isn't owner NFT", 214);
+    public static final ResultDTO error215 = new ResultDTO(false, "Only increase value of NFT", 215);
+    public static final ResultDTO error216 = new ResultDTO(false, "NFT value already changed one time", 216);
 
 }
