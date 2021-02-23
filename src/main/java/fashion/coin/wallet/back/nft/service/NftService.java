@@ -4,6 +4,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.CommentsRequestDTO;
 import fashion.coin.wallet.back.nft.dto.HistoryNftRequestDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
@@ -178,5 +179,22 @@ public class NftService {
     public Nft findNft(Long nftId) {
 
         return nftRepository.getOne(nftId);
+    }
+
+    public ResultDTO getOneNft(CommentsRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            Nft nft = nftRepository.getOne(request.getNftId());
+            if (nft == null) {
+                return error213;
+            }
+            return new ResultDTO(true, nft, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }
