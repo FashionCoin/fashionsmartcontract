@@ -46,5 +46,6 @@ public class ErrorDictionary {
     public static final ResultDTO error210 = new ResultDTO(false, "Amount doesn't equal", 210);
     public static final ResultDTO error211 = new ResultDTO(false, "This is not BURN transaction", 211);
     public static final ResultDTO error212 = new ResultDTO(false, "NFT creative value not equal transaction amount", 212);
+    public static final ResultDTO error213 = new ResultDTO(false, "NFT not found", 213);
 
 }

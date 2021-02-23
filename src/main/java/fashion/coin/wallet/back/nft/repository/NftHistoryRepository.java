@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface NftHistoryRepository extends JpaRepository<NftHistory,Long> {
 
-    List<NftHistory> findByNftId(Long nftId);
+    List<NftHistory> findByNftIdOrderByTimestampDesc(Long nftId);
 }

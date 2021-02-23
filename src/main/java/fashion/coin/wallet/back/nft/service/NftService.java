@@ -164,7 +164,7 @@ public class NftService {
             if (client == null) {
                 return error109;
             }
-            List<NftHistory> nftHistoryList = nftHistoryRepository.findByNftId(request.getNftId());
+            List<NftHistory> nftHistoryList = nftHistoryRepository.findByNftIdOrderByTimestampDesc(request.getNftId());
             if (nftHistoryList == null || nftHistoryList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
             }
@@ -173,5 +173,10 @@ public class NftService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    public Nft findNft(Long nftId) {
+
+        return nftRepository.getOne(nftId);
     }
 }
