@@ -13,7 +13,7 @@ public class ErrorDictionary {
     public static final ResultDTO error106 = new ResultDTO(false, "Can't find pub_key param", 106);
     public static final ResultDTO error107 = new ResultDTO(false, "Can't find apikey param", 107);
     public static final ResultDTO error108 = new ResultDTO(false, "Please, use crypto names to send FSHN", 108);
-    public static final ResultDTO error109 = new ResultDTO(false, "Not valid apikey", 109);
+    public static final ResultDTO error109 = new ResultDTO(false, "Not valid apiKey", 109);
     public static final ResultDTO error110 = new ResultDTO(false, "Unknown  email", 110);
     public static final ResultDTO error111 = new ResultDTO(false, "Email is not confirmed", 111);
     public static final ResultDTO error112 = new ResultDTO(false, "Friend not found", 112);

@@ -4,6 +4,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.HistoryNftRequestDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
@@ -150,6 +152,23 @@ public class NftService {
             nftHistoryRepository.save(nftHistory);
 
             return new ResultDTO(true, nftHistory, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+    public ResultDTO getHistory(HistoryNftRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            List<NftHistory> nftHistoryList = nftHistoryRepository.findByNftId(request.getNftId());
+            if (nftHistoryList == null || nftHistoryList.size() == 0) {
+                return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
+            }
+            return new ResultDTO(true, nftHistoryList, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
