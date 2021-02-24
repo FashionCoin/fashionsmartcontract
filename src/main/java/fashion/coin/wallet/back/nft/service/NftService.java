@@ -124,7 +124,7 @@ public class NftService {
 
             Client clientFrom = clientService.findByWallet(transactionRequest.getBlockchainTransaction().getBody().getTo());
             Client clientTo = clientService.findByWallet(transactionRequest.getBlockchainTransaction().getBody().getFrom());
-            Nft nft = nftRepository.getOne(nftId);
+            Nft nft = nftRepository.findById(nftId).orElse(null);
 
             BigDecimal amount = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount());
             amount = amount.movePointLeft(3);
@@ -182,7 +182,7 @@ public class NftService {
 
     public Nft findNft(Long nftId) {
 
-        return nftRepository.getOne(nftId);
+        return nftRepository.findById(nftId).orElse(null);
     }
 
     public ResultDTO getOneNft(NftRequestDTO request) {
@@ -191,7 +191,7 @@ public class NftService {
             if (client == null) {
                 return error109;
             }
-            Nft nft = nftRepository.getOne(request.getNftId());
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
                 return error213;
             }
@@ -209,7 +209,7 @@ public class NftService {
             if (client == null) {
                 return error109;
             }
-            Nft nft = nftRepository.getOne(request.getNftId());
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
                 return error213;
             }
@@ -241,7 +241,7 @@ public class NftService {
             if (client == null) {
                 return error109;
             }
-            Nft nft = nftRepository.getOne(request.getNftId());
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
                 return error213;
             }

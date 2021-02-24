@@ -186,7 +186,7 @@ public class FiatService {
 
 
     public FiatPayment getPaymentStatus(PaymentStatusRequestDTO data) {
-        FiatPayment fiatPayment = fiatPaymentRepository.getOne(data.getId());
+        FiatPayment fiatPayment = fiatPaymentRepository.findById(data.getId()).orElse(null);
        logger.info(gson.toJson(fiatPayment));
         return fiatPayment;
     }
