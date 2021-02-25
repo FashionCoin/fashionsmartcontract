@@ -219,8 +219,8 @@ public class NftService {
             if (!nft.isCanChangeValue()) {
                 return error216;
             }
-            if (nft.getCreativeValue().compareTo(request.getCreativeValue()) < 0
-                    || nft.getFaceValue().compareTo(request.getFaceValue()) < 0) {
+            if (nft.getCreativeValue().compareTo(request.getCreativeValue()) > 0
+                    || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
                 return error215;
             }
             nft.setCreativeValue(request.getCreativeValue());
