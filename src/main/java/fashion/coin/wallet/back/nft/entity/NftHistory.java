@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,7 +17,7 @@ public class NftHistory {
 
     String cryptonameFrom;
     String cryptonameTo;
-
+    @Column(precision = 30, scale = 3)
     BigDecimal amount;
 
     public Long getId() {

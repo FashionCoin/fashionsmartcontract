@@ -1,9 +1,6 @@
 package fashion.coin.wallet.back.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,7 +27,7 @@ public class TransactionCoins {
 
     @ManyToOne
     Client receiver;
-
+    @Column(precision = 30, scale = 3)
     BigDecimal amount;
 
     String txhash;

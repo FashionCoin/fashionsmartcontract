@@ -16,7 +16,9 @@ public class Nft {
     String fileName;
     String title;
     String description;
+    @Column(precision = 30, scale = 3)
     BigDecimal faceValue;
+    @Column(precision = 30, scale = 3)
     BigDecimal creativeValue;
     Long authorId;
     String authorName;
