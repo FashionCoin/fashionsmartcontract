@@ -17,4 +17,6 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
 
 
     List<Nft> findByFileName(String filename);
+
+    List<Nft> findByOwnerId(Long id);
 }

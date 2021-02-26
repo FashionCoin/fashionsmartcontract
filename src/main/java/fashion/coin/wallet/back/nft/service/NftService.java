@@ -268,4 +268,13 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
+    List<Nft> getNftByOwner(Long ownerId){
+        List<Nft> nftList = nftRepository.findByOwnerId(ownerId);
+        if(nftList==null || nftList.size()==0){
+            return new ArrayList<>();
+        }
+        return nftList;
+    }
+
 }
