@@ -50,5 +50,6 @@ public class ErrorDictionary {
     public static final ResultDTO error214 = new ResultDTO(false, "Client isn't owner NFT", 214);
     public static final ResultDTO error215 = new ResultDTO(false, "Only increase value of NFT", 215);
     public static final ResultDTO error216 = new ResultDTO(false, "NFT value already changed one time", 216);
+    public static final ResultDTO error217 = new ResultDTO(false, "Overdraft of Proofs limit. Only 100 proofs per 24h", 217);
 
 }

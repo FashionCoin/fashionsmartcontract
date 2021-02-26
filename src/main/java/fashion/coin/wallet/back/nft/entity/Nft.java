@@ -26,7 +26,8 @@ public class Nft {
     String ownerName;
     String ownerWallet;
     Long timestamp;
-    Long proofs;
+    @Column(precision = 30, scale = 3)
+    BigDecimal proofs = BigDecimal.ZERO;
     @Column(name ="can_change_value", columnDefinition="boolean default false",nullable = false)
     boolean canChangeValue;
 
@@ -132,11 +133,11 @@ public class Nft {
         this.timestamp = timestamp;
     }
 
-    public Long getProofs() {
+    public BigDecimal getProofs() {
         return proofs;
     }
 
-    public void setProofs(Long proofs) {
+    public void setProofs(BigDecimal proofs) {
         this.proofs = proofs;
     }
 

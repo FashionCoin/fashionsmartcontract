@@ -35,11 +35,16 @@ public class ProofService {
     @Autowired
     ProofHistoryRepository proofHistoryRepository;
 
-    ResultDTO proofNft(NftRequestDTO request) {
+    static final long DAY = 24 * 60 * 60 * 1000;
+
+  public   ResultDTO proofNft(NftRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
                 return error109;
+            }
+            if (overdraftProof(client.getId())) {
+                return error217;
             }
             Nft nft = nftService.findNft(request.getNftId());
             if (nft == null) {
@@ -66,7 +71,11 @@ public class ProofService {
 
             proofHistoryRepository.save(proofHistory);
 
-            return new ResultDTO(true, proofHistory, 0);
+            nft.setProofs(nft.getProofs().add(proofValue));
+nftService.save(nft);
+
+
+            return new ResultDTO(true, nft, 0);
 
 
         } catch (Exception e) {
@@ -74,6 +83,14 @@ public class ProofService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    private boolean overdraftProof(Long clientId) {
+
+        long yesterday = System.currentTimeMillis() - DAY;
+        List<ProofHistory> proofHistoryList =
+                proofHistoryRepository.findByClientIdAndAndTimestampGreaterThan(clientId, yesterday);
+        return proofHistoryList != null && proofHistoryList.size() >= 100;
     }
 
 

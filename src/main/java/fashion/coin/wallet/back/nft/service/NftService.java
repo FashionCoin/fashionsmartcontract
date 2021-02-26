@@ -113,7 +113,7 @@ public class NftService {
         nft.setCreativeValue(creativeValue);
         nft.setFileName(nftFile.getFilename());
         nft.setTimestamp(System.currentTimeMillis());
-        nft.setProofs(0L);
+        nft.setProofs(BigDecimal.ZERO);
         nftRepository.save(nft);
         return new ResultDTO(true, nft, 0);
     }
@@ -269,12 +269,15 @@ public class NftService {
         }
     }
 
-    List<Nft> getNftByOwner(Long ownerId){
+    List<Nft> getNftByOwner(Long ownerId) {
         List<Nft> nftList = nftRepository.findByOwnerId(ownerId);
-        if(nftList==null || nftList.size()==0){
+        if (nftList == null || nftList.size() == 0) {
             return new ArrayList<>();
         }
         return nftList;
     }
 
+    public void save(Nft nft) {
+        nftRepository.save(nft);
+    }
 }
