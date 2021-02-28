@@ -12,7 +12,7 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
 //    List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDesc(LocalDateTime localDateTime);
 
 
-    @Query(value = "SELECT * FROM nft WHERE timestamp > ?1 AND burned = FALSE ORDER BY timestamp DESC LIMIT ?2", nativeQuery = true)
+    @Query(value = "SELECT * FROM nft WHERE timestamp < ?1 AND burned = FALSE ORDER BY timestamp DESC LIMIT ?2", nativeQuery = true)
     List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(Long timestamp, int limit);
 
 
