@@ -77,7 +77,7 @@ public class PolClientService {
             responseDTO.setProofs(polClient.getProofs());
 
             responseDTO.setCollection(nftService.getCollection(client.getId()));
-            responseDTO.setCollection(nftService.getCreation(client.getId()));
+            responseDTO.setCreation(nftService.getCreation(client.getId()));
 
             return new ResultDTO(true,responseDTO,0);
         } catch (Exception e) {
