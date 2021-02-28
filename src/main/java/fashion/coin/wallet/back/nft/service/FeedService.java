@@ -100,7 +100,12 @@ public class FeedService {
         if (mainFeed.size() > 1) {
             lastNftTime = mainFeed.get(mainFeed.size() - 1).getTimestamp();
         }
+
+        logger.info("Last Time: {}",lastNftTime);
+        logger.info("Elements: {}",elements);
+
         List<Nft> oldNfts = nftRepository.findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(lastNftTime, elements);
+        logger.info("Old Nfts: {}",oldNfts);
         if (oldNfts != null && oldNfts.size() > 0) {
             mainFeed.addAll(oldNfts);
         }
