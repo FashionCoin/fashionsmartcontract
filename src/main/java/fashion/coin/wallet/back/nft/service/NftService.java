@@ -202,10 +202,7 @@ public class NftService {
 
     public ResultDTO getOneNft(NftRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+
             Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
                 return error213;
