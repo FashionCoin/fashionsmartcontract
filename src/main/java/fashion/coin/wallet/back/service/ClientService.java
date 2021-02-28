@@ -980,4 +980,8 @@ public class ClientService {
         Client client = findByCryptoname(cryptoname);
         return client;
     }
+
+    public Client getClient(Long id) {
+        return clientRepository.findById(id).orElse(null);
+    }
 }

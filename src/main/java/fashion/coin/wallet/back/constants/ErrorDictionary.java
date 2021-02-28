@@ -31,6 +31,7 @@ public class ErrorDictionary {
     public static final ResultDTO error124 = new ResultDTO(false, "Only Main feeds for guest users", 124);
     public static final ResultDTO error125 = new ResultDTO(false, "Use one of feed types: main, proof, proofs", 125);
     public static final ResultDTO error126 = new ResultDTO(false, "Illegal page or perPage", 126);
+    public static final ResultDTO error127 = new ResultDTO(false, "Client not found", 127);
 
 
     public static final ResultDTO error200 = new ResultDTO(false, "Sender Wallet not found", 200);

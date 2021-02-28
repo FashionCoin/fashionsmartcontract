@@ -10,6 +10,7 @@ import fashion.coin.wallet.back.nft.dto.NewValueRequestDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
+import fashion.coin.wallet.back.nft.entity.PolClient;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.AIService;
@@ -49,6 +50,8 @@ public class NftService {
 
     FeedService feedService;
 
+    PolClientService polClientService;
+
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
         this.nftRepository = nftRepository;
@@ -83,6 +86,12 @@ public class NftService {
     public void setFeedService(FeedService feedService) {
         this.feedService = feedService;
     }
+
+    @Autowired
+    public void setPolClientService(PolClientService polClientService) {
+        this.polClientService = polClientService;
+    }
+
 
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
@@ -129,7 +138,7 @@ public class NftService {
         nftRepository.save(nft);
 
         feedService.addNewNft(nft);
-
+        polClientService.addNft(nft);
         return new ResultDTO(true, nft, 0);
     }
 
@@ -235,10 +244,16 @@ public class NftService {
                     || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
                 return error215;
             }
+            polClientService.increaseValue(client,
+                    request.getFaceValue().subtract(nft.getFaceValue()),
+                    request.getCreativeValue().subtract(nft.getCreativeValue()));
+
+
             nft.setCreativeValue(request.getCreativeValue());
             nft.setFaceValue(request.getFaceValue());
             nft.setCanChangeValue(false);
             nftRepository.save(nft);
+
             return new ResultDTO(true, nft, 0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,5 +306,21 @@ public class NftService {
 
     public void save(Nft nft) {
         nftRepository.save(nft);
+    }
+
+    public List<Nft> getCollection(Long id) {
+        List<Nft> collection = nftRepository.findByOwnerId(id);
+        if(collection == null || collection.size()==0){
+            return new ArrayList<>();
+        }
+        return collection;
+    }
+
+    public List<Nft> getCreation(Long id) {
+        List<Nft> creation = nftRepository.findByAuthorId(id);
+        if(creation == null || creation.size()==0){
+            return new ArrayList<>();
+        }
+        return creation;
     }
 }
