@@ -101,7 +101,7 @@ public class FeedService {
             lastNftTime = mainFeed.get(mainFeed.size() - 1).getTimestamp();
         }
         List<Nft> oldNfts = nftRepository.findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(lastNftTime, elements);
-        if(oldNfts != null && oldNfts.size()>0){
+        if (oldNfts != null && oldNfts.size() > 0) {
             mainFeed.addAll(oldNfts);
         }
     }
@@ -114,5 +114,9 @@ public class FeedService {
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
         this.nftRepository = nftRepository;
+    }
+
+    public void addNewNft(Nft nft) {
+        mainFeed.add(0, nft);
     }
 }

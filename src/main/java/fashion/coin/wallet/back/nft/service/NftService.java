@@ -47,6 +47,8 @@ public class NftService {
 
     NftHistoryRepository nftHistoryRepository;
 
+    FeedService feedService;
+
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
         this.nftRepository = nftRepository;
@@ -77,11 +79,21 @@ public class NftService {
         this.nftHistoryRepository = nftHistoryRepository;
     }
 
+    @Autowired
+    public void setFeedService(FeedService feedService) {
+        this.feedService = feedService;
+    }
+
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
                           BlockchainTransactionDTO blockchainTransaction) {
 
         if (!clientService.checkApiKey(login, apikey)) return error109;
+
+        if (creativeValue.compareTo(BigDecimal.ZERO) <= 0 || faceValue.compareTo(BigDecimal.ZERO) <= 0) {
+            return error218;
+        }
+
         ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
         if (!resultDTO.isResult()) return resultDTO;
         NftFile nftFile = (NftFile) resultDTO.getData();
@@ -115,6 +127,9 @@ public class NftService {
         nft.setTimestamp(System.currentTimeMillis());
         nft.setProofs(BigDecimal.ZERO);
         nftRepository.save(nft);
+
+        feedService.addNewNft(nft);
+
         return new ResultDTO(true, nft, 0);
     }
 
