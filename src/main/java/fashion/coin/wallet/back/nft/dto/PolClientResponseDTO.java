@@ -19,6 +19,9 @@ public class PolClientResponseDTO {
     List<Nft> collection;
     List<Nft> creation;
 
+    String avatar;
+    boolean avaExists;
+
     public Long getId() {
         return id;
     }
@@ -73,5 +76,21 @@ public class PolClientResponseDTO {
 
     public void setCreation(List<Nft> creation) {
         this.creation = creation;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public boolean isAvaExists() {
+        return avaExists;
+    }
+
+    public void setAvaExists(boolean avaExists) {
+        this.avaExists = avaExists;
     }
 }

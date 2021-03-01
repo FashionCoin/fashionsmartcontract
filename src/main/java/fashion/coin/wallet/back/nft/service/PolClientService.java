@@ -39,6 +39,7 @@ public class PolClientService {
             polClient.setCreativeValue(BigDecimal.ZERO);
             polClient.setFaceValue(BigDecimal.ZERO);
             polClient.setProofs(BigDecimal.ZERO);
+
             polClientRepository.save(polClient);
         }
         return polClient;
@@ -62,10 +63,10 @@ public class PolClientService {
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
             Client client = clientService.getClient(request.getId());
-            if(client==null){
+            if (client == null) {
                 client = clientService.findByCryptoname(request.getCryptoname());
             }
-            if(client== null){
+            if (client == null) {
                 return error127;
             }
             PolClient polClient = getClient(client.getId());
@@ -79,7 +80,11 @@ public class PolClientService {
             responseDTO.setCollection(nftService.getCollection(client.getId()));
             responseDTO.setCreation(nftService.getCreation(client.getId()));
 
-            return new ResultDTO(true,responseDTO,0);
+            responseDTO.setAvatar(client.getAvatar());
+            responseDTO.setAvaExists(client.getAvatar() != null && client.getAvatar().length() > 0);
+
+
+            return new ResultDTO(true, responseDTO, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
