@@ -30,9 +30,9 @@ public class FeedService {
     ClientService clientService;
     NftRepository nftRepository;
 
-    private List<Nft> mainFeed = new ArrayList<>();
-    Long lastUpdateFeed = 0L;
-    Nft lastActualNft = null;
+//    private List<Nft> mainFeed = new ArrayList<>();
+//    Long lastUpdateFeed = 0L;
+//    Nft lastActualNft = null;
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
         logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
@@ -46,6 +46,9 @@ public class FeedService {
             try {
                 int fromIndex = (request.getPage() - 1) * request.getPerPage();
                 int toIndex = fromIndex + request.getPerPage();
+
+                List<Nft> mainFeed = nftRepository.findLastTenThousand();
+                /*
                 if (toIndex > mainFeed.size()) {
                     getFeedTail(toIndex - mainFeed.size());
 
@@ -55,8 +58,10 @@ public class FeedService {
 
                     toIndex = mainFeed.size();
                 }
+                */
+
                 List<Nft> subList = mainFeed.subList(fromIndex, toIndex);
-                cleanFeed(toIndex);
+//                cleanFeed(toIndex);
                 return new ResultDTO(true, subList, 0);
             } catch (Exception e) {
                 logger.error(e.getMessage());
@@ -74,6 +79,7 @@ public class FeedService {
 
     }
 
+    /*
     private void cleanFeed(int toIndex) {
         try {
             if (mainFeed.size() >= toIndex) {
@@ -110,7 +116,7 @@ public class FeedService {
             mainFeed.addAll(oldNfts);
         }
     }
-
+*/
     @Autowired
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
@@ -120,8 +126,10 @@ public class FeedService {
     public void setNftRepository(NftRepository nftRepository) {
         this.nftRepository = nftRepository;
     }
-
+/*
     public void addNewNft(Nft nft) {
         mainFeed.add(0, nft);
     }
+
+ */
 }
