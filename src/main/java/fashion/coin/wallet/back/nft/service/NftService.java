@@ -156,7 +156,7 @@ public class NftService {
         nft.setProofs(BigDecimal.ZERO);
         nftRepository.save(nft);
 
-        feedService.addNewNft(nft);
+//        feedService.addNewNft(nft);
         polClientService.addNft(nft);
         return new ResultDTO(true, nft, 0);
     }
