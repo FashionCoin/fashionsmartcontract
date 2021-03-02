@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -103,6 +104,10 @@ public class NftService {
             return error218;
         }
 
+        if (!checkCreativeValueLimit(faceValue, creativeValue, new BigDecimal(100))) {
+            return error219;
+        }
+
         ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
         if (!resultDTO.isResult()) return resultDTO;
         NftFile nftFile = (NftFile) resultDTO.getData();
@@ -140,6 +145,11 @@ public class NftService {
         feedService.addNewNft(nft);
         polClientService.addNft(nft);
         return new ResultDTO(true, nft, 0);
+    }
+
+    private boolean checkCreativeValueLimit(BigDecimal faceValue, BigDecimal creativeValue, BigDecimal maxRate) {
+        BigDecimal rate = creativeValue.divide(faceValue, 1, RoundingMode.HALF_UP);
+        return rate.compareTo(maxRate) <= 0;
     }
 
     public ResultDTO buy(Long nftId, TransactionRequestDTO transactionRequest) {
@@ -244,6 +254,10 @@ public class NftService {
                     || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
                 return error215;
             }
+            if (checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
+                return error219;
+            }
+
             polClientService.increaseValue(client,
                     request.getFaceValue().subtract(nft.getFaceValue()),
                     request.getCreativeValue().subtract(nft.getCreativeValue()));
@@ -310,7 +324,7 @@ public class NftService {
 
     public List<Nft> getCollection(Long id) {
         List<Nft> collection = nftRepository.findByOwnerId(id);
-        if(collection == null || collection.size()==0){
+        if (collection == null || collection.size() == 0) {
             return new ArrayList<>();
         }
         return collection;
@@ -318,7 +332,7 @@ public class NftService {
 
     public List<Nft> getCreation(Long id) {
         List<Nft> creation = nftRepository.findByAuthorId(id);
-        if(creation == null || creation.size()==0){
+        if (creation == null || creation.size() == 0) {
             return new ArrayList<>();
         }
         return creation;
