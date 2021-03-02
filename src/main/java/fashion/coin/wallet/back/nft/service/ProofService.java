@@ -3,8 +3,10 @@ package fashion.coin.wallet.back.nft.service;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
+import fashion.coin.wallet.back.nft.entity.DividendHistory;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.ProofHistory;
+import fashion.coin.wallet.back.nft.repository.DividendHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.ProofHistoryRepository;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
@@ -14,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+import static fashion.coin.wallet.back.nft.service.NftService.BASE_WAY;
 
 @Service
 public class ProofService {
@@ -35,9 +39,12 @@ public class ProofService {
     @Autowired
     ProofHistoryRepository proofHistoryRepository;
 
+    @Autowired
+    DividendHistoryRepository dividendHistoryRepository;
+
     static final long DAY = 24 * 60 * 60 * 1000;
 
-  public   ResultDTO proofNft(NftRequestDTO request) {
+    public ResultDTO proofNft(NftRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
@@ -72,7 +79,7 @@ public class ProofService {
             proofHistoryRepository.save(proofHistory);
 
             nft.setProofs(nft.getProofs().add(proofValue));
-nftService.save(nft);
+            nftService.save(nft);
 
 
             return new ResultDTO(true, nft, 0);
@@ -115,6 +122,48 @@ nftService.save(nft);
         }
         String totalStr = String.valueOf(nft.getFaceValue().movePointRight(3).longValue() / 1000);
         return totalStr.length();
+    }
+
+
+    public ResultDTO dividendPayment(Nft nft, Client seller) {
+        if (nft.getWayOfAllocatingFunds().equals(BASE_WAY)) {
+            BigDecimal amountToDistribute = nft.getCreativeValue().divide(BigDecimal.TEN, 6, RoundingMode.HALF_UP);
+
+            List<ProofHistory> proofHistoryList = proofHistoryRepository.findByNftId(nft.getId());
+            BigDecimal totalAmount = BigDecimal.ZERO;
+
+            if (proofHistoryList != null && proofHistoryList.size() > 0) {
+
+                BigDecimal oneProofRate = amountToDistribute.divide(nft.getProofs(), 6, RoundingMode.HALF_UP);
+
+                for (ProofHistory pfh : proofHistoryList) {
+
+                    BigDecimal amount = pfh.getProofValue().multiply(oneProofRate).setScale(3, RoundingMode.HALF_UP);
+                    if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                        Client client = clientService.getClient(pfh.getClientId());
+                        totalAmount = totalAmount.add(amount);
+                        if (!aiService.transfer(amount.toString(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG)) {
+                            return error205;
+                        }
+                        DividendHistory dividendHistory = new DividendHistory();
+                        dividendHistory.setTimestamp(System.currentTimeMillis());
+                        dividendHistory.setClientId(client.getId());
+                        dividendHistory.setNftId(nft.getId());
+                        dividendHistory.setAmount(amount);
+                        dividendHistoryRepository.save(dividendHistory);
+                    }
+                }
+            }
+            amountToDistribute = amountToDistribute.subtract(totalAmount).setScale(3, RoundingMode.HALF_UP);
+            if (amountToDistribute.compareTo(BigDecimal.ZERO) > 0) {
+                if (!aiService.transfer(amountToDistribute.toString(), seller.getWalletAddress(), AIService.AIWallets.MONEYBAG)) {
+                    return error205;
+                }
+            }
+        } else {
+            return error220;
+        }
+        return new ResultDTO(true, "Ok", 0);
     }
 
 }

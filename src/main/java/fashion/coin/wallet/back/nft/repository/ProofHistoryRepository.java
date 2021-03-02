@@ -9,4 +9,6 @@ public interface ProofHistoryRepository extends JpaRepository<ProofHistory,Long>
 
     List<ProofHistory> findByClientIdAndAndTimestampGreaterThan(Long clientId, Long timestamp);
 
+    List<ProofHistory> findByNftId(Long nftId);
+
 }

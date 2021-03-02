@@ -4,14 +4,11 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
-import fashion.coin.wallet.back.nft.dto.AllocatedFundsDTO;
-import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
-import fashion.coin.wallet.back.nft.dto.HistoryNftRequestDTO;
-import fashion.coin.wallet.back.nft.dto.NewValueRequestDTO;
+import fashion.coin.wallet.back.nft.dto.*;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
-import fashion.coin.wallet.back.nft.entity.PolClient;
+import fashion.coin.wallet.back.nft.entity.ProofHistory;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.AIService;
@@ -30,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -55,6 +51,8 @@ public class NftService {
     FeedService feedService;
 
     PolClientService polClientService;
+
+    ProofService proofService;
 
     // Way of allocated funds
     public static final String BASE_WAY = "base";
@@ -105,6 +103,10 @@ public class NftService {
         this.polClientService = polClientService;
     }
 
+    @Autowired
+    public void setProofService(ProofService proofService) {
+        this.proofService = proofService;
+    }
 
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
@@ -164,36 +166,41 @@ public class NftService {
         return rate.compareTo(maxRate) <= 0;
     }
 
-    public ResultDTO buy(Long nftId, TransactionRequestDTO transactionRequest) {
+    public ResultDTO buy(BuyNftDTO buyNftDTO) {
 
         try {
 
-            Client clientFrom = clientService.findByWallet(transactionRequest.getBlockchainTransaction().getBody().getTo());
-            Client clientTo = clientService.findByWallet(transactionRequest.getBlockchainTransaction().getBody().getFrom());
-            Nft nft = nftRepository.findById(nftId).orElse(null);
-
-            BigDecimal amount = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount());
-            amount = amount.movePointLeft(3);
-
-            logger.info("Client From: {}", clientFrom);
-            logger.info("Client: To {}", clientTo);
-            logger.info("Nft: {}", nft);
-            logger.info("Amount: {}", amount);
-
-            if (nft.getCreativeValue().compareTo(amount) != 0) {
+            Client clientFrom = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
+                    .getBlockchainTransaction().getBody().getTo());
+            Client clientTo = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
+                    .getBlockchainTransaction().getBody().getFrom());
+            Nft nft = nftRepository.findById(buyNftDTO.getNftId()).orElse(null);
+            if (nft == null) {
+                return error213;
+            }
+            if (!checkBuyAmounts(nft, buyNftDTO.getTransactionsRequestMap())) {
                 return error212;
             }
 
+
+            BigDecimal amount = nft.getCreativeValue();
             NftHistory nftHistory = new NftHistory();
             nftHistory.setCryptonameFrom(clientFrom.getCryptoname());
             nftHistory.setCryptonameTo(clientTo.getCryptoname());
             nftHistory.setNftId(nft.getId());
             nftHistory.setAmount(amount);
 
-            ResultDTO result = transactionService.send(transactionRequest);
+            ResultDTO result = sendAllTransactions(buyNftDTO.getTransactionsRequestMap());
             if (!result.isResult()) {
                 return result;
             }
+
+            result = proofService.dividendPayment(nft,clientFrom);
+            if (!result.isResult()) {
+                return result;
+            }
+
+
             nftHistory.setTimestamp(System.currentTimeMillis());
             nft.setOwnerId(clientTo.getId());
             nft.setOwnerName(clientTo.getCryptoname());
@@ -207,6 +214,41 @@ public class NftService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+
+
+    private ResultDTO sendAllTransactions(Map<String, TransactionRequestDTO> transactionsRequestMap) {
+        for (Map.Entry<String, TransactionRequestDTO> transactionRequestDTOEntry : transactionsRequestMap.entrySet()) {
+            ResultDTO resultDTO = transactionService.send(transactionRequestDTOEntry.getValue());
+            if (!resultDTO.isResult()) {
+                return resultDTO;
+            }
+        }
+        return new ResultDTO(true, "Transactions sended", 0);
+    }
+
+    private boolean checkBuyAmounts(Nft nft, Map<String, TransactionRequestDTO> transactionsRequestMap) {
+
+        ResultDTO resultDTO = checkShare(nft.getId());
+        if (resultDTO.getData() instanceof HashMap) {
+            HashMap<String, AllocatedFundsDTO> share = (HashMap<String, AllocatedFundsDTO>) resultDTO.getData();
+            for (Map.Entry<String, AllocatedFundsDTO> allocatedFunds : share.entrySet()) {
+                TransactionRequestDTO transactionRequest = transactionsRequestMap.get(allocatedFunds.getKey());
+                BigDecimal amount = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody()
+                        .getAmount()).movePointLeft(3);
+                if (allocatedFunds.getValue().getAmount().compareTo(amount) != 0) {
+                    return false;
+                }
+                String wallet = transactionRequest.getBlockchainTransaction().getBody().getTo();
+                if (!allocatedFunds.getValue().getWallet().equals(wallet)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        logger.error(resultDTO.getData().getClass().getName());
+        return false;
     }
 
     public ResultDTO getHistory(HistoryNftRequestDTO request) {

@@ -2,9 +2,12 @@ package fashion.coin.wallet.back.nft.dto;
 
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BuyNftDTO {
     Long nftId;
-    TransactionRequestDTO transactionRequest;
+    Map<String, TransactionRequestDTO> transactionsRequestMap = new HashMap<>();
 
     public Long getNftId() {
         return nftId;
@@ -14,11 +17,11 @@ public class BuyNftDTO {
         this.nftId = nftId;
     }
 
-    public TransactionRequestDTO getTransactionRequest() {
-        return transactionRequest;
+    public Map<String, TransactionRequestDTO> getTransactionsRequestMap() {
+        return transactionsRequestMap;
     }
 
-    public void setTransactionRequest(TransactionRequestDTO transactionRequest) {
-        this.transactionRequest = transactionRequest;
+    public void setTransactionsRequestMap(Map<String, TransactionRequestDTO> transactionsRequestMap) {
+        this.transactionsRequestMap = transactionsRequestMap;
     }
 }

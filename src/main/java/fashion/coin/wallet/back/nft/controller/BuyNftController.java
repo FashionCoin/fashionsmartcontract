@@ -19,7 +19,7 @@ public class BuyNftController {
     @PostMapping("/api/v1/nft/buy")
     @ResponseBody
     ResultDTO buyNft(@RequestBody BuyNftDTO buyNftDTO) {
-        return nftService.buy(buyNftDTO.getNftId(), buyNftDTO.getTransactionRequest());
+        return nftService.buy(buyNftDTO);
     }
 
 
