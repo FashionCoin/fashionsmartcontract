@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static fashion.coin.wallet.back.nft.service.NftService.BASE_WAY;
+
 @Entity
 public class Nft {
     @Id
@@ -33,6 +35,8 @@ public class Nft {
 
     @Column(name ="burned", columnDefinition="boolean default false",nullable = false)
     boolean isBurned;
+
+    String wayOfAllocatingFunds = BASE_WAY;
 
     public Nft() {
     }
@@ -155,5 +159,13 @@ public class Nft {
 
     public void setBurned(boolean burned) {
         isBurned = burned;
+    }
+
+    public String getWayOfAllocatingFunds() {
+        return wayOfAllocatingFunds;
+    }
+
+    public void setWayOfAllocatingFunds(String wayOfAllocatingFunds) {
+        this.wayOfAllocatingFunds = wayOfAllocatingFunds;
     }
 }

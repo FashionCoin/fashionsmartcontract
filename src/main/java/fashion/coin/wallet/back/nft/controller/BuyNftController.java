@@ -23,4 +23,11 @@ public class BuyNftController {
     }
 
 
+    @PostMapping("/api/v1/nft/checkshare")
+    @ResponseBody
+    ResultDTO checkShare(@RequestBody BuyNftDTO buyNftDTO) {
+        return nftService.checkShare(buyNftDTO.getNftId());
+    }
+
+
 }

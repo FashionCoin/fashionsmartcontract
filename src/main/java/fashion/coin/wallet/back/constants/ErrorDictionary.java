@@ -54,5 +54,6 @@ public class ErrorDictionary {
     public static final ResultDTO error217 = new ResultDTO(false, "Overdraft of Proofs limit. Only 100 proofs per 24h", 217);
     public static final ResultDTO error218 = new ResultDTO(false, "Value must be biggest than 0", 218);
     public static final ResultDTO error219 = new ResultDTO(false, "Creative value limit x100 ", 219);
+    public static final ResultDTO error220 = new ResultDTO(false, "Way of allocating funds not found", 220);
 
 }

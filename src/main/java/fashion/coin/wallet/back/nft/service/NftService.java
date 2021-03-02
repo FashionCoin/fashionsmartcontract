@@ -4,6 +4,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.AllocatedFundsDTO;
 import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.HistoryNftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.NewValueRequestDTO;
@@ -26,7 +27,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
@@ -52,6 +55,15 @@ public class NftService {
     FeedService feedService;
 
     PolClientService polClientService;
+
+    // Way of allocated funds
+    public static final String BASE_WAY = "base";
+
+    // Purpose of payments
+    public static final String AUTHOR = "author";
+    public static final String SELLER = "seller";
+    public static final String TAX_AND_PROOFS = "taxAndProofs";
+
 
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
@@ -339,5 +351,48 @@ public class NftService {
             return new ArrayList<>();
         }
         return creation;
+    }
+
+    public ResultDTO checkShare(Long nftId) {
+        try {
+            Nft nft = nftRepository.findById(nftId).orElse(null);
+            if (nft == null) {
+                return error213;
+            }
+
+            if (nft.getWayOfAllocatingFunds().equals(BASE_WAY)) {
+
+                Map<String, AllocatedFundsDTO> share = new HashMap<>();
+
+                Client author = clientService.getClient(nft.getAuthorId());
+                AllocatedFundsDTO authorFunds = new AllocatedFundsDTO();
+                authorFunds.setPurpose(AUTHOR);
+                authorFunds.setWallet(author.getWalletAddress());
+                authorFunds.setAmount(nft.getCreativeValue().divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP));
+                share.put(AUTHOR, authorFunds);
+
+                AllocatedFundsDTO sellerFunds = new AllocatedFundsDTO();
+                sellerFunds.setPurpose(SELLER);
+                sellerFunds.setWallet(nft.getOwnerWallet());
+                sellerFunds.setAmount(nft.getCreativeValue().multiply(new BigDecimal("0.78")).setScale(3, RoundingMode.HALF_UP));
+                share.put(SELLER, sellerFunds);
+
+                AllocatedFundsDTO proofsFunds = new AllocatedFundsDTO();
+                proofsFunds.setPurpose(TAX_AND_PROOFS);
+                proofsFunds.setWallet(aiService.getPubKey(AIService.AIWallets.MONEYBAG));
+                proofsFunds.setAmount(nft.getCreativeValue()
+                        .subtract(authorFunds.getAmount())
+                        .subtract(sellerFunds.getAmount()));
+                share.put(TAX_AND_PROOFS, proofsFunds);
+
+                return new ResultDTO(true, share, 0);
+            } else {
+                return error220;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
     }
 }
