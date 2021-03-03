@@ -111,6 +111,7 @@ public class NftService {
         this.proofService = proofService;
     }
 
+    @Autowired
     public void setGson(Gson gson) {
         this.gson = gson;
     }
