@@ -64,4 +64,17 @@ public class BodyDTO {
     public void setSeed(String seed) {
         this.seed = seed;
     }
+
+    @Override
+    public String toString() {
+        return "BodyDTO{" +
+                "left_right='" + left_right + '\'' +
+                ", name_hash='" + name_hash + '\'' +
+                ", pub_key='" + pub_key + '\'' +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", amount='" + amount + '\'' +
+                ", seed='" + seed + '\'' +
+                '}';
+    }
 }

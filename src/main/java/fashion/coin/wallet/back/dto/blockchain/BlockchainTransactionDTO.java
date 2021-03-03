@@ -65,5 +65,15 @@ public class BlockchainTransactionDTO {
         this.signature = signature;
     }
 
-
+    @Override
+    public String toString() {
+        return "BlockchainTransactionDTO{" +
+                "network_id=" + network_id +
+                ", protocol_version=" + protocol_version +
+                ", message_id=" + message_id +
+                ", service_id=" + service_id +
+                ", body=" + body +
+                ", signature='" + signature + '\'' +
+                '}';
+    }
 }

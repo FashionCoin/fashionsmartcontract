@@ -62,4 +62,15 @@ public class TransactionRequestDTO {
     public void setBlockchainTransaction(BlockchainTransactionDTO blockchainTransaction) {
         this.blockchainTransaction = blockchainTransaction;
     }
+
+    @Override
+    public String toString() {
+        return "TransactionRequestDTO{" +
+                "senderWallet='" + senderWallet + '\'' +
+                ", receiverWallet='" + receiverWallet + '\'' +
+                ", receiverLogin='" + receiverLogin + '\'' +
+                ", amount='" + amount + '\'' +
+                ", blockchainTransaction=" + blockchainTransaction +
+                '}';
+    }
 }

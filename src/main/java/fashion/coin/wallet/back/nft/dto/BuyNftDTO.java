@@ -24,4 +24,12 @@ public class BuyNftDTO {
     public void setTransactionsRequestMap(Map<String, TransactionRequestDTO> transactionsRequestMap) {
         this.transactionsRequestMap = transactionsRequestMap;
     }
+
+    @Override
+    public String toString() {
+        return "BuyNftDTO{" +
+                "nftId=" + nftId +
+                ", transactionsRequestMap=" + transactionsRequestMap +
+                '}';
+    }
 }
