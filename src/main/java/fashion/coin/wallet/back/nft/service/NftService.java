@@ -177,6 +177,7 @@ public class NftService {
 
         try {
             logger.info("Buy NFT:");
+            logger.info(gson.toJson(buyNftDTO));
             logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap()));
             logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER)));
             logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction()));
