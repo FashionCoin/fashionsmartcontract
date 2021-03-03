@@ -29,6 +29,8 @@ public class BuyNftController {
 
         logger.info(request);
         BuyNftDTO buyNftDTO = gson.fromJson(request, BuyNftDTO.class);
+        String test = gson.toJson(buyNftDTO);
+        logger.info(test);
         logger.info(String.valueOf(buyNftDTO));
         return nftService.buy(buyNftDTO);
     }
