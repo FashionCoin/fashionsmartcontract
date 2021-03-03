@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.service;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -54,6 +55,8 @@ public class NftService {
 
     ProofService proofService;
 
+    Gson gson;
+
     // Way of allocated funds
     public static final String BASE_WAY = "base";
 
@@ -106,6 +109,10 @@ public class NftService {
     @Autowired
     public void setProofService(ProofService proofService) {
         this.proofService = proofService;
+    }
+
+    public void setGson(Gson gson) {
+        this.gson = gson;
     }
 
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
@@ -169,7 +176,12 @@ public class NftService {
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
 
         try {
-
+            logger.info("Buy NFT:");
+            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap()));
+            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER)));
+            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction()));
+            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction().getBody()));
+            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction().getBody().getTo()));
             Client clientFrom = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
                     .getBlockchainTransaction().getBody().getTo());
             Client clientTo = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
@@ -195,7 +207,7 @@ public class NftService {
                 return result;
             }
 
-            result = proofService.dividendPayment(nft,clientFrom);
+            result = proofService.dividendPayment(nft, clientFrom);
             if (!result.isResult()) {
                 return result;
             }
@@ -215,7 +227,6 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
-
 
 
     private ResultDTO sendAllTransactions(Map<String, TransactionRequestDTO> transactionsRequestMap) {
