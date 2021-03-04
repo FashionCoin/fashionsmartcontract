@@ -164,8 +164,7 @@ public class NftService {
         nft.setProofs(BigDecimal.ZERO);
         nftRepository.save(nft);
 
-//        feedService.addNewNft(nft);
-        polClientService.addNft(nft);
+
         return new ResultDTO(true, nft, 0);
     }
 
@@ -328,9 +327,6 @@ public class NftService {
                 return error219;
             }
 
-            BigDecimal increaseFaceValue = request.getFaceValue().subtract(nft.getFaceValue());
-            BigDecimal increaseCreativeValue = request.getCreativeValue().subtract(nft.getCreativeValue());
-
 
             ResultDTO resultDTO = checkIncreaseTransaction(nft, request);
             if (!resultDTO.isResult()) {
@@ -341,9 +337,6 @@ public class NftService {
             if (!resultDTO.isResult()) {
                 return resultDTO;
             }
-
-            polClientService.increaseValue(client, increaseFaceValue, increaseCreativeValue);
-
 
             nft.setCreativeValue(request.getCreativeValue());
             nft.setFaceValue(request.getFaceValue());
