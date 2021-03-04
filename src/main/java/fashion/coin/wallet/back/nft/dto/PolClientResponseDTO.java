@@ -22,6 +22,9 @@ public class PolClientResponseDTO {
     String avatar;
     boolean avaExists;
 
+    boolean proofSender;
+    boolean proofReceiver;
+
     public Long getId() {
         return id;
     }
@@ -92,5 +95,21 @@ public class PolClientResponseDTO {
 
     public void setAvaExists(boolean avaExists) {
         this.avaExists = avaExists;
+    }
+
+    public boolean isProofSender() {
+        return proofSender;
+    }
+
+    public void setProofSender(boolean proofSender) {
+        this.proofSender = proofSender;
+    }
+
+    public boolean isProofReceiver() {
+        return proofReceiver;
+    }
+
+    public void setProofReceiver(boolean proofReceiver) {
+        this.proofReceiver = proofReceiver;
     }
 }

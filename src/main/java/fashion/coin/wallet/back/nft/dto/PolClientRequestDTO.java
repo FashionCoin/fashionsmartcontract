@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.nft.dto;
 
 public class PolClientRequestDTO {
     Long id;
+    String apikey;
     String cryptoname;
 
     public Long getId() {
@@ -10,6 +11,14 @@ public class PolClientRequestDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
     }
 
     public String getCryptoname() {

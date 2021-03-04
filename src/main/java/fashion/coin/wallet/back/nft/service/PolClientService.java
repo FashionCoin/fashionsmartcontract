@@ -4,8 +4,10 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
 import fashion.coin.wallet.back.nft.dto.PolClientResponseDTO;
+import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.PolClient;
+import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.PolClientRepository;
 import fashion.coin.wallet.back.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error127;
 
 @Service
@@ -27,6 +30,9 @@ public class PolClientService {
 
     @Autowired
     NftService nftService;
+
+    @Autowired
+    FriendProofRepository friendProofRepository;
 
 
     public PolClient getClient(Long id) {
@@ -62,14 +68,22 @@ public class PolClientService {
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
-            Client client = clientService.getClient(request.getId());
+            Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
-                client = clientService.findByCryptoname(request.getCryptoname());
+                return error109;
             }
-            if (client == null) {
+
+
+            Client friend = clientService.getClient(request.getId());
+            if (friend == null) {
+                friend = clientService.findByCryptoname(request.getCryptoname());
+            }
+            if (friend == null) {
                 return error127;
             }
-            PolClient polClient = getClient(client.getId());
+
+
+            PolClient polClient = getClient(friend.getId());
             PolClientResponseDTO responseDTO = new PolClientResponseDTO();
             responseDTO.setId(polClient.getId());
             responseDTO.setCryptoname(polClient.getCryptoname());
@@ -77,17 +91,25 @@ public class PolClientService {
             responseDTO.setCreativeValue(polClient.getCreativeValue());
             responseDTO.setProofs(polClient.getProofs());
 
-            responseDTO.setCollection(nftService.getCollection(client.getId()));
-            responseDTO.setCreation(nftService.getCreation(client.getId()));
+            responseDTO.setCollection(nftService.getCollection(friend.getId()));
+            responseDTO.setCreation(nftService.getCreation(friend.getId()));
 
-            responseDTO.setAvatar(client.getAvatar());
-            responseDTO.setAvaExists(client.getAvatar() != null && client.getAvatar().length() > 0);
+            responseDTO.setAvatar(friend.getAvatar());
+            responseDTO.setAvaExists(friend.getAvatar() != null && friend.getAvatar().length() > 0);
 
+            responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
+            responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
 
             return new ResultDTO(true, responseDTO, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    private boolean checkProof(Long proofSenderId, Long proofReceiverId) {
+        List<FriendProof> friendProofList =
+                friendProofRepository.findByProofSenderIdAndProofReceiverId(proofSenderId, proofReceiverId);
+        return friendProofList != null && friendProofList.size() != 0;
     }
 }
