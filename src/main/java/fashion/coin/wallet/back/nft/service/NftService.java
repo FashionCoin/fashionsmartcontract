@@ -9,7 +9,6 @@ import fashion.coin.wallet.back.nft.dto.*;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
-import fashion.coin.wallet.back.nft.entity.ProofHistory;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.AIService;
@@ -130,6 +129,7 @@ public class NftService {
             return error219;
         }
 
+
         ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
         if (!resultDTO.isResult()) return resultDTO;
         NftFile nftFile = (NftFile) resultDTO.getData();
@@ -180,7 +180,7 @@ public class NftService {
             logger.info("Buy NFT:");
             logger.info(String.valueOf(buyNftDTO));
             logger.info(buyNftDTO.toString());
-            logger.info(String.valueOf( gson));
+            logger.info(String.valueOf(gson));
             logger.info(gson.toJson(buyNftDTO));
             logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap()));
             logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER)));
@@ -324,13 +324,25 @@ public class NftService {
                     || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
                 return error215;
             }
-            if (checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
+            if (!checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
                 return error219;
             }
 
-            polClientService.increaseValue(client,
-                    request.getFaceValue().subtract(nft.getFaceValue()),
-                    request.getCreativeValue().subtract(nft.getCreativeValue()));
+            BigDecimal increaseFaceValue = request.getFaceValue().subtract(nft.getFaceValue());
+            BigDecimal increaseCreativeValue = request.getCreativeValue().subtract(nft.getCreativeValue());
+
+
+            ResultDTO resultDTO = checkIncreaseTransaction(nft, request);
+            if (!resultDTO.isResult()) {
+                return resultDTO;
+            }
+
+            resultDTO = transactionService.send(request.getTransactionRequest());
+            if (!resultDTO.isResult()) {
+                return resultDTO;
+            }
+
+            polClientService.increaseValue(client, increaseFaceValue, increaseCreativeValue);
 
 
             nft.setCreativeValue(request.getCreativeValue());
@@ -344,6 +356,28 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    private ResultDTO checkIncreaseTransaction(Nft nft, NewValueRequestDTO request) {
+
+        BigDecimal increaseFaceValue = request.getFaceValue().subtract(nft.getFaceValue());
+
+        BigDecimal transactionAmount = new BigDecimal(request.getTransactionRequest().getBlockchainTransaction()
+                .getBody().getAmount()).movePointLeft(3);
+
+        if (increaseFaceValue.compareTo(transactionAmount) != 0) {
+            return error205;
+        }
+
+        if (!request.getTransactionRequest().getBlockchainTransaction().getBody()
+                .getTo().equals(aiService.getPubKey(AIService.AIWallets.MONEYBAG))) {
+            return error205;
+        }
+        if (!request.getTransactionRequest().getBlockchainTransaction().getBody()
+                .getFrom().equals(nft.getOwnerWallet())) {
+            return error214;
+        }
+        return new ResultDTO(true, "Ok", 0);
     }
 
     public ResultDTO burnNft(NftRequestDTO request) {

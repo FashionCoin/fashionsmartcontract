@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.nft.dto;
 
+import fashion.coin.wallet.back.dto.TransactionRequestDTO;
+
 import java.math.BigDecimal;
 
 public class NewValueRequestDTO {
@@ -8,6 +10,7 @@ public class NewValueRequestDTO {
     Long nftId;
     BigDecimal faceValue;
     BigDecimal creativeValue;
+    TransactionRequestDTO transactionRequest;
 
     public String getApikey() {
         return apikey;
@@ -39,5 +42,13 @@ public class NewValueRequestDTO {
 
     public void setCreativeValue(BigDecimal creativeValue) {
         this.creativeValue = creativeValue;
+    }
+
+    public TransactionRequestDTO getTransactionRequest() {
+        return transactionRequest;
+    }
+
+    public void setTransactionRequest(TransactionRequestDTO transactionRequest) {
+        this.transactionRequest = transactionRequest;
     }
 }

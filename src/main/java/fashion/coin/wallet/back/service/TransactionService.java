@@ -135,7 +135,8 @@ public class TransactionService {
                 clientService.addAmountToWallet(receiver, amount);
                 contactService.connectFriends(sender, receiver);
             }
-            return created;
+//            return created;
+            return new ResultDTO(true,txhash,0);
         } catch (Exception e) {
             return new ResultDTO(false, e.getMessage(), -1);
         }
