@@ -2,7 +2,6 @@ package fashion.coin.wallet.back.nft.controller;
 
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
-import fashion.coin.wallet.back.nft.entity.PolClient;
 import fashion.coin.wallet.back.nft.service.PolClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

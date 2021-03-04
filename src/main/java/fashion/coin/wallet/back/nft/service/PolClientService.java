@@ -6,14 +6,15 @@ import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
 import fashion.coin.wallet.back.nft.dto.PolClientResponseDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
-import fashion.coin.wallet.back.nft.entity.PolClient;
+
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
-import fashion.coin.wallet.back.nft.repository.PolClientRepository;
+
 import fashion.coin.wallet.back.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
@@ -22,8 +23,6 @@ import static fashion.coin.wallet.back.constants.ErrorDictionary.error127;
 @Service
 public class PolClientService {
 
-    @Autowired
-    PolClientRepository polClientRepository;
 
     @Autowired
     ClientService clientService;
@@ -35,36 +34,6 @@ public class PolClientService {
     FriendProofRepository friendProofRepository;
 
 
-    public PolClient getClient(Long id) {
-        PolClient polClient = polClientRepository.findById(id).orElse(null);
-        if (polClient == null) {
-            Client client = clientService.getClient(id);
-            polClient = new PolClient();
-            polClient.setId(client.getId());
-            polClient.setCryptoname(client.getCryptoname());
-            polClient.setCreativeValue(BigDecimal.ZERO);
-            polClient.setFaceValue(BigDecimal.ZERO);
-            polClient.setProofs(BigDecimal.ZERO);
-
-            polClientRepository.save(polClient);
-        }
-        return polClient;
-    }
-
-    public void addNft(Nft nft) {
-        PolClient polClient = getClient(nft.getOwnerId());
-        polClient.setFaceValue(polClient.getFaceValue().add(nft.getFaceValue()));
-        polClient.setCreativeValue(polClient.getCreativeValue().add(nft.getCreativeValue()));
-        polClientRepository.save(polClient);
-    }
-
-    public PolClient increaseValue(Client client, BigDecimal incFace, BigDecimal incCreative) {
-        PolClient polClient = getClient(client.getId());
-        polClient.setFaceValue(polClient.getFaceValue().add(incFace));
-        polClient.setCreativeValue(polClient.getCreativeValue().add(incCreative));
-        polClientRepository.save(polClient);
-        return polClient;
-    }
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
@@ -82,17 +51,40 @@ public class PolClientService {
                 return error127;
             }
 
-
-            PolClient polClient = getClient(friend.getId());
             PolClientResponseDTO responseDTO = new PolClientResponseDTO();
-            responseDTO.setId(polClient.getId());
-            responseDTO.setCryptoname(polClient.getCryptoname());
-            responseDTO.setFaceValue(polClient.getFaceValue());
-            responseDTO.setCreativeValue(polClient.getCreativeValue());
-            responseDTO.setProofs(polClient.getProofs());
+            responseDTO.setId(friend.getId());
+            responseDTO.setCryptoname(friend.getCryptoname());
 
-            responseDTO.setCollection(nftService.getCollection(friend.getId()));
-            responseDTO.setCreation(nftService.getCreation(friend.getId()));
+            List<Nft> nftList = nftService.getCollection(friend.getId());
+            BigDecimal faceValue = BigDecimal.ZERO;
+            BigDecimal creativeValue = BigDecimal.ZERO;
+            BigDecimal proofs = BigDecimal.ZERO;
+
+            List<Nft> collection = new ArrayList<>();
+            List<Nft> creation = new ArrayList<>();
+
+            for (Nft nft : nftList) {
+                faceValue = faceValue.add(nft.getFaceValue());
+                creativeValue = creativeValue.add(nft.getCreativeValue());
+                proofs = proofs.add(nft.getProofs());
+
+                if (nft.getAuthorId() == client.getId()) {
+                    creation.add(nft);
+                } else {
+                    collection.add(nft);
+                }
+
+
+            }
+            creation.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+            collection.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+
+            responseDTO.setFaceValue(faceValue);
+            responseDTO.setCreativeValue(creativeValue);
+            responseDTO.setProofs(proofs);
+
+            responseDTO.setCollection(collection);
+            responseDTO.setCreation(creation);
 
             responseDTO.setAvatar(friend.getAvatar());
             responseDTO.setAvaExists(friend.getAvatar() != null && friend.getAvatar().length() > 0);
