@@ -4,9 +4,11 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.entity.DividendHistory;
+import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.ProofHistory;
 import fashion.coin.wallet.back.nft.repository.DividendHistoryRepository;
+import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.ProofHistoryRepository;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.text.normalizer.CharTrie;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,6 +44,9 @@ public class ProofService {
 
     @Autowired
     DividendHistoryRepository dividendHistoryRepository;
+
+    @Autowired
+    FriendProofRepository friendProofRepository;
 
     static final long DAY = 24 * 60 * 60 * 1000;
 
@@ -81,6 +87,7 @@ public class ProofService {
             nft.setProofs(nft.getProofs().add(proofValue));
             nftService.save(nft);
 
+            updateFriends(client.getId(), nft.getOwnerId());
 
             return new ResultDTO(true, nft, 0);
 
@@ -90,6 +97,20 @@ public class ProofService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    private void updateFriends(Long proofSenderId, Long proofReceiverId) {
+        List<FriendProof> friendList = friendProofRepository.findByProofSenderIdAndProofReceiverId(proofSenderId, proofReceiverId);
+
+        if (friendList == null || friendList.size() == 0) {
+            FriendProof friendProof = new FriendProof();
+            friendProof.setTimestamp(System.currentTimeMillis());
+            friendProof.setProofSenderId(proofSenderId);
+            friendProof.setProofReceiverId(proofReceiverId);
+            friendProofRepository.save(friendProof);
+        } else if (friendList.size() > 1) {
+            logger.error("FriendList > 1");
+        }
     }
 
     private boolean overdraftProof(Long clientId) {
