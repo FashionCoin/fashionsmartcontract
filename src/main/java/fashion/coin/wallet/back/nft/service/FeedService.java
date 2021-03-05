@@ -69,7 +69,10 @@ public class FeedService {
                 List<FriendProof> friendList = friendProofRepository.findByProofReceiverId(client.getId());
                 logger.info("Frienf List size: {}", friendList.size());
                 for (FriendProof fp : friendList) {
+
+                    logger.info("FP: {}", fp.getProofSenderId());
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
+                    logger.info("Size: {}", nftList.size());
                     if (nftList != null && nftList.size() > 0) {
                         feed.addAll(nftList);
                     }
