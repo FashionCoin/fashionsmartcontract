@@ -38,7 +38,7 @@ public class FeedService {
     public ResultDTO getFeed(FeedNftRequestDTO request) {
         logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
         Client client = clientService.findByCryptonameAndApiKey(request.getCryptoname(), request.getApikey());
-
+        logger.info("Feed Type: {}", request.getFeedType());
         if (client == null && !request.getFeedType().equals(MAIN_FEED)) {
             return error124;
         }
