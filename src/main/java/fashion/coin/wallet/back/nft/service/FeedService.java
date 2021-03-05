@@ -65,20 +65,22 @@ public class FeedService {
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
 
             } else if (request.getFeedType().equals(PROOFS_FEED)) {
-
+                logger.info(request.getFeedType());
                 List<FriendProof> friendList = friendProofRepository.findByProofReceiverId(client.getId());
-
+                logger.info("Frienf List size: {}", friendList.size());
                 for (FriendProof fp : friendList) {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
                     if (nftList != null && nftList.size() > 0) {
                         feed.addAll(nftList);
                     }
                 }
+                logger.info("NFT list size: {}", feed.size());
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             } else {
                 return error125;
             }
-
+            logger.info("FromIndex: {}", fromIndex);
+            logger.info("ToIndex: {}", toIndex);
 
             if (fromIndex >= feed.size()) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
