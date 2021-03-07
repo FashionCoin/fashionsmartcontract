@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.repository;
 
 import fashion.coin.wallet.back.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,4 +30,12 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
     List<Client> findByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 
     List<Client> findAllByRegisteredFrom(String registeredFrom);
+
+    List<Client> findByCryptonameContainingIgnoreCase(String name);
+
+
+    @Query(value = "SELECT * FROM client WHERE LOWER(login) LIKE LOWER('%?1%') LIMIT 1000", nativeQuery = true)
+    List<Client> findNameContains(String name);
+
+
 }
