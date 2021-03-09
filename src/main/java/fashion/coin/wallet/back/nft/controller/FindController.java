@@ -47,11 +47,11 @@ public class FindController {
         return findPolService.topProofs(request);
     }
 
-//    @PostMapping("/api/v1/find/sold")
-//    @ResponseBody
-//    ResultDTO findRecentlySold(@RequestBody FindByDurationRequestDTO request) {
-//        return findPolService.recentlySold(request);
-//    }
+    @PostMapping("/api/v1/find/sold")
+    @ResponseBody
+    ResultDTO findRecentlySold(@RequestBody FindByDurationRequestDTO request) {
+        return findPolService.recentlySold(request);
+    }
 
 
 }

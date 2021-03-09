@@ -13,6 +13,7 @@ import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.nft.repository.ProofHistoryRepository;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.service.ClientService;
+import org.glassfish.grizzly.utils.ArraySet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -120,7 +121,7 @@ public class FindPolService {
                 durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
             }
 
-            List<NftHistory> nftHistoryList = nftHistoryRepository.findByTimestampIsGreaterThan(durationStart);
+            List<NftHistory> nftHistoryList = nftHistoryRepository.findByTimestampIsGreaterThanOrderByTimestampDesc(durationStart);
 
             Map<String, TopClientDTO> topClientMap = new HashMap<>();
             for (NftHistory nftHistory : nftHistoryList) {
@@ -162,13 +163,12 @@ public class FindPolService {
 
             Set<Nft> nftSet = new HashSet<>();
 
-            for(ProofHistory proofHistory : proofHistoryList){
+            for (ProofHistory proofHistory : proofHistoryList) {
                 Nft nft = nftRepository.findById(proofHistory.getNftId()).orElse(null);
                 nftSet.add(nft);
             }
 
-
-           List<Nft> nftList = new ArrayList<>(nftSet);
+            List<Nft> nftList = new ArrayList<>(nftSet);
 
             nftList.sort((o1, o2) -> o2.getProofs().compareTo(o1.getProofs()));
             return new ResultDTO(true, nftList, 0);
@@ -177,39 +177,32 @@ public class FindPolService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
-//
-//    public ResultDTO recentlySold(FindByDurationRequestDTO request) {
-//
-//        try {
-//            Client client = clientService.findClientByApikey(request.getApikey());
-//            if (client == null) {
-//                return error109;
-//            }
-//
-//
-//            List<NftHistory> nftHistoryList = nftHistoryRepository.fi(durationStart);
-//
-//            Map<String, TopClientDTO> topClientMap = new HashMap<>();
-//            for (NftHistory nftHistory : nftHistoryList) {
-//
-//                String cryptoname = nftHistory.getCryptonameTo();
-//                if (!topClientMap.containsKey(cryptoname)) {
-//                    Client clientEntity = clientService.findByCryptoname(cryptoname);
-//                    TopClientDTO topClient = new TopClientDTO();
-//                    topClient.setId(clientEntity.getId());
-//                    topClient.setCryptoname(nftHistory.getCryptonameTo());
-//                    topClient.setAmount(BigDecimal.ZERO);
-//                    topClientMap.put(cryptoname, topClient);
-//                }
-//                TopClientDTO topClient = topClientMap.get(cryptoname);
-//                topClient.setAmount(topClient.getAmount().add(nftHistory.getAmount()));
-//            }
-//            List<TopClientDTO> clientList = new ArrayList<>(topClientMap.values());
-//            clientList.sort((o1, o2) -> o2.getAmount().compareTo(o1.getAmount()));
-//            return new ResultDTO(true, clientList, 0);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResultDTO(false, e.getMessage(), -1);
-//        }
-//    }
+
+    public ResultDTO recentlySold(FindByDurationRequestDTO request) {
+
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            long durationStart = System.currentTimeMillis() - 100 * DAY;
+
+            List<NftHistory> nftHistoryList = nftHistoryRepository.findByTimestampIsGreaterThanOrderByTimestampDesc(durationStart);
+
+            List<Nft> soldNft = new ArrayList<>();
+            Set<Long> nftIdSet = new HashSet<>();
+            for (NftHistory nftHistory : nftHistoryList) {
+                Long nftId = nftHistory.getNftId();
+                if (!nftIdSet.contains(nftId)) {
+                    Nft nft = nftRepository.findById(nftId).orElse(null);
+                    soldNft.add(nft);
+                    nftIdSet.add(nftId);
+                }
+            }
+            return new ResultDTO(true, soldNft, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
 }
