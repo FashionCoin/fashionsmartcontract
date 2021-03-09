@@ -35,4 +35,11 @@ public class FindController {
     }
 
 
+    @PostMapping("/api/v1/find/collectors")
+    @ResponseBody
+    ResultDTO findCollectors(@RequestBody FindByDurationRequestDTO request) {
+        return findPolService.collectors(request);
+    }
+
+
 }

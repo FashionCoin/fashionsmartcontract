@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface NftHistoryRepository extends JpaRepository<NftHistory,Long> {
+public interface NftHistoryRepository extends JpaRepository<NftHistory, Long> {
 
     List<NftHistory> findByNftIdOrderByTimestampDesc(Long nftId);
+
+    List<NftHistory> findByTimestampIsGreaterThan(Long timestamp);
 }
