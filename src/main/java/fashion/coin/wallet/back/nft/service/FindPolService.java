@@ -221,7 +221,29 @@ public class FindPolService {
 
             List<Nft> nftList = nftRepository.findByTimestampIsGreaterThan(durationStart);
 
-            nftList.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
+            nftList.sort((o1, o2) -> o2.getFaceValue().compareTo(o1.getFaceValue()));
+            return new ResultDTO(true, nftList, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+    }
+
+    public ResultDTO mostExpensiveCreativeValue(FindByDurationRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            long durationStart = 0;
+            if (request.getDuration() > 0) {
+                durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
+            }
+
+            List<Nft> nftList = nftRepository.findByTimestampIsGreaterThan(durationStart);
+
+            nftList.sort((o1, o2) -> o2.getCreativeValue().compareTo(o1.getCreativeValue()));
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
             e.printStackTrace();
