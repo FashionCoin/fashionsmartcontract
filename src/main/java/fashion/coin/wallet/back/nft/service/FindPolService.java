@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 import static fashion.coin.wallet.back.nft.service.ProofService.DAY;
@@ -163,11 +160,56 @@ public class FindPolService {
 
             List<ProofHistory> proofHistoryList = proofHistoryRepository.findByTimestampIsGreaterThan(durationStart);
 
-            proofHistoryList.sort((o1, o2) -> o2.getProofValue().compareTo(o1.getProofValue()));
-            return new ResultDTO(true, proofHistoryList, 0);
+            Set<Nft> nftSet = new HashSet<>();
+
+            for(ProofHistory proofHistory : proofHistoryList){
+                Nft nft = nftRepository.findById(proofHistory.getNftId()).orElse(null);
+                nftSet.add(nft);
+            }
+
+
+           List<Nft> nftList = new ArrayList<>(nftSet);
+
+            nftList.sort((o1, o2) -> o2.getProofs().compareTo(o1.getProofs()));
+            return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+//
+//    public ResultDTO recentlySold(FindByDurationRequestDTO request) {
+//
+//        try {
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
+//
+//
+//            List<NftHistory> nftHistoryList = nftHistoryRepository.fi(durationStart);
+//
+//            Map<String, TopClientDTO> topClientMap = new HashMap<>();
+//            for (NftHistory nftHistory : nftHistoryList) {
+//
+//                String cryptoname = nftHistory.getCryptonameTo();
+//                if (!topClientMap.containsKey(cryptoname)) {
+//                    Client clientEntity = clientService.findByCryptoname(cryptoname);
+//                    TopClientDTO topClient = new TopClientDTO();
+//                    topClient.setId(clientEntity.getId());
+//                    topClient.setCryptoname(nftHistory.getCryptonameTo());
+//                    topClient.setAmount(BigDecimal.ZERO);
+//                    topClientMap.put(cryptoname, topClient);
+//                }
+//                TopClientDTO topClient = topClientMap.get(cryptoname);
+//                topClient.setAmount(topClient.getAmount().add(nftHistory.getAmount()));
+//            }
+//            List<TopClientDTO> clientList = new ArrayList<>(topClientMap.values());
+//            clientList.sort((o1, o2) -> o2.getAmount().compareTo(o1.getAmount()));
+//            return new ResultDTO(true, clientList, 0);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResultDTO(false, e.getMessage(), -1);
+//        }
+//    }
 }
