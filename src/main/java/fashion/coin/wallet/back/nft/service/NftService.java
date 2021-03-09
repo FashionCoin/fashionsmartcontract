@@ -149,7 +149,10 @@ public class NftService {
         resultDTO = transactionService.send(transactionRequestDTO);
         if (!resultDTO.isResult()) return resultDTO;
 
+
+
         Nft nft = new Nft();
+        nft.setTxhash(resultDTO.getMessage());
         nft.setAuthorId(client.getId());
         nft.setAuthorName(client.getCryptoname());
         nft.setOwnerId(client.getId());
@@ -176,16 +179,7 @@ public class NftService {
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
 
         try {
-            logger.info("Buy NFT:");
-            logger.info(String.valueOf(buyNftDTO));
-            logger.info(buyNftDTO.toString());
-            logger.info(String.valueOf(gson));
-            logger.info(gson.toJson(buyNftDTO));
-            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap()));
-            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER)));
-            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction()));
-            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction().getBody()));
-            logger.info(gson.toJson(buyNftDTO.getTransactionsRequestMap().get(SELLER).getBlockchainTransaction().getBody().getTo()));
+
             Client clientFrom = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
                     .getBlockchainTransaction().getBody().getTo());
             Client clientTo = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
@@ -210,7 +204,7 @@ public class NftService {
             if (!result.isResult()) {
                 return result;
             }
-
+            nftHistory.setTxhash(result.getMessage());
             result = proofService.dividendPayment(nft, clientFrom);
             if (!result.isResult()) {
                 return result;
@@ -234,13 +228,17 @@ public class NftService {
 
 
     private ResultDTO sendAllTransactions(Map<String, TransactionRequestDTO> transactionsRequestMap) {
+        String txhash = "";
         for (Map.Entry<String, TransactionRequestDTO> transactionRequestDTOEntry : transactionsRequestMap.entrySet()) {
             ResultDTO resultDTO = transactionService.send(transactionRequestDTOEntry.getValue());
             if (!resultDTO.isResult()) {
                 return resultDTO;
             }
+            if (transactionRequestDTOEntry.getKey().equals(SELLER)) {
+                txhash = resultDTO.getMessage();
+            }
         }
-        return new ResultDTO(true, "Transactions sended", 0);
+        return new ResultDTO(true, txhash, 0);
     }
 
     private boolean checkBuyAmounts(Nft nft, Map<String, TransactionRequestDTO> transactionsRequestMap) {

@@ -20,6 +20,8 @@ public class NftHistory {
     @Column(precision = 30, scale = 3)
     BigDecimal amount;
 
+    String txhash;
+
     public Long getId() {
         return id;
     }
@@ -66,5 +68,13 @@ public class NftHistory {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getTxhash() {
+        return txhash;
+    }
+
+    public void setTxhash(String txhash) {
+        this.txhash = txhash;
     }
 }

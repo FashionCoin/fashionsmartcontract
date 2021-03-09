@@ -38,6 +38,8 @@ public class Nft {
 
     String wayOfAllocatingFunds = BASE_WAY;
 
+    String txhash;
+
     public Nft() {
     }
 
@@ -167,5 +169,14 @@ public class Nft {
 
     public void setWayOfAllocatingFunds(String wayOfAllocatingFunds) {
         this.wayOfAllocatingFunds = wayOfAllocatingFunds;
+    }
+
+
+    public String getTxhash() {
+        return txhash;
+    }
+
+    public void setTxhash(String txhash) {
+        this.txhash = txhash;
     }
 }

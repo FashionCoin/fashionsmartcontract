@@ -4,14 +4,14 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.FindNameRequestDTO;
 import fashion.coin.wallet.back.repository.ClientRepository;
+import fashion.coin.wallet.back.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error125;
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error127;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 @Service
 public class FindPolService {
@@ -19,12 +19,18 @@ public class FindPolService {
     @Autowired
     ClientRepository clientRepository;
 
+    @Autowired
+    ClientService clientService;
+
 
     public ResultDTO byName(FindNameRequestDTO request) {
         try {
-
             if (request == null || request.getName() == null) {
                 return error127;
+            }
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
             }
             List<Client> clientList = clientRepository.findNameContains(request.getName());
             if (clientList == null || clientList.size() == 0) {
