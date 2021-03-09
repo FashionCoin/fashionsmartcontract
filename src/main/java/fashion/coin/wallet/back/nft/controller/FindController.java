@@ -53,5 +53,11 @@ public class FindController {
         return findPolService.recentlySold(request);
     }
 
+    @PostMapping("/api/v1/find/mostexpface")
+    @ResponseBody
+    ResultDTO findMostExpensiveFaceValue(@RequestBody FindByDurationRequestDTO request) {
+        return findPolService.mostExpensiveFaceValue(request);
+    }
+
 
 }

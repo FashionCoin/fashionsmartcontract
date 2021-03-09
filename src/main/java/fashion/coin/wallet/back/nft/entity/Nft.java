@@ -36,6 +36,9 @@ public class Nft {
     @Column(name ="burned", columnDefinition="boolean default false",nullable = false)
     boolean isBurned;
 
+    @Column(name ="banned", columnDefinition="boolean default false",nullable = false)
+    boolean isBanned;
+
     String wayOfAllocatingFunds = BASE_WAY;
 
     String txhash;
@@ -161,6 +164,14 @@ public class Nft {
 
     public void setBurned(boolean burned) {
         isBurned = burned;
+    }
+
+    public boolean isBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 
     public String getWayOfAllocatingFunds() {
