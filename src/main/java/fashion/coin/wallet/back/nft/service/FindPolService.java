@@ -161,14 +161,16 @@ public class FindPolService {
 
             List<ProofHistory> proofHistoryList = proofHistoryRepository.findByTimestampIsGreaterThan(durationStart);
 
-            Set<Nft> nftSet = new HashSet<>();
-
+            Set<Long> nftSet = new HashSet<>();
+            List<Nft> nftList = new ArrayList<>();
             for (ProofHistory proofHistory : proofHistoryList) {
-                Nft nft = nftRepository.findById(proofHistory.getNftId()).orElse(null);
-                nftSet.add(nft);
+                long nftId = proofHistory.getNftId();
+                if (!nftSet.contains(nftId)) {
+                    Nft nft = nftRepository.findById(nftId).orElse(null);
+                    nftList.add(nft);
+                    nftSet.add(nftId);
+                }
             }
-
-            List<Nft> nftList = new ArrayList<>(nftSet);
 
             nftList.sort((o1, o2) -> o2.getProofs().compareTo(o1.getProofs()));
             return new ResultDTO(true, nftList, 0);
