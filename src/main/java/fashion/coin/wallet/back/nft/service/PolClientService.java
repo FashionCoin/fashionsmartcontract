@@ -68,7 +68,7 @@ public class PolClientService {
                 creativeValue = creativeValue.add(nft.getCreativeValue());
                 proofs = proofs.add(nft.getProofs());
 
-                if (nft.getAuthorId() == client.getId()) {
+                if (nft.getAuthorId().compareTo(client.getId())==0) {
                     creation.add(nft);
                 } else {
                     collection.add(nft);
