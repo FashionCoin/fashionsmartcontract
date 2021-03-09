@@ -7,8 +7,10 @@ import fashion.coin.wallet.back.nft.dto.FindNameRequestDTO;
 import fashion.coin.wallet.back.nft.dto.TopClientDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
+import fashion.coin.wallet.back.nft.entity.ProofHistory;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
+import fashion.coin.wallet.back.nft.repository.ProofHistoryRepository;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class FindPolService {
 
     @Autowired
     NftHistoryRepository nftHistoryRepository;
+
+    @Autowired
+    ProofHistoryRepository proofHistoryRepository;
 
 
     public ResultDTO byName(FindNameRequestDTO request) {
@@ -136,6 +141,28 @@ public class FindPolService {
             List<TopClientDTO> clientList = new ArrayList<>(topClientMap.values());
             clientList.sort((o1, o2) -> o2.getAmount().compareTo(o1.getAmount()));
             return new ResultDTO(true, clientList, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+    public ResultDTO topProofs(FindByDurationRequestDTO request) {
+
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            long durationStart = 0;
+            if (request.getDuration() > 0) {
+                durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
+            }
+
+            List<ProofHistory> proofHistoryList = proofHistoryRepository.findByTimestampIsGreaterThan(durationStart);
+
+            proofHistoryList.sort((o1, o2) -> o2.getProofValue().compareTo(o1.getProofValue()));
+            return new ResultDTO(true, proofHistoryList, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);

@@ -41,5 +41,11 @@ public class FindController {
         return findPolService.collectors(request);
     }
 
+    @PostMapping("/api/v1/find/topproofs")
+    @ResponseBody
+    ResultDTO findTopProofs(@RequestBody FindByDurationRequestDTO request) {
+        return findPolService.topProofs(request);
+    }
+
 
 }
