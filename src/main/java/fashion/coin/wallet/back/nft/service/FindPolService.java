@@ -130,7 +130,9 @@ public class FindPolService {
 
                 String cryptoname = nftHistory.getCryptonameTo();
                 if (!topClientMap.containsKey(cryptoname)) {
+                    Client clientEntity = clientService.findByCryptoname(cryptoname);
                     TopClientDTO topClient = new TopClientDTO();
+                    topClient.setId(clientEntity.getId());
                     topClient.setCryptoname(nftHistory.getCryptonameTo());
                     topClient.setAmount(BigDecimal.ZERO);
                     topClientMap.put(cryptoname, topClient);
