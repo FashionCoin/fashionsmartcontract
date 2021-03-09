@@ -24,4 +24,6 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
 
     List<Nft> findByAuthorId(Long id);
 
+    List<Nft> findByTimestampIsGreaterThan(long durationStart);
+
 }
