@@ -35,7 +35,7 @@ public interface ClientRepository extends JpaRepository<Client,Long> {
     List<Client> findByCryptonameContainingIgnoreCase(String name);
 
 
-    @Query(value = "SELECT * FROM client WHERE LOWER(login) LIKE LOWER(?1%) LIMIT 1000", nativeQuery = true)
+    @Query(value = "SELECT * FROM client WHERE LOWER(login) LIKE ?1% LIMIT 1000", nativeQuery = true)
     List<Client> findNameContains(String name);
 
 
