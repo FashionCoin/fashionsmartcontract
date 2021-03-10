@@ -256,9 +256,14 @@ public class ClientService {
             if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
 // 3b722fc4cbcdbe05fa33e740d2e6c25bce557969503af0de15130d9034766a1b5d745f5050d72220986dc76c860a165a36e9e794f57c12632a664994b8023909
             if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
-            client.setApikey(data.getApikey());
 
-            clientRepository.save(client);
+            if (data.getApikey().equals("permanent0apikey") && client.getApikey() != null) {
+                return new ResultDTO(true, "{\"apikey\" : \"" + client.getApikey() + "\" }", 0);
+            } else {
+                client.setApikey(data.getApikey());
+                clientRepository.save(client);
+            }
+
 
             if (client.getEncryptedhash() != null) {
                 return new ResultDTO(true, "{\"encryptedhash\" : \"" + client.getEncryptedhash() + "\" }", 0);
@@ -270,6 +275,7 @@ public class ClientService {
         }
 
     }
+
 
     private boolean checkSignature(String signedData, String publicKey) {
         try {
@@ -616,7 +622,7 @@ public class ClientService {
     public ResultDTO getWallets(GetWalletsDTO data) {
         try {
             Client quested = clientRepository.findClientByApikey(data.getApikey());
-            if(quested==null){
+            if (quested == null) {
                 return error109;
             }
 
@@ -626,8 +632,7 @@ public class ClientService {
                 if (client != null && client.getWalletAddress() != null) {
 
 
-
-                    clients.put(cryptoname, toContact( client));
+                    clients.put(cryptoname, toContact(client));
                 }
             }
 
