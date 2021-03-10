@@ -143,6 +143,11 @@ public class FileUploadService {
             }else{
                 Files.move(copyLocation, copyLocation.resolveSibling(newName));
                 nftFileRepository.save(nftFile);
+                if(multipartFile.getContentType().toLowerCase().contains("video")){
+                    String videoName = newName.toString();
+                    String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+                    createPreview(videoName,imageName);
+                }
             }
 
             return new ResultDTO(true,nftFile,0);
@@ -151,5 +156,15 @@ public class FileUploadService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    private boolean createPreview(String videoName, String imageName) {
+        try{
+            Process process = Runtime.getRuntime().exec("ffmpeg -i '"+videoName+"' -frames 1  -f image2 "+imageName);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 }
