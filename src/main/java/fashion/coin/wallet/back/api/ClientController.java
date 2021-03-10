@@ -43,6 +43,12 @@ public class ClientController {
         return clientService.trySignIn(data);
     }
 
+    @PostMapping("/api/v1/permanent/signin")
+    @ResponseBody
+    ResultDTO permanentSignIn(@RequestBody SignInDTO data){
+        return clientService.permanentSignIn(data);
+    }
+
 
     @PostMapping("/api/v1/checkname")
     @ResponseBody

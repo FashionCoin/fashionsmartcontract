@@ -254,16 +254,11 @@ public class ClientService {
 
 
             if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
-// 3b722fc4cbcdbe05fa33e740d2e6c25bce557969503af0de15130d9034766a1b5d745f5050d72220986dc76c860a165a36e9e794f57c12632a664994b8023909
+
             if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
+            client.setApikey(data.getApikey());
 
-            if (data.getApikey().equals("permanent0apikey") && client.getApikey() != null) {
-                return new ResultDTO(true, "{\"apikey\" : \"" + client.getApikey() + "\" }", 0);
-            } else {
-                client.setApikey(data.getApikey());
-                clientRepository.save(client);
-            }
-
+            clientRepository.save(client);
 
             if (client.getEncryptedhash() != null) {
                 return new ResultDTO(true, "{\"encryptedhash\" : \"" + client.getEncryptedhash() + "\" }", 0);
@@ -276,6 +271,41 @@ public class ClientService {
 
     }
 
+
+    public ResultDTO permanentSignIn(SignInDTO data) {
+        try {
+            logger.info("Sign in " + gson.toJson(data));
+
+            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            if (cryptoname == null) cryptoname = data.getCryptoname().trim();
+
+            Client client = clientRepository.findClientByCryptoname(cryptoname);
+            if (client == null) return error108;
+            if (client.isBanned()) return error122;
+            if (data.getApikey() == null) return error107;
+
+            if (!checkUsingApiKey(data.getApikey())) return error117;
+
+            String apiKeyInSignature = data.getSignature().substring(128);
+            String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
+
+
+            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
+
+            if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
+            if (client.getApikey() == null) {
+                client.setApikey(data.getApikey());
+                clientRepository.save(client);
+            }
+
+            return new ResultDTO(true, "{\"apikey\" : \"" + client.getApikey() + "\" }", 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+    }
 
     private boolean checkSignature(String signedData, String publicKey) {
         try {
