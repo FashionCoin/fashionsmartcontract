@@ -10,6 +10,8 @@ import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 
 import fashion.coin.wallet.back.service.ClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ import static fashion.coin.wallet.back.constants.ErrorDictionary.error127;
 @Service
 public class PolClientService {
 
+    Logger logger = LoggerFactory.getLogger(PolClientService.class);
 
     @Autowired
     ClientService clientService;
@@ -32,7 +35,6 @@ public class PolClientService {
 
     @Autowired
     FriendProofRepository friendProofRepository;
-
 
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
@@ -68,9 +70,18 @@ public class PolClientService {
                 creativeValue = creativeValue.add(nft.getCreativeValue());
                 proofs = proofs.add(nft.getProofs());
 
-                if (nft.getAuthorId().compareTo(client.getId())==0) {
+                logger.info("Client name: {}", client.getCryptoname());
+                logger.info("Author name: {}", nft.getAuthorName());
+                logger.info("NFT: {}", nft.getTitle());
+                logger.info("Client id: {}", client.getId());
+                logger.info("NFT Author: {}", nft.getAuthorId());
+                logger.info("Compare: {}", nft.getAuthorId().compareTo(client.getId()));
+
+                if (nft.getAuthorId().compareTo(client.getId()) == 0) {
+                    logger.info("Add to creation");
                     creation.add(nft);
                 } else {
+                    logger.info("Add to collection");
                     collection.add(nft);
                 }
 
