@@ -150,7 +150,6 @@ public class NftService {
         if (!resultDTO.isResult()) return resultDTO;
 
 
-
         Nft nft = new Nft();
         nft.setTxhash(resultDTO.getMessage());
         nft.setAuthorId(client.getId());
@@ -179,15 +178,20 @@ public class NftService {
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
 
         try {
+            Nft nft = nftRepository.findById(buyNftDTO.getNftId()).orElse(null);
+            if (nft == null) {
+                return error213;
+            }
+
+            if (nft.isInsale()) {
+                return error221;
+            }
 
             Client clientFrom = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
                     .getBlockchainTransaction().getBody().getTo());
             Client clientTo = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
                     .getBlockchainTransaction().getBody().getFrom());
-            Nft nft = nftRepository.findById(buyNftDTO.getNftId()).orElse(null);
-            if (nft == null) {
-                return error213;
-            }
+
             if (!checkBuyAmounts(nft, buyNftDTO.getTransactionsRequestMap())) {
                 return error212;
             }
@@ -200,13 +204,26 @@ public class NftService {
             nftHistory.setNftId(nft.getId());
             nftHistory.setAmount(amount);
 
+            if (!nft.isInsale()) {
+                nft.setInsale(true);
+                nftRepository.save(nft);
+            } else {
+                return error221;
+            }
+
+
             ResultDTO result = sendAllTransactions(buyNftDTO.getTransactionsRequestMap());
+
             if (!result.isResult()) {
+                nft.setInsale(false);
+                nftRepository.save(nft);
                 return result;
             }
             nftHistory.setTxhash(result.getMessage());
             result = proofService.dividendPayment(nft, clientFrom);
             if (!result.isResult()) {
+                nft.setInsale(false);
+                nftRepository.save(nft);
                 return result;
             }
 
@@ -218,10 +235,16 @@ public class NftService {
             nft.setCanChangeValue(true);
             nftRepository.save(nft);
             nftHistoryRepository.save(nftHistory);
-
+            nft.setInsale(false);
+            nftRepository.save(nft);
             return new ResultDTO(true, nftHistory, 0);
         } catch (Exception e) {
             e.printStackTrace();
+            Nft nft = nftRepository.findById(buyNftDTO.getNftId()).orElse(null);
+            if(nft.isInsale()){
+                nft.setInsale(false);
+                nftRepository.save(nft);
+            }
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
