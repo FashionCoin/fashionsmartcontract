@@ -42,15 +42,15 @@ public class MintNftController {
                          @RequestParam String stringTransaction) {
         logger.info(multipartFile.getOriginalFilename());
         try {
-
+            logger.info("Type: {}", multipartFile.getContentType());
 
             BlockchainTransactionDTO blockchainTransaction = gson.fromJson(stringTransaction, BlockchainTransactionDTO.class);
 
             return nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
                     blockchainTransaction);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResultDTO(false,e.getMessage(),-1);
+            return new ResultDTO(false, e.getMessage(), -1);
         }
 
     }
