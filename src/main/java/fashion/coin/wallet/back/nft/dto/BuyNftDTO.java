@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class BuyNftDTO {
     Long nftId;
+    String apikey;
     Map<String, TransactionRequestDTO> transactionsRequestMap = new HashMap<>();
 
     public Long getNftId() {
@@ -15,6 +16,14 @@ public class BuyNftDTO {
 
     public void setNftId(Long nftId) {
         this.nftId = nftId;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
     }
 
     public Map<String, TransactionRequestDTO> getTransactionsRequestMap() {

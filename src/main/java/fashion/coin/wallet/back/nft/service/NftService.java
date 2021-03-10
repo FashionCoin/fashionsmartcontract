@@ -192,7 +192,7 @@ public class NftService {
             Client clientTo = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
                     .getBlockchainTransaction().getBody().getFrom());
 
-            if (!checkBuyAmounts(nft, buyNftDTO.getTransactionsRequestMap())) {
+            if (!checkBuyAmounts(nft, buyNftDTO, buyNftDTO.getTransactionsRequestMap())) {
                 return error212;
             }
 
@@ -241,7 +241,7 @@ public class NftService {
         } catch (Exception e) {
             e.printStackTrace();
             Nft nft = nftRepository.findById(buyNftDTO.getNftId()).orElse(null);
-            if(nft.isInsale()){
+            if (nft.isInsale()) {
                 nft.setInsale(false);
                 nftRepository.save(nft);
             }
@@ -264,9 +264,9 @@ public class NftService {
         return new ResultDTO(true, txhash, 0);
     }
 
-    private boolean checkBuyAmounts(Nft nft, Map<String, TransactionRequestDTO> transactionsRequestMap) {
+    private boolean checkBuyAmounts(Nft nft, BuyNftDTO request, Map<String, TransactionRequestDTO> transactionsRequestMap) {
 
-        ResultDTO resultDTO = checkShare(nft.getId());
+        ResultDTO resultDTO = checkShare(request);
         if (resultDTO.getData() instanceof HashMap) {
             HashMap<String, AllocatedFundsDTO> share = (HashMap<String, AllocatedFundsDTO>) resultDTO.getData();
             for (Map.Entry<String, AllocatedFundsDTO> allocatedFunds : share.entrySet()) {
@@ -459,9 +459,14 @@ public class NftService {
         return creation;
     }
 
-    public ResultDTO checkShare(Long nftId) {
+    public ResultDTO checkShare(BuyNftDTO request) {
         try {
-            Nft nft = nftRepository.findById(nftId).orElse(null);
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
                 return error213;
             }
@@ -470,18 +475,30 @@ public class NftService {
 
                 Map<String, AllocatedFundsDTO> share = new HashMap<>();
 
+
                 Client author = clientService.getClient(nft.getAuthorId());
                 AllocatedFundsDTO authorFunds = new AllocatedFundsDTO();
                 authorFunds.setPurpose(AUTHOR);
                 authorFunds.setWallet(author.getWalletAddress());
-                authorFunds.setAmount(nft.getCreativeValue().divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP));
-                share.put(AUTHOR, authorFunds);
 
+                if (nft.getAuthorId().equals(client.getId())) {
+                    logger.info("Buyer is author: {}", client.getCryptoname());
+                    authorFunds.setAmount(BigDecimal.ZERO);
+                } else {
+                    authorFunds.setAmount(nft.getCreativeValue().divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP));
+                    share.put(AUTHOR, authorFunds);
+                }
+
+                if (nft.getOwnerId().equals(client.getId())) {
+                    logger.error("Seller is Buyer: {}", client.getCryptoname());
+                    return new ResultDTO(false, "Seller is buyer", -1);
+                }
                 AllocatedFundsDTO sellerFunds = new AllocatedFundsDTO();
                 sellerFunds.setPurpose(SELLER);
                 sellerFunds.setWallet(nft.getOwnerWallet());
                 sellerFunds.setAmount(nft.getCreativeValue().multiply(new BigDecimal("0.78")).setScale(3, RoundingMode.HALF_UP));
                 share.put(SELLER, sellerFunds);
+
 
                 AllocatedFundsDTO proofsFunds = new AllocatedFundsDTO();
                 proofsFunds.setPurpose(TAX_AND_PROOFS);
