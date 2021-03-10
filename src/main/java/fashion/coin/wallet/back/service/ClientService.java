@@ -284,7 +284,6 @@ public class ClientService {
             if (client.isBanned()) return error122;
             if (data.getApikey() == null) return error107;
 
-            if (!checkUsingApiKey(data.getApikey())) return error117;
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
