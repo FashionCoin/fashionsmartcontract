@@ -62,6 +62,9 @@ public class ProofService {
             if (nft == null) {
                 return error213;
             }
+            if (!checkOneProof(nft, client)) {
+                return error222;
+            }
             int clientRate = getOwnerRate(client.getId());
             int nftRate = getNftRate(nft.getId());
             BigDecimal proofValue = new BigDecimal(clientRate * nftRate);
@@ -96,6 +99,11 @@ public class ProofService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    private boolean checkOneProof(Nft nft, Client client) {
+        List<ProofHistory> proofHistoryList = proofHistoryRepository.findByClientIdAndNftId(client.getId(), nft.getId());
+        return proofHistoryList == null || proofHistoryList.size() == 0;
     }
 
     private void updateFriends(Long proofSenderId, Long proofReceiverId) {

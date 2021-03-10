@@ -56,5 +56,6 @@ public class ErrorDictionary {
     public static final ResultDTO error219 = new ResultDTO(false, "Creative value limit x100 ", 219);
     public static final ResultDTO error220 = new ResultDTO(false, "Way of allocating funds not found", 220);
     public static final ResultDTO error221 = new ResultDTO(false, "NFT in sale process. Please wait", 221);
+    public static final ResultDTO error222 = new ResultDTO(false, "Only one proof to one NFT from one user", 222);
 
 }
