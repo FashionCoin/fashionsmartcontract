@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.service;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.FindByDurationRequestDTO;
@@ -14,6 +15,8 @@ import fashion.coin.wallet.back.nft.repository.ProofHistoryRepository;
 import fashion.coin.wallet.back.repository.ClientRepository;
 import fashion.coin.wallet.back.service.ClientService;
 import org.glassfish.grizzly.utils.ArraySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,8 @@ import static fashion.coin.wallet.back.nft.service.ProofService.DAY;
 
 @Service
 public class FindPolService {
+
+    Logger logger = LoggerFactory.getLogger(FindPolService.class);
 
     @Autowired
     ClientRepository clientRepository;
@@ -41,9 +46,14 @@ public class FindPolService {
     @Autowired
     ProofHistoryRepository proofHistoryRepository;
 
+    @Autowired
+    Gson gson;
+
 
     public ResultDTO byName(FindNameRequestDTO request) {
         try {
+
+            logger.info(gson.toJson(request));
             if (request == null || request.getName() == null) {
                 return error127;
             }
@@ -51,10 +61,13 @@ public class FindPolService {
             if (client == null) {
                 return error109;
             }
+
             List<Client> clientList = clientRepository.findNameContains(request.getName());
+            logger.info(String.valueOf(clientList));
             if (clientList == null || clientList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
             }
+            logger.info(String.valueOf(clientList.size()));
 
             List<Client> result = new ArrayList<>();
             for (Client c : clientList) {

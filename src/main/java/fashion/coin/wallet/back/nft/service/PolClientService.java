@@ -70,18 +70,12 @@ public class PolClientService {
                 creativeValue = creativeValue.add(nft.getCreativeValue());
                 proofs = proofs.add(nft.getProofs());
 
-                logger.info("Client name: {}", friend.getCryptoname());
-                logger.info("Author name: {}", nft.getAuthorName());
-                logger.info("NFT: {}", nft.getTitle());
-                logger.info("Client id: {}", friend.getId());
-                logger.info("NFT Author: {}", nft.getAuthorId());
-                logger.info("Compare: {}", nft.getAuthorId().compareTo(friend.getId()));
 
                 if (nft.getAuthorId().compareTo(friend.getId()) == 0) {
-                    logger.info("Add to creation");
+
                     creation.add(nft);
                 } else {
-                    logger.info("Add to collection");
+
                     collection.add(nft);
                 }
 
