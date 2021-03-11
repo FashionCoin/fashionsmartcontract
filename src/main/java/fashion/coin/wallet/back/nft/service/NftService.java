@@ -530,7 +530,24 @@ public class NftService {
             if (nftHistoryList == null || nftHistoryList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
             }
-            return new ResultDTO(true, nftHistoryList, 0);
+            List<MyHistoryDTO> myHistoryList = new ArrayList<>();
+            for(NftHistory nftHistory : nftHistoryList){
+                MyHistoryDTO myHistory = new MyHistoryDTO();
+                myHistory.setId(nftHistory.getId());
+                Nft nft = nftRepository.findById(nftHistory.getNftId()).orElse(null);
+                myHistory.setNftId(nft.getId());
+                myHistory.setTitle(nft.getTitle());
+                myHistory.setFileName(nft.getFileName());
+                myHistory.setCryptonameFrom(nftHistory.getCryptonameFrom());
+                myHistory.setCryptonameTo(nftHistory.getCryptonameTo());
+                myHistory.setAmount(nftHistory.getAmount());
+                myHistory.setTimestamp(nftHistory.getTimestamp());
+                myHistory.setTxhash(nftHistory.getTxhash());
+                myHistoryList.add(myHistory);
+            }
+
+
+            return new ResultDTO(true, myHistoryList, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
