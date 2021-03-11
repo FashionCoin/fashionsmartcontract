@@ -59,6 +59,7 @@ public class FeedService {
                 for (FriendProof fp : friendList) {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofReceiverId());
                     if (nftList != null && nftList.size() > 0) {
+                        nftList.removeIf(nft -> nft.getOwnerId().equals(client.getId()));
                         feed.addAll(nftList);
                     }
                 }
@@ -74,6 +75,7 @@ public class FeedService {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
                     logger.info("Size: {}", nftList.size());
                     if (nftList != null && nftList.size() > 0) {
+                        nftList.removeIf(nft -> nft.getOwnerId().equals(client.getId()));
                         feed.addAll(nftList);
                     }
                 }
