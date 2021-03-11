@@ -518,4 +518,23 @@ public class NftService {
         }
 
     }
+
+    public ResultDTO myHistory(HistoryNftRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+            List<NftHistory> nftHistoryList = nftHistoryRepository.findByCryptonameFromOrCryptonameToOrderByTimestampDesc(
+                    client.getCryptoname(),client.getCryptoname());
+            if (nftHistoryList == null || nftHistoryList.size() == 0) {
+                return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
+            }
+            return new ResultDTO(true, nftHistoryList, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+    }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 public interface NftHistoryRepository extends JpaRepository<NftHistory, Long> {
 
     List<NftHistory> findByNftIdOrderByTimestampDesc(Long nftId);
+    List<NftHistory> findByCryptonameFromOrCryptonameToOrderByTimestampDesc(String cryptonameFrom,String cryptonameTo);
 
     List<NftHistory> findByTimestampIsGreaterThanOrderByTimestampDesc(Long timestamp);
 }

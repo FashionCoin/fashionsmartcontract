@@ -21,7 +21,13 @@ public class HistoryNftController {
     ResultDTO feedNft(@RequestBody HistoryNftRequestDTO request){
 
         return nftService.getHistory(request);
+    }
 
+    @PostMapping("/api/v1/nft/myhistory")
+    @ResponseBody
+    ResultDTO myHistoryNft(@RequestBody HistoryNftRequestDTO request){
+
+        return nftService.myHistory(request);
     }
 
 }
