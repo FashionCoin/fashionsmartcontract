@@ -296,8 +296,10 @@ public class ClientService {
                 client.setApikey(data.getApikey());
                 clientRepository.save(client);
             }
+            ApiKeyDTO apiKeyDTO = new ApiKeyDTO();
+            apiKeyDTO.setApikey(client.getApikey());
 
-            return new ResultDTO(true, "{\"apikey\" : \"" + client.getApikey() + "\" }", 0);
+            return new ResultDTO(true, apiKeyDTO, 0);
 
         } catch (Exception e) {
             e.printStackTrace();
