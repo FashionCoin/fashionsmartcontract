@@ -160,8 +160,11 @@ public class FileUploadService {
 
     private boolean createPreview(String videoName, String imageName) {
         try{
-            Process process = Runtime.getRuntime().exec("ffmpeg -i '"+videoName+"' -frames 1  -f image2 "+imageName);
-
+            String command = "ffmpeg -i '"+videoName+"' -frames 1  -f image2 '"+imageName+"'";
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+            int result = process.waitFor();
+            logger.info("Result: {}", result);
+            logger.info(imageName);
         }catch (Exception e){
             e.printStackTrace();
         }
