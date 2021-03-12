@@ -55,7 +55,7 @@ public class FWalletService {
                     client = clientService.updateBalance(client);
                     fWalletsResponse.setAmount(client.getWalletBalance());
                     BigDecimal lastRate = currencyService.getLastCurrencyRate("USD");
-                    BigDecimal usd = client.getWalletBalance().divide(lastRate, 8, RoundingMode.HALF_UP);
+                    BigDecimal usd = client.getWalletBalance().divide(lastRate, 2, RoundingMode.HALF_UP);
                     fWalletsResponse.setApproximateСost("~ " + usd + " USD");
                 } else {
                     fWalletsResponse.setAmount(BigDecimal.ZERO);
