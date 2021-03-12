@@ -86,8 +86,12 @@ public class FWalletService {
         if (lastRate == null) {
             return "~ 0 FSHN";
         } else {
-            BigDecimal fshn = fWallet.getBalance().multiply(lastRate).setScale(0,RoundingMode.HALF_UP);
+            BigDecimal fshn = fWallet.getBalance().multiply(lastRate).setScale(0, RoundingMode.HALF_UP);
             return "~ " + fshn + " FSHN";
         }
+    }
+
+    public ResultDTO getCurrencyList() {
+        return new ResultDTO(true, currencyList, 0);
     }
 }

@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.fwrap.controller;
 import fashion.coin.wallet.back.dto.ApiKeyDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.fwrap.dto.FCurrencyRequestDTO;
+import fashion.coin.wallet.back.fwrap.dto.FSendMoneyRequestDTO;
 import fashion.coin.wallet.back.fwrap.entity.FTransaction;
 import fashion.coin.wallet.back.fwrap.service.FTransactionService;
 import org.slf4j.Logger;
@@ -26,6 +27,13 @@ public class FTransactionsController {
     ResultDTO getByCurrency(@RequestBody FCurrencyRequestDTO request){
 
         return fTransactionService.getByCurrency(request);
+    }
+
+    @PostMapping("/api/v1/fwrap/transaction")
+    @ResponseBody
+    ResultDTO sendMoney(@RequestBody FSendMoneyRequestDTO request){
+
+        return fTransactionService.sendMoney(request);
     }
 
 

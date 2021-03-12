@@ -30,4 +30,12 @@ public class FWalletsController {
         return fWalletService.getClientWallets(request);
     }
 
+
+    @PostMapping("/api/v1/fwrap/currency")
+    @ResponseBody
+    ResultDTO getCurrencyList(){
+
+        return fWalletService.getCurrencyList();
+    }
+
 }

@@ -5,6 +5,7 @@ import fashion.coin.wallet.back.dto.TransactionDTO;
 import fashion.coin.wallet.back.dto.TransactionListRequestDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.fwrap.dto.FCurrencyRequestDTO;
+import fashion.coin.wallet.back.fwrap.dto.FSendMoneyRequestDTO;
 import fashion.coin.wallet.back.fwrap.dto.FTransactionResponseDTO;
 import fashion.coin.wallet.back.fwrap.dto.FWalletsResponseDTO;
 import fashion.coin.wallet.back.fwrap.entity.FTransaction;
@@ -102,5 +103,9 @@ public class FTransactionService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    public ResultDTO sendMoney(FSendMoneyRequestDTO request) {
+        return new ResultDTO(false, "Does not realise", -1);
     }
 }
