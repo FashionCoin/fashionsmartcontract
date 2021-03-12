@@ -180,8 +180,10 @@ public class FindPolService {
                 long nftId = proofHistory.getNftId();
                 if (!nftSet.contains(nftId)) {
                     Nft nft = nftRepository.findById(nftId).orElse(null);
-                    nftList.add(nft);
-                    nftSet.add(nftId);
+                    if (!nft.isBanned() && !nft.isBurned()) {
+                        nftList.add(nft);
+                        nftSet.add(nftId);
+                    }
                 }
             }
 
@@ -210,8 +212,10 @@ public class FindPolService {
                 Long nftId = nftHistory.getNftId();
                 if (!nftIdSet.contains(nftId)) {
                     Nft nft = nftRepository.findById(nftId).orElse(null);
-                    soldNft.add(nft);
-                    nftIdSet.add(nftId);
+                    if (!nft.isBanned() && !nft.isBurned()) {
+                        soldNft.add(nft);
+                        nftIdSet.add(nftId);
+                    }
                 }
             }
             return new ResultDTO(true, soldNft, 0);
@@ -233,7 +237,7 @@ public class FindPolService {
             }
 
             List<Nft> nftList = nftRepository.findByTimestampIsGreaterThan(durationStart);
-
+            nftList.removeIf(nft -> nft.isBurned() || nft.isBanned());
             nftList.sort((o1, o2) -> o2.getFaceValue().compareTo(o1.getFaceValue()));
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
@@ -255,7 +259,7 @@ public class FindPolService {
             }
 
             List<Nft> nftList = nftRepository.findByTimestampIsGreaterThan(durationStart);
-
+            nftList.removeIf(nft -> nft.isBurned() || nft.isBanned());
             nftList.sort((o1, o2) -> o2.getCreativeValue().compareTo(o1.getCreativeValue()));
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {

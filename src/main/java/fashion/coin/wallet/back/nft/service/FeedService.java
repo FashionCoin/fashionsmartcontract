@@ -80,6 +80,7 @@ public class FeedService {
                     }
                 }
                 logger.info("NFT list size: {}", feed.size());
+                feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             } else {
                 return error125;
