@@ -810,8 +810,10 @@ public class ClientService {
 
 
     public Client findClientByApikey(String apikey) {
-
-        return clientRepository.findClientByApikey(apikey);
+        if (apikey == null) return null;
+        List<Client> clientList = clientRepository.findByApikey(apikey);
+        if (clientList == null || clientList.size() == 0) return null;
+        return clientList.get(0);
     }
 
 
