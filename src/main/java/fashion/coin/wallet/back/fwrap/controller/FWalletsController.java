@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.fwrap.controller;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ApiKeyDTO;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.fwrap.service.FWalletService;
@@ -18,10 +19,13 @@ public class FWalletsController {
     @Autowired
     FWalletService fWalletService;
 
+    @Autowired
+    Gson gson;
 
     @PostMapping("/api/v1/fwrap/wallets")
     @ResponseBody
     ResultDTO getClientWallets(ApiKeyDTO request){
+        logger.info(gson.toJson(request));
         return fWalletService.getClientWallets(request);
     }
 
