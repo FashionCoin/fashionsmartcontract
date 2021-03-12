@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -24,7 +25,7 @@ public class FWalletsController {
 
     @PostMapping("/api/v1/fwrap/wallets")
     @ResponseBody
-    ResultDTO getClientWallets(ApiKeyDTO request){
+    ResultDTO getClientWallets(@RequestBody ApiKeyDTO request){
         logger.info(gson.toJson(request));
         return fWalletService.getClientWallets(request);
     }
