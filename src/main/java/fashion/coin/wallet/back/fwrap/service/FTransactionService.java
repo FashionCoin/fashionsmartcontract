@@ -59,9 +59,11 @@ public class FTransactionService {
                     if (transaction.getReceiver().equals(client.getCryptoname())) {
                         transactionRespons.setIncome(true);
                         transactionRespons.setAmount(transaction.getAmount());
+                        transactionRespons.setCryptoname(transaction.getSender());
                     } else {
                         transactionRespons.setIncome(false);
                         transactionRespons.setAmount(transaction.getAmount().negate());
+                        transactionRespons.setCryptoname(transaction.getReceiver());
                     }
                     fTransactionList.add(transactionRespons);
                 }
@@ -83,9 +85,11 @@ public class FTransactionService {
                         if (transaction.getToId().equals(client.getId())) {
                             transactionRespons.setIncome(true);
                             transactionRespons.setAmount(transaction.getAmount());
+                            transactionRespons.setCryptoname(transaction.getFromCryptoname());
                         } else {
                             transactionRespons.setIncome(false);
                             transactionRespons.setAmount(transaction.getAmount().negate());
+                            transactionRespons.setCryptoname(transaction.getToCryptoname());
                         }
                         fTransactionList.add(transactionRespons);
                     }
