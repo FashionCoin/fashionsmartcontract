@@ -1022,4 +1022,13 @@ public class ClientService {
     public Client getClient(Long id) {
         return clientRepository.findById(id).orElse(null);
     }
+
+    public Client findByCryptonameOrWallet(String receiver) {
+        Client result = findByCryptoname(receiver);
+        if (result != null) {
+            return result;
+        }else{
+            return findByWallet(receiver);
+        }
+    }
 }

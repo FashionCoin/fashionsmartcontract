@@ -94,4 +94,37 @@ public class FWalletService {
     public ResultDTO getCurrencyList() {
         return new ResultDTO(true, currencyList, 0);
     }
+
+    public BigDecimal getBalance(Client client, String currency) {
+        return getWallet(client, currency).getBalance();
+    }
+
+    public FWallet getWallet(Client client, String currency) {
+        List<FWallet> fWalletList = fWalletRepository.findByClientIdAndCurrency(client.getId(), currency);
+
+        if (fWalletList == null || fWalletList.size() == 0) {
+            FWallet fWallet = new FWallet();
+            fWallet.setClientId(client.getId());
+            fWallet.setCryptoname(client.getCryptoname());
+            fWallet.setCurrency(currency);
+            fWallet.setBalance(BigDecimal.ZERO);
+            fWalletRepository.save(fWallet);
+            return fWallet;
+        }
+
+        return fWalletList.get(0);
+    }
+
+
+    public boolean sendMoney(Client sender, Client receiver, String currency, BigDecimal amount) {
+
+        FWallet senderWallet = getWallet(sender, currency);
+        senderWallet.setBalance(senderWallet.getBalance().subtract(amount));
+        fWalletRepository.save(senderWallet);
+
+        FWallet receiverWallet = getWallet(receiver, currency);
+        receiverWallet.setBalance(receiver.getWalletBalance().add(amount));
+        fWalletRepository.save(receiverWallet);
+        return true;
+    }
 }

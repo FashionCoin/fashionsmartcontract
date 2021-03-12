@@ -3,9 +3,18 @@ package fashion.coin.wallet.back.fwrap.dto;
 import java.math.BigDecimal;
 
 public class FSendMoneyRequestDTO {
+    String apikey;
     String receiver;
     String currency;
     BigDecimal amount;
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
+    }
 
     public String getReceiver() {
         return receiver;

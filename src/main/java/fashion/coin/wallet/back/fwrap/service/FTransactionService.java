@@ -21,7 +21,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 @Service
 public class FTransactionService {
@@ -34,6 +34,9 @@ public class FTransactionService {
 
     @Autowired
     TransactionService transactionService;
+
+    @Autowired
+    FWalletService fWalletService;
 
     public ResultDTO getByCurrency(FCurrencyRequestDTO request) {
 
@@ -106,6 +109,43 @@ public class FTransactionService {
     }
 
     public ResultDTO sendMoney(FSendMoneyRequestDTO request) {
-        return new ResultDTO(false, "Does not realise", -1);
+
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+
+            if (request.getCurrency().equals("FSHN")) {
+                return new ResultDTO(false, "This API not for FSHN. Use /api/v1/send with blockchain transaction", -1);
+            }
+
+            Client receiver = clientService.findByCryptonameOrWallet(request.getReceiver());
+            if (receiver == null) {
+                return error112;
+            }
+
+            if (fWalletService.getBalance(client, request.getCurrency()).compareTo(request.getAmount()) < 0) {
+                return error202;
+            }
+           fWalletService.sendMoney(client, receiver, request.getCurrency(), request.getAmount()) ;
+
+                FTransaction fTransaction = new FTransaction();
+                fTransaction.setTimestamp(System.currentTimeMillis());
+                fTransaction.setCurrency(request.getCurrency());
+                fTransaction.setFromId(client.getId());
+                fTransaction.setFromCryptoname(client.getCryptoname());
+                fTransaction.setToId(receiver.getId());
+                fTransaction.setAmount(request.getAmount());
+
+                fTransactionRepository.save(fTransaction);
+
+
+                return new ResultDTO(true, fTransaction, 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }

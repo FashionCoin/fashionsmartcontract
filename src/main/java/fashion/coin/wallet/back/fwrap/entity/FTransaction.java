@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.fwrap.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ public class FTransaction {
     String fromCryptoname;
     Long toId;
     String toCryptoname;
+    @Column(precision = 30, scale = 3)
     BigDecimal amount;
 
     public Long getId() {
