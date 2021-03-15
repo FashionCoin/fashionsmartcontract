@@ -61,24 +61,31 @@ public class FindPolService {
             if (client == null) {
                 return error109;
             }
+            Client friend = clientRepository.findClientByCryptoname(request.getName());
+
 
             List<Client> clientList = clientRepository.findNameContains(request.getName().toLowerCase());
             logger.info(String.valueOf(clientList));
             if (clientList == null || clientList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
             }
-            logger.info(String.valueOf(clientList.size()));
+            if(client!= null){
+                clientList.add(friend);
+            }
 
             List<Client> result = new ArrayList<>();
+
             for (Client c : clientList) {
-                Client cl = new Client();
-                cl.setId(c.getId());
-                cl.setCryptoname(c.getCryptoname());
-                if (c.avaExists()) {
-                    cl.setAvatar(c.getAvatar());
+                if(!c.getId().equals(friend.getId())) {
+                    Client cl = new Client();
+                    cl.setId(c.getId());
+                    cl.setCryptoname(c.getCryptoname());
+                    if (c.avaExists()) {
+                        cl.setAvatar(c.getAvatar());
+                    }
+                    cl.setWalletBalance(c.getWalletBalance());
+                    result.add(cl);
                 }
-                cl.setWalletBalance(c.getWalletBalance());
-                result.add(cl);
             }
             return new ResultDTO(true, result, 0);
         } catch (Exception e) {
