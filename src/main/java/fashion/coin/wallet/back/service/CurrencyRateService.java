@@ -44,41 +44,73 @@ public class CurrencyRateService {
     String cmcApiKey;
 
     private static final String cmcLink = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";
-    private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
-
-    static LocalDateTime lastUpdate = LocalDateTime.now();
-    Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
-
-
-
+    //    private static final String apiUrlNazbank = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+    public static final String params = "?symbol=USDT&convert=FSHN,BTC,ETH,USD,EUR,GBP,UAH";
+//    static LocalDateTime lastUpdate = LocalDateTime.now();
+//    Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
 
 
     @Scheduled(cron = "0 */20 * * * *")
     public void updateExchangeRate() {
         try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-CMC_PRO_API_KEY", cmcApiKey);
+
+            HttpEntity entity = new HttpEntity(headers);
+
+            ResponseEntity<CmcDTO> responseEntity = restTemplate.exchange(
+                    "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"+
+                            params,
+                    HttpMethod.GET,
+                    entity,
+                    CmcDTO.class
+            );
+
+            CmcDTO cmcDTO = responseEntity.getBody();
+
+            Map<String, PriceDTO> priceMap = cmcDTO.data.get("USDT").quote;
+
+            BigDecimal fshnPrice = new BigDecimal(priceMap.get("FSHN").price);
+            for(Map.Entry<String,PriceDTO> entry : priceMap.entrySet()){
+                if(!entry.getKey().equals("FSHN")) {
+                    CurrencyRate currencyRate = new CurrencyRate();
+                    currencyRate.setCurrency(entry.getKey());
+                    currencyRate.setDateTime(LocalDateTime.now());
+                    currencyRate.setRate(fshnPrice.divide(
+                            new BigDecimal( entry.getValue().price
+                            ),6, RoundingMode.HALF_UP));
+                    logger.info(gson.toJson(currencyRate));
+                    currencyRateRepository.save(currencyRate);
+                }
+            }
+
+       /*
             List<String> crypts = currencyService.getAvailableCrypts();
-            for(String currency : crypts){
+            for (String currency : crypts) {
                 CurrencyRate currencyRate = new CurrencyRate();
                 currencyRate.setCurrency(currency);
                 currencyRate.setRate(getFshnExchangeRate(currency).setScale(6));
                 currencyRate.setDateTime(LocalDateTime.now());
-                if(currencyRate.getRate().compareTo(BigDecimal.ONE)==0){
+                if (currencyRate.getRate().compareTo(BigDecimal.ONE) == 0) {
                     currencyRate.setRate(currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency).getRate());
                 }
                 currencyRateRepository.save(currencyRate);
             }
+         */
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
+/*
+
     BigDecimal getFshnExchangeRate(String currency) {
         BigDecimal fshnUsd = lastExchangeRate.get("FSHN");
-        logger.info("lastExchangeRate1: {}",gson.toJson(lastExchangeRate));
+        logger.info("lastExchangeRate1: {}", gson.toJson(lastExchangeRate));
         if (currency.equals("USD")) {
             fshnUsd = getUsdExchangeRate("FSHN");
-            logger.info("lastExchangeRate2: {}",gson.toJson(lastExchangeRate));
+            logger.info("lastExchangeRate2: {}", gson.toJson(lastExchangeRate));
             return BigDecimal.ONE.divide(fshnUsd, 3, RoundingMode.HALF_UP);
         } else if (currency.equals("ETH") || currency.equals("BTC")) {
             BigDecimal curUsd = getUsdExchangeRate(currency);
@@ -90,10 +122,10 @@ public class CurrencyRateService {
             logger.error("Currency: {}", currency);
         }
 
-      CurrencyRate rate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
-        if(rate== null) {
+        CurrencyRate rate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+        if (rate == null) {
             return BigDecimal.ONE;
-        }else{
+        } else {
             return rate.getRate();
         }
     }
@@ -101,10 +133,10 @@ public class CurrencyRateService {
     BigDecimal getUsdExchangeRate(String currency) {
         try {
             if (!lastExchangeRate.containsKey(currency)) {
-                CurrencyRate rate  = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
-                if(rate== null) {
+                CurrencyRate rate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+                if (rate == null) {
                     lastExchangeRate.put(currency, BigDecimal.ONE);
-                }else{
+                } else {
                     lastExchangeRate.put(currency, rate.getRate());
                 }
             }
@@ -148,10 +180,10 @@ public class CurrencyRateService {
     private BigDecimal getRateFromNBU(String currency) {
         try {
             if (!lastExchangeRate.containsKey(currency)) {
-                CurrencyRate rate  = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
-                if(rate== null) {
+                CurrencyRate rate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+                if (rate == null) {
                     lastExchangeRate.put(currency, BigDecimal.ONE);
-                }else{
+                } else {
                     lastExchangeRate.put(currency, rate.getRate());
                 }
             }
@@ -178,7 +210,6 @@ public class CurrencyRateService {
         }
         return lastExchangeRate.get(currency);
     }
-
 
     static class CmcDTO {
 
@@ -220,5 +251,25 @@ public class CurrencyRateService {
         public String lastUpdated;
 
     }
+*/
 
+
+    static class CmcDTO {
+        public Status status;
+        public Map<String, CurrencyDTO> data;
+    }
+
+    static class CurrencyDTO {
+        public Long id;
+        public String name;
+        public Map<String, PriceDTO> quote;
+    }
+
+    static class Status {
+        public String timestamp;
+    }
+
+    static class PriceDTO {
+        public String price;
+    }
 }
