@@ -54,7 +54,7 @@ public class CurrencyService {
 
 
     public List<String> getAvailableCrypts() {
-        return Stream.of("USD", "BTC", "ETH", "UAH").collect(Collectors.toList());
+        return Stream.of("USD","EUR","GBP", "BTC", "ETH", "UAH").collect(Collectors.toList());
     }
 
 
