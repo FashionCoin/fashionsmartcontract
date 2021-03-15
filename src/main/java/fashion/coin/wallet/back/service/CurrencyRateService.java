@@ -50,7 +50,7 @@ public class CurrencyRateService {
 //    Map<String, BigDecimal> lastExchangeRate = new HashMap<>();
 
 
-    @Scheduled(cron = "0 */20 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     public void updateExchangeRate() {
         try {
             HttpHeaders headers = new HttpHeaders();
