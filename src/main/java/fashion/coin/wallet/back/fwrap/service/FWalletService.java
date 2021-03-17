@@ -36,7 +36,7 @@ public class FWalletService {
     CurrencyService currencyService;
 
 
-    List<String> currencyList = Arrays.asList("FSHN", "FUSD", "FEUR", "FGBP", "FBTC", "FETH");
+    List<String> currencyList = Arrays.asList("FSHN", "FUSD", "FEUR", "FGBP", "FDEM", "FBTC", "FETH", "FAU");
 
     public ResultDTO getClientWallets(ApiKeyDTO request) {
 
@@ -134,7 +134,7 @@ public class FWalletService {
             fWallet.setBalance(fWallet.getBalance().add(amount));
             fWalletRepository.save(fWallet);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
