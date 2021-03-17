@@ -69,14 +69,15 @@ public class FindPolService {
             if (clientList == null || clientList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
             }
-            if(client!= null){
+            logger.info("Friend: {}", friend);
+            if (friend != null) {
                 clientList.add(friend);
             }
 
             List<Client> result = new ArrayList<>();
 
             for (Client c : clientList) {
-                if(!c.getId().equals(friend.getId())) {
+                if (!c.getId().equals(friend.getId())) {
                     Client cl = new Client();
                     cl.setId(c.getId());
                     cl.setCryptoname(c.getCryptoname());
