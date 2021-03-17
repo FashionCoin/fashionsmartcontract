@@ -239,7 +239,10 @@ public class WrapService {
 
 
             logger.info("TX Ethereum hash: {}", request.getTransactionHash());
-            boolean result = aiService.transfer(request.getAmount(), client.getWalletAddress(), AIService.AIWallets.DIAMOND);
+            boolean result = aiService.transfer(
+                    request.getAmount(),
+                    client.getWalletAddress(),
+                    AIService.AIWallets.DIAMOND).isResult();
             if (result) {
 
                 wrapLogRepository.save(new WrapLog(false, amount.longValue(), client.getWalletAddress(),

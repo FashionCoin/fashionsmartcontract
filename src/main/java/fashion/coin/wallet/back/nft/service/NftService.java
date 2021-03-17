@@ -411,7 +411,9 @@ public class NftService {
             BigDecimal amountWithoutTax = nft.getFaceValue().multiply(new BigDecimal("0.9"))
                     .setScale(3, RoundingMode.HALF_UP);
 
-            boolean result = aiService.transfer(amountWithoutTax.toString(), nft.getOwnerWallet(), AIService.AIWallets.MONEYBAG);
+            boolean result = aiService.transfer(amountWithoutTax.toString(),
+                    nft.getOwnerWallet(),
+                    AIService.AIWallets.MONEYBAG).isResult();;
             if (result) {
                 nft.setOwnerId(null);
                 nft.setOwnerWallet(null);

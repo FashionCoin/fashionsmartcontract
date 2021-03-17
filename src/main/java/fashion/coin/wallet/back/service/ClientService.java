@@ -165,7 +165,8 @@ public class ClientService {
                                     logger.info("isWalletExists = " + String.valueOf(isWalletExists));
                                 } while (!isWalletExists);
 
-                                boolean result = aiService.transfer(balance.toString(), clientWallet, AIService.AIWallets.MONEYBAG);
+                                boolean result = aiService.transfer(balance.toString(),
+                                        clientWallet, AIService.AIWallets.MONEYBAG).isResult();
                                 if (!result) {
                                     logger.error("Error sending telegram money to client: \n" +
                                             gson.toJson(clientName));

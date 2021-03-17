@@ -3,12 +3,11 @@ package fashion.coin.wallet.back.fwrap.service;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.fwrap.dto.FExchangeRequestDTO;
 import fashion.coin.wallet.back.fwrap.dto.FWrapRequestDTO;
 import fashion.coin.wallet.back.fwrap.entity.FExchange;
-import fashion.coin.wallet.back.fwrap.entity.FWallet;
 import fashion.coin.wallet.back.fwrap.repository.FExchangeRepository;
 import fashion.coin.wallet.back.fwrap.repository.FTransactionRepository;
-import fashion.coin.wallet.back.fwrap.repository.FWalletRepository;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.CurrencyService;
@@ -49,6 +48,7 @@ public class FExchangeService {
     @Autowired
     FExchangeRepository fExchangeRepository;
 
+
     public static final String FEE = "0.02";
 
     public ResultDTO wrapCurrency(FWrapRequestDTO request) {
@@ -74,8 +74,14 @@ public class FExchangeService {
 
             BigDecimal totalAmount = fshn.divide(rate, 2, RoundingMode.HALF_UP);
 
-            BigDecimal receive = totalAmount.multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE))).setScale(2);
+            BigDecimal receive = totalAmount.multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)))
+                    .setScale(2, RoundingMode.HALF_UP);
             BigDecimal fee = totalAmount.subtract(receive);
+
+            if (fee.compareTo(BigDecimal.ZERO) == 0) {
+                return error223;
+            }
+
 
             resultDTO = transactionService.send(request.getTransactionRequest());
             if (!resultDTO.isResult()) {
@@ -122,5 +128,91 @@ public class FExchangeService {
         }
 
         return new ResultDTO(true, transactionAmount, 0);
+    }
+
+    public ResultDTO exchange(FExchangeRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+
+            BigDecimal balance = fWalletService.getBalance(client, request.getCurrencyFrom());
+            if (balance.compareTo(request.getAmount()) < 0) {
+                return error202;
+            }
+
+            BigDecimal rate = currencyService.getLastCurrencyRate(request.getCurrencyFrom());
+            logger.info("Rate: {}", rate);
+
+            BigDecimal fshn = request.getAmount().multiply(rate).setScale(3, RoundingMode.HALF_UP);
+
+            if (request.getCurrencyTo().equals("FSHN")) {
+
+                BigDecimal receive = fshn.multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)))
+                        .setScale(3, RoundingMode.HALF_UP);
+                BigDecimal fee = fshn.subtract(receive);
+
+                if (fee.compareTo(BigDecimal.ZERO) == 0) {
+                    return error223;
+                }
+                ResultDTO resultDTO = aiService.transfer(
+                        receive.toString(),
+                        client.getWalletAddress(),
+                        AIService.AIWallets.MONEYBAG);
+                if (!resultDTO.isResult()) {
+                    return resultDTO;
+                }
+
+                FExchange fExchange = new FExchange();
+                fExchange.setTimstamp(System.currentTimeMillis());
+                fExchange.setClientId(client.getId());
+                fExchange.setCryptoname(client.getCryptoname());
+                fExchange.setCurrencyFrom(request.getCurrencyFrom());
+                fExchange.setCurrencyTo("FSHN");
+                fExchange.setTxHash(resultDTO.getMessage());
+                fExchange.setValueFrom(request.getAmount());
+                fExchange.setValueTo(receive);
+                fExchange.setFee(fee);
+
+                fExchangeRepository.save(fExchange);
+
+                fWalletService.changeAmount(client, request.getCurrencyFrom(), request.getAmount().negate());
+
+                return new ResultDTO(true, fExchange, 0);
+
+            } else {
+                rate = currencyService.getLastCurrencyRate(request.getCurrencyTo());
+                BigDecimal totalAmount = fshn.divide(rate, 2, RoundingMode.HALF_UP);
+
+                BigDecimal receive = totalAmount.multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)))
+                        .setScale(2, RoundingMode.HALF_UP);
+                BigDecimal fee = totalAmount.subtract(receive);
+
+                if (fee.compareTo(BigDecimal.ZERO) == 0) {
+                    return error223;
+                }
+
+                FExchange fExchange = new FExchange();
+                fExchange.setTimstamp(System.currentTimeMillis());
+                fExchange.setClientId(client.getId());
+                fExchange.setCryptoname(client.getCryptoname());
+                fExchange.setCurrencyFrom(request.getCurrencyFrom());
+                fExchange.setCurrencyTo(request.getCurrencyTo());
+                fExchange.setTxHash("");
+                fExchange.setValueFrom(request.getAmount());
+                fExchange.setValueTo(receive);
+                fExchange.setFee(fee);
+
+                fExchangeRepository.save(fExchange);
+
+                fWalletService.changeAmount(client, request.getCurrencyFrom(), request.getAmount().negate());
+                fWalletService.changeAmount(client, request.getCurrencyTo(), receive);
+                return new ResultDTO(true, fExchange, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }

@@ -124,18 +124,18 @@ public class AIService {
     }
 
 
-    public boolean transfer(String amountStr, String receiver, AIWallets sender) {
+    public ResultDTO transfer(String amountStr, String receiver, AIWallets sender) {
         return transfer(amountStr, receiver, sender, System.currentTimeMillis());
     }
 
-    public boolean transfer(String amountStr, String receiver, AIWallets sender, long seedLong) {
+    public ResultDTO transfer(String amountStr, String receiver, AIWallets sender, long seedLong) {
 
 
         String pub_key = getPubKey(sender);
         String priv_key = getPrivKey(sender);
 
         BigDecimal floatamount = new BigDecimal(amountStr);
-//        BigInteger amount = new BigInteger(amountStr + "000", 10);
+
         BigInteger amount = floatamount.movePointRight(3).toBigInteger();
         BigInteger seed = new BigInteger(String.valueOf(seedLong));
         SignBuilder.init();
@@ -159,11 +159,11 @@ public class AIService {
             ResultDTO resp = transactionService.send(transactionRequestDTO);
 
             logger.info(gson.toJson(resp));
-            return resp.isResult();
+            return resp;
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return false;
+            return new ResultDTO(false,e.getMessage(),-1);
         }
     }
 

@@ -69,7 +69,9 @@ public class ProofService {
             int nftRate = getNftRate(nft.getId());
             BigDecimal proofValue = new BigDecimal(clientRate * nftRate);
 
-            boolean result = aiService.transfer(proofValue.toString(), nft.getOwnerWallet(), AIService.AIWallets.MONEYBAG);
+            boolean result = aiService.transfer(proofValue.toString(),
+                    nft.getOwnerWallet(),
+                    AIService.AIWallets.MONEYBAG).isResult();
 
             if (!result) {
                 return error205;
@@ -170,7 +172,9 @@ public class ProofService {
                     if (amount.compareTo(BigDecimal.ZERO) > 0) {
                         Client client = clientService.getClient(pfh.getClientId());
                         totalAmount = totalAmount.add(amount);
-                        if (!aiService.transfer(amount.toString(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG)) {
+                        if (!aiService.transfer(amount.toString(),
+                                client.getWalletAddress(),
+                                AIService.AIWallets.MONEYBAG).isResult()) {
                             return error205;
                         }
                         DividendHistory dividendHistory = new DividendHistory();
@@ -184,7 +188,9 @@ public class ProofService {
             }
             amountToDistribute = amountToDistribute.subtract(totalAmount).setScale(3, RoundingMode.HALF_UP);
             if (amountToDistribute.compareTo(BigDecimal.ZERO) > 0) {
-                if (!aiService.transfer(amountToDistribute.toString(), seller.getWalletAddress(), AIService.AIWallets.MONEYBAG)) {
+                if (!aiService.transfer(amountToDistribute.toString(),
+                        seller.getWalletAddress(),
+                        AIService.AIWallets.MONEYBAG).isResult()) {
                     return error205;
                 }
             }

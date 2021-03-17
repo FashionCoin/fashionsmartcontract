@@ -117,7 +117,10 @@ public class FiatService {
                     payment.setMsg("Several users found with the same number");
                 } else {
                     Client client = clientList.get(0);
-                    if (aiService.transfer(data.getFshn().toString(), client.getWalletAddress(), AIService.AIWallets.BTCU)) {
+                    if (aiService.transfer(
+                            data.getFshn().toString(),
+                            client.getWalletAddress(),
+                            AIService.AIWallets.BTCU).isResult()) {
                         payment.setResult(true);
                         payment.setMsg("Ok");
                     } else {
