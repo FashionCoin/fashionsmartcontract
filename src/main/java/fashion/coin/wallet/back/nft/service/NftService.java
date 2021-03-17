@@ -63,7 +63,7 @@ public class NftService {
     public static final String AUTHOR = "author";
     public static final String SELLER = "seller";
     public static final String TAX_AND_PROOFS = "taxAndProofs";
-
+    public static final String FEE = "0.02";
 
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
@@ -555,5 +555,53 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    public ResultDTO transfer(NftTransferDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
+            if (nft == null) {
+                return error213;
+            }
+
+            if(!nft.getOwnerId().equals(client.getId())){
+                return error214;
+            }
+
+            Client friend = clientService.findByCryptonameOrWallet(request.getReceiver());
+            if(friend==null){
+                return error112;
+            }
+
+            NftHistory nftHistory = new NftHistory();
+            nftHistory.setCryptonameFrom(client.getCryptoname());
+            nftHistory.setCryptonameTo(friend.getCryptoname());
+            nftHistory.setTimestamp(System.currentTimeMillis());
+            nftHistory.setAmount(nft.getFaceValue());
+            nftHistory.setNftId(nft.getId());
+            nftHistory.setTxhash("");
+
+            nft.setOwnerId(friend.getId());
+            nft.setOwnerName(friend.getCryptoname());
+            nft.setOwnerWallet(friend.getWalletAddress());
+
+            BigDecimal newFaceValue = nft.getFaceValue().multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)));
+            BigDecimal newCreativeValue = nft.getCreativeValue().multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)));
+
+// TODO: Fee
+
+            nftHistoryRepository.save(nftHistory);
+            nftRepository.save(nft);
+
+            return new ResultDTO(true, nftHistory, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }
