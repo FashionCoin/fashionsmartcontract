@@ -15,6 +15,7 @@ public class PolClientResponseDTO {
     BigDecimal creativeValue;
 
     BigDecimal proofs = BigDecimal.ZERO;
+    BigDecimal proof = BigDecimal.ZERO;
 
     List<Nft> collection;
     List<Nft> creation;
@@ -63,6 +64,14 @@ public class PolClientResponseDTO {
 
     public void setProofs(BigDecimal proofs) {
         this.proofs = proofs;
+    }
+
+    public BigDecimal getProof() {
+        return proof;
+    }
+
+    public void setProof(BigDecimal proof) {
+        this.proof = proof;
     }
 
     public List<Nft> getCollection() {

@@ -115,6 +115,8 @@ public class CurrencyRateService {
                 logger.info(gson.toJson(currencyRate));
                 currencyRateRepository.save(currencyRate);
 
+            }else{
+                logger.error(gson.toJson(responseEntity));
             }
         } catch (Exception e) {
             e.printStackTrace();

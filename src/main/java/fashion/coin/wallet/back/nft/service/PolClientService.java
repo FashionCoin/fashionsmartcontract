@@ -36,6 +36,9 @@ public class PolClientService {
     @Autowired
     FriendProofRepository friendProofRepository;
 
+    @Autowired
+    ProofService proofService;
+
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
@@ -87,7 +90,7 @@ public class PolClientService {
             responseDTO.setFaceValue(faceValue);
             responseDTO.setCreativeValue(creativeValue);
             responseDTO.setProofs(proofs);
-
+            responseDTO.setProof(proofService.allProof(friend));
             responseDTO.setCollection(collection);
             responseDTO.setCreation(creation);
 

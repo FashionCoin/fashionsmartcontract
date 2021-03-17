@@ -200,4 +200,16 @@ public class ProofService {
         return new ResultDTO(true, "Ok", 0);
     }
 
+    public BigDecimal allProof(Client client){
+
+        BigDecimal proof = BigDecimal.ZERO;
+
+        List<ProofHistory> proofHistoryList = proofHistoryRepository.findByClientId(client.getId());
+        if(proofHistoryList!=null && proofHistoryList.size()>0){
+            for(ProofHistory ph : proofHistoryList){
+                proof = proof.add(ph.getProofValue());
+            }
+        }
+        return proof;
+    }
 }

@@ -55,7 +55,7 @@ public class CurrencyService {
 
 
     public List<String> getAvailableCrypts() {
-        return Stream.of("USD", "EUR", "GBP", "BTC", "ETH", "UAH").collect(Collectors.toList());
+        return Stream.of("USD", "EUR", "GBP", "BTC", "ETH", "UAH", "XAU","XAG").collect(Collectors.toList());
     }
 
 
@@ -99,6 +99,12 @@ public class CurrencyService {
         }
         if (currency.equals("FETH")) {
             return "ETH";
+        }
+        if (currency.equals("FAU")) {
+            return "XAU";
+        }
+        if (currency.equals("FAG")) {
+            return "XAG";
         }
         return currency;
     }
