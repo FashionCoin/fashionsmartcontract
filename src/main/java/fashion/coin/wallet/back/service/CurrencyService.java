@@ -68,6 +68,9 @@ public class CurrencyService {
 
     public BigDecimal getLastCurrencyRate(String currency) {
         logger.info(currency);
+
+        currency = checkFashionCurrency(currency);
+
         CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
         logger.info("Currency Rate: ", gson.toJson(currencyRate));
         if (currencyRate != null) {
@@ -75,6 +78,29 @@ public class CurrencyService {
         } else {
             return null;
         }
+    }
+
+    private String checkFashionCurrency(String currency) {
+
+        if (currency.equals("FUSD") || currency.equals("FDEM")) {
+            return "USD";
+        }
+        if (currency.equals("FEUR")) {
+            return "EUR";
+        }
+        if (currency.equals("FGBP")) {
+            return "GBP";
+        }
+        if (currency.equals("FUAH")) {
+            return "UAH";
+        }
+        if (currency.equals("FBTC")) {
+            return "BTC";
+        }
+        if (currency.equals("FETH")) {
+            return "ETH";
+        }
+        return currency;
     }
 
 
