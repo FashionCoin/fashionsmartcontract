@@ -71,22 +71,23 @@ public class FindPolService {
             }
             logger.info("Friend: {}", friend);
             if (friend != null) {
+                clientList.removeIf(cl -> cl.getId().equals(friend.getId()));
                 clientList.add(friend);
             }
 
             List<Client> result = new ArrayList<>();
 
             for (Client c : clientList) {
-                if (!c.getId().equals(friend.getId())) {
-                    Client cl = new Client();
-                    cl.setId(c.getId());
-                    cl.setCryptoname(c.getCryptoname());
-                    if (c.avaExists()) {
-                        cl.setAvatar(c.getAvatar());
-                    }
-                    cl.setWalletBalance(c.getWalletBalance());
-                    result.add(cl);
+
+                Client cl = new Client();
+                cl.setId(c.getId());
+                cl.setCryptoname(c.getCryptoname());
+                if (c.avaExists()) {
+                    cl.setAvatar(c.getAvatar());
                 }
+                cl.setWalletBalance(c.getWalletBalance());
+                result.add(cl);
+
             }
             return new ResultDTO(true, result, 0);
         } catch (Exception e) {
