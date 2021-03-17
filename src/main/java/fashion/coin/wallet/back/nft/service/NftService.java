@@ -595,7 +595,7 @@ public class NftService {
             nftHistory.setTimestamp(System.currentTimeMillis());
             nftHistory.setAmount(nft.getFaceValue());
             nftHistory.setNftId(nft.getId());
-            nftHistory.setTxhash("");
+            nftHistory.setTxhash(resultDTO.getMessage());
 
             nft.setOwnerId(friend.getId());
             nft.setOwnerName(friend.getCryptoname());
