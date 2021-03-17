@@ -127,6 +127,7 @@ public class CurrencyService {
             LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
+                logger.info("{} {} {}",currency,dateStart,dateEnd);
                 Double avg = currencyRateRepository.getAverageCurrency(currency,
                         dateStart, dateEnd);
                 logger.info("AVG: {}", avg);
