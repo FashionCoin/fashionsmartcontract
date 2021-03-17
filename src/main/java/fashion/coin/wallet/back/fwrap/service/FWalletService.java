@@ -127,4 +127,16 @@ public class FWalletService {
         fWalletRepository.save(receiverWallet);
         return true;
     }
+
+    public boolean changeAmount(Client client, String currency, BigDecimal amount) {
+        try {
+            FWallet fWallet = getWallet(client, currency);
+            fWallet.setBalance(fWallet.getBalance().add(amount));
+            fWalletRepository.save(fWallet);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
