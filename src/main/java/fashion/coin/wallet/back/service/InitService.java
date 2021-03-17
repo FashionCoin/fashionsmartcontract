@@ -23,7 +23,6 @@ public class InitService {
 
     AIService aiService;
 
-    CurrencyRateService currencyRateService;
 
     @PostConstruct
     public void init() {
@@ -61,8 +60,5 @@ public class InitService {
         this.aiService = aiService;
     }
 
-    @Autowired
-    public void setCurrencyRateService(CurrencyRateService currencyRateService) {
-        this.currencyRateService = currencyRateService;
-    }
+
 }
