@@ -1,9 +1,12 @@
 package fashion.coin.wallet.back.nft.dto;
 
+import fashion.coin.wallet.back.dto.TransactionRequestDTO;
+
 public class NftTransferDTO {
     Long nftId;
     String apikey;
     String receiver;
+    TransactionRequestDTO transactionRequest;
 
     public Long getNftId() {
         return nftId;
@@ -27,5 +30,13 @@ public class NftTransferDTO {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public TransactionRequestDTO getTransactionRequest() {
+        return transactionRequest;
+    }
+
+    public void setTransactionRequest(TransactionRequestDTO transactionRequest) {
+        this.transactionRequest = transactionRequest;
     }
 }

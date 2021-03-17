@@ -63,7 +63,7 @@ public class NftService {
     public static final String AUTHOR = "author";
     public static final String SELLER = "seller";
     public static final String TAX_AND_PROOFS = "taxAndProofs";
-    public static final String FEE = "0.02";
+    public static final String FEE = "0.0002";
 
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
@@ -413,7 +413,8 @@ public class NftService {
 
             boolean result = aiService.transfer(amountWithoutTax.toString(),
                     nft.getOwnerWallet(),
-                    AIService.AIWallets.MONEYBAG).isResult();;
+                    AIService.AIWallets.MONEYBAG).isResult();
+            ;
             if (result) {
                 nft.setOwnerId(null);
                 nft.setOwnerWallet(null);
@@ -528,12 +529,12 @@ public class NftService {
                 return error109;
             }
             List<NftHistory> nftHistoryList = nftHistoryRepository.findByCryptonameFromOrCryptonameToOrderByTimestampDesc(
-                    client.getCryptoname(),client.getCryptoname());
+                    client.getCryptoname(), client.getCryptoname());
             if (nftHistoryList == null || nftHistoryList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
             }
             List<MyHistoryDTO> myHistoryList = new ArrayList<>();
-            for(NftHistory nftHistory : nftHistoryList){
+            for (NftHistory nftHistory : nftHistoryList) {
                 MyHistoryDTO myHistory = new MyHistoryDTO();
                 myHistory.setId(nftHistory.getId());
                 Nft nft = nftRepository.findById(nftHistory.getNftId()).orElse(null);
@@ -569,14 +570,24 @@ public class NftService {
                 return error213;
             }
 
-            if(!nft.getOwnerId().equals(client.getId())){
+            if (!nft.getOwnerId().equals(client.getId())) {
                 return error214;
             }
 
             Client friend = clientService.findByCryptonameOrWallet(request.getReceiver());
-            if(friend==null){
+            if (friend == null) {
                 return error112;
             }
+
+            if (!checkTransferFee(nft, request.getTransactionRequest())) {
+                return error224;
+            }
+
+            ResultDTO resultDTO = transactionService.send(request.getTransactionRequest());
+            if (!resultDTO.isResult()) {
+                return resultDTO;
+            }
+
 
             NftHistory nftHistory = new NftHistory();
             nftHistory.setCryptonameFrom(client.getCryptoname());
@@ -590,11 +601,6 @@ public class NftService {
             nft.setOwnerName(friend.getCryptoname());
             nft.setOwnerWallet(friend.getWalletAddress());
 
-            BigDecimal newFaceValue = nft.getFaceValue().multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)));
-            BigDecimal newCreativeValue = nft.getCreativeValue().multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)));
-
-// TODO: Fee
-
             nftHistoryRepository.save(nftHistory);
             nftRepository.save(nft);
 
@@ -604,4 +610,29 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
+    private boolean checkTransferFee(Nft nft, TransactionRequestDTO transactionRequest) {
+
+        BigDecimal transactionFee = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount()).movePointLeft(3);
+
+        BigDecimal nftFee = nft.getFaceValue().multiply(new BigDecimal(FEE));
+        BigDecimal minimafFee = new BigDecimal("0.001");
+        if (nftFee.compareTo(minimafFee) < 0) {
+            nftFee = minimafFee;
+        }
+
+        if (transactionFee.compareTo(nftFee) != 0) {
+            logger.error("transactionFee {}", transactionFee);
+            return false;
+        }
+
+        if (!transactionRequest.getBlockchainTransaction().getBody().getTo().equals(aiService.getPubKey(AIService.AIWallets.MONEYBAG))) {
+            logger.error("Receiver: {}", transactionRequest.getBlockchainTransaction().getBody().getTo());
+            logger.error("MoneyBag: {}", aiService.getPubKey(AIService.AIWallets.MONEYBAG));
+            return false;
+        }
+
+        return true;
+    }
+
 }
