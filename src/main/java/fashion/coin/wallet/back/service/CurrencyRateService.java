@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
+import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class CurrencyRateService {
 
     public static final String params = "?symbol=USDT&convert=FSHN,BTC,ETH,USD,EUR,GBP,UAH";
 
-
+    public static final String metalPriceUrl = "https://data-asg.goldprice.org/dbXRates/USD";
 
     @Scheduled(cron = "0 */10 * * * *")
     public void updateExchangeRate() {
@@ -54,8 +55,7 @@ public class CurrencyRateService {
             HttpEntity entity = new HttpEntity(headers);
 
             ResponseEntity<CmcDTO> responseEntity = restTemplate.exchange(
-                    "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"+
-                            params,
+                    cmcLink + params,
                     HttpMethod.GET,
                     entity,
                     CmcDTO.class
@@ -66,19 +66,56 @@ public class CurrencyRateService {
             Map<String, PriceDTO> priceMap = cmcDTO.data.get("USDT").quote;
 
             BigDecimal fshnPrice = new BigDecimal(priceMap.get("FSHN").price);
-            for(Map.Entry<String,PriceDTO> entry : priceMap.entrySet()){
-                if(!entry.getKey().equals("FSHN")) {
+            for (Map.Entry<String, PriceDTO> entry : priceMap.entrySet()) {
+                if (!entry.getKey().equals("FSHN")) {
                     CurrencyRate currencyRate = new CurrencyRate();
                     currencyRate.setCurrency(entry.getKey());
                     currencyRate.setDateTime(LocalDateTime.now());
                     currencyRate.setRate(fshnPrice.divide(
-                            new BigDecimal( entry.getValue().price
-                            ),6, RoundingMode.HALF_UP));
+                            new BigDecimal(entry.getValue().price
+                            ), 6, RoundingMode.HALF_UP));
                     logger.info(gson.toJson(currencyRate));
                     currencyRateRepository.save(currencyRate);
                 }
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Scheduled(cron = "@hourly")
+    public void updateMetalRate() {
+        try {
+
+            ResponseEntity<MetalDTO> responseEntity = restTemplate.getForEntity(
+                    metalPriceUrl, MetalDTO.class
+            );
+            if (responseEntity.hasBody()) {
+
+                BigDecimal auUsd = new BigDecimal(responseEntity.getBody().items[0].xauPrice);
+                BigDecimal agUsd = new BigDecimal(responseEntity.getBody().items[0].xagPrice);
+
+                BigDecimal usdPrice = currencyService.getLastCurrencyRate("USD");
+                BigDecimal auPrice = auUsd.multiply(usdPrice).setScale(6, RoundingMode.HALF_UP);
+                BigDecimal agPrice = agUsd.multiply(usdPrice).setScale(6, RoundingMode.HALF_UP);
+
+                CurrencyRate currencyRate = new CurrencyRate();
+                currencyRate.setCurrency("XAU");
+                currencyRate.setDateTime(LocalDateTime.now());
+                currencyRate.setRate(auPrice);
+                logger.info(gson.toJson(currencyRate));
+                currencyRateRepository.save(currencyRate);
+
+                currencyRate = new CurrencyRate();
+                currencyRate.setCurrency("XAG");
+                currencyRate.setDateTime(LocalDateTime.now());
+                currencyRate.setRate(agPrice);
+                logger.info(gson.toJson(currencyRate));
+                currencyRateRepository.save(currencyRate);
+
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,5 +139,15 @@ public class CurrencyRateService {
 
     static class PriceDTO {
         public String price;
+    }
+
+
+    static class MetalDTO {
+        ItemDTO[] items;
+    }
+
+    static class ItemDTO {
+        Float xauPrice;
+        Float xagPrice;
     }
 }

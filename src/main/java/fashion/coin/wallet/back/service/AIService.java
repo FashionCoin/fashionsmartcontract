@@ -187,7 +187,7 @@ public class AIService {
                     boolean isWalletExists = false;
                     do {
                         logger.info("Sleep before register name on blockchain");
-                        Thread.sleep(1000);
+                        Thread.sleep(6000);
                         logger.info("Wake Up");
                         FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(wallet);
                         if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
