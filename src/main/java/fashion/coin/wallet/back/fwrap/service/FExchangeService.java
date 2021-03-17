@@ -121,7 +121,7 @@ public class FExchangeService {
         BigDecimal transactionAmount = new BigDecimal(request.getBlockchainTransaction()
                 .getBody().getAmount()).movePointLeft(3);
 
-        if (transactionAmount.compareTo(BigDecimal.ZERO) > 0) {
+        if (transactionAmount.compareTo(BigDecimal.ZERO) <= 0) {
             logger.error("transactionAmount: {}", transactionAmount);
             return error205;
         }
