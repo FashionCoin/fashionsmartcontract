@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.service;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.inject.internal.cglib.core.$ClassInfo;
 import fashion.coin.wallet.back.dto.CurrencyDTO;
 import fashion.coin.wallet.back.entity.CurrencyRate;
 import fashion.coin.wallet.back.repository.CurrencyRateRepository;
@@ -127,10 +128,14 @@ public class CurrencyService {
             LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
-                logger.info("{} {} {}",currency,dateStart,dateEnd);
+                logger.info("{} {} {}", currency, dateStart, dateEnd);
                 Double avg = currencyRateRepository.getAverageCurrency(currency,
                         dateStart, dateEnd);
                 logger.info("AVG: {}", avg);
+                if (avg == null) {
+                    avg = 1.;
+                    logger.error("AVG == null for {} {}", currency, date);
+                }
                 BigDecimal rate = BigDecimal.valueOf(avg);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format(rate));
                 currencyList.add(currencyDTO);
