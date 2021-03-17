@@ -54,7 +54,7 @@ public class CurrencyService {
 
 
     public List<String> getAvailableCrypts() {
-        return Stream.of("USD","EUR","GBP", "BTC", "ETH", "UAH").collect(Collectors.toList());
+        return Stream.of("USD", "EUR", "GBP", "BTC", "ETH", "UAH").collect(Collectors.toList());
     }
 
 
@@ -127,8 +127,10 @@ public class CurrencyService {
             LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
-                BigDecimal rate = BigDecimal.valueOf(currencyRateRepository.getAverageCurrency(currency,
-                        dateStart, dateEnd));
+                Double avg = currencyRateRepository.getAverageCurrency(currency,
+                        dateStart, dateEnd);
+                logger.info("AVG: {}", avg);
+                BigDecimal rate = BigDecimal.valueOf(avg);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format(rate));
                 currencyList.add(currencyDTO);
                 logger.info(gson.toJson(currencyDTO));
