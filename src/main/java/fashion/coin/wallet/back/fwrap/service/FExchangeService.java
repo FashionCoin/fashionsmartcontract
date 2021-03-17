@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.fwrap.service;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.entity.Client;
@@ -48,6 +49,8 @@ public class FExchangeService {
     @Autowired
     FExchangeRepository fExchangeRepository;
 
+    @Autowired
+    Gson gson;
 
     public static final String FEE = "0.02";
 
@@ -81,10 +84,10 @@ public class FExchangeService {
             if (fee.compareTo(BigDecimal.ZERO) == 0) {
                 return error223;
             }
-
-
+            logger.info(gson.toJson(request));
             resultDTO = transactionService.send(request.getTransactionRequest());
             if (!resultDTO.isResult()) {
+                logger.error(gson.toJson(resultDTO));
                 return resultDTO;
             }
 
@@ -119,11 +122,14 @@ public class FExchangeService {
                 .getBody().getAmount()).movePointLeft(3);
 
         if (transactionAmount.compareTo(BigDecimal.ZERO) > 0) {
+            logger.error("transactionAmount: {}", transactionAmount);
             return error205;
         }
 
         if (!request.getBlockchainTransaction().getBody()
                 .getTo().equals(aiService.getPubKey(AIService.AIWallets.MONEYBAG))) {
+            logger.error("Transaction To: {}", request.getBlockchainTransaction().getBody().getTo());
+            logger.error("MoneyBag: {}", aiService.getPubKey(AIService.AIWallets.MONEYBAG));
             return error205;
         }
 
