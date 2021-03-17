@@ -85,7 +85,7 @@ public class CurrencyRateService {
     }
 
 
-    @Scheduled(cron = "0 1 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void updateMetalRate() {
         try {
 
