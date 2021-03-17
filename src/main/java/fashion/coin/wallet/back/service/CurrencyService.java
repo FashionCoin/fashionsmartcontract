@@ -67,7 +67,9 @@ public class CurrencyService {
     }
 
     public BigDecimal getLastCurrencyRate(String currency) {
+        logger.info(currency);
         CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
+        logger.info("Currency Rate: ", gson.toJson(currencyRate));
         if (currencyRate != null) {
             return currencyRate.getRate();
         } else {
