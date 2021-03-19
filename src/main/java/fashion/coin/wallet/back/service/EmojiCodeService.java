@@ -69,8 +69,8 @@ public class EmojiCodeService {
 
     private boolean checkOneEmoji(String cryptoname) {
 
-        return true;
-        /*
+       // return true;
+
         if (cryptoname == null || cryptoname.length() < 1) return false;
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
@@ -83,7 +83,7 @@ public class EmojiCodeService {
         // Reserv:
         return textWithoutEmoji.length() == 0 && textOnlyEmoji.size() == 1;
 
-         */
+
     }
 
 
