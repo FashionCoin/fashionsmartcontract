@@ -316,13 +316,38 @@ public class NftService {
             if (nft == null) {
                 return error213;
             }
+
+            Client client = clientService.getClient(nft.getOwnerId());
+
+            OneNftResponceDTO oneNft = new OneNftResponceDTO();
+            oneNft.setId(nft.getId());
+            oneNft.setAvaExists(client.avaExists());
+            oneNft.setAvatar(client.getAvatar());
+            oneNft.setAuthorId(nft.getAuthorId());
+            oneNft.setAuthorName(nft.getAuthorName());
+            oneNft.setBanned(nft.isBanned());
+            oneNft.setBurned(nft.isBurned());
+            oneNft.setCanChangeValue(nft.isCanChangeValue());
+            oneNft.setCreativeValue(nft.getCreativeValue());
+            oneNft.setDescription(nft.getDescription());
+            oneNft.setFaceValue(nft.getFaceValue());
+            oneNft.setFileName(nft.getFileName());
+            oneNft.setInsale(nft.isInsale());
+            oneNft.setOwnerId(nft.getOwnerId());
+            oneNft.setOwnerName(nft.getOwnerName());
+            oneNft.setOwnerWallet(nft.getOwnerWallet());
+            oneNft.setProofs(nft.getProofs());
+            oneNft.setTimestamp(nft.getTimestamp());
+            oneNft.setTitle(nft.getTitle());
+            oneNft.setTxhash(nft.getTxhash());
+            oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
 /*
             Client client = clientService.getClient(nft.getOwnerId());
             OneNftResponceDTO oneNft = (OneNftResponceDTO) nft;
             oneNft.setAvatar(client.getAvatar());
             oneNft.setAvaExists(client.getAvatar() != null && client.getAvatar().length() > 0);
 */
-            return new ResultDTO(true, nft, 0);
+            return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
