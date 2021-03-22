@@ -316,7 +316,13 @@ public class NftService {
             if (nft == null) {
                 return error213;
             }
-            return new ResultDTO(true, nft, 0);
+
+            Client client = clientService.getClient(nft.getOwnerId());
+            OneNftResponceDTO oneNft = (OneNftResponceDTO) nft;
+            oneNft.setAvatar(client.getAvatar());
+            oneNft.setAvaExists(client.getAvatar() != null && client.getAvatar().length() > 0);
+
+            return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
