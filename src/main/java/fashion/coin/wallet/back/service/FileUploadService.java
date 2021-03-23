@@ -193,7 +193,7 @@ public class FileUploadService {
     }
 
 
-    @PostConstruct
+
     public void convertAllFiles(){
 
         List<NftFile> nftFileList = nftFileRepository.findAll();
