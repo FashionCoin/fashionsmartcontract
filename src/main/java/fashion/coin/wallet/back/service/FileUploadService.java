@@ -140,17 +140,21 @@ public class FileUploadService {
             if (newName.toFile().exists()) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
-            }else{
+            } else {
                 Files.move(copyLocation, copyLocation.resolveSibling(newName));
                 nftFileRepository.save(nftFile);
-                if(multipartFile.getContentType().toLowerCase().contains("video")){
+
+                if (multipartFile.getContentType().toLowerCase().contains("video")) {
                     String videoName = newName.toString();
                     String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
-                    createPreview(videoName,imageName);
+                    createPreview(videoName, imageName);
+                    resizePreview(shaChecksum + ".jpeg");
+                } else {
+                    resizePreview(shaChecksum + fileExtension);
                 }
             }
 
-            return new ResultDTO(true,nftFile,0);
+            return new ResultDTO(true, nftFile, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
@@ -158,14 +162,42 @@ public class FileUploadService {
 
     }
 
+    private void resizePreview(String fileName) {
+        try {
+            String originalFile = NFT_PATH + File.separator + fileName;
+            String size300 = NFT_PATH + File.separator + "300" + File.separator + fileName;
+            String size600 = NFT_PATH + File.separator + "600" + File.separator + fileName;
+            String size1000 = NFT_PATH + File.separator + "1000" + File.separator + fileName;
+
+
+            String command = "ffmpeg -i '" + originalFile + "' -vf scale=300:-1  '" + size300 + "'";
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+            int result = process.waitFor();
+            logger.info("Result: {}", result);
+
+            command = "ffmpeg -i '" + originalFile + "' -vf scale=600:-1  '" + size600 + "'";
+            process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+            result = process.waitFor();
+            logger.info("Result: {}", result);
+
+            command = "ffmpeg -i '" + originalFile + "' -vf scale=1000:-1  '" + size1000 + "'";
+            process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+            result = process.waitFor();
+            logger.info("Result: {}", result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean createPreview(String videoName, String imageName) {
-        try{
-            String command = "ffmpeg -i '"+videoName+"' -frames 1  -f image2 '"+imageName+"'";
+        try {
+            String command = "ffmpeg -i '" + videoName + "' -frames 1  -f image2 '" + imageName + "'";
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             int result = process.waitFor();
             logger.info("Result: {}", result);
             logger.info(imageName);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
