@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.util.List;
 import java.util.Optional;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
@@ -189,6 +191,22 @@ public class FileUploadService {
             e.printStackTrace();
         }
     }
+
+
+    @PostConstruct
+    public void convertAllFiles(){
+
+        List<NftFile> nftFileList = nftFileRepository.findAll();
+        for(NftFile nftFile : nftFileList){
+
+            if(nftFile.getContentType().toLowerCase().contains("image")){
+                resizePreview(nftFile.getFilename());
+            }else if(nftFile.getContentType().toLowerCase().contains("video")){
+                resizePreview(nftFile.getFilename().substring(0,64)+".jpeg");
+            }
+        }
+    }
+
 
     private boolean createPreview(String videoName, String imageName) {
         try {
