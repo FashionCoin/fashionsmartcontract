@@ -123,7 +123,7 @@ public class FWalletService {
         fWalletRepository.save(senderWallet);
 
         FWallet receiverWallet = getWallet(receiver, currency);
-        receiverWallet.setBalance(receiver.getWalletBalance().add(amount));
+        receiverWallet.setBalance(receiverWallet.getBalance().add(amount));
         fWalletRepository.save(receiverWallet);
         return true;
     }

@@ -1,7 +1,6 @@
 package fashion.coin.wallet.back.nft.controller;
 
 import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.ReportRequestDTO;
 import fashion.coin.wallet.back.nft.service.ReportNftService;
 import org.springframework.beans.factory.annotation.Autowired;

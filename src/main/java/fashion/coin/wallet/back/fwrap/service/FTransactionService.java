@@ -136,6 +136,7 @@ public class FTransactionService {
                 fTransaction.setFromId(client.getId());
                 fTransaction.setFromCryptoname(client.getCryptoname());
                 fTransaction.setToId(receiver.getId());
+                fTransaction.setToCryptoname(receiver.getCryptoname());
                 fTransaction.setAmount(request.getAmount());
 
                 fTransactionRepository.save(fTransaction);
