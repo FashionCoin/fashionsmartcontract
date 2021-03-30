@@ -115,6 +115,9 @@ public class NftService {
         this.gson = gson;
     }
 
+    @Autowired
+    HashtagService hashtagService;
+
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
                           BlockchainTransactionDTO blockchainTransaction) {
@@ -166,6 +169,7 @@ public class NftService {
         nft.setProofs(BigDecimal.ZERO);
         nftRepository.save(nft);
 
+        hashtagService.checkTags(nft.getDescription());
 
         return new ResultDTO(true, nft, 0);
     }
