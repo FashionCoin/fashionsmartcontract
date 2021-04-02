@@ -55,4 +55,22 @@ public class MintNftController {
 
     }
 
+    @PostMapping("/api/v1/nft/mint/free")
+    @ResponseBody
+    ResultDTO mintFreeNft(@RequestParam MultipartFile multipartFile,
+                         @RequestParam String apikey, @RequestParam String login,
+                         @RequestParam String title,
+                         @RequestParam String description) {
+        logger.info(multipartFile.getOriginalFilename());
+        try {
+            logger.info("Type: {}", multipartFile.getContentType());
+
+            return nftService.mintFree(multipartFile, apikey, login, title, description);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+    }
+
 }

@@ -43,6 +43,11 @@ public class Nft {
     boolean insale;
 
 
+    @Column(name ="free", columnDefinition="boolean default false",nullable = false)
+    boolean free;
+
+
+
     String wayOfAllocatingFunds = BASE_WAY;
 
     String txhash;
@@ -184,6 +189,14 @@ public class Nft {
 
     public void setInsale(boolean insale) {
         this.insale = insale;
+    }
+
+    public boolean isFree() {
+        return free;
+    }
+
+    public void setFree(boolean free) {
+        this.free = free;
     }
 
     public String getWayOfAllocatingFunds() {

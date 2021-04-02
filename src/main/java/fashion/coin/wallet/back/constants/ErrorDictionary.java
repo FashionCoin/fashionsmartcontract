@@ -59,5 +59,6 @@ public class ErrorDictionary {
     public static final ResultDTO error222 = new ResultDTO(false, "Only one proof to one NFT from one user", 222);
     public static final ResultDTO error223 = new ResultDTO(false, "So small amount to exchange. Add money", 223);
     public static final ResultDTO error224 = new ResultDTO(false, "Incorrect fee transaction", 224);
+    public static final ResultDTO error225 = new ResultDTO(false, "Only ten free NFT per day", 225);
 
 }

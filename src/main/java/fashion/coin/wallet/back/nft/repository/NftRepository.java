@@ -28,4 +28,7 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
 
     @Query(value = "SELECT * FROM nft WHERE description LIKE %?1% ORDER BY timestamp DESC LIMIT 10000", nativeQuery = true)
     List<Nft> findHashTags(String hashtag);
+
+
+    List<Nft> findByAuthorNameAndTimestampIsGreaterThan(String authorName,Long timestamp);
 }

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+import static fashion.coin.wallet.back.nft.service.ProofService.DAY;
 
 @Service
 public class NftService {
@@ -172,6 +173,74 @@ public class NftService {
         hashtagService.checkTags(nft.getDescription());
 
         return new ResultDTO(true, nft, 0);
+    }
+
+    public ResultDTO mintFree(MultipartFile multipartFile, String apikey, String login,
+                              String title, String description) {
+
+        BigDecimal faceValue = new BigDecimal(1000);
+        BigDecimal creativeValue = new BigDecimal(100000);
+
+
+        if (!clientService.checkApiKey(login, apikey)) return error109;
+
+        if (!checkTenFreeNft(login)) {
+            return error225;
+        }
+
+
+        ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
+        if (!resultDTO.isResult()) return resultDTO;
+        NftFile nftFile = (NftFile) resultDTO.getData();
+
+        List<Nft> nftList = nftRepository.findByFileName(nftFile.getFilename());
+        if (nftList != null && nftList.size() > 0) {
+            return error123;
+        }
+
+        Client client = clientService.findByCryptoname(login);
+
+
+        /*
+
+        TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
+        transactionRequestDTO.setAmount(faceValue.toString());
+        transactionRequestDTO.setBlockchainTransaction(blockchainTransaction);
+        transactionRequestDTO.setReceiverLogin(aiService.getPubKey(AIService.AIWallets.MONEYBAG));
+        transactionRequestDTO.setSenderWallet(client.getWalletAddress());
+        resultDTO = transactionService.send(transactionRequestDTO);
+        if (!resultDTO.isResult()) return resultDTO;
+*/
+
+        Nft nft = new Nft();
+//        nft.setTxhash(resultDTO.getMessage());
+        nft.setAuthorId(client.getId());
+        nft.setAuthorName(client.getCryptoname());
+        nft.setOwnerId(client.getId());
+        nft.setOwnerName(client.getCryptoname());
+        nft.setOwnerWallet(client.getWalletAddress());
+        nft.setTitle(title);
+        nft.setDescription(description);
+        nft.setFaceValue(faceValue);
+        nft.setCreativeValue(creativeValue);
+        nft.setFileName(nftFile.getFilename());
+        nft.setTimestamp(System.currentTimeMillis());
+        nft.setProofs(BigDecimal.ZERO);
+        nft.setFree(true);
+        nftRepository.save(nft);
+
+        hashtagService.checkTags(nft.getDescription());
+
+        return new ResultDTO(true, nft, 0);
+    }
+
+    private boolean checkTenFreeNft(String login) {
+
+        Long timestamp = System.currentTimeMillis() - DAY;
+
+        List<Nft> nftList = nftRepository.findByAuthorNameAndTimestampIsGreaterThan(login, timestamp);
+        if (nftList == null) return true;
+        return nftList.size() < 10;
     }
 
     private boolean checkCreativeValueLimit(BigDecimal faceValue, BigDecimal creativeValue, BigDecimal maxRate) {
