@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.service;
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
@@ -38,6 +39,9 @@ public class PolClientService {
 
     @Autowired
     ProofService proofService;
+
+    @Autowired
+    Gson gson;
 
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
@@ -93,6 +97,7 @@ public class PolClientService {
                 logger.info(String.valueOf(friend.getId()));
                 logger.info(String.valueOf(nft.getOwnerId()));
 
+                logger.info(gson.toJson(nft));
 
                 if (nft.getAuthorId().compareTo(friend.getId()) == 0 &&
                         nft.getOwnerId().compareTo(friend.getId()) != 0) {
