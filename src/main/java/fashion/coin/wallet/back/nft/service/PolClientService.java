@@ -84,6 +84,16 @@ public class PolClientService {
 
 
             }
+
+            nftList = nftService.getCreation(friend.getId());
+
+            for (Nft nft : nftList) {
+                if (nft.getAuthorId().compareTo(friend.getId()) == 0 &&
+                        nft.getOwnerId().compareTo(friend.getId()) != 0) {
+                    creation.add(nft);
+                }
+            }
+
             creation.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             collection.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
 
