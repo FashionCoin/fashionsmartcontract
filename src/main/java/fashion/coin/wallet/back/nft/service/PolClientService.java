@@ -88,6 +88,12 @@ public class PolClientService {
             nftList = nftService.getCreation(friend.getId());
 
             for (Nft nft : nftList) {
+
+                logger.info(String.valueOf(nft.getAuthorId()));
+                logger.info(String.valueOf(friend.getId()));
+                logger.info(String.valueOf(nft.getOwnerId()));
+
+
                 if (nft.getAuthorId().compareTo(friend.getId()) == 0 &&
                         nft.getOwnerId().compareTo(friend.getId()) != 0) {
                     creation.add(nft);
