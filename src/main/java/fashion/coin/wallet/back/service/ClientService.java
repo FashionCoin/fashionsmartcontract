@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 import static fashion.coin.wallet.back.service.StatisticsService.*;
@@ -1028,8 +1029,32 @@ public class ClientService {
         Client result = findByCryptoname(receiver);
         if (result != null) {
             return result;
-        }else{
+        } else {
             return findByWallet(receiver);
         }
+    }
+
+    public ResultDTO clientAbout(AboutClientRequestDTO request) {
+
+        try {
+
+            Client client = findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error127;
+            }
+
+            client.setAbout(request.getAbout());
+            client.setSocialLinks(gson.toJson( request.getSocialLinks()));
+
+            clientRepository.save(client);
+
+            return new ResultDTO(true, client, 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+
     }
 }

@@ -115,6 +115,13 @@ public class ClientController {
     }
 
 
+    @PostMapping("/api/v1/client/about")
+    @ResponseBody
+    ResultDTO clientAbout(@RequestBody  AboutClientRequestDTO request){
+        return clientService.clientAbout( request);
+    }
+
+
 
 
     @Autowired

@@ -50,6 +50,11 @@ public class Client implements Comparable<Client> {
     @Column(name = "banned", columnDefinition = "boolean default false", nullable = false)
     boolean banned = false;
 
+
+    String about;
+
+    String socialLinks;
+
     public Client() {
         this.walletBalance = BigDecimal.ZERO;
     }
@@ -225,5 +230,21 @@ public class Client implements Comparable<Client> {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public String getSocialLinks() {
+        return socialLinks;
+    }
+
+    public void setSocialLinks(String socialLinks) {
+        this.socialLinks = socialLinks;
     }
 }
