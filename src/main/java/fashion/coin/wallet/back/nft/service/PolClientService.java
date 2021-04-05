@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.nft.service;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
+import fashion.coin.wallet.back.dto.SocialLinkDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
 import fashion.coin.wallet.back.nft.dto.PolClientResponseDTO;
@@ -121,6 +122,10 @@ public class PolClientService {
 
             responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
             responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
+
+            responseDTO.setAbout(friend.getAbout());
+            responseDTO.setSocialLinks(gson.fromJson( friend.getSocialLinks(),List.class));
+
 
             return new ResultDTO(true, responseDTO, 0);
         } catch (Exception e) {

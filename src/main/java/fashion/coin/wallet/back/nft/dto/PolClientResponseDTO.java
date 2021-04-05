@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.dto;
 
+import fashion.coin.wallet.back.dto.SocialLinkDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 
 import javax.persistence.Column;
@@ -25,6 +26,11 @@ public class PolClientResponseDTO {
 
     boolean proofSender;
     boolean proofReceiver;
+
+    String about;
+
+    List<SocialLinkDTO> socialLinks;
+
 
     public Long getId() {
         return id;
@@ -120,5 +126,21 @@ public class PolClientResponseDTO {
 
     public void setProofReceiver(boolean proofReceiver) {
         this.proofReceiver = proofReceiver;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public List<SocialLinkDTO> getSocialLinks() {
+        return socialLinks;
+    }
+
+    public void setSocialLinks(List<SocialLinkDTO> socialLinks) {
+        this.socialLinks = socialLinks;
     }
 }
