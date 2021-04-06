@@ -51,7 +51,7 @@ public class EmojiCodeService {
 
                     EmojiCode emojiCode = emojiCodeRepository.findById(emj).orElse(null);
                     if (emojiCode == null) {
-                        emojiCode = new EmojiCode(emojiCodeList[i]);
+                        emojiCode = new EmojiCode(emj);
                         emojiCodeRepository.save(emojiCode);
                     }
                 }
