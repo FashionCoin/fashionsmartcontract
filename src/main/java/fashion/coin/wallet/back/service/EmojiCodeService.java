@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,6 +41,25 @@ public class EmojiCodeService {
                     emojiCodeRepository.save(emojiCode);
                 }
             }
+
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                for (int i = 0; i < 98; i++) {
+                    byte[] encodedhash = digest.digest(("love"+i).getBytes());
+
+                    String emj = bytesToHex(encodedhash).substring(0,8);
+
+                    EmojiCode emojiCode = emojiCodeRepository.findById(emj).orElse(null);
+                    if (emojiCode == null) {
+                        emojiCode = new EmojiCode(emojiCodeList[i]);
+                        emojiCodeRepository.save(emojiCode);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             listIsRefreshed = true;
         }
     }
@@ -125,6 +145,20 @@ public class EmojiCodeService {
         if (emojiCode == null) return false;
         if (emojiCode.getWallet() != null && emojiCode.getWallet().length() > 0) return false;
         return true;
+    }
+
+
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (int i = 0; i < hash.length; i++) {
+            String hex = Integer.toHexString(0xff & hash[i]);
+            if(hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
 
