@@ -726,7 +726,7 @@ public class NftService {
         }
 
         if (transactionFee.compareTo(nftFee) != 0) {
-            logger.error("transactionFee {}", transactionFee);
+            logger.error("transactionFee {} != {}", transactionFee, nftFee);
             return false;
         }
 
