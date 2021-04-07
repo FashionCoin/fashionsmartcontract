@@ -719,7 +719,7 @@ public class NftService {
 
         BigDecimal transactionFee = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount()).movePointLeft(3);
 
-        BigDecimal nftFee = nft.getFaceValue().multiply(new BigDecimal(FEE));
+        BigDecimal nftFee = nft.getFaceValue().multiply(new BigDecimal(FEE)).setScale(3,RoundingMode.HALF_UP);
         BigDecimal minimafFee = new BigDecimal("0.001");
         if (nftFee.compareTo(minimafFee) < 0) {
             nftFee = minimafFee;
