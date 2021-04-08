@@ -29,11 +29,13 @@ public class ReportNftService {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
-                return error109;
+//                return error109;
             }
 
             ReportNft reportNft = new ReportNft();
-            reportNft.setClientId(client.getId());
+            if (client != null) {
+                reportNft.setClientId(client.getId());
+            }
             reportNft.setTimestamp(System.currentTimeMillis());
             reportNft.setNftId(request.getNftId());
             reportNft.setText(request.getText());
@@ -41,12 +43,12 @@ public class ReportNftService {
 
             reportNftRepository.save(reportNft);
 
-            return new ResultDTO(true,reportNft,0);
+            return new ResultDTO(true, reportNft, 0);
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResultDTO(false,e.getMessage(),-1);
+            return new ResultDTO(false, e.getMessage(), -1);
         }
 
     }
