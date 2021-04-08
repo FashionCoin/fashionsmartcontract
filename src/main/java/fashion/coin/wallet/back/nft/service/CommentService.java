@@ -58,10 +58,10 @@ public class CommentService {
 
     public ResultDTO getCommentList(NftRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             List<NftComment> commentList = commentRepository.findByNftIdOrderByTimestampDesc(request.getNftId());
             if (commentList == null || commentList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftComment>(), 0);

@@ -362,10 +362,10 @@ public class NftService {
 
     public ResultDTO getHistory(HistoryNftRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             List<NftHistory> nftHistoryList = nftHistoryRepository.findByNftIdOrderByTimestampDesc(request.getNftId());
             if (nftHistoryList == null || nftHistoryList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
