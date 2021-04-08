@@ -414,12 +414,7 @@ public class NftService {
             oneNft.setTitle(nft.getTitle());
             oneNft.setTxhash(nft.getTxhash());
             oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
-/*
-            Client client = clientService.getClient(nft.getOwnerId());
-            OneNftResponceDTO oneNft = (OneNftResponceDTO) nft;
-            oneNft.setAvatar(client.getAvatar());
-            oneNft.setAvaExists(client.getAvatar() != null && client.getAvatar().length() > 0);
-*/
+
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
             e.printStackTrace();

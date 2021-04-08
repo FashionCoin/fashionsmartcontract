@@ -47,9 +47,10 @@ public class PolClientService {
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
+
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
-                return error109;
+//                return error109;
             }
 
 
@@ -120,9 +121,10 @@ public class PolClientService {
             responseDTO.setAvatar(friend.getAvatar());
             responseDTO.setAvaExists(friend.getAvatar() != null && friend.getAvatar().length() > 0);
 
-            responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
-            responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
-
+            if(client != null) {
+                responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
+                responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
+            }
             responseDTO.setAbout(friend.getAbout());
             responseDTO.setSocialLinks(gson.fromJson( friend.getSocialLinks(),List.class));
 

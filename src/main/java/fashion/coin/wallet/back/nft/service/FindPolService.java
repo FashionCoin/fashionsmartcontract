@@ -57,10 +57,10 @@ public class FindPolService {
             if (request == null || request.getName() == null) {
                 return error127;
             }
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             Client friend = clientRepository.findClientByCryptoname(request.getName());
 
 
@@ -98,10 +98,10 @@ public class FindPolService {
 
     public ResultDTO creators(FindByDurationRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             long durationStart = 0;
             if (request.getDuration() > 0) {
                 durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
@@ -134,10 +134,10 @@ public class FindPolService {
 
     public ResultDTO collectors(FindByDurationRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             long durationStart = 0;
             if (request.getDuration() > 0) {
                 durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
@@ -172,10 +172,10 @@ public class FindPolService {
     public ResultDTO topProofs(FindByDurationRequestDTO request) {
 
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             long durationStart = 0;
             if (request.getDuration() > 0) {
                 durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
@@ -207,10 +207,10 @@ public class FindPolService {
     public ResultDTO recentlySold(FindByDurationRequestDTO request) {
 
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             long durationStart = System.currentTimeMillis() - 100 * DAY;
 
             List<NftHistory> nftHistoryList = nftHistoryRepository.findByTimestampIsGreaterThanOrderByTimestampDesc(durationStart);
@@ -236,10 +236,10 @@ public class FindPolService {
 
     public ResultDTO mostExpensiveFaceValue(FindByDurationRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             long durationStart = 0;
             if (request.getDuration() > 0) {
                 durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
@@ -258,10 +258,10 @@ public class FindPolService {
 
     public ResultDTO mostExpensiveCreativeValue(FindByDurationRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(request.getApikey());
-            if (client == null) {
-                return error109;
-            }
+//            Client client = clientService.findClientByApikey(request.getApikey());
+//            if (client == null) {
+//                return error109;
+//            }
             long durationStart = 0;
             if (request.getDuration() > 0) {
                 durationStart = System.currentTimeMillis() - request.getDuration() * DAY;
