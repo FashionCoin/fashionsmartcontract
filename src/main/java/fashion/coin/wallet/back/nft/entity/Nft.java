@@ -14,7 +14,8 @@ public class Nft {
     @Id
     @GeneratedValue
     Long id;
-
+    @Column(columnDefinition = "varchar(255) default 'FSHN'")
+    String currency;
     String fileName;
     String title;
     String description;
@@ -30,22 +31,25 @@ public class Nft {
     Long timestamp;
     @Column(precision = 30, scale = 3)
     BigDecimal proofs = BigDecimal.ZERO;
-    @Column(name ="can_change_value", columnDefinition="boolean default false",nullable = false)
+    @Column(name = "can_change_value", columnDefinition = "boolean default false", nullable = false)
     boolean canChangeValue;
 
-    @Column(name ="burned", columnDefinition="boolean default false",nullable = false)
+    @Column(name = "burned", columnDefinition = "boolean default false", nullable = false)
     boolean isBurned;
 
-    @Column(name ="banned", columnDefinition="boolean default false",nullable = false)
+    @Column(name = "banned", columnDefinition = "boolean default false", nullable = false)
     boolean isBanned;
 
-    @Column(name ="insale", columnDefinition="boolean default false",nullable = false)
+    @Column(name = "insale", columnDefinition = "boolean default false", nullable = false)
     boolean insale;
 
 
-    @Column(name ="free", columnDefinition="boolean default false",nullable = false)
+    @Column(name = "free", columnDefinition = "boolean default false", nullable = false)
     boolean free;
 
+
+    @Column(name = "tirage", columnDefinition = "boolean default false", nullable = false)
+    boolean tirage;
 
 
     String wayOfAllocatingFunds = BASE_WAY;
