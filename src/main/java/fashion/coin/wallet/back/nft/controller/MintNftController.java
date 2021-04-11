@@ -39,15 +39,25 @@ public class MintNftController {
                          @RequestParam String description,
                          @RequestParam BigDecimal faceValue,
                          @RequestParam BigDecimal creativeValue,
+                         @RequestParam(defaultValue = "1") Integer tirage,
                          @RequestParam String stringTransaction) {
         logger.info(multipartFile.getOriginalFilename());
         try {
             logger.info("Type: {}", multipartFile.getContentType());
 
             BlockchainTransactionDTO blockchainTransaction = gson.fromJson(stringTransaction, BlockchainTransactionDTO.class);
+            ResultDTO resultDTO;
+            if (tirage.equals(1)) {
+                resultDTO = nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
+                        blockchainTransaction);
+            } else {
+                resultDTO = nftService.mintTirage(multipartFile, apikey, login, title, description, faceValue, creativeValue,
+                        tirage,
+                        blockchainTransaction);
+            }
 
-            return nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
-                    blockchainTransaction);
+
+            return resultDTO;
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
@@ -58,9 +68,9 @@ public class MintNftController {
     @PostMapping("/api/v1/nft/mint/free")
     @ResponseBody
     ResultDTO mintFreeNft(@RequestParam MultipartFile multipartFile,
-                         @RequestParam String apikey, @RequestParam String login,
-                         @RequestParam String title,
-                         @RequestParam String description) {
+                          @RequestParam String apikey, @RequestParam String login,
+                          @RequestParam String title,
+                          @RequestParam String description) {
         logger.info(multipartFile.getOriginalFilename());
         try {
             logger.info("Type: {}", multipartFile.getContentType());

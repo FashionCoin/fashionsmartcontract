@@ -219,4 +219,20 @@ public class Nft {
     public void setTxhash(String txhash) {
         this.txhash = txhash;
     }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public boolean isTirage() {
+        return tirage;
+    }
+
+    public void setTirage(boolean tirage) {
+        this.tirage = tirage;
+    }
 }

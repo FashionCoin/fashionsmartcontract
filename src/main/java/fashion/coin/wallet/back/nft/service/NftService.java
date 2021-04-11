@@ -9,8 +9,10 @@ import fashion.coin.wallet.back.nft.dto.*;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
+import fashion.coin.wallet.back.nft.entity.NftTirage;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
+import fashion.coin.wallet.back.nft.repository.NftTirageRepository;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.FileUploadService;
@@ -119,6 +121,9 @@ public class NftService {
     @Autowired
     HashtagService hashtagService;
 
+    @Autowired
+    NftTirageRepository nftTirageRepository;
+
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
                           BlockchainTransactionDTO blockchainTransaction) {
@@ -139,11 +144,18 @@ public class NftService {
         NftFile nftFile = (NftFile) resultDTO.getData();
 
         List<Nft> nftList = nftRepository.findByFileName(nftFile.getFilename());
-        if (nftList != null && nftList.size() > 0) {
-            return error123;
+        if (nftList != null) {
+            nftList.removeIf(nft -> nft.isBurned());
+            if (nftList.size() > 0) {
+                return error123;
+            }
         }
 
         Client client = clientService.findByCryptoname(login);
+
+        if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(faceValue.movePointRight(3)) != 0) {
+            return error210;
+        }
 
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
         transactionRequestDTO.setAmount(faceValue.toString());
@@ -714,7 +726,7 @@ public class NftService {
 
         BigDecimal transactionFee = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount()).movePointLeft(3);
 
-        BigDecimal nftFee = nft.getFaceValue().multiply(new BigDecimal(FEE)).setScale(3,RoundingMode.HALF_UP);
+        BigDecimal nftFee = nft.getFaceValue().multiply(new BigDecimal(FEE)).setScale(3, RoundingMode.HALF_UP);
         BigDecimal minimafFee = new BigDecimal("0.001");
         if (nftFee.compareTo(minimafFee) < 0) {
             nftFee = minimafFee;
@@ -734,4 +746,70 @@ public class NftService {
         return true;
     }
 
+    public ResultDTO mintTirage(MultipartFile multipartFile, String apikey, String login, String title, String description, BigDecimal faceValue, BigDecimal creativeValue, Integer tirage, BlockchainTransactionDTO blockchainTransaction) {
+
+        if (!clientService.checkApiKey(login, apikey)) return error109;
+
+        if (creativeValue.compareTo(BigDecimal.ZERO) <= 0 || faceValue.compareTo(BigDecimal.ZERO) <= 0) {
+            return error218;
+        }
+
+
+        ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
+        if (!resultDTO.isResult()) return resultDTO;
+        NftFile nftFile = (NftFile) resultDTO.getData();
+
+        List<Nft> nftList = nftRepository.findByFileName(nftFile.getFilename());
+        if (nftList != null) {
+            nftList.removeIf(nft -> nft.isBurned());
+            if (nftList.size() > 0) {
+                return error123;
+            }
+        }
+
+
+        Client client = clientService.findByCryptoname(login);
+
+        BigDecimal total = faceValue.multiply(new BigDecimal(tirage)).setScale(3, RoundingMode.HALF_UP);
+        if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(total.movePointRight(3)) != 0) {
+            return error210;
+        }
+
+        TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
+        transactionRequestDTO.setAmount(faceValue.toString());
+        transactionRequestDTO.setBlockchainTransaction(blockchainTransaction);
+        transactionRequestDTO.setReceiverLogin(aiService.getPubKey(AIService.AIWallets.MONEYBAG));
+        transactionRequestDTO.setSenderWallet(client.getWalletAddress());
+        resultDTO = transactionService.send(transactionRequestDTO);
+        if (!resultDTO.isResult()) return resultDTO;
+
+        Nft nft = new Nft();
+        nft.setTxhash(resultDTO.getMessage());
+        nft.setAuthorId(client.getId());
+        nft.setAuthorName(client.getCryptoname());
+
+        nft.setTitle(title);
+        nft.setDescription(description);
+        nft.setFaceValue(faceValue);
+
+        nft.setFileName(nftFile.getFilename());
+        nft.setTimestamp(System.currentTimeMillis());
+        nft.setProofs(BigDecimal.ZERO);
+        nft.setTirage(true);
+        nftRepository.save(nft);
+
+        NftTirage nftTirage = new NftTirage();
+        nftTirage.setNftId(nft.getId());
+        nftTirage.setCreativeValue(creativeValue);
+        nftTirage.setOwnerId(client.getId());
+        nftTirage.setTimestamp(System.currentTimeMillis());
+        nftTirage.setCanChangeValue(false);
+        nftTirage.setInsale(false);
+        nftTirage.setTxhash(resultDTO.getMessage());
+        nftTirageRepository.save(nftTirage);
+
+        hashtagService.checkTags(nft.getDescription());
+
+        return new ResultDTO(true, nft, 0);
+    }
 }
