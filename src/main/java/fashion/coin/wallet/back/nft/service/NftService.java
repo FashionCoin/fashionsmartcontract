@@ -746,7 +746,9 @@ public class NftService {
         return true;
     }
 
-    public ResultDTO mintTirage(MultipartFile multipartFile, String apikey, String login, String title, String description, BigDecimal faceValue, BigDecimal creativeValue, Integer tirage, BlockchainTransactionDTO blockchainTransaction) {
+    public ResultDTO mintTirage(MultipartFile multipartFile, String apikey, String login, String title,
+                                String description, BigDecimal faceValue, BigDecimal creativeValue, Long tirage,
+                                BlockchainTransactionDTO blockchainTransaction) {
 
         if (!clientService.checkApiKey(login, apikey)) return error109;
 
@@ -806,6 +808,7 @@ public class NftService {
         nftTirage.setCanChangeValue(false);
         nftTirage.setInsale(false);
         nftTirage.setTxhash(resultDTO.getMessage());
+        nftTirage.setTirage(tirage);
         nftTirageRepository.save(nftTirage);
 
         hashtagService.checkTags(nft.getDescription());

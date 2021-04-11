@@ -39,7 +39,7 @@ public class MintNftController {
                          @RequestParam String description,
                          @RequestParam BigDecimal faceValue,
                          @RequestParam BigDecimal creativeValue,
-                         @RequestParam(defaultValue = "1") Integer tirage,
+                         @RequestParam(defaultValue = "1") Long tirage,
                          @RequestParam String stringTransaction) {
         logger.info(multipartFile.getOriginalFilename());
         try {

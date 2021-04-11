@@ -13,6 +13,7 @@ public class NftTirage {
     Long id;
     Long nftId;
 
+    Long tirage;
     @Column(precision = 30, scale = 3)
     BigDecimal creativeValue;
     Long ownerId;
@@ -38,6 +39,14 @@ public class NftTirage {
 
     public void setNftId(Long nftId) {
         this.nftId = nftId;
+    }
+
+    public Long getTirage() {
+        return tirage;
+    }
+
+    public void setTirage(Long tirage) {
+        this.tirage = tirage;
     }
 
     public BigDecimal getCreativeValue() {
