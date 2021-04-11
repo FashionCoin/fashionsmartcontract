@@ -5,6 +5,7 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.FeedNftRequestDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
+import fashion.coin.wallet.back.nft.entity.NftTirage;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.ClientService;
@@ -65,6 +66,12 @@ public class FeedService {
                     }
                 }
                 feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
+                feed.forEach(nft -> {
+                    if(nft.isTirage()){
+                        nft.setOwnerId(nft.getAuthorId());
+                        nft.setOwnerName(nft.getAuthorName());
+                    }
+                });
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
 
             } else if (request.getFeedType().equals(PROOFS_FEED)) {
