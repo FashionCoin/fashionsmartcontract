@@ -409,6 +409,8 @@ public class NftService {
                 ownerId = nft.getAuthorId();
             }
 
+
+
             Client client = clientService.getClient(ownerId);
 
             OneNftResponceDTO oneNft = new OneNftResponceDTO();
@@ -426,8 +428,8 @@ public class NftService {
             oneNft.setFileName(nft.getFileName());
             oneNft.setInsale(nft.isInsale());
             oneNft.setOwnerId(ownerId);
-            oneNft.setOwnerName(nft.getOwnerName());
-            oneNft.setOwnerWallet(nft.getOwnerWallet());
+            oneNft.setOwnerName(client.getCryptoname());
+            oneNft.setOwnerWallet(client.getWalletAddress());
             oneNft.setProofs(nft.getProofs());
             oneNft.setTimestamp(nft.getTimestamp());
             oneNft.setTitle(nft.getTitle());
