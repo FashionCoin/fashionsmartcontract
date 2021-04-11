@@ -405,6 +405,7 @@ public class NftService {
 
             Long ownerId = nft.getOwnerId();
             if(nft.isTirage()){
+//TODO: Придумать как узнать владельца
                 ownerId = nft.getAuthorId();
             }
 
@@ -424,7 +425,7 @@ public class NftService {
             oneNft.setFaceValue(nft.getFaceValue());
             oneNft.setFileName(nft.getFileName());
             oneNft.setInsale(nft.isInsale());
-            oneNft.setOwnerId(nft.getOwnerId());
+            oneNft.setOwnerId(ownerId);
             oneNft.setOwnerName(nft.getOwnerName());
             oneNft.setOwnerWallet(nft.getOwnerWallet());
             oneNft.setProofs(nft.getProofs());
