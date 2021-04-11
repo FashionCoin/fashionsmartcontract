@@ -434,6 +434,7 @@ public class NftService {
             oneNft.setTxhash(nft.getTxhash());
             oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
 
+
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
             e.printStackTrace();
