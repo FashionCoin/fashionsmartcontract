@@ -403,7 +403,12 @@ public class NftService {
                 return error213;
             }
 
-            Client client = clientService.getClient(nft.getOwnerId());
+            Long ownerId = nft.getOwnerId();
+            if(nft.isTirage()){
+                ownerId = nft.getAuthorId();
+            }
+
+            Client client = clientService.getClient(ownerId);
 
             OneNftResponceDTO oneNft = new OneNftResponceDTO();
             oneNft.setId(nft.getId());
