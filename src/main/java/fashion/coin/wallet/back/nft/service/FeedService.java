@@ -13,12 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.error124;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.error125;
 
 
 @Service
@@ -33,6 +32,7 @@ public class FeedService {
     ClientService clientService;
     NftRepository nftRepository;
     FriendProofRepository friendProofRepository;
+    TirageService tirageService;
 
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
@@ -58,11 +58,13 @@ public class FeedService {
 
                 for (FriendProof fp : friendList) {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofReceiverId());
+                    nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
                     if (nftList != null && nftList.size() > 0) {
-                        nftList.removeIf(nft -> nft.getOwnerId().equals(client.getId()));
+                        nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
                         feed.addAll(nftList);
                     }
                 }
+                feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
 
             } else if (request.getFeedType().equals(PROOFS_FEED)) {
@@ -73,9 +75,10 @@ public class FeedService {
 
                     logger.info("FP: {}", fp.getProofSenderId());
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
+                    nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
                     logger.info("Size: {}", nftList.size());
                     if (nftList != null && nftList.size() > 0) {
-                        nftList.removeIf(nft -> nft.getOwnerId().equals(client.getId()));
+                        nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
                         feed.addAll(nftList);
                     }
                 }
@@ -117,5 +120,10 @@ public class FeedService {
     @Autowired
     public void setFriendProofRepository(FriendProofRepository friendProofRepository) {
         this.friendProofRepository = friendProofRepository;
+    }
+
+    @Autowired
+    public void setTirageService(TirageService tirageService) {
+        this.tirageService = tirageService;
     }
 }
