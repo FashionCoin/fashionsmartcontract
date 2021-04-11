@@ -435,7 +435,12 @@ public class NftService {
             oneNft.setTitle(nft.getTitle());
             oneNft.setTxhash(nft.getTxhash());
             oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
-
+            if(nft.isTirage()) {
+                NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(),ownerId);
+                oneNft.setPieces(nftTirage.getTirage());
+            }else{
+                oneNft.setPieces(1L);
+            }
 
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {

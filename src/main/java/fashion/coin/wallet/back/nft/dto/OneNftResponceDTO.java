@@ -6,6 +6,7 @@ public class OneNftResponceDTO extends Nft {
 
     String avatar;
     boolean avaExists;
+    Long pieces;
 
     public String getAvatar() {
         return avatar;
@@ -21,5 +22,13 @@ public class OneNftResponceDTO extends Nft {
 
     public void setAvaExists(boolean avaExists) {
         this.avaExists = avaExists;
+    }
+
+    public Long getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Long pieces) {
+        this.pieces = pieces;
     }
 }
