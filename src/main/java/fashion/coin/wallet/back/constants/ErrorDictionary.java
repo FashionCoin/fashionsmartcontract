@@ -61,5 +61,6 @@ public class ErrorDictionary {
     public static final ResultDTO error224 = new ResultDTO(false, "Incorrect fee transaction", 224);
     public static final ResultDTO error225 = new ResultDTO(false, "Only ten free NFT per day", 225);
     public static final ResultDTO error226 = new ResultDTO(false, "Not enough NFT", 226);
+    public static final ResultDTO error227 = new ResultDTO(false, "Tirage NFT can not be Proof", 227);
 
 }

@@ -62,6 +62,11 @@ public class ProofService {
             if (nft == null) {
                 return error213;
             }
+
+            if(nft.isTirage()){
+                return error227;
+            }
+
             if (!checkOneProof(nft, client)) {
                 return error222;
             }
