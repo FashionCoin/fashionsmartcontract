@@ -10,6 +10,9 @@ public class BuyNftDTO {
     String apikey;
     Map<String, TransactionRequestDTO> transactionsRequestMap = new HashMap<>();
 
+    Long pieces;
+    Long ownerId;
+
     public Long getNftId() {
         return nftId;
     }
@@ -34,11 +37,29 @@ public class BuyNftDTO {
         this.transactionsRequestMap = transactionsRequestMap;
     }
 
+    public Long getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Long pieces) {
+        this.pieces = pieces;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
     @Override
     public String toString() {
         return "BuyNftDTO{" +
                 "nftId=" + nftId +
+                ", apikey='" + apikey + '\'' +
                 ", transactionsRequestMap=" + transactionsRequestMap +
+                ", pieces=" + pieces +
                 '}';
     }
 }

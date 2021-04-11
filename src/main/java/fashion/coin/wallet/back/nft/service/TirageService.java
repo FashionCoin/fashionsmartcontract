@@ -47,4 +47,14 @@ public class TirageService {
             return new ArrayList<>();
         }
     }
+
+    public NftTirage save(NftTirage nftTirage) {
+        nftTirageRepository.save(nftTirage);
+        return nftTirage;
+    }
+
+    public NftTirage tirageFindByNftAndOwnerId(Long nftId, Long ownerId) {
+       NftTirage nftTirage = nftTirageRepository.findTopByNftIdAndOwnerId(nftId,ownerId);
+        return nftTirage;
+    }
 }

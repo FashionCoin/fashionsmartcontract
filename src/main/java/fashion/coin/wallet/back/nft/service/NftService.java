@@ -121,8 +121,9 @@ public class NftService {
     @Autowired
     HashtagService hashtagService;
 
+
     @Autowired
-    NftTirageRepository nftTirageRepository;
+    TirageService tirageService;
 
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
@@ -809,10 +810,72 @@ public class NftService {
         nftTirage.setInsale(false);
         nftTirage.setTxhash(resultDTO.getMessage());
         nftTirage.setTirage(tirage);
-        nftTirageRepository.save(nftTirage);
+        tirageService.save(nftTirage);
 
         hashtagService.checkTags(nft.getDescription());
 
         return new ResultDTO(true, nft, 0);
+    }
+
+    public ResultDTO checkShareTirage(BuyNftDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
+            if (nft == null) {
+                return error213;
+            }
+
+            NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(request.getNftId(), request.getOwnerId());
+            if (nftTirage.getTirage() < request.getPieces()) {
+                return error226;
+            }
+
+            Client owner = clientService.getClient(request.getOwnerId());
+
+            if (nft.getWayOfAllocatingFunds().equals(BASE_WAY)) {
+
+                Map<String, AllocatedFundsDTO> share = new HashMap<>();
+
+
+                Client author = clientService.getClient(nft.getAuthorId());
+                AllocatedFundsDTO authorFunds = new AllocatedFundsDTO();
+                authorFunds.setPurpose(AUTHOR);
+                authorFunds.setWallet(author.getWalletAddress());
+
+                if (nft.getAuthorId().equals(client.getId())) {
+                    logger.info("Buyer is author: {}", client.getCryptoname());
+                    authorFunds.setAmount(BigDecimal.ZERO);
+                } else {
+                    authorFunds.setAmount(nft.getCreativeValue()
+                            .multiply(BigDecimal.valueOf(request.getPieces()))
+                            .divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP));
+                    share.put(AUTHOR, authorFunds);
+                }
+
+                if (owner.getId().equals(client.getId())) {
+                    logger.error("Seller is Buyer: {}", client.getCryptoname());
+                    return new ResultDTO(false, "Seller is buyer", -1);
+                }
+                AllocatedFundsDTO sellerFunds = new AllocatedFundsDTO();
+                sellerFunds.setPurpose(SELLER);
+                sellerFunds.setWallet(owner.getWalletAddress());
+                sellerFunds.setAmount(nft.getCreativeValue()
+                        .multiply(BigDecimal.valueOf(request.getPieces()))
+                        .multiply(new BigDecimal("0.78")).setScale(3, RoundingMode.HALF_UP));
+                share.put(SELLER, sellerFunds);
+
+                return new ResultDTO(true, share, 0);
+            } else {
+                return error220;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
     }
 }
