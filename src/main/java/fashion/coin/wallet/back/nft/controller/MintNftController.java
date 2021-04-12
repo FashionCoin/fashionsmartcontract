@@ -47,10 +47,11 @@ public class MintNftController {
 
             BlockchainTransactionDTO blockchainTransaction = gson.fromJson(stringTransaction, BlockchainTransactionDTO.class);
             ResultDTO resultDTO;
-            if (tirage.equals(1)) {
+            if (tirage == 1L) {
                 resultDTO = nftService.mint(multipartFile, apikey, login, title, description, faceValue, creativeValue,
                         blockchainTransaction);
             } else {
+                logger.info("tirage: {} ",tirage);
                 resultDTO = nftService.mintTirage(multipartFile, apikey, login, title, description, faceValue, creativeValue,
                         tirage,
                         blockchainTransaction);
