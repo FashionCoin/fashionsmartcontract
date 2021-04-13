@@ -33,8 +33,8 @@ public class TirageNftController {
     @PostMapping("/api/v1/tirage/one")
     @ResponseBody
     ResultDTO oneHolder(@RequestBody NftRequestDTO request){
-
         return tirageService.oneHolder(request);
-
     }
+
+
 }

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +66,20 @@ public class TirageService {
 
     public NftTirage tirageFindByNftAndOwnerId(Long nftId, Long ownerId) {
         NftTirage nftTirage = nftTirageRepository.findTopByNftIdAndOwnerId(nftId, ownerId);
+        if(nftTirage==null){
+            Client owner = clientService.getClient(ownerId);
+            nftTirage = new NftTirage();
+            nftTirage.setNftId(nftId);
+            nftTirage.setTirage(0L);
+            nftTirage.setOwnerWallet(owner.getWalletAddress());
+            nftTirage.setOwnerName(owner.getCryptoname());
+            nftTirage.setInsale(false);
+            nftTirage.setCanChangeValue(false);
+            nftTirage.setTimestamp(System.currentTimeMillis());
+            nftTirage.setOwnerId(ownerId);
+        }
+
+
         return nftTirage;
     }
 
@@ -139,5 +154,18 @@ public class TirageService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    public boolean setPieces(NftTirage nftTirage, long pieces) {
+        Long total = nftTirage.getTirage()+pieces;
+        if(total<0){
+            return false;
+        }else if(total==0){
+            nftTirageRepository.delete(nftTirage);
+        }else{
+            nftTirage.setTirage(total);
+            nftTirageRepository.save(nftTirage);
+        }
+        return true;
     }
 }
