@@ -938,7 +938,7 @@ public class NftService {
         }
 
         TransactionRequestDTO transactionRequestDTO = new TransactionRequestDTO();
-        transactionRequestDTO.setAmount(faceValue.toString());
+        transactionRequestDTO.setAmount(total.toString());
         transactionRequestDTO.setBlockchainTransaction(blockchainTransaction);
 //        transactionRequestDTO.setReceiverLogin(aiService.getPubKey(AIService.AIWallets.MONEYBAG));
         transactionRequestDTO.setReceiverWallet(aiService.getPubKey(AIService.AIWallets.MONEYBAG));
