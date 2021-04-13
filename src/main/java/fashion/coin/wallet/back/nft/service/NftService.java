@@ -499,37 +499,56 @@ public class NftService {
             if (nft == null) {
                 return error213;
             }
-            if (!nft.getOwnerId().equals(client.getId())) {
-                return error214;
-            }
-            if (!nft.isCanChangeValue()) {
-                return error216;
-            }
-            if (nft.getCreativeValue().compareTo(request.getCreativeValue()) > 0
-                    || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
-                return error215;
-            }
-            if (!checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
-                return error219;
+            NftTirage nftTirage = null;
+            if (nft.isTirage()) {
+                nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), client.getId());
+                if (nftTirage.getTirage() == 0) {
+                    return error214;
+                }
+                if (!nftTirage.isCanChangeValue()) {
+                    return error216;
+                }
+                if (nftTirage.getCreativeValue().compareTo(request.getCreativeValue()) > 0) {
+                    return error215;
+                }
+
+                nftTirage.setCreativeValue(request.getCreativeValue());
+                nftTirage.setCanChangeValue(false);
+                tirageService.save(nftTirage);
+                return new ResultDTO(true, nftTirage, 0);
+            } else {
+
+                if (!nft.getOwnerId().equals(client.getId())) {
+                    return error214;
+                }
+                if (!nft.isCanChangeValue()) {
+                    return error216;
+                }
+                if (nft.getCreativeValue().compareTo(request.getCreativeValue()) > 0
+                        || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
+                    return error215;
+                }
+                if (!checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
+                    return error219;
+                }
+
+                ResultDTO resultDTO = checkIncreaseTransaction(nft, request);
+                if (!resultDTO.isResult()) {
+                    return resultDTO;
+                }
+
+                resultDTO = transactionService.send(request.getTransactionRequest());
+                if (!resultDTO.isResult()) {
+                    return resultDTO;
+                }
+
+                nft.setCreativeValue(request.getCreativeValue());
+                nft.setFaceValue(request.getFaceValue());
+                nft.setCanChangeValue(false);
+                nftRepository.save(nft);
+                return new ResultDTO(true, nft, 0);
             }
 
-
-            ResultDTO resultDTO = checkIncreaseTransaction(nft, request);
-            if (!resultDTO.isResult()) {
-                return resultDTO;
-            }
-
-            resultDTO = transactionService.send(request.getTransactionRequest());
-            if (!resultDTO.isResult()) {
-                return resultDTO;
-            }
-
-            nft.setCreativeValue(request.getCreativeValue());
-            nft.setFaceValue(request.getFaceValue());
-            nft.setCanChangeValue(false);
-            nftRepository.save(nft);
-
-            return new ResultDTO(true, nft, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
