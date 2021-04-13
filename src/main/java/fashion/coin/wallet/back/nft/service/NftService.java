@@ -582,6 +582,7 @@ public class NftService {
     }
 
     public ResultDTO burnNft(NftRequestDTO request) {
+        NftTirage nftTirage = null;
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
@@ -591,26 +592,54 @@ public class NftService {
             if (nft == null) {
                 return error213;
             }
-            if (!nft.getOwnerId().equals(client.getId())) {
-                return error214;
+            BigDecimal amountWithoutTax = null;
+            if (nft.isTirage()) {
+                nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), client.getId());
+                if (!nftTirage.getOwnerId().equals(client.getId())) {
+                    return error214;
+                }
+                amountWithoutTax = nft.getFaceValue().multiply(BigDecimal.valueOf(request.getPieces()))
+                        .multiply(new BigDecimal("0.9"))
+                        .setScale(3, RoundingMode.HALF_UP);
+            } else {
+
+                if (!nft.getOwnerId().equals(client.getId())) {
+                    return error214;
+                }
+                amountWithoutTax = nft.getFaceValue().multiply(new BigDecimal("0.9"))
+                        .setScale(3, RoundingMode.HALF_UP);
             }
 
-            BigDecimal amountWithoutTax = nft.getFaceValue().multiply(new BigDecimal("0.9"))
-                    .setScale(3, RoundingMode.HALF_UP);
 
             boolean result = aiService.transfer(amountWithoutTax.toString(),
                     nft.getOwnerWallet(),
                     AIService.AIWallets.MONEYBAG).isResult();
-            ;
+
             if (result) {
-                nft.setOwnerId(null);
-                nft.setOwnerWallet(null);
-                nft.setOwnerName(null);
-                nft.setCreativeValue(BigDecimal.ZERO);
-                nft.setBurned(true);
-                nft.setFaceValue(BigDecimal.ZERO);
-                nftRepository.save(nft);
-                return new ResultDTO(true, nft, 0);
+                if (nft.isTirage()) {
+                    tirageService.setPieces(nftTirage, -request.getPieces());
+                    if (tirageService.totalNfts(nft) == 0) {
+                        nft.setOwnerId(null);
+                        nft.setOwnerWallet(null);
+                        nft.setOwnerName(null);
+                        nft.setCreativeValue(BigDecimal.ZERO);
+                        nft.setBurned(true);
+                        nft.setFaceValue(BigDecimal.ZERO);
+                        nftRepository.save(nft);
+                        return new ResultDTO(true, nft, 0);
+                    }
+                    return new ResultDTO(true, nftTirage, 0);
+                } else {
+
+                    nft.setOwnerId(null);
+                    nft.setOwnerWallet(null);
+                    nft.setOwnerName(null);
+                    nft.setCreativeValue(BigDecimal.ZERO);
+                    nft.setBurned(true);
+                    nft.setFaceValue(BigDecimal.ZERO);
+                    nftRepository.save(nft);
+                    return new ResultDTO(true, nft, 0);
+                }
             } else {
                 return error205;
             }

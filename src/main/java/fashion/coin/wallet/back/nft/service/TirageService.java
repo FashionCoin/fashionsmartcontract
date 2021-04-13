@@ -172,4 +172,21 @@ public class TirageService {
         }
         return true;
     }
+
+    public long totalNfts(Nft nft) {
+        Long total = 0L;
+        if(nft.isTirage()){
+            List<NftTirage> nftTirageList = nftTirageRepository.findByNftId(nft.getId());
+
+            if(nftTirageList!= null && nftTirageList.size()>0){
+                for(NftTirage nftTirage : nftTirageList){
+                    total += nftTirage.getTirage();
+                }
+            }
+
+        }else{
+            throw new IllegalArgumentException("Nft does not tirage");
+        }
+        return total;
+    }
 }

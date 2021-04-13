@@ -5,6 +5,7 @@ public class NftRequestDTO {
     String apikey;
     Long nftId;
     Long ownerId;
+    Long pieces;
 
     public String getApikey() {
         return apikey;
@@ -28,5 +29,13 @@ public class NftRequestDTO {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public Long getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Long pieces) {
+        this.pieces = pieces;
     }
 }
