@@ -60,7 +60,11 @@ public class TirageService {
     }
 
     public NftTirage save(NftTirage nftTirage) {
-        nftTirageRepository.save(nftTirage);
+        if(nftTirage.getTirage()==0){
+            nftTirageRepository.delete(nftTirage);
+        }else {
+            nftTirageRepository.save(nftTirage);
+        }
         return nftTirage;
     }
 

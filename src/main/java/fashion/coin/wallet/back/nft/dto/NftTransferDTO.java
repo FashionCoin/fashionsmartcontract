@@ -6,6 +6,7 @@ public class NftTransferDTO {
     Long nftId;
     String apikey;
     String receiver;
+    Long pieces;
     TransactionRequestDTO transactionRequest;
 
     public Long getNftId() {
@@ -38,5 +39,13 @@ public class NftTransferDTO {
 
     public void setTransactionRequest(TransactionRequestDTO transactionRequest) {
         this.transactionRequest = transactionRequest;
+    }
+
+    public Long getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Long pieces) {
+        this.pieces = pieces;
     }
 }

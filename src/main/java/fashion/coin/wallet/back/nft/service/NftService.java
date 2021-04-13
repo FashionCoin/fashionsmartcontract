@@ -276,6 +276,9 @@ public class NftService {
 
             if (nft.isTirage()) {
                 nftTirage = tirageService.tirageFindByNftAndOwnerId(buyNftDTO.getNftId(), buyNftDTO.getOwnerId());
+                if (nftTirage.getTirage() < buyNftDTO.getPieces()) {
+                    return error226;
+                }
             }
 
             Client clientFrom = clientService.findByWallet(buyNftDTO.getTransactionsRequestMap().get(SELLER)
@@ -743,6 +746,7 @@ public class NftService {
     }
 
     public ResultDTO transfer(NftTransferDTO request) {
+        NftTirage nftTirage = null;
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
@@ -754,8 +758,18 @@ public class NftService {
                 return error213;
             }
 
-            if (!nft.getOwnerId().equals(client.getId())) {
-                return error214;
+            if (nft.isTirage()) {
+                nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), client.getId());
+                if (nftTirage.getTirage() == 0) {
+                    return error214;
+                }
+                if (nftTirage.getTirage() < request.getPieces()) {
+                    return error226;
+                }
+            } else {
+                if (!nft.getOwnerId().equals(client.getId())) {
+                    return error214;
+                }
             }
 
             Client friend = clientService.findByCryptonameOrWallet(request.getReceiver());
@@ -763,8 +777,14 @@ public class NftService {
                 return error112;
             }
 
-            if (!checkTransferFee(nft, request.getTransactionRequest())) {
-                return error224;
+            if (nft.isTirage()) {
+                if (!checkTirageTransferFee(nft, request.getPieces(), request.getTransactionRequest())) {
+                    return error224;
+                }
+            } else {
+                if (!checkTransferFee(nft, request.getTransactionRequest())) {
+                    return error224;
+                }
             }
 
             ResultDTO resultDTO = transactionService.send(request.getTransactionRequest());
@@ -780,15 +800,25 @@ public class NftService {
             nftHistory.setAmount(nft.getFaceValue());
             nftHistory.setNftId(nft.getId());
             nftHistory.setTxhash(resultDTO.getMessage());
-
-            nft.setOwnerId(friend.getId());
-            nft.setOwnerName(friend.getCryptoname());
-            nft.setOwnerWallet(friend.getWalletAddress());
-
             nftHistoryRepository.save(nftHistory);
-            nftRepository.save(nft);
 
+            if (nft.isTirage()) {
+                NftTirage newOwnerTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), friend.getId());
+                newOwnerTirage.setCanChangeValue(false);
+                newOwnerTirage.setCreativeValue(nftTirage.getCreativeValue());
+                newOwnerTirage.setTxhash(nftHistory.getTxhash());
+                tirageService.setPieces(nftTirage, -request.getPieces());
+                tirageService.setPieces(newOwnerTirage, request.getPieces());
+
+            } else {
+                nft.setOwnerId(friend.getId());
+                nft.setOwnerName(friend.getCryptoname());
+                nft.setOwnerWallet(friend.getWalletAddress());
+                nftRepository.save(nft);
+
+            }
             return new ResultDTO(true, nftHistory, 0);
+
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
@@ -798,6 +828,7 @@ public class NftService {
     private boolean checkTransferFee(Nft nft, TransactionRequestDTO transactionRequest) {
 
         BigDecimal transactionFee = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount()).movePointLeft(3);
+
 
         BigDecimal nftFee = nft.getFaceValue().multiply(new BigDecimal(FEE)).setScale(3, RoundingMode.HALF_UP);
         BigDecimal minimafFee = new BigDecimal("0.001");
@@ -818,6 +849,33 @@ public class NftService {
 
         return true;
     }
+
+    private boolean checkTirageTransferFee(Nft nft, Long pieces, TransactionRequestDTO transactionRequest) {
+
+        BigDecimal transactionFee = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody().getAmount()).movePointLeft(3);
+
+
+        BigDecimal nftFee = nft.getFaceValue().multiply(BigDecimal.valueOf(pieces))
+                .multiply(new BigDecimal(FEE)).setScale(3, RoundingMode.HALF_UP);
+        BigDecimal minimafFee = new BigDecimal("0.001");
+        if (nftFee.compareTo(minimafFee) < 0) {
+            nftFee = minimafFee;
+        }
+
+        if (transactionFee.compareTo(nftFee) != 0) {
+            logger.error("transactionFee {} != {}", transactionFee, nftFee);
+            return false;
+        }
+
+        if (!transactionRequest.getBlockchainTransaction().getBody().getTo().equals(aiService.getPubKey(AIService.AIWallets.MONEYBAG))) {
+            logger.error("Receiver: {}", transactionRequest.getBlockchainTransaction().getBody().getTo());
+            logger.error("MoneyBag: {}", aiService.getPubKey(AIService.AIWallets.MONEYBAG));
+            return false;
+        }
+
+        return true;
+    }
+
 
     public ResultDTO mintTirage(MultipartFile multipartFile, String apikey, String login, String title,
                                 String description, BigDecimal faceValue, BigDecimal creativeValue, Long tirage,
