@@ -406,6 +406,7 @@ public class NftService {
             Long ownerId = nft.getOwnerId();
             if(nft.isTirage()){
 //TODO: Придумать как узнать владельца
+                // Никак. Нужен отдельный метод для тиражных НФТ
                 ownerId = nft.getAuthorId();
             }
 
@@ -819,6 +820,8 @@ public class NftService {
         nftTirage.setNftId(nft.getId());
         nftTirage.setCreativeValue(creativeValue);
         nftTirage.setOwnerId(client.getId());
+        nftTirage.setOwnerName(client.getCryptoname());
+        nftTirage.setOwnerWallet(client.getWalletAddress());
         nftTirage.setTimestamp(System.currentTimeMillis());
         nftTirage.setCanChangeValue(false);
         nftTirage.setInsale(false);

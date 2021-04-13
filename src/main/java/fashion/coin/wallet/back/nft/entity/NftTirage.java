@@ -17,6 +17,8 @@ public class NftTirage {
     @Column(precision = 30, scale = 3)
     BigDecimal creativeValue;
     Long ownerId;
+    String ownerName;
+    String ownerWallet;
     Long timestamp;
     @Column(name ="can_change_value", columnDefinition="boolean default false",nullable = false)
     boolean canChangeValue;
@@ -63,6 +65,22 @@ public class NftTirage {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getOwnerWallet() {
+        return ownerWallet;
+    }
+
+    public void setOwnerWallet(String ownerWallet) {
+        this.ownerWallet = ownerWallet;
     }
 
     public Long getTimestamp() {

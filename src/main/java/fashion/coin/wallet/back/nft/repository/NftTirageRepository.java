@@ -8,4 +8,5 @@ import java.util.List;
 public interface NftTirageRepository extends JpaRepository<NftTirage,Long> {
     List<NftTirage> findByOwnerId(Long ownerId);
     NftTirage findTopByNftIdAndOwnerId(Long nftId, Long ownerId);
+    List<NftTirage> findByNftId(Long nftId);
 }
