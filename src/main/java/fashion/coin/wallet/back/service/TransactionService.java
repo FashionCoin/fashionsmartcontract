@@ -143,13 +143,32 @@ public class TransactionService {
     }
 
     private boolean checkTransaction(String senderWallet, String receiverWallet, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
-        if (blockchainTransaction.getSignature() == null) return false;
-        if (!blockchainTransaction.getBody().getFrom().equals(senderWallet)) return false;
-        if (receiverWallet != null) {
-            if (!blockchainTransaction.getBody().getTo().equals(receiverWallet)) return false;
-        }
-        if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0)
+
+    logger.info(senderWallet);
+    logger.info(receiverWallet);
+    logger.info(amount.toString());
+    logger.info(gson.toJson(blockchainTransaction));
+
+        if (blockchainTransaction.getSignature() == null){
+            logger.error("blockchainTransaction.getSignature() == null");
             return false;
+        }
+        if (!blockchainTransaction.getBody().getFrom().equals(senderWallet)){
+            logger.error("!blockchainTransaction.getBody().getFrom().equals(senderWallet)");
+            return false;
+        }
+        if (receiverWallet != null) {
+            logger.info("receiverWallet != null");
+            if (!blockchainTransaction.getBody().getTo().equals(receiverWallet)){
+                logger.error("!blockchainTransaction.getBody().getTo().equals(receiverWallet)");
+                return false;
+            }
+        }
+        if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0){
+            logger.error("new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0");
+            return false;
+        }
+
         return true;
     }
 
