@@ -2,23 +2,25 @@ package fashion.coin.wallet.back.nft.service;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.nft.dto.TirageDisributionRequestDTO;
+import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
+import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
 import fashion.coin.wallet.back.nft.dto.TirageDisributionResponseDTO;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftTirage;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.nft.repository.NftTirageRepository;
+import fashion.coin.wallet.back.service.ClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error213;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 @Service
 public class TirageService {
@@ -32,6 +34,9 @@ public class TirageService {
 
     @Autowired
     NftRepository nftRepository;
+
+    @Autowired
+    ClientService clientService;
 
 
     public List<Nft> tirageFindByOwnerId(Long ownerId) {
@@ -63,7 +68,7 @@ public class TirageService {
         return nftTirage;
     }
 
-    public ResultDTO distribution(TirageDisributionRequestDTO request) {
+    public ResultDTO distribution(NftRequestDTO request) {
         try {
             Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
@@ -80,6 +85,56 @@ public class TirageService {
             response.setDistribution(nftTirageList);
 
             return new ResultDTO(true, response, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+    public ResultDTO oneHolder(NftRequestDTO request) {
+        try {
+            Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
+            if (nft == null) {
+                return error213;
+            }
+            Client owner = clientService.getClient(request.getOwnerId());
+            if (owner == null) {
+                return error127;
+            }
+
+            NftTirage nftTirage = nftTirageRepository.findTopByNftIdAndOwnerId(request.getNftId(), request.getOwnerId());
+            if (nftTirage == null) {
+                return error228;
+            }
+
+
+            OneNftResponceDTO oneNft = new OneNftResponceDTO();
+            oneNft.setPieces(nftTirage.getTirage());
+            oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
+            oneNft.setTxhash(nftTirage.getTxhash());
+            oneNft.setTitle(nft.getTitle());
+            oneNft.setTimestamp(nftTirage.getTimestamp());
+            oneNft.setOwnerWallet(nftTirage.getOwnerWallet());
+            oneNft.setOwnerName(nftTirage.getOwnerName());
+            oneNft.setOwnerId(nftTirage.getOwnerId());
+            oneNft.setInsale(nftTirage.isInsale());
+            oneNft.setFileName(nft.getFileName());
+            oneNft.setFaceValue(nft.getFaceValue());
+            oneNft.setDescription(nft.getDescription());
+            oneNft.setCreativeValue(nftTirage.getCreativeValue());
+            oneNft.setCanChangeValue(nftTirage.isCanChangeValue());
+            oneNft.setBurned(nft.isBurned());
+            oneNft.setBanned(nft.isBanned());
+            oneNft.setAuthorName(nft.getAuthorName());
+            oneNft.setAuthorId(nft.getAuthorId());
+            oneNft.setAvatar(owner.getAvatar());
+            oneNft.setAvaExists(owner.avaExists());
+            oneNft.setId(nft.getId());
+            oneNft.setCurrency(nft.getCurrency());
+            oneNft.setFree(nft.isFree());
+            oneNft.setTirage(nft.isTirage());
+
+            return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
