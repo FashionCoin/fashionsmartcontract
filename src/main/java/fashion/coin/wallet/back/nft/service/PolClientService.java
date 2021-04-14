@@ -81,10 +81,12 @@ public class PolClientService {
             for (Nft nft : nftList) {
 
                 if(nft.isTirage()){
+
                     NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(),friend.getId());
+
                     faceValue = faceValue.add(nft.getFaceValue()
                             .multiply(BigDecimal.valueOf(nftTirage.getTirage())));
-                    creativeValue = creativeValue.add(nft.getCreativeValue()
+                    creativeValue = creativeValue.add(nftTirage.getCreativeValue()
                             .multiply(BigDecimal.valueOf(nftTirage.getTirage())));
 
                     if (nft.getAuthorId().compareTo(friend.getId()) == 0) {
