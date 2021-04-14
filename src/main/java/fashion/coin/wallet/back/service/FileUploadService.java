@@ -139,6 +139,8 @@ public class FileUploadService {
             if (newName.toFile().exists()) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
+                /// TODO: прост отест - нужно удалить:
+                Files.delete(newName);
             } else {
                 Files.move(copyLocation, copyLocation.resolveSibling(newName));
                 nftFileRepository.save(nftFile);
