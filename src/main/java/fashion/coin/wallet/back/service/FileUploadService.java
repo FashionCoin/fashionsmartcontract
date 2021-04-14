@@ -186,10 +186,6 @@ public class FileUploadService {
             String command = "ffmpeg -i '" + originalFile + "' -vf scale=300:-1  '" + size300 + "'";
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String firstLine = reader.readLine();
-            logger.info("First Line: {}", firstLine);
-
             int result = process.waitFor();
             logger.info("Result: {}", result);
 
@@ -236,6 +232,7 @@ public class FileUploadService {
     private String getRotateOrientation(String originalFile) {
         try {
             String command = " exiftool -Orientation -n -S " + originalFile;
+            logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
