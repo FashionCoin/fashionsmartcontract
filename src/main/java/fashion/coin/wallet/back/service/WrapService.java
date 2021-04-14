@@ -77,7 +77,7 @@ public class WrapService {
             logger.info(gson.toJson(result));
             if (result.isResult()) {
 
-                int amount = Integer.parseInt(request.getTransactionRequestDTO().getBlockchainTransaction().getBody().getAmount());
+                long amount = Long.parseLong(request.getTransactionRequestDTO().getBlockchainTransaction().getBody().getAmount());
                 logger.info("Amount: {}", amount);
                 WrappedResponseDTO resp = signPayment(request.getEthereumWallet(),
                         amount,
@@ -107,11 +107,11 @@ public class WrapService {
     }
 
 
-    private WrappedResponseDTO signPayment(String recipient, int amount, long nonce, String contractAddress) throws UnsupportedEncodingException {
+    private WrappedResponseDTO signPayment(String recipient, long amount, long nonce, String contractAddress) throws UnsupportedEncodingException {
 
         WrappedResponseDTO resp = new WrappedResponseDTO();
         resp.setWallet(recipient);
-        resp.setAmount((long) amount);
+        resp.setAmount(amount);
         resp.setNonce(nonce);
         resp.setSmartconract(contractAddress);
 
