@@ -136,14 +136,22 @@ public class FileUploadService {
             String shaChecksum = getFileChecksum(shaDigest, copyLocation.toFile());
             Path newName = Paths.get(NFT_PATH + File.separator + shaChecksum + fileExtension);
             NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
-            if (!Files.notExists(newName)) {
+            if (Files.exists(newName)) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
-                logger.info("Is symbolicLink {}", Files.isSymbolicLink(newName));
+                /// TODO: Временно
+                Files.move(copyLocation, copyLocation.resolveSibling(newName));
+                nftFileRepository.save(nftFile);
+                if (multipartFile.getContentType().toLowerCase().contains("video")) {
+                    String videoName = newName.toString();
+                    String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+                    createPreview(videoName, imageName);
+                    resizePreview(shaChecksum + ".jpeg");
+                } else {
+                    resizePreview(shaChecksum + fileExtension);
+                }
 
-//                /// TODO: прост отест - нужно удалить:
-//                Files.delete(newName);
-//                logger.info("{} exists: {}",newName.toString(), newName.toFile().exists());
+                ///
             } else {
                 Files.move(copyLocation, copyLocation.resolveSibling(newName));
                 nftFileRepository.save(nftFile);
