@@ -138,18 +138,18 @@ public class FileUploadService {
             NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
             if (Files.exists(newName)) {
                 logger.info("{} exists", newName.toString());
-//                Files.delete(copyLocation);
+                Files.delete(copyLocation);
                 /// TODO: Временно
-                Files.move(copyLocation, copyLocation.resolveSibling(newName));
-                nftFileRepository.save(nftFile);
-                if (multipartFile.getContentType().toLowerCase().contains("video")) {
-                    String videoName = newName.toString();
-                    String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
-                    createPreview(videoName, imageName);
-                    resizePreview(shaChecksum + ".jpeg");
-                } else {
-                    resizePreview(shaChecksum + fileExtension);
-                }
+//                Files.move(copyLocation, copyLocation.resolveSibling(newName));
+//                nftFileRepository.save(nftFile);
+//                if (multipartFile.getContentType().toLowerCase().contains("video")) {
+//                    String videoName = newName.toString();
+//                    String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+//                    createPreview(videoName, imageName);
+//                    resizePreview(shaChecksum + ".jpeg");
+//                } else {
+//                    resizePreview(shaChecksum + fileExtension);
+//                }
 
                 ///
             } else {
@@ -233,11 +233,11 @@ public class FileUploadService {
 
     private String getRotateOrientation(String originalFile) {
         try {
-            if (originalFile.equals("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg")) {
-                return "6";
-            } else {
-                logger.info(originalFile);
-            }
+//            if (originalFile.equals("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg")) {
+//                return "6";
+//            } else {
+//                logger.info(originalFile);
+//            }
 
 
             String command = "exiftool -Orientation -n -S " + originalFile;
