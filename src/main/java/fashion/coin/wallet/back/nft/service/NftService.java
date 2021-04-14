@@ -397,8 +397,15 @@ public class NftService {
     }
 
     private boolean checkBuyAmounts(Nft nft, BuyNftDTO request, Map<String, TransactionRequestDTO> transactionsRequestMap) {
+        ResultDTO resultDTO = null;
+        if (nft.isTirage()) {
+            resultDTO = checkShareTirage(request);
+        } else {
+            resultDTO = checkShare(request);
+        }
 
-        ResultDTO resultDTO = checkShare(request);
+
+        logger.info(gson.toJson(resultDTO));
         if (resultDTO.getData() instanceof HashMap) {
             HashMap<String, AllocatedFundsDTO> share = (HashMap<String, AllocatedFundsDTO>) resultDTO.getData();
             for (Map.Entry<String, AllocatedFundsDTO> allocatedFunds : share.entrySet()) {
@@ -666,7 +673,7 @@ public class NftService {
         List<Nft> collection = nftRepository.findByOwnerId(id);
         List<Nft> tirage = tirageService.tirageFindByOwnerId(id);
         if ((collection == null || collection.size() == 0)
-        && (tirage==null || tirage.size()==0)){
+                && (tirage == null || tirage.size() == 0)) {
             return new ArrayList<>();
         }
         collection.addAll(tirage);
