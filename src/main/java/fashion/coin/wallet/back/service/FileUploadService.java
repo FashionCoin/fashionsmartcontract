@@ -235,7 +235,7 @@ public class FileUploadService {
             int result = process.waitFor();
             logger.info("Result: {}", result);
 
-            if (firstLine.contains("Orientation: ")) {
+            if (firstLine!=null && firstLine.contains("Orientation: ")) {
                 return firstLine.replace("Orientation: ", "");
             }
 
