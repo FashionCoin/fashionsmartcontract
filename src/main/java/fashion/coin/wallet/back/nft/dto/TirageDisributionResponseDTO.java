@@ -9,7 +9,7 @@ public class TirageDisributionResponseDTO {
 
   Nft nft;
 
-  List<NftTirage> distribution;
+    List<DistributionNftDTO>distribution;
 
     public Nft getNft() {
         return nft;
@@ -19,11 +19,11 @@ public class TirageDisributionResponseDTO {
         this.nft = nft;
     }
 
-    public List<NftTirage> getDistribution() {
+    public List<DistributionNftDTO> getDistribution() {
         return distribution;
     }
 
-    public void setDistribution(List<NftTirage> distribution) {
+    public void setDistribution(List<DistributionNftDTO> distribution) {
         this.distribution = distribution;
     }
 }

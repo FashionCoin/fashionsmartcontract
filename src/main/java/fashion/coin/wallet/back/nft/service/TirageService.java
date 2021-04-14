@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.nft.service;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.DistributionNftDTO;
 import fashion.coin.wallet.back.nft.dto.NftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
 import fashion.coin.wallet.back.nft.dto.TirageDisributionResponseDTO;
@@ -60,9 +61,9 @@ public class TirageService {
     }
 
     public NftTirage save(NftTirage nftTirage) {
-        if(nftTirage.getTirage()==0){
+        if (nftTirage.getTirage() == 0) {
             nftTirageRepository.delete(nftTirage);
-        }else {
+        } else {
             nftTirageRepository.save(nftTirage);
         }
         return nftTirage;
@@ -70,7 +71,7 @@ public class TirageService {
 
     public NftTirage tirageFindByNftAndOwnerId(Long nftId, Long ownerId) {
         NftTirage nftTirage = nftTirageRepository.findTopByNftIdAndOwnerId(nftId, ownerId);
-        if(nftTirage==null){
+        if (nftTirage == null) {
             Client owner = clientService.getClient(ownerId);
             nftTirage = new NftTirage();
             nftTirage.setNftId(nftId);
@@ -95,15 +96,33 @@ public class TirageService {
             }
 
             List<NftTirage> nftTirageList = nftTirageRepository.findByNftId(request.getNftId());
-            if (nftTirageList == null) {
-                nftTirageList = new ArrayList<>();
-            }
+            List<DistributionNftDTO> distributionNftList = new ArrayList<>();
+            if (nftTirageList != null) {
 
+
+                for (NftTirage nftTirage : nftTirageList) {
+                    Client owner = clientService.getClient(nftTirage.getOwnerId());
+                    DistributionNftDTO distribution = new DistributionNftDTO();
+                    distribution.setId(nftTirage.getId());
+                    distribution.setAvaExists(owner.avaExists());
+                    distribution.setAvatar(owner.getAvatar());
+                    distribution.setCreativeValue(nftTirage.getCreativeValue());
+                    distribution.setNftId(nftTirage.getNftId());
+                    distribution.setOwnerId(owner.getId());
+                    distribution.setOwnerName(owner.getCryptoname());
+                    distribution.setOwnerWallet(owner.getWalletAddress());
+                    distribution.setTirage(nftTirage.getTirage());
+                    distributionNftList.add(distribution);
+                }
+
+
+            }
             TirageDisributionResponseDTO response = new TirageDisributionResponseDTO();
             response.setNft(nft);
-            response.setDistribution(nftTirageList);
+            response.setDistribution(distributionNftList);
 
             return new ResultDTO(true, response, 0);
+
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
@@ -161,12 +180,12 @@ public class TirageService {
     }
 
     public boolean setPieces(NftTirage nftTirage, long pieces) {
-        Long total = nftTirage.getTirage()+pieces;
-        if(total<0){
+        Long total = nftTirage.getTirage() + pieces;
+        if (total < 0) {
             return false;
-        }else if(total==0){
+        } else if (total == 0) {
             nftTirageRepository.delete(nftTirage);
-        }else{
+        } else {
             nftTirage.setTirage(total);
             nftTirageRepository.save(nftTirage);
         }
@@ -175,16 +194,16 @@ public class TirageService {
 
     public long totalNfts(Nft nft) {
         Long total = 0L;
-        if(nft.isTirage()){
+        if (nft.isTirage()) {
             List<NftTirage> nftTirageList = nftTirageRepository.findByNftId(nft.getId());
 
-            if(nftTirageList!= null && nftTirageList.size()>0){
-                for(NftTirage nftTirage : nftTirageList){
+            if (nftTirageList != null && nftTirageList.size() > 0) {
+                for (NftTirage nftTirage : nftTirageList) {
                     total += nftTirage.getTirage();
                 }
             }
 
-        }else{
+        } else {
             throw new IllegalArgumentException("Nft does not tirage");
         }
         return total;
