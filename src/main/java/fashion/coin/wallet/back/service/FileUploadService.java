@@ -219,6 +219,7 @@ public class FileUploadService {
     private void setRotateOrientation(String filename, String exif) {
         try {
             String command = "exiftool -Orientation="+exif+" -n " + filename;
+            logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
             int result = process.waitFor();
