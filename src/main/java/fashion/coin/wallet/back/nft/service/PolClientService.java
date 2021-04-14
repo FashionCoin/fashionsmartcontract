@@ -9,6 +9,7 @@ import fashion.coin.wallet.back.nft.dto.PolClientResponseDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
 
+import fashion.coin.wallet.back.nft.entity.NftTirage;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 
 import fashion.coin.wallet.back.service.ClientService;
@@ -44,6 +45,9 @@ public class PolClientService {
     @Autowired
     Gson gson;
 
+    @Autowired
+    TirageService tirageService;
+
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
@@ -75,26 +79,46 @@ public class PolClientService {
             List<Nft> creation = new ArrayList<>();
 
             for (Nft nft : nftList) {
-                faceValue = faceValue.add(nft.getFaceValue());
-                creativeValue = creativeValue.add(nft.getCreativeValue());
-                proofs = proofs.add(nft.getProofs());
+
+                if(nft.isTirage()){
+                    NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(),friend.getId());
+                    faceValue = faceValue.add(nft.getFaceValue()
+                            .multiply(BigDecimal.valueOf(nftTirage.getTirage())));
+                    creativeValue = creativeValue.add(nft.getCreativeValue()
+                            .multiply(BigDecimal.valueOf(nftTirage.getTirage())));
+
+                    if (nft.getAuthorId().compareTo(friend.getId()) == 0) {
+                        creation.add(nft);
+                    } else {
+                        collection.add(nft);
+                    }
+                }else {
+
+                    faceValue = faceValue.add(nft.getFaceValue());
+                    creativeValue = creativeValue.add(nft.getCreativeValue());
+                    proofs = proofs.add(nft.getProofs());
 
 
-                if (nft.getAuthorId().compareTo(friend.getId()) == 0) {
+                    if (nft.getAuthorId().compareTo(friend.getId()) == 0) {
 
-                    creation.add(nft);
-                } else {
+                        creation.add(nft);
+                    } else {
 
-                    collection.add(nft);
+                        collection.add(nft);
+                    }
                 }
-
 
             }
 
             nftList = nftService.getCreation(friend.getId());
 
             for (Nft nft : nftList) {
-                if (nft.getOwnerId() != null) {
+                if(nft.isTirage()){
+                    NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(),friend.getId());
+                    if (nftTirage.getTirage()==0L) {
+                        creation.add(nft);
+                    }
+                }else{
                     logger.info(String.valueOf(nft.getAuthorId()));
                     logger.info(String.valueOf(friend.getId()));
                     logger.info(String.valueOf(nft.getOwnerId()));

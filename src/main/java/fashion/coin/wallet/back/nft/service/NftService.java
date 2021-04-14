@@ -664,9 +664,12 @@ public class NftService {
 
     public List<Nft> getCollection(Long id) {
         List<Nft> collection = nftRepository.findByOwnerId(id);
-        if (collection == null || collection.size() == 0) {
+        List<Nft> tirage = tirageService.tirageFindByOwnerId(id);
+        if ((collection == null || collection.size() == 0)
+        && (tirage==null || tirage.size()==0)){
             return new ArrayList<>();
         }
+        collection.addAll(tirage);
         return collection;
     }
 

@@ -52,6 +52,7 @@ public class Nft {
     boolean tirage;
 
 
+
     String wayOfAllocatingFunds = BASE_WAY;
 
     String txhash;
