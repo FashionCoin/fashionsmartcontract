@@ -168,31 +168,78 @@ public class FileUploadService {
             String size600 = NFT_PATH + File.separator + "600" + File.separator + fileName;
             String size1000 = NFT_PATH + File.separator + "1000" + File.separator + fileName;
 
-
+            String exif = getRotateOrientation(originalFile);
+            logger.info("EXIF: " + exif);
             String command = "ffmpeg -i '" + originalFile + "' -vf scale=300:-1  '" + size300 + "'";
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             String firstLine = reader.readLine();
-
             logger.info("First Line: {}", firstLine);
 
             int result = process.waitFor();
             logger.info("Result: {}", result);
+
+            if (exif != null) {
+                setRotateOrientation(size300, exif);
+            }
 
             command = "ffmpeg -i '" + originalFile + "' -vf scale=600:-1  '" + size600 + "'";
             process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             result = process.waitFor();
             logger.info("Result: {}", result);
 
+            if (exif != null) {
+                setRotateOrientation(size600, exif);
+            }
+
             command = "ffmpeg -i '" + originalFile + "' -vf scale=1000:-1  '" + size1000 + "'";
             process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             result = process.waitFor();
             logger.info("Result: {}", result);
 
+            if (exif != null) {
+                setRotateOrientation(size1000, exif);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setRotateOrientation(String filename, String exif) {
+        try {
+            String command = "exiftool -Orientation="+exif+" -n " + filename;
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+
+            int result = process.waitFor();
+            logger.info("Result: {}", result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getRotateOrientation(String originalFile) {
+        try {
+            String command = " exiftool -Orientation -n -S " + originalFile;
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String firstLine = reader.readLine();
+            logger.info("First Line: {}", firstLine);
+
+            int result = process.waitFor();
+            logger.info("Result: {}", result);
+
+            if (firstLine.contains("Orientation: ")) {
+                return firstLine.replace("Orientation: ", "");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
