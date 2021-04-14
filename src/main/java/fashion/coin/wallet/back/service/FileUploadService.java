@@ -184,8 +184,9 @@ public class FileUploadService {
             String exif = getRotateOrientation(originalFile);
             logger.info("EXIF: " + exif);
             String command = "ffmpeg -i '" + originalFile + "' -vf scale=300:-1  '" + size300 + "'";
+            logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
-
+            logger.info("process.isAlive() : {}", process.isAlive());
             int result = process.waitFor();
             logger.info("Result: {}", result);
 
@@ -218,7 +219,7 @@ public class FileUploadService {
 
     private void setRotateOrientation(String filename, String exif) {
         try {
-            String command = "exiftool -Orientation="+exif+" -n " + filename;
+            String command = "exiftool -Orientation=" + exif + " -n " + filename;
             logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
@@ -232,9 +233,9 @@ public class FileUploadService {
 
     private String getRotateOrientation(String originalFile) {
         try {
-            if(originalFile.equals("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg")){
+            if (originalFile.equals("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg")) {
                 return "6";
-            }else{
+            } else {
                 logger.info(originalFile);
             }
 
@@ -251,7 +252,7 @@ public class FileUploadService {
             int result = process.waitFor();
             logger.info("Result: {}", result);
 
-            if (firstLine!=null && firstLine.contains("Orientation: ")) {
+            if (firstLine != null && firstLine.contains("Orientation: ")) {
                 return firstLine.replace("Orientation: ", "");
             }
 
