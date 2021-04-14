@@ -268,7 +268,7 @@ public class FindPolService {
             }
 
             List<Nft> nftList = nftRepository.findByTimestampIsGreaterThan(durationStart);
-            nftList.removeIf(nft -> nft.isBurned() || nft.isBanned());
+            nftList.removeIf(nft -> nft.isBurned() || nft.isBanned() || nft.isTirage());
             nftList.sort((o1, o2) -> o2.getCreativeValue().compareTo(o1.getCreativeValue()));
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
