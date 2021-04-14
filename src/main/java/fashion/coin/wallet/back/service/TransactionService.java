@@ -48,18 +48,18 @@ public class TransactionService {
 
     public String createTransaction(Client sender, Client receiver, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
         TransactionCoins transactionCoins = null;
-        if (!anonimousSending && receiver != null) {
+        if (!anonimousSending || receiver != null) {
             transactionCoins = new TransactionCoins(sender, receiver, amount);
         }
 
         String txhash = blockchainService.sendTransaction(blockchainTransaction);
-        if (!anonimousSending && transactionCoins != null && txhash != null && txhash.length() > 0) {
+        if ( transactionCoins != null && txhash != null && txhash.length() > 0) {
             transactionCoins.setTxhash(txhash);
             List<TransactionCoins> list = transactionRepository.findAllByTxhash(txhash);
             if (list != null && list.size() > 0) return txhash;
-
+            transactionRepository.save(transactionCoins);
         }
-        transactionRepository.save(transactionCoins);
+
         return txhash;
     }
 
