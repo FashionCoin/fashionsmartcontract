@@ -136,7 +136,7 @@ public class FileUploadService {
             String shaChecksum = getFileChecksum(shaDigest, copyLocation.toFile());
             Path newName = Paths.get(NFT_PATH + File.separator + shaChecksum + fileExtension);
             NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
-            if (newName.toFile().getAbsoluteFile().exists()) {
+            if (!Files.notExists(newName)) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
                 logger.info("Is symbolicLink {}", Files.isSymbolicLink(newName));
