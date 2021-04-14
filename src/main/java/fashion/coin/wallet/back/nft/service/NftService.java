@@ -291,7 +291,7 @@ public class NftService {
             }
             BigDecimal amount;
             if (nft.isTirage()) {
-                amount = nft.getCreativeValue().multiply(BigDecimal.valueOf(buyNftDTO.getPieces()))
+                amount = nftTirage.getCreativeValue().multiply(BigDecimal.valueOf(buyNftDTO.getPieces()))
                         .setScale(3, RoundingMode.HALF_UP);
             } else {
                 amount = nft.getCreativeValue();
