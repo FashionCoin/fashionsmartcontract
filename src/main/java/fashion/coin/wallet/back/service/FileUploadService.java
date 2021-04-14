@@ -236,7 +236,7 @@ public class FileUploadService {
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            reader.wait(10000);
+
             String firstLine = reader.readLine();
             logger.info("First Line: {}", firstLine);
 
