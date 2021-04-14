@@ -231,6 +231,13 @@ public class FileUploadService {
 
     private String getRotateOrientation(String originalFile) {
         try {
+            if(originalFile.equals("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg")){
+                return "6";
+            }else{
+                logger.info(originalFile);
+            }
+
+
             String command = "exiftool -Orientation -n -S " + originalFile;
             logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
