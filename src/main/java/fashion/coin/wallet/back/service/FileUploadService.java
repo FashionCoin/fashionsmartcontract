@@ -139,6 +139,8 @@ public class FileUploadService {
             if (Files.exists(newName)) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
+                logger.info("Is symbolicLink {}", Files.isSymbolicLink(newName));
+
                 /// TODO: прост отест - нужно удалить:
                 Files.delete(newName);
                 logger.info("{} exists: {}",newName.toString(), newName.toFile().exists());
