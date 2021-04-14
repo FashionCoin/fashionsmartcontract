@@ -618,13 +618,13 @@ public class NftService {
             }
 
 
-            boolean result =false;
-            if(nft.isTirage()) {
-                aiService.transfer(amountWithoutTax.toString(),
+            boolean result = false;
+            if (nft.isTirage()) {
+                result = aiService.transfer(amountWithoutTax.toString(),
                         nftTirage.getOwnerWallet(),
                         AIService.AIWallets.MONEYBAG).isResult();
-            }else{
-                aiService.transfer(amountWithoutTax.toString(),
+            } else {
+                result = aiService.transfer(amountWithoutTax.toString(),
                         nft.getOwnerWallet(),
                         AIService.AIWallets.MONEYBAG).isResult();
             }
