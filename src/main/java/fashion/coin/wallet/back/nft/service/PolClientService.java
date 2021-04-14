@@ -115,21 +115,23 @@ public class PolClientService {
             nftList = nftService.getCreation(friend.getId());
 
             for (Nft nft : nftList) {
-                if(nft.isTirage()){
-                    NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(),friend.getId());
-                    if (nftTirage.getTirage()==0L) {
-                        creation.add(nft);
-                    }
-                }else{
-                    logger.info(String.valueOf(nft.getAuthorId()));
-                    logger.info(String.valueOf(friend.getId()));
-                    logger.info(String.valueOf(nft.getOwnerId()));
+                if(!nft.isBurned() && !nft.isBanned()) {
+                    if (nft.isTirage()) {
+                        NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), friend.getId());
+                        if (nftTirage.getTirage() == 0L) {
+                            creation.add(nft);
+                        }
+                    } else {
+                        logger.info(String.valueOf(nft.getAuthorId()));
+                        logger.info(String.valueOf(friend.getId()));
+                        logger.info(String.valueOf(nft.getOwnerId()));
 
-                    logger.info(gson.toJson(nft));
+                        logger.info(gson.toJson(nft));
 
-                    if (nft.getAuthorId().compareTo(friend.getId()) == 0 &&
-                            nft.getOwnerId().compareTo(friend.getId()) != 0) {
-                        creation.add(nft);
+                        if (nft.getAuthorId().compareTo(friend.getId()) == 0 &&
+                                nft.getOwnerId().compareTo(friend.getId()) != 0) {
+                            creation.add(nft);
+                        }
                     }
                 }
             }
