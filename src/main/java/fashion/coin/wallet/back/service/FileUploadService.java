@@ -13,10 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -174,6 +171,12 @@ public class FileUploadService {
 
             String command = "ffmpeg -i '" + originalFile + "' -vf scale=300:-1  '" + size300 + "'";
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String firstLine = reader.readLine();
+
+            logger.info("First Line: {}", firstLine);
+
             int result = process.waitFor();
             logger.info("Result: {}", result);
 
@@ -193,16 +196,15 @@ public class FileUploadService {
     }
 
 
-
-    public void convertAllFiles(){
+    public void convertAllFiles() {
 
         List<NftFile> nftFileList = nftFileRepository.findAll();
-        for(NftFile nftFile : nftFileList){
+        for (NftFile nftFile : nftFileList) {
 
-            if(nftFile.getContentType().toLowerCase().contains("image")){
+            if (nftFile.getContentType().toLowerCase().contains("image")) {
                 resizePreview(nftFile.getFilename());
-            }else if(nftFile.getContentType().toLowerCase().contains("video")){
-                resizePreview(nftFile.getFilename().substring(0,64)+".jpeg");
+            } else if (nftFile.getContentType().toLowerCase().contains("video")) {
+                resizePreview(nftFile.getFilename().substring(0, 64) + ".jpeg");
             }
         }
     }
