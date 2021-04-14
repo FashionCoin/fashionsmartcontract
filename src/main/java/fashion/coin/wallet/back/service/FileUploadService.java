@@ -138,7 +138,7 @@ public class FileUploadService {
             NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
             if (Files.exists(newName)) {
                 logger.info("{} exists", newName.toString());
-                Files.delete(copyLocation);
+//                Files.delete(copyLocation);
                 /// TODO: Временно
                 Files.move(copyLocation, copyLocation.resolveSibling(newName));
                 nftFileRepository.save(nftFile);
