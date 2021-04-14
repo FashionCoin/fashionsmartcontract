@@ -1023,7 +1023,7 @@ public class NftService {
                 AllocatedFundsDTO sellerFunds = new AllocatedFundsDTO();
                 sellerFunds.setPurpose(SELLER);
                 sellerFunds.setWallet(owner.getWalletAddress());
-                sellerFunds.setAmount(nft.getCreativeValue()
+                sellerFunds.setAmount(nftTirage.getCreativeValue()
                         .multiply(BigDecimal.valueOf(request.getPieces()))
                         .multiply(new BigDecimal("0.78")).setScale(3, RoundingMode.HALF_UP));
                 share.put(SELLER, sellerFunds);
