@@ -57,8 +57,9 @@ public class TransactionService {
             transactionCoins.setTxhash(txhash);
             List<TransactionCoins> list = transactionRepository.findAllByTxhash(txhash);
             if (list != null && list.size() > 0) return txhash;
-            transactionRepository.save(transactionCoins);
+
         }
+        transactionRepository.save(transactionCoins);
         return txhash;
     }
 
