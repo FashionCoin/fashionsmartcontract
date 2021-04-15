@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface WrapLogRepository extends JpaRepository<WrapLog,Long> {
     List<WrapLog> findByTxHash(String txHash);
+    List<WrapLog> findByTxHashAndNetwork(String txHash,String network);
 }

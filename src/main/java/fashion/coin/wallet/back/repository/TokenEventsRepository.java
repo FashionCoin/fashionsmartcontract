@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface TokenEventsRepository extends JpaRepository<WrappedTokenEvents, String> {
 
-    @Query(value = "SELECT * FROM wrapped_token_events ORDER BY block_number DESC LIMIT 1", nativeQuery = true)
-    WrappedTokenEvents findByLastTransaction();
+    @Query(value = "SELECT * FROM wrapped_token_events WHERE network=?1 ORDER BY block_number DESC LIMIT 1", nativeQuery = true)
+    WrappedTokenEvents findByLastTransaction(String network);
 
     List<WrappedTokenEvents> findByAddressFromOrAddressTo(String from, String to);
+
+    WrappedTokenEvents findByTransactionHashAndNetwork(String txHash,String network);
 
 }

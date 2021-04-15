@@ -54,7 +54,7 @@ public class WrapService {
     public static final String NULL_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000000";
     public static final String SHORT_NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-// Ethereum
+    // Ethereum
     @Value("${wfshn.contract.address}")
     String ethereumContractAddress;
 
@@ -86,7 +86,7 @@ public class WrapService {
                     binanceOwnerPrivKey : ethereumOwnerPrivKey;
 
             logger.info(gson.toJson(request));
-            if (!aiService.isDiamondWallet(request.getTransactionRequestDTO().getReceiverWallet(),request.getNetwork())) {
+            if (!aiService.isDiamondWallet(request.getTransactionRequestDTO().getReceiverWallet(), request.getNetwork())) {
                 return error207;
             }
             logger.info("receiver ok!");
@@ -103,7 +103,7 @@ public class WrapService {
                         ownerPrivKey
                 );
                 wrapLogRepository.save(new WrapLog(true, amount, request.getTransactionRequestDTO().getSenderWallet(),
-                        request.getEthereumWallet(),request.getNetwork()));
+                        request.getEthereumWallet(), request.getNetwork()));
                 return new ResultDTO(true, resp, 0);
 
             } else {
@@ -234,14 +234,16 @@ public class WrapService {
 
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
+            String network = request.equals("binance") ? "binance" : "ethereum";
+
 
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) return error109;
-            if (transactionExists(request.getTransactionHash())) {
+            if (transactionExists(request.getTransactionHash(), network)) {
                 return error208;
             }
 
-            if(!eventExists(request.getTransactionHash())){
+            if (!eventExists(request.getTransactionHash(), network)) {
                 return error209;
             }
             WrappedTokenEvents event = tokenEventsRepository.findById(request.getTransactionHash()).orElse(null);
@@ -258,14 +260,18 @@ public class WrapService {
 
 
             logger.info("TX Ethereum hash: {}", request.getTransactionHash());
+
+            AIService.AIWallets diamondWallet = network.equals("binance") ?
+                    AIService.AIWallets.DIAMOND : AIService.AIWallets.DIAMOND;
+
             boolean result = aiService.transfer(
                     request.getAmount(),
                     client.getWalletAddress(),
-                    AIService.AIWallets.DIAMOND).isResult();
+                    diamondWallet).isResult();
             if (result) {
 
                 wrapLogRepository.save(new WrapLog(false, amount.longValue(), client.getWalletAddress(),
-                        request.getEthereumWallet(), request.getTransactionHash()));
+                        request.getEthereumWallet(), network, request.getTransactionHash()));
                 return new ResultDTO(true, "Unwrap ok!", 0);
             } else {
                 return error205;
@@ -276,9 +282,9 @@ public class WrapService {
         }
     }
 
-    private boolean eventExists(String transactionHash) {
+    private boolean eventExists(String transactionHash, String network) {
         WrappedTokenEvents event = null;
-        for (int i = 1000; i < 100000 ; i+=500) {
+        for (int i = 1000; i < 100000; i += 500) {
             updateEthereumEventd();
             event = tokenEventsRepository.findById(transactionHash).orElse(null);
             if (event == null) {
@@ -287,28 +293,29 @@ public class WrapService {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 break;
             }
         }
         return (event != null);
     }
 
-    private boolean transactionExists(String transactionHash) {
-        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
+    private boolean transactionExists(String transactionHash, String network) {
+        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHashAndNetwork(transactionHash, network);
         return (wrapLogList != null && wrapLogList.size() > 0);
     }
 
 
-    private WrappedTokenEvents convertToEvent(EthEventDTO result) {
+    private WrappedTokenEvents convertToEvent(EthEventDTO result, String network) {
         WrappedTokenEvents event = new WrappedTokenEvents();
         event.setTransactionHash(result.getTransactionHash());
-        event.setBlockNumber(hexToLong(result.getBlockNumber()));
+        event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
         event.setTimeStamp(hexToLong(result.getTimeStamp()));
         event.setAmount(hexToLong(result.getData()));
         event.setAddressFrom(hexToAddress(result.getTopics().get(1)));
         event.setAddressTo(hexToAddress(result.getTopics().get(2)));
         event.setType(hexToType(result.getTopics()));
+        event.setNetwork(network);
         return event;
     }
 
@@ -339,30 +346,62 @@ public class WrapService {
         return Keys.toChecksumAddress(address.toString());
     }
 
-//    @Scheduled(cron = "0 * * * * *")
+    //    @Scheduled(cron = "0 * * * * *")
     public void updateEthereumEventd() {
         try {
-
-            long lastBlock = 11866190;
-            WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction();
-            if (lastEvent != null) {
-                lastBlock = lastEvent.blockNumber;
-            }
-
-            EventsDTO responce = restTemplate.getForObject("https://api.etherscan.io/api?module=logs&action=getLogs&" +
-                            "fromBlock=" + lastBlock + "&toBlock=latest&" +
-                            "address=" + ethereumContractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
-                            "apikey=" + ethereumApiKey,
-                    EventsDTO.class);
-
-            for (EthEventDTO result : responce.getResult()) {
-                tokenEventsRepository.save(convertToEvent(result));
-            }
-            logger.info("Ethereum Events Updated. Add {} new events", responce.getResult().size() - 1);
-        }catch (Exception e){
+            updateWrapEvents("ethereum");
+            updateWrapEvents("binance");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void updateWrapEvents(String network) {
+        try {
+// TODO: Временно. Нужно удалить
+            List<WrappedTokenEvents> eventsList = tokenEventsRepository.findAll();
+            for (WrappedTokenEvents wrappedTokenEvents : eventsList) {
+                if (wrappedTokenEvents.getBlockNumber() < 0) {
+                    wrappedTokenEvents.setBlockNumber(16777216L -
+                            wrappedTokenEvents.getBlockNumber());
+
+                }
+            }
+            tokenEventsRepository.saveAll(eventsList);
+
+            //////////////////////////////////
+
+            long lastBlock = network.equals("binance") ?
+                    6573342 : 11866190;
+            WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction(network);
+            if (lastEvent != null) {
+                lastBlock = lastEvent.blockNumber;
+            }
+            logger.info("Last event block on {}: {}", network, lastBlock);
+
+            EventsDTO responce = null;
+            if (network.equals("binance")) {
+                responce = restTemplate.getForObject("https://api.bscscan.com/api?module=logs&action=getLogs&" +
+                                "fromBlock=" + lastBlock + "&toBlock=latest&" +
+                                "address=" + binanceContractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
+                                "apikey=" + binanceApiKey,
+                        EventsDTO.class);
+            } else {
+
+                responce = restTemplate.getForObject("https://api.etherscan.io/api?module=logs&action=getLogs&" +
+                                "fromBlock=" + lastBlock + "&toBlock=latest&" +
+                                "address=" + ethereumContractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
+                                "apikey=" + ethereumApiKey,
+                        EventsDTO.class);
+            }
+            for (EthEventDTO result : responce.getResult()) {
+                tokenEventsRepository.save(convertToEvent(result, network));
+            }
+            logger.info("{} Events Updated. Add {} new events", network, responce.getResult().size() - 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public ResultDTO getWalletHistoy(WrapHistoryRequestDTO request) {

@@ -44,4 +44,12 @@ public class UnwrapRequestDTO {
     public void setAmount(String amount) {
         this.amount = amount;
     }
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
+    }
 }

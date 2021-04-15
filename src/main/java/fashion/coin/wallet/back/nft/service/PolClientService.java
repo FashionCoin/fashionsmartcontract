@@ -56,7 +56,9 @@ public class PolClientService {
             if (client == null) {
 //                return error109;
             }
-
+            if (request.getId() == null) {
+                return error127;
+            }
 
             Client friend = clientService.getClient(request.getId());
             if (friend == null) {
@@ -80,9 +82,9 @@ public class PolClientService {
 
             for (Nft nft : nftList) {
 
-                if(nft.isTirage()){
+                if (nft.isTirage()) {
 
-                    NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(),friend.getId());
+                    NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), friend.getId());
 
                     faceValue = faceValue.add(nft.getFaceValue()
                             .multiply(BigDecimal.valueOf(nftTirage.getTirage())));
@@ -94,7 +96,7 @@ public class PolClientService {
                     } else {
                         collection.add(nft);
                     }
-                }else {
+                } else {
 
                     faceValue = faceValue.add(nft.getFaceValue());
                     creativeValue = creativeValue.add(nft.getCreativeValue());
@@ -115,7 +117,7 @@ public class PolClientService {
             nftList = nftService.getCreation(friend.getId());
 
             for (Nft nft : nftList) {
-                if(!nft.isBurned() && !nft.isBanned()) {
+                if (!nft.isBurned() && !nft.isBanned()) {
                     if (nft.isTirage()) {
                         NftTirage nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), friend.getId());
                         if (nftTirage.getTirage() == 0L) {
@@ -149,12 +151,12 @@ public class PolClientService {
             responseDTO.setAvatar(friend.getAvatar());
             responseDTO.setAvaExists(friend.getAvatar() != null && friend.getAvatar().length() > 0);
 
-            if(client != null) {
+            if (client != null) {
                 responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
                 responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
             }
             responseDTO.setAbout(friend.getAbout());
-            responseDTO.setSocialLinks(gson.fromJson( friend.getSocialLinks(),List.class));
+            responseDTO.setSocialLinks(gson.fromJson(friend.getSocialLinks(), List.class));
 
 
             return new ResultDTO(true, responseDTO, 0);
