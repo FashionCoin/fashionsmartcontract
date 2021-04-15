@@ -93,8 +93,11 @@ public class AESEncriptor implements AttributeConverter<String, String> {
             }
         }
         System.out.println("Key and IV seted OK");
-
+        aiService.saveDiamond();
     }
+
+    @Autowired
+    AIService aiService;
 
     @Autowired
     public void setSettingsService(SettingsService settingsService) {
