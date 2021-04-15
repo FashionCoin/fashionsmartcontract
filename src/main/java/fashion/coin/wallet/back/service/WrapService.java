@@ -259,10 +259,10 @@ public class WrapService {
             }
 
 
-            logger.info("TX Ethereum hash: {}", request.getTransactionHash());
+            logger.info("TX {} hash: {}",network, request.getTransactionHash());
 
             AIService.AIWallets diamondWallet = network.equals("binance") ?
-                    AIService.AIWallets.DIAMOND : AIService.AIWallets.DIAMOND;
+                    AIService.AIWallets.BINANCE : AIService.AIWallets.DIAMOND;
 
             boolean result = aiService.transfer(
                     request.getAmount(),
