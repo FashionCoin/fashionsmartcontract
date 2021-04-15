@@ -36,8 +36,11 @@ public class InitService {
 //                currencyRateService.updateExchangeRate();
 //            }
 //        }).start();
-
-
+        try {
+            aiService.saveDiamond();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Autowired
