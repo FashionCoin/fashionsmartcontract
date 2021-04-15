@@ -24,46 +24,66 @@ public class FindController {
     @PostMapping("/api/v1/find/name")
     @ResponseBody
     ResultDTO findName(@RequestBody FindNameRequestDTO request) {
-        return findPolService.byName(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.byName(request);
+        logger.info("Request end");
+        return resultDTO;
+
     }
 
 
     @PostMapping("/api/v1/find/creators")
     @ResponseBody
     ResultDTO findCreators(@RequestBody FindByDurationRequestDTO request) {
-        return findPolService.creators(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.creators(request);
+        logger.info("Request end");
+        return resultDTO;
     }
 
 
     @PostMapping("/api/v1/find/collectors")
     @ResponseBody
     ResultDTO findCollectors(@RequestBody FindByDurationRequestDTO request) {
-        return findPolService.collectors(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.collectors(request);
+        logger.info("Request end");
+        return resultDTO;
     }
 
     @PostMapping("/api/v1/find/topproofs")
     @ResponseBody
     ResultDTO findTopProofs(@RequestBody FindByDurationRequestDTO request) {
-        return findPolService.topProofs(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.topProofs(request);
+        logger.info("Request end");
+        return resultDTO;
     }
 
     @PostMapping("/api/v1/find/sold")
     @ResponseBody
     ResultDTO findRecentlySold(@RequestBody FindByDurationRequestDTO request) {
-        return findPolService.recentlySold(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.recentlySold(request);
+        logger.info("Request end");
+        return resultDTO;
     }
 
     @PostMapping("/api/v1/find/mostexpface")
     @ResponseBody
     ResultDTO findMostExpensiveFaceValue(@RequestBody FindByDurationRequestDTO request) {
-        return findPolService.mostExpensiveFaceValue(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.mostExpensiveFaceValue(request);
+        logger.info("Request end");
+        return resultDTO;
     }
 
     @PostMapping("/api/v1/find/mostexpcreative")
     @ResponseBody
     ResultDTO findMostExpensiveCreativeValue(@RequestBody FindByDurationRequestDTO request) {
-        return findPolService.mostExpensiveCreativeValue(request);
+        logger.info("Request start");
+        ResultDTO resultDTO = findPolService.mostExpensiveCreativeValue(request);
+        logger.info("Request end");
+        return resultDTO;
     }
-
-
 }
