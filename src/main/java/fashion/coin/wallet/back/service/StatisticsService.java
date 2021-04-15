@@ -49,17 +49,18 @@ public class StatisticsService {
             int mobile = 0;
 
             for (Client client : clientList) {
-
-                switch (client.getRegisteredFrom()) {
-                    case FROMMOBILE:
-                        mobile++;
-                        break;
-                    case FROMTELEGRAMM:
-                        telegram++;
-                        break;
-                    case FROMWEB:
-                        web++;
-                        break;
+                if (client != null) {
+                    switch (client.getRegisteredFrom()) {
+                        case FROMMOBILE:
+                            mobile++;
+                            break;
+                        case FROMTELEGRAMM:
+                            telegram++;
+                            break;
+                        case FROMWEB:
+                            web++;
+                            break;
+                    }
                 }
             }
             logger.info("Telegram: " + telegram);
@@ -74,7 +75,7 @@ public class StatisticsService {
             logger.info("Mail sended");
 
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
             e.printStackTrace();
         }
