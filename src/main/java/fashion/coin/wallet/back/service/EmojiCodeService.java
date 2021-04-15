@@ -42,23 +42,23 @@ public class EmojiCodeService {
                 }
             }
 
-            try {
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                for (int i = 0; i < 98; i++) {
-                    byte[] encodedhash = digest.digest(("love"+i).getBytes());
-
-                    String emj = bytesToHex(encodedhash).substring(0,8);
-
-                    EmojiCode emojiCode = emojiCodeRepository.findById(emj).orElse(null);
-                    if (emojiCode == null) {
-                        emojiCode = new EmojiCode(emj);
-                        emojiCodeRepository.save(emojiCode);
-                    }
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+//                for (int i = 0; i < 98; i++) {
+//                    byte[] encodedhash = digest.digest(("love"+i).getBytes());
+//
+//                    String emj = bytesToHex(encodedhash).substring(0,8);
+//
+//                    EmojiCode emojiCode = emojiCodeRepository.findById(emj).orElse(null);
+//                    if (emojiCode == null) {
+//                        emojiCode = new EmojiCode(emj);
+//                        emojiCodeRepository.save(emojiCode);
+//                    }
+//                }
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
             listIsRefreshed = true;
         }
@@ -73,8 +73,10 @@ public class EmojiCodeService {
 
             String emcode = codeCandidat.substring(0, colonePosition);
             EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
+            logger.info("emojiCode: {}",gson.toJson( emojiCode));
             if (emojiCode != null && emojiCode.getWallet() == null) {
                 String cryptoname = codeCandidat.substring(colonePosition + 1);
+                logger.info("cryptoname: {}",cryptoname);
                 if (cryptoname != null && cryptoname.length() > 0) {
                     logger.info("checkCode: " + cryptoname);
                     emojiCode.setEmoji(cryptoname);
