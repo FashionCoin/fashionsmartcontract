@@ -25,20 +25,22 @@ public class WrapLog {
     public WrapLog() {
     }
 
-    public WrapLog(boolean isWrap, long amount, String fshnWallet, String ethWallet) {
+    public WrapLog(boolean isWrap, long amount, String fshnWallet, String ethWallet, String network) {
         this.time = LocalDateTime.now();
         this.isWrap = isWrap;
         this.amount = amount;
         this.fshnWallet = fshnWallet;
         this.ethWallet = ethWallet;
+        this.network = network;
     }
 
-    public WrapLog(boolean isWrap, long amount, String fshnWallet, String ethWallet, String txHash) {
+    public WrapLog(boolean isWrap, long amount, String fshnWallet, String ethWallet,String network, String txHash) {
         this.time = LocalDateTime.now();
         this.isWrap = isWrap;
         this.amount = amount;
         this.fshnWallet = fshnWallet;
         this.ethWallet = ethWallet;
+        this.network = network;
         this.txHash = txHash;
     }
 

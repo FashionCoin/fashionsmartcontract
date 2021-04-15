@@ -80,8 +80,13 @@ public class WrapService {
 
     public ResultDTO wrap(WrappedRequestDTO request) {
         try {
+            String contractAddress = request.getNetwork().equals("binance") ?
+                    binanceContractAddress : ethereumContractAddress;
+            String ownerPrivKey = request.getNetwork().equals("binance") ?
+                    binanceOwnerPrivKey : ethereumOwnerPrivKey;
+
             logger.info(gson.toJson(request));
-            if (!aiService.isDiamondWallet(request.getTransactionRequestDTO().getReceiverWallet())) {
+            if (!aiService.isDiamondWallet(request.getTransactionRequestDTO().getReceiverWallet(),request.getNetwork())) {
                 return error207;
             }
             logger.info("receiver ok!");
@@ -94,10 +99,11 @@ public class WrapService {
                 WrappedResponseDTO resp = signPayment(request.getEthereumWallet(),
                         amount,
                         getNonce(),
-                        ethereumContractAddress
+                        contractAddress,
+                        ownerPrivKey
                 );
                 wrapLogRepository.save(new WrapLog(true, amount, request.getTransactionRequestDTO().getSenderWallet(),
-                        request.getEthereumWallet()));
+                        request.getEthereumWallet(),request.getNetwork()));
                 return new ResultDTO(true, resp, 0);
 
             } else {
@@ -119,7 +125,8 @@ public class WrapService {
     }
 
 
-    private WrappedResponseDTO signPayment(String recipient, long amount, long nonce, String contractAddress) throws UnsupportedEncodingException {
+    private WrappedResponseDTO signPayment(String recipient, long amount, long nonce,
+                                           String contractAddress, String ownerPrivKey) throws UnsupportedEncodingException {
 
         WrappedResponseDTO resp = new WrappedResponseDTO();
         resp.setWallet(recipient);
@@ -129,7 +136,7 @@ public class WrapService {
 
 
         // Owner: 0x2E960FF80fCD4C7C31a18f62E78db89AD99fF56B on Rinkebuy
-        Credentials ownerCred = Credentials.create(ethereumOwnerPrivKey);
+        Credentials ownerCred = Credentials.create(ownerPrivKey);
         logger.info("Owner Address: {}", ownerCred.getAddress());
 
         byte[] recipientAddress = Numeric.hexStringToByteArray(recipient);

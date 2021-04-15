@@ -60,7 +60,8 @@ public class AIService {
         LEFT,
         BTCU,
         MONEYBAG,
-        DIAMOND
+        DIAMOND,
+        BINANCE
     }
 
     public AIService() {
@@ -360,8 +361,10 @@ public class AIService {
         this.messagingService = messagingService;
     }
 
-    public boolean isDiamondWallet(String walletAddress) {
-        String diamondWallet = getPubKey(AIWallets.DIAMOND);
+    public boolean isDiamondWallet(String walletAddress,String network) {
+
+        String diamondWallet = network.equals("binance") ?
+                getPubKey(AIWallets.BINANCE) : getPubKey(AIWallets.DIAMOND);
         logger.info("Diamond Wallet: {}", diamondWallet);
         return diamondWallet.equals(walletAddress);
     }
