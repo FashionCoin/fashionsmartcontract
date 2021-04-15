@@ -72,7 +72,7 @@ public class FindPolService {
             logger.info("Friend: {}", friend);
             if (friend != null) {
                 clientList.removeIf(cl -> cl.getId().equals(friend.getId()));
-                clientList.add(friend);
+                clientList.add(0,friend);
             }
 
             List<Client> result = new ArrayList<>();
