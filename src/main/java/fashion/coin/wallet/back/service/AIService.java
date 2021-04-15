@@ -403,29 +403,6 @@ public class AIService {
     }
 
 
-    /// Temp
-    @Value("${diamond.pub}")
-    String pubDiamond;
 
-    @Value("${diamond.priv}")
-    String privDiamond;
 
-    ///
-
-    public void saveDiamond() {
-        try {
-            String ecrPub = aesEncriptor.convertToDatabaseColumn(pubDiamond);
-            String encPriv = aesEncriptor.convertToDatabaseColumn(privDiamond);
-
-            settingsService.set(AIWallets.BINANCE + "_pub_key", ecrPub);
-            settingsService.set(AIWallets.BINANCE + "_priv_key", encPriv);
-
-            logger.info("ecrPub: {}", ecrPub);
-            logger.info("encPriv: {}", encPriv);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }
