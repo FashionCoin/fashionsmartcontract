@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -13,6 +14,8 @@ public class WrappedTokenEvents {
     Long amount;
     String addressFrom;
     String addressTo;
+    @Column(name="network",columnDefinition = "boolean default 'ethereum'")
+    String network;
 
 
     public String getTransactionHash() {
@@ -69,5 +72,13 @@ public class WrappedTokenEvents {
 
     public void setAddressTo(String addressTo) {
         this.addressTo = addressTo;
+    }
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
     }
 }

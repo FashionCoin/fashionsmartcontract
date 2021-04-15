@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.entity;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,6 +19,8 @@ public class WrapLog {
     String fshnWallet;
     String ethWallet;
     String txHash;
+    @Column(name="network",columnDefinition = "boolean default 'ethereum'")
+    String network;
 
     public WrapLog() {
     }
@@ -94,5 +97,13 @@ public class WrapLog {
 
     public void setTxHash(String txHash) {
         this.txHash = txHash;
+    }
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
     }
 }

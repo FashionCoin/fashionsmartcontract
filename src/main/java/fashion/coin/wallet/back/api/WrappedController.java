@@ -1,9 +1,6 @@
 package fashion.coin.wallet.back.api;
 
-import fashion.coin.wallet.back.dto.ApiKeyDTO;
-import fashion.coin.wallet.back.dto.ResultDTO;
-import fashion.coin.wallet.back.dto.UnwrapRequestDTO;
-import fashion.coin.wallet.back.dto.WrappedRequestDTO;
+import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.service.WrapService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +33,9 @@ public class WrappedController {
 
     @PostMapping("/api/v1/history")
     @ResponseBody
-    ResultDTO history(@RequestBody ApiKeyDTO apiKeyDTO) {
+    ResultDTO history(@RequestBody WrapHistoryRequestDTO request) {
         logger.info("Get Ethereum History");
-        return wrapService.getWalletHistoy(apiKeyDTO.getApikey());
+        return wrapService.getWalletHistoy(request);
     }
 
 

@@ -17,7 +17,10 @@ public class WrappedRequestDTO {
 
     TransactionRequestDTO transactionRequestDTO;
 
+    String network = "ethereum";
+
     public WrappedRequestDTO() {
+        this.network = "ethereum";
     }
 
     public String getEthereumWallet() {
@@ -34,5 +37,13 @@ public class WrappedRequestDTO {
 
     public void setTransactionRequestDTO(TransactionRequestDTO transactionRequestDTO) {
         this.transactionRequestDTO = transactionRequestDTO;
+    }
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
     }
 }

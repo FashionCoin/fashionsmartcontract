@@ -589,7 +589,7 @@ contract BinanceFashionCoin is ERC20, Ownable, ERC20Burnable {
 
     mapping(uint256 => bool) usedNonces;
 
-    constructor()  ERC20("BinanceFashionCoin", "BFSHN") {
+    constructor()  ERC20("FashionCoin Binance", "FSHNB") {
         _setupDecimals(3);
     }
 

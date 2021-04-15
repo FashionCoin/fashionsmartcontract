@@ -54,16 +54,28 @@ public class WrapService {
     public static final String NULL_ADDRESS = "0x0000000000000000000000000000000000000000000000000000000000000000";
     public static final String SHORT_NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-
+// Ethereum
     @Value("${wfshn.contract.address}")
-    String contractAddress;
+    String ethereumContractAddress;
 
 
     @Value("${wfshn.owner.priv.key}")
-    String ownerPrivKey;
+    String ethereumOwnerPrivKey;
 
     @Value("${etherscan.api.key}")
-    String apiKey;
+    String ethereumApiKey;
+
+// Binance
+
+    @Value("${fshnb.contract.address}")
+    String binanceContractAddress;
+
+
+    @Value("${fshnb.owner.priv.key}")
+    String binanceOwnerPrivKey;
+
+    @Value("${bscscan.api.key}")
+    String binanceApiKey;
 
 
     public ResultDTO wrap(WrappedRequestDTO request) {
@@ -82,7 +94,7 @@ public class WrapService {
                 WrappedResponseDTO resp = signPayment(request.getEthereumWallet(),
                         amount,
                         getNonce(),
-                        contractAddress
+                        ethereumContractAddress
                 );
                 wrapLogRepository.save(new WrapLog(true, amount, request.getTransactionRequestDTO().getSenderWallet(),
                         request.getEthereumWallet()));
@@ -117,7 +129,7 @@ public class WrapService {
 
 
         // Owner: 0x2E960FF80fCD4C7C31a18f62E78db89AD99fF56B on Rinkebuy
-        Credentials ownerCred = Credentials.create(ownerPrivKey);
+        Credentials ownerCred = Credentials.create(ethereumOwnerPrivKey);
         logger.info("Owner Address: {}", ownerCred.getAddress());
 
         byte[] recipientAddress = Numeric.hexStringToByteArray(recipient);
@@ -332,8 +344,8 @@ public class WrapService {
 
             EventsDTO responce = restTemplate.getForObject("https://api.etherscan.io/api?module=logs&action=getLogs&" +
                             "fromBlock=" + lastBlock + "&toBlock=latest&" +
-                            "address=" + contractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
-                            "apikey=" + apiKey,
+                            "address=" + ethereumContractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
+                            "apikey=" + ethereumApiKey,
                     EventsDTO.class);
 
             for (EthEventDTO result : responce.getResult()) {
@@ -346,9 +358,9 @@ public class WrapService {
 
     }
 
-    public ResultDTO getWalletHistoy(String apiKey) {
+    public ResultDTO getWalletHistoy(WrapHistoryRequestDTO request) {
         try {
-            Client client = clientService.findClientByApikey(apiKey);
+            Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) return error109;
             updateEthereumEventd();
             String hexAddress = cryptoWalletsService.getWalletByCryptoname(client.getCryptoname(), "ETH");
