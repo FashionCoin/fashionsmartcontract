@@ -239,11 +239,11 @@ public class WrapService {
 
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) return error109;
-            if (transactionExists(request.getTransactionHash(), network)) {
+            if (transactionExists(request.getTransactionHash())) {
                 return error208;
             }
 
-            if (!eventExists(request.getTransactionHash(), network)) {
+            if (!eventExists(request.getTransactionHash())) {
                 return error209;
             }
             WrappedTokenEvents event = tokenEventsRepository.findById(request.getTransactionHash()).orElse(null);
@@ -282,7 +282,7 @@ public class WrapService {
         }
     }
 
-    private boolean eventExists(String transactionHash, String network) {
+    private boolean eventExists(String transactionHash) {
         WrappedTokenEvents event = null;
         for (int i = 1000; i < 100000; i += 500) {
             updateEthereumEventd();
@@ -300,8 +300,8 @@ public class WrapService {
         return (event != null);
     }
 
-    private boolean transactionExists(String transactionHash, String network) {
-        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHashAndNetwork(transactionHash, network);
+    private boolean transactionExists(String transactionHash) {
+        List<WrapLog> wrapLogList = wrapLogRepository.findByTxHash(transactionHash);
         return (wrapLogList != null && wrapLogList.size() > 0);
     }
 
@@ -359,7 +359,7 @@ public class WrapService {
 
     private void updateWrapEvents(String network) {
         try {
-// TODO: Временно. Нужно удалить
+// TODO: Временно. Нужно удалить после того как номера блоков исправятся
             List<WrappedTokenEvents> eventsList = tokenEventsRepository.findAll();
             for (WrappedTokenEvents wrappedTokenEvents : eventsList) {
                 if (wrappedTokenEvents.getBlockNumber() < 0) {
@@ -412,7 +412,7 @@ public class WrapService {
             String hexAddress = cryptoWalletsService.getWalletByCryptoname(client.getCryptoname(), "ETH");
 
             String address = hexToAddress(hexAddress);
-            List<WrappedTokenEvents> fullHistory = getHistory(address);
+            List<WrappedTokenEvents> fullHistory = getHistory(address,request.getNetwork());
             Long balance = 0L;
             List<WFSHNhistory> wfshNhistoryList = new ArrayList<>();
             for (WrappedTokenEvents events : fullHistory) {
@@ -466,8 +466,9 @@ public class WrapService {
     }
 
 
-    private List<WrappedTokenEvents> getHistory(String address) {
+    private List<WrappedTokenEvents> getHistory(String address,String network) {
         List<WrappedTokenEvents> eventsList = tokenEventsRepository.findByAddressFromOrAddressTo(address, address);
+        eventsList.removeIf(wrappedTokenEvents -> !wrappedTokenEvents.getNetwork().equals(network));
         eventsList.sort((o1, o2) -> (o2.getTimeStamp().compareTo(o1.getTimeStamp())));
         return eventsList;
     }
