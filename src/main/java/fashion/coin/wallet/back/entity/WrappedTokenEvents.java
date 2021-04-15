@@ -14,7 +14,7 @@ public class WrappedTokenEvents {
     Long amount;
     String addressFrom;
     String addressTo;
-    @Column(name="network",columnDefinition = "boolean default 'ethereum'")
+    @Column(name="network",columnDefinition = "varchar(255) default 'ethereum'")
     String network;
 
 

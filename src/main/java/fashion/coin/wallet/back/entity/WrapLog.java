@@ -19,7 +19,7 @@ public class WrapLog {
     String fshnWallet;
     String ethWallet;
     String txHash;
-    @Column(name="network",columnDefinition = "boolean default 'ethereum'")
+    @Column(name="network",columnDefinition = "varchar(255) default 'ethereum'")
     String network;
 
     public WrapLog() {
