@@ -72,6 +72,9 @@ public class EmojiCodeService {
             int colonePosition = codeCandidat.indexOf(":");
 
             String emcode = codeCandidat.substring(0, colonePosition);
+            logger.info(emcode);
+             emcode = codeCandidat.substring( colonePosition);
+            logger.info(emcode);
             EmojiCode emojiCode = emojiCodeRepository.findById(emcode).orElse(null);
             logger.info("emojiCode: {}",gson.toJson( emojiCode));
             if (emojiCode != null && emojiCode.getWallet() == null) {
