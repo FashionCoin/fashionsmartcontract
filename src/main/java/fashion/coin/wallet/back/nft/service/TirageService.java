@@ -171,6 +171,7 @@ public class TirageService {
             oneNft.setCurrency(nft.getCurrency());
             oneNft.setFree(nft.isFree());
             oneNft.setTirage(nft.isTirage());
+            oneNft.setTotal(totalNfts(nft));
 
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
