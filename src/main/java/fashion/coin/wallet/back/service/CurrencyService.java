@@ -94,11 +94,17 @@ public class CurrencyService {
         if (currency.equals("FUAH")) {
             return "UAH";
         }
+        if (currency.equals("FRUB")) {
+            return "RUB";
+        }
         if (currency.equals("FBTC")) {
             return "BTC";
         }
         if (currency.equals("FETH")) {
             return "ETH";
+        }
+        if (currency.equals("FBNB")) {
+            return "BNB";
         }
         if (currency.equals("FAU")) {
             return "XAU";
