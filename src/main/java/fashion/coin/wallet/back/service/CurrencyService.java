@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.thymeleaf.extras.java8time.expression.Temporals;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,6 +19,8 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -165,17 +168,28 @@ public class CurrencyService {
         List<String> crypts = getAvailableCrypts();
         try {
             logger.info("Average for: " + date);
-            LocalDateTime dateStart = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
-            LocalDateTime dateEnd = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime dateStartReq = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime dateEndReq = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
-                logger.info("{} {} {}", currency, dateStart, dateEnd);
-                Double avg = currencyRateRepository.getAverageCurrency(currency,
-                        dateStart, dateEnd);
-                logger.info("AVG: {}", avg);
-                if (avg == null) {
-                    avg = 1.;
-                    logger.error("AVG == null for {} {}", currency, date);
+
+                Double avg = null;
+                for (int i = 0; i < 10; i++) {
+                    LocalDateTime dateStart = dateStartReq.plus(i, ChronoUnit.DAYS);
+                    LocalDateTime dateEnd = dateEndReq.plus(i, ChronoUnit.DAYS);
+                    logger.info("{} {} {}", currency, dateStart, dateEnd);
+                    avg = currencyRateRepository.getAverageCurrency(currency,
+                            dateStart, dateEnd);
+                    logger.info("AVG: {}", avg);
+                    if (avg != null) {
+                        break;
+                    } else {
+                        logger.error("AVG == null for {} {}", currency, date);
+                    }
                 }
+                if (avg == null) {
+                    avg = 1.0;
+                }
+
                 BigDecimal rate = BigDecimal.valueOf(avg);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format(rate));
                 currencyList.add(currencyDTO);
