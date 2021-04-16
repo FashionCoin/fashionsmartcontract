@@ -123,6 +123,7 @@ public class FTransactionService {
                     }
                 }
 
+                fTransactionList.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
                 return new ResultDTO(true, fTransactionList, 0);
             }
         } catch (Exception e) {
