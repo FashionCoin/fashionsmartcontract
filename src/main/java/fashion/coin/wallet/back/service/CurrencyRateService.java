@@ -42,7 +42,7 @@ public class CurrencyRateService {
 
     private static final String cmcLink = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";
 
-    public static final String params = "?symbol=USDT&convert=FSHN,BTC,ETH,USD,EUR,GBP,UAH";
+    public static final String params = "?symbol=USDT&convert=FSHN,BTC,ETH,EUR,GBP,UAH,BNB,RUB";
 
     public static final String metalPriceUrl = "https://data-asg.goldprice.org/dbXRates/USD";
 
@@ -64,7 +64,9 @@ public class CurrencyRateService {
             CmcDTO cmcDTO = responseEntity.getBody();
 
             Map<String, PriceDTO> priceMap = cmcDTO.data.get("USDT").quote;
-
+            if(!priceMap.containsKey("USD")) {
+                priceMap.put("USD", new PriceDTO("1.0"));
+            }
             BigDecimal fshnPrice = new BigDecimal(priceMap.get("FSHN").price);
             for (Map.Entry<String, PriceDTO> entry : priceMap.entrySet()) {
                 if (!entry.getKey().equals("FSHN")) {
@@ -115,7 +117,7 @@ public class CurrencyRateService {
                 logger.info(gson.toJson(currencyRate));
                 currencyRateRepository.save(currencyRate);
 
-            }else{
+            } else {
                 logger.error(gson.toJson(responseEntity));
             }
         } catch (Exception e) {
@@ -140,6 +142,10 @@ public class CurrencyRateService {
     }
 
     static class PriceDTO {
+        public PriceDTO(String price) {
+            this.price = price;
+        }
+
         public String price;
     }
 

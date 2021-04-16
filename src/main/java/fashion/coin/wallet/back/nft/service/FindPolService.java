@@ -87,6 +87,8 @@ public class FindPolService {
                     cl.setAvatar(c.getAvatar());
                 }
                 cl.setWalletBalance(c.getWalletBalance());
+
+
                 if (c.getCryptoname().equals(request.getName())) {
                     result.add(0, cl);
                 } else {
