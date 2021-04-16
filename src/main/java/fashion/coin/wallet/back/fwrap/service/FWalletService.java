@@ -37,7 +37,7 @@ public class FWalletService {
 
 
     List<String> currencyList = Arrays.asList(
-            "FSHN", "FUSD", "FEUR", "FGBP", "FUAH", "FRUB", "FDEM", "FBTC", "FETH", "FAU", "FAG");
+            "FSHN", "FUSD", "FEUR", "FGBP", "FUAH", "FRUB", "FDEM", "FBTC", "FETH","FBNB", "FAU", "FAG");
 
     public ResultDTO getClientWallets(ApiKeyDTO request) {
 
