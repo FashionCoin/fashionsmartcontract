@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -220,5 +222,13 @@ public class FExchangeService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    public List<FExchange> findByClientIdAndCurrency(Long clientId, String currency) {
+        List<FExchange> exchangeList = fExchangeRepository.findByClientAndCurrency(clientId, currency);
+        if (exchangeList == null) {
+            return new ArrayList<>();
+        }
+        return exchangeList;
     }
 }

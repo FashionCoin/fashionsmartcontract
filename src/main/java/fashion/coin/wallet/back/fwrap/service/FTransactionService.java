@@ -8,8 +8,10 @@ import fashion.coin.wallet.back.fwrap.dto.FCurrencyRequestDTO;
 import fashion.coin.wallet.back.fwrap.dto.FSendMoneyRequestDTO;
 import fashion.coin.wallet.back.fwrap.dto.FTransactionResponseDTO;
 import fashion.coin.wallet.back.fwrap.dto.FWalletsResponseDTO;
+import fashion.coin.wallet.back.fwrap.entity.FExchange;
 import fashion.coin.wallet.back.fwrap.entity.FTransaction;
 import fashion.coin.wallet.back.fwrap.entity.FWallet;
+import fashion.coin.wallet.back.fwrap.repository.FExchangeRepository;
 import fashion.coin.wallet.back.fwrap.repository.FTransactionRepository;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.TransactionService;
@@ -37,6 +39,9 @@ public class FTransactionService {
 
     @Autowired
     FWalletService fWalletService;
+
+    @Autowired
+    FExchangeService fExchangeService;
 
     public ResultDTO getByCurrency(FCurrencyRequestDTO request) {
 
@@ -94,6 +99,25 @@ public class FTransactionService {
                             transactionRespons.setIncome(false);
                             transactionRespons.setAmount(transaction.getAmount().negate());
                             transactionRespons.setCryptoname(transaction.getToCryptoname());
+                        }
+                        fTransactionList.add(transactionRespons);
+                    }
+                }
+
+                List<FExchange> exchangeList = fExchangeService.findByClientIdAndCurrency(client.getId(),request.getCurrency());
+                if(exchangeList!= null && exchangeList.size()>0){
+                    for(FExchange fExchange : exchangeList){
+                        FTransactionResponseDTO transactionRespons = new FTransactionResponseDTO();
+                        transactionRespons.setId(fExchange.getId());
+                        transactionRespons.setTimestamp(fExchange.getTimstamp());
+                        if (fExchange.getCurrencyTo().equals(request.getCurrency())) {
+                            transactionRespons.setIncome(true);
+                            transactionRespons.setAmount(fExchange.getValueTo());
+                            transactionRespons.setCryptoname(fExchange.getCurrencyFrom());
+                        } else {
+                            transactionRespons.setIncome(false);
+                            transactionRespons.setAmount(fExchange.getValueFrom().negate());
+                            transactionRespons.setCryptoname(fExchange.getCurrencyTo());
                         }
                         fTransactionList.add(transactionRespons);
                     }
