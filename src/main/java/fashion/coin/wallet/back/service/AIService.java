@@ -403,19 +403,4 @@ public class AIService {
     }
 
 
-    public void printAIwallets() {
-        try {
-            logger.info("{}: {}", AIWallets.BINANCE.toString(), getPubKey(AIWallets.BINANCE));
-            logger.info("{}: {}", AIWallets.LEFT.toString(), getPubKey(AIWallets.LEFT));
-            logger.info("{}: {}", AIWallets.BTCU.toString(), getPubKey(AIWallets.BTCU));
-            logger.info("{}: {}", AIWallets.MONEYBAG.toString(), getPubKey(AIWallets.MONEYBAG));
-            logger.info("{}: {}", AIWallets.DIAMOND.toString(), getPubKey(AIWallets.DIAMOND));
-            logger.info("{}: {}", AIWallets.DIAMOND.toString(), getPubKey(AIWallets.DIAMOND));
-
-            logger.info(gson.toJson(keyStore));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
