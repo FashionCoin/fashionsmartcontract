@@ -407,7 +407,7 @@ public class ClientService {
 
     private boolean checkValidCryptoname(String cryptoname) {
 
-        if (cryptoname.length() < 1) {
+        if (cryptoname.length() <= 1) {
             logger.error("So short");
             return false;
         }
