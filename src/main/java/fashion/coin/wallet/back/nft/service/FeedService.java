@@ -58,10 +58,24 @@ public class FeedService {
 
                 for (FriendProof fp : friendList) {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofReceiverId());
-                    nftList.addAll(tirageService.tirageFindByOwnerIdFilteredDouble(fp.getProofReceiverId(),nftList));
+                    nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
                     if (nftList != null && nftList.size() > 0) {
                         nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
-                        feed.addAll(nftList);
+
+                        for(Nft nft : nftList){
+                            boolean isDouble = false;
+                            for(Nft feedNft : feed){
+                                if(feedNft.getId().equals(nft.getId())){
+                                    isDouble = true;
+                                    break;
+                                }
+                            }
+                            if(!isDouble){
+                                feed.add(nft);
+                            }
+                        }
+
+//                        feed.addAll(nftList);
                     }
                 }
                 feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
@@ -73,6 +87,7 @@ public class FeedService {
                 });
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
 
+
             } else if (request.getFeedType().equals(PROOFS_FEED)) {
                 logger.info(request.getFeedType());
                 List<FriendProof> friendList = friendProofRepository.findByProofReceiverId(client.getId());
@@ -81,11 +96,25 @@ public class FeedService {
 
                     logger.info("FP: {}", fp.getProofSenderId());
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
-                    nftList.addAll(tirageService.tirageFindByOwnerIdFilteredDouble(fp.getProofReceiverId(),nftList));
+                    nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
                     logger.info("Size: {}", nftList.size());
                     if (nftList != null && nftList.size() > 0) {
                         nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
-                        feed.addAll(nftList);
+
+                        for(Nft nft : nftList){
+                            boolean isDouble = false;
+                            for(Nft feedNft : feed){
+                                if(feedNft.getId().equals(nft.getId())){
+                                    isDouble = true;
+                                    break;
+                                }
+                            }
+                            if(!isDouble){
+                                feed.add(nft);
+                            }
+                        }
+
+//                        feed.addAll(nftList);
                     }
                 }
                 logger.info("NFT list size: {}", feed.size());
