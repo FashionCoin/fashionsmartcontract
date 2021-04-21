@@ -228,6 +228,11 @@ public class FindPolService {
                 if (!nftIdSet.contains(nftId)) {
                     Nft nft = nftRepository.findById(nftId).orElse(null);
                     if (!nft.isBanned() && !nft.isBurned()) {
+
+                        if(nft.isTirage()){
+                            nft.setCreativeValue(nftHistory.getAmount());
+                        }
+
                         soldNft.add(nft);
                         nftIdSet.add(nftId);
                     }
