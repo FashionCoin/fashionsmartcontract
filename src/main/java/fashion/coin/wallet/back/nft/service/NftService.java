@@ -165,7 +165,7 @@ public class NftService {
         transactionRequestDTO.setSenderWallet(client.getWalletAddress());
         resultDTO = transactionService.send(transactionRequestDTO);
         if (!resultDTO.isResult()) return resultDTO;
-
+        logger.info("TX HASH: {}", resultDTO.getMessage());
 
         Nft nft = new Nft();
         nft.setTxhash(resultDTO.getMessage());
