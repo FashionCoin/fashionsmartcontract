@@ -5,7 +5,6 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.FeedNftRequestDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
-import fashion.coin.wallet.back.nft.entity.NftTirage;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.ClientService;
@@ -59,7 +58,7 @@ public class FeedService {
 
                 for (FriendProof fp : friendList) {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofReceiverId());
-                    nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
+                    nftList.addAll(tirageService.tirageFindByOwnerIdFilteredDouble(fp.getProofReceiverId(),nftList));
                     if (nftList != null && nftList.size() > 0) {
                         nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
                         feed.addAll(nftList);
@@ -82,7 +81,7 @@ public class FeedService {
 
                     logger.info("FP: {}", fp.getProofSenderId());
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
-                    nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
+                    nftList.addAll(tirageService.tirageFindByOwnerIdFilteredDouble(fp.getProofReceiverId(),nftList));
                     logger.info("Size: {}", nftList.size());
                     if (nftList != null && nftList.size() > 0) {
                         nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));

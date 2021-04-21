@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -208,5 +209,34 @@ public class TirageService {
             throw new IllegalArgumentException("Nft does not tirage");
         }
         return total;
+    }
+
+    public List< Nft> tirageFindByOwnerIdFilteredDouble(Long ownerId, List<Nft> nftList) {
+        try {
+            if (ownerId == null) return new ArrayList<>();
+            List<NftTirage> nftTirageList = nftTirageRepository.findByOwnerId(ownerId);
+            if (nftTirageList == null) return new ArrayList<>();
+            List<Nft> result = new ArrayList<>();
+            for (NftTirage tirage : nftTirageList) {
+                boolean isDouble = false;
+                for(Nft nft:nftList){
+                    if(nft.getId().equals(tirage.getNftId())){
+                        isDouble=true;
+                        break;
+                    }
+                }
+                if(!isDouble) {
+                    Optional<Nft> nftOptional = nftRepository.findById(tirage.getNftId());
+                    if (nftOptional.isPresent()) {
+                        result.add(nftOptional.get());
+                    }
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
     }
 }
