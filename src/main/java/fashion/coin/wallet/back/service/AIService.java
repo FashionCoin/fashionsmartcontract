@@ -164,7 +164,7 @@ public class AIService {
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return new ResultDTO(false,e.getMessage(),-1);
+            return new ResultDTO(false, e.getMessage(), -1);
         }
     }
 
@@ -361,7 +361,7 @@ public class AIService {
         this.messagingService = messagingService;
     }
 
-    public boolean isDiamondWallet(String walletAddress,String network) {
+    public boolean isDiamondWallet(String walletAddress, String network) {
 
         String diamondWallet = network.equals("binance") ?
                 getPubKey(AIWallets.BINANCE) : getPubKey(AIWallets.DIAMOND);
@@ -403,6 +403,19 @@ public class AIService {
     }
 
 
+    public void printAIwallets() {
+        try {
+            logger.info("{}: {}", AIWallets.BINANCE.toString(), getPubKey(AIWallets.BINANCE));
+            logger.info("{}: {}", AIWallets.LEFT.toString(), getPubKey(AIWallets.LEFT));
+            logger.info("{}: {}", AIWallets.BTCU.toString(), getPubKey(AIWallets.BTCU));
+            logger.info("{}: {}", AIWallets.MONEYBAG.toString(), getPubKey(AIWallets.MONEYBAG));
+            logger.info("{}: {}", AIWallets.DIAMOND.toString(), getPubKey(AIWallets.DIAMOND));
+            logger.info("{}: {}", AIWallets.DIAMOND.toString(), getPubKey(AIWallets.DIAMOND));
 
+            logger.info(gson.toJson(keyStore));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

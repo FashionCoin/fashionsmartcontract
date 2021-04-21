@@ -94,10 +94,10 @@ public class FeedService {
                 logger.info("Frienf List size: {}", friendList.size());
                 for (FriendProof fp : friendList) {
 
-                    logger.info("FP: {}", fp.getProofSenderId());
+
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofSenderId());
                     nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
-                    logger.info("Size: {}", nftList.size());
+
                     if (nftList != null && nftList.size() > 0) {
                         nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
 
