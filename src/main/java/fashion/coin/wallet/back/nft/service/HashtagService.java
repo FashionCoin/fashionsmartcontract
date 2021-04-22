@@ -95,6 +95,7 @@ public class HashtagService {
             if (nftList == null) {
                 nftList = new ArrayList<>();
             }
+            nftList.removeIf(nft -> nft.isBurned() || nft.isBanned());
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
             e.printStackTrace();
