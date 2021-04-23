@@ -164,6 +164,21 @@ public class ProofService {
         if (nft.getWayOfAllocatingFunds().equals(BASE_WAY)) {
             BigDecimal amountToDistribute = nft.getCreativeValue().divide(BigDecimal.TEN, 6, RoundingMode.HALF_UP);
 
+
+            for (int i = 1; i < 10000 ; i+=1000) {
+
+                if (!aiService.isEnoughMoney(AIService.AIWallets.MONEYBAG, amountToDistribute) ){
+                    try {
+                        Thread.sleep(i);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    break;
+                }
+
+            }
+
             List<ProofHistory> proofHistoryList = proofHistoryRepository.findByNftId(nft.getId());
             BigDecimal totalAmount = BigDecimal.ZERO;
 

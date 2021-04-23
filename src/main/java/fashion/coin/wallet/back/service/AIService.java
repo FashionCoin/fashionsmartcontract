@@ -56,6 +56,12 @@ public class AIService {
         return getPubKey(AIWallets.LEFT);
     }
 
+    public boolean isEnoughMoney(AIWallets sender, BigDecimal amount) {
+       Client client = clientService.findByWallet(getPubKey( AIWallets.MONEYBAG));
+        clientService.updateBalance(client);
+        return client.getWalletBalance().compareTo(amount) < 0;
+    }
+
     public enum AIWallets {
         LEFT,
         BTCU,

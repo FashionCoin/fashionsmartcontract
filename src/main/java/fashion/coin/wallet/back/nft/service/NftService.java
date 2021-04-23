@@ -719,7 +719,7 @@ public class NftService {
 
                 if (nft.getAuthorId().equals(client.getId())) {
                     logger.info("Buyer is author: {}", client.getCryptoname());
-                    authorFunds.setAmount(BigDecimal.ZERO);
+                    authorFunds.setAmount(BigDecimal.ZERO); /// TODO: ????
                 } else {
                     authorFunds.setAmount(nft.getCreativeValue().divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP));
                     share.put(AUTHOR, authorFunds);
