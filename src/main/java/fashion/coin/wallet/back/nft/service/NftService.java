@@ -1,6 +1,7 @@
 package fashion.coin.wallet.back.nft.service;
 
 import com.google.gson.Gson;
+import com.google.inject.internal.cglib.core.$ClassInfo;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -335,14 +336,17 @@ public class NftService {
             }
 
             nftHistory.setTxhash(result.getMessage());
-            if (!nft.isTirage()) {
 
-                result = proofService.dividendPayment(nft, clientFrom);
-                if (!result.isResult()) {
-
-                    return result;
-                }
-            }
+            new Thread(new DividendProofPaymentProcess(nft,clientFrom)).start();
+//
+//            if (!nft.isTirage()) {
+//
+//                result = proofService.dividendPayment(nft, clientFrom);
+//                if (!result.isResult()) {
+//
+//                    return result;
+//                }
+//            }
 
 
             nftHistory.setTimestamp(System.currentTimeMillis());
@@ -1051,5 +1055,34 @@ public class NftService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+
+    class DividendProofPaymentProcess implements Runnable {
+
+        Nft nft;
+
+        Client clientFrom;
+
+        public DividendProofPaymentProcess(Nft nft,
+
+                                           Client clientFrom) {
+            this.nft = nft;
+            this.clientFrom = clientFrom;
+        }
+
+        @Override
+        public void run() {
+
+            if (!nft.isTirage()) {
+
+                ResultDTO result = proofService.dividendPayment(nft, clientFrom);
+                if (!result.isResult()) {
+
+                    logger.info(gson.toJson(result));
+                }
+            }
+
+        }
     }
 }
