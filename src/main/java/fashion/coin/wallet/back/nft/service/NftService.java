@@ -337,7 +337,7 @@ public class NftService {
 
             nftHistory.setTxhash(result.getMessage());
 
-            new Thread(new DividendProofPaymentProcess(nft,clientFrom)).start();
+            new Thread(new DividendProofPaymentProcess(nft, clientFrom)).start();
 //
 //            if (!nft.isTirage()) {
 //
@@ -1073,7 +1073,7 @@ public class NftService {
 
         @Override
         public void run() {
-
+            logger.info("proof process start");
             if (!nft.isTirage()) {
 
                 ResultDTO result = proofService.dividendPayment(nft, clientFrom);
