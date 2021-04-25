@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.gson.Gson;
 import com.thebuzzmedia.exiftool.ExifTool;
 import com.thebuzzmedia.exiftool.ExifToolBuilder;
 import com.thebuzzmedia.exiftool.Tag;
@@ -86,6 +87,9 @@ public class FileUploadService {
         this.nftFileRepository = nftFileRepository;
     }
 
+    @Autowired
+    Gson gson;
+
     public ResultDTO uploadNftPicture(MultipartFile multipartFile, String login, String apikey) {
         if (!clientService.checkApiKey(login, apikey)) return error109;
         return saveNft(multipartFile);
@@ -146,21 +150,14 @@ public class FileUploadService {
             if (Files.exists(newName)) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
-                /// TODO: Временно
-//                Files.move(copyLocation, copyLocation.resolveSibling(newName));
-//                nftFileRepository.save(nftFile);
-//                if (multipartFile.getContentType().toLowerCase().contains("video")) {
-//                    String videoName = newName.toString();
-//                    String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
-//                    createPreview(videoName, imageName);
-//                    resizePreview(shaChecksum + ".jpeg");
-//                } else {
-//                    resizePreview(shaChecksum + fileExtension);
-//                }
 
-                ///
             } else {
                 Files.move(copyLocation, copyLocation.resolveSibling(newName));
+                Map<Tag, String> valueMap = getImageParams(newName);
+                nftFile.setExifOrientation(valueMap.get(StandardTag.ORIENTATION));
+                nftFile.setHeight(valueMap.get(StandardTag.IMAGE_HEIGHT));
+                nftFile.setWidth(valueMap.get(StandardTag.IMAGE_WIDTH));
+
                 nftFileRepository.save(nftFile);
 
                 if (multipartFile.getContentType().toLowerCase().contains("video")) {
@@ -178,6 +175,29 @@ public class FileUploadService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+
+    }
+
+    private Map<Tag, String> getImageParams(Path path) {
+        logger.info("Get Image Params");
+        Map<Tag, String> valueMap = new HashMap<>();
+        try {
+            File image = path.toFile();
+            ExifTool exifTool = new ExifToolBuilder().build();
+
+            valueMap = exifTool.getImageMeta(image, asList(
+                    StandardTag.ORIENTATION,
+                    StandardTag.IMAGE_WIDTH,
+                    StandardTag.IMAGE_HEIGHT
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+            valueMap.put(StandardTag.ORIENTATION, null);
+            valueMap.put(StandardTag.IMAGE_HEIGHT, null);
+            valueMap.put(StandardTag.IMAGE_WIDTH, null);
+        }
+        logger.info(gson.toJson(valueMap));
+        return valueMap;
 
     }
 
@@ -292,12 +312,9 @@ public class FileUploadService {
     @PostConstruct
     void getOrient() {
         try {
-            String filename ="/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg";
-            String orientation = getRotateOrientation(filename);
-            logger.info("Filename: {}",filename);
-            logger.info("Orientation: {}",orientation);
-            setRotateOrientation(filename,"0");
-            setRotateOrientation(filename,orientation);
+            String filename = "/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg";
+            Path path = Paths.get(filename);
+            getImageParams(path);
 
         } catch (Exception e) {
             e.printStackTrace();
