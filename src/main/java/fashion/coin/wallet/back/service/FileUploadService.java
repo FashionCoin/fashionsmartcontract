@@ -312,9 +312,15 @@ public class FileUploadService {
     @PostConstruct
     void getOrient() {
         try {
-            String filename = "/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg";
-            Path path = Paths.get(filename);
-            getImageParams(path);
+            List<NftFile> fileList = nftFileRepository.findAll();
+            for (NftFile nftFile : fileList) {
+                Path path = Paths.get(NFT_PATH + File.separator + nftFile.getFilename());
+                Map<Tag, String> valueMap = getImageParams(path);
+                nftFile.setExifOrientation(valueMap.get(StandardTag.ORIENTATION));
+                nftFile.setHeight(valueMap.get(StandardTag.IMAGE_HEIGHT));
+                nftFile.setWidth(valueMap.get(StandardTag.IMAGE_WIDTH));
+            }
+            nftFileRepository.saveAll(fileList);
 
         } catch (Exception e) {
             e.printStackTrace();
