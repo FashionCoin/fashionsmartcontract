@@ -3,11 +3,9 @@ package fashion.coin.wallet.back.dto;
 public class WrapHistoryRequestDTO {
 
     String apikey;
-    String network = "ethereum";
+    String network;
 
-    public WrapHistoryRequestDTO(String network) {
-        this.network = "ethereum";
-    }
+
 
     public String getApikey() {
         return apikey;
