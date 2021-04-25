@@ -1,5 +1,9 @@
 package fashion.coin.wallet.back.service;
 
+import com.thebuzzmedia.exiftool.ExifTool;
+import com.thebuzzmedia.exiftool.ExifToolBuilder;
+import com.thebuzzmedia.exiftool.Tag;
+import com.thebuzzmedia.exiftool.core.StandardTag;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.entity.NftFile;
@@ -20,10 +24,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.util.Arrays.asList;
 
 /**
  * Created by JAVA-P on 02.11.2018.
@@ -298,8 +304,17 @@ public class FileUploadService {
     @PostConstruct
     void getOrient() {
         try {
-            String exif = getRotateOrientation("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg");
-            logger.info(exif);
+            File image = new File("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg");
+            ExifTool exifTool = new ExifToolBuilder().build();
+
+            Map<Tag, String> valueMap = exifTool.getImageMeta(image, asList(
+                        StandardTag.ORIENTATION,
+                        StandardTag.IMAGE_HEIGHT,
+                        StandardTag.IMAGE_WIDTH
+                ));
+           logger.info("ORIENTATION: {}",  valueMap.get( StandardTag.ORIENTATION));
+           logger.info("IMAGE_HEIGHT: {}",  valueMap.get( StandardTag.IMAGE_HEIGHT));
+           logger.info("IMAGE_WIDTH: {}",  valueMap.get( StandardTag.IMAGE_WIDTH));
         } catch (Exception e) {
             e.printStackTrace();
         }
