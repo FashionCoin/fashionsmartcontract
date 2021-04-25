@@ -35,6 +35,9 @@ public class WrappedController {
     @ResponseBody
     ResultDTO history(@RequestBody WrapHistoryRequestDTO request) {
         logger.info("Get Ethereum History");
+        if(request.getNetwork()==null){
+            request.setNetwork("ethereum");
+        }
         return wrapService.getWalletHistoy(request);
     }
 
