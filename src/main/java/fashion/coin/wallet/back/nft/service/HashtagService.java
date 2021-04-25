@@ -96,6 +96,11 @@ public class HashtagService {
                 nftList = new ArrayList<>();
             }
             nftList.removeIf(nft -> nft.isBurned() || nft.isBanned());
+
+            HashTag hashTag = hashTagRepository.findById(request.getHashtag()).orElse(null);
+            hashTag.setPublications((long) nftList.size());
+            hashTagRepository.save(hashTag);
+
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
             e.printStackTrace();
