@@ -297,8 +297,11 @@ public class FileUploadService {
 
     @PostConstruct
     void getOrient(){
-        String exif = getRotateOrientation("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg");
-        logger.info(exif);
-
+        try {
+            String exif = getRotateOrientation("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg");
+            logger.info(exif);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
