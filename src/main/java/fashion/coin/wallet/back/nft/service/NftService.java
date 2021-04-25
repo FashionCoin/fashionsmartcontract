@@ -11,6 +11,7 @@ import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
 import fashion.coin.wallet.back.nft.entity.NftTirage;
+import fashion.coin.wallet.back.nft.repository.NftFileRepository;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.nft.repository.NftTirageRepository;
@@ -125,6 +126,9 @@ public class NftService {
 
     @Autowired
     TirageService tirageService;
+
+    @Autowired
+    NftFileRepository nftFileRepository;
 
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
@@ -466,6 +470,7 @@ public class NftService {
                 return error229;
             }
 
+NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
 
             Client client = clientService.getClient(ownerId);
 
@@ -494,6 +499,8 @@ public class NftService {
 
             oneNft.setPieces(1L);
 
+            oneNft.setHeight(nftFile.getHeight());
+            oneNft.setWidth(nftFile.getWidth());
 
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {

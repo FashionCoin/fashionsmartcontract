@@ -309,27 +309,27 @@ public class FileUploadService {
     }
 
 
-    @PostConstruct
-    void getOrient() {
-        try {
-            List<NftFile> fileList = nftFileRepository.findAll();
-            for (NftFile nftFile : fileList) {
-                String orientation = nftFile.getExifOrientation();
-                if (orientation != null && orientation.length() > 0) {
-                    String fileName = nftFile.getFilename();
-                    String size300 = NFT_PATH + File.separator + "300" + File.separator + fileName;
-                    String size600 = NFT_PATH + File.separator + "600" + File.separator + fileName;
-                    String size1000 = NFT_PATH + File.separator + "1000" + File.separator + fileName;
-
-                    setRotateOrientation(size300, orientation);
-                    setRotateOrientation(size600, orientation);
-                    setRotateOrientation(size1000, orientation);
-                    logger.info("Set orientation {} to {}", orientation, fileName);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @PostConstruct
+//    void getOrient() {
+//        try {
+//            List<NftFile> fileList = nftFileRepository.findAll();
+//            for (NftFile nftFile : fileList) {
+//                String orientation = nftFile.getExifOrientation();
+//                if (orientation != null && orientation.length() > 0) {
+//                    String fileName = nftFile.getFilename();
+//                    String size300 = NFT_PATH + File.separator + "300" + File.separator + fileName;
+//                    String size600 = NFT_PATH + File.separator + "600" + File.separator + fileName;
+//                    String size1000 = NFT_PATH + File.separator + "1000" + File.separator + fileName;
+//
+//                    setRotateOrientation(size300, orientation);
+//                    setRotateOrientation(size600, orientation);
+//                    setRotateOrientation(size1000, orientation);
+//                    logger.info("Set orientation {} to {}", orientation, fileName);
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

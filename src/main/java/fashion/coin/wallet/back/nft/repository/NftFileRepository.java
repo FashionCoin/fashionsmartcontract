@@ -5,4 +5,6 @@ import fashion.coin.wallet.back.nft.entity.NftFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NftFileRepository extends JpaRepository<NftFile,Long> {
+
+    NftFile findTopByFilename(String filename);
 }
