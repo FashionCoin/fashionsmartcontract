@@ -14,6 +14,9 @@ public class NftFile {
     String filename;
     String contentType;
     Long size;
+    String exifOrientation;
+    String height;
+    String weigh;
 
     public NftFile() {
     }
@@ -54,5 +57,29 @@ public class NftFile {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public String getExifOrientation() {
+        return exifOrientation;
+    }
+
+    public void setExifOrientation(String exifOrientation) {
+        this.exifOrientation = exifOrientation;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public String getWeigh() {
+        return weigh;
+    }
+
+    public void setWeigh(String weigh) {
+        this.weigh = weigh;
     }
 }

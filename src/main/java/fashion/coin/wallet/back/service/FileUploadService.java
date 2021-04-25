@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -225,12 +226,15 @@ public class FileUploadService {
 
     private void setRotateOrientation(String filename, String exif) {
         try {
-            String command = "exiftool -Orientation=" + exif + " -n " + filename;
-            logger.info(command);
-            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
+            File image = new File(filename);
+            logger.info("ORIENTATION before set: {}", getRotateOrientation(filename));
 
-            int result = process.waitFor();
-            logger.info("Result: {}", result);
+            ExifTool exifTool = new ExifToolBuilder().build();
+
+            Map<Tag, String> valueMap = new HashMap<>();
+            valueMap.put(StandardTag.ORIENTATION, exif);
+            exifTool.setImageMeta(image, valueMap);
+            logger.info("ORIENTATION after set: {}", getRotateOrientation(filename));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -239,32 +243,16 @@ public class FileUploadService {
 
     private String getRotateOrientation(String originalFile) {
         try {
-//            if (originalFile.equals("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg")) {
-//                return "6";
-//            } else {
-//                logger.info(originalFile);
-//            }
+            File image = new File(originalFile);
+            ExifTool exifTool = new ExifToolBuilder().build();
 
+            Map<Tag, String> valueMap = exifTool.getImageMeta(image, asList(
+                    StandardTag.ORIENTATION
+            ));
+            String orientation = valueMap.get(StandardTag.ORIENTATION);
+            logger.info("ORIENTATION: {}", orientation);
 
-            logger.info("Exif: {}", originalFile);
-            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "ls"});
-
-//            String command = "exiftool -Orientation -n -S " + originalFile;
-//            logger.info(command);
-//            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            logger.info(String.valueOf(reader.lines().count()));
-            String firstLine = reader.readLine();
-            logger.info("First Line: {}", firstLine);
-
-
-            int result = process.waitFor();
-            logger.info("Result: {}", result);
-
-            if (firstLine != null && firstLine.contains("Orientation: ")) {
-                return firstLine.replace("Orientation: ", "");
-            }
+            return orientation;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -304,17 +292,13 @@ public class FileUploadService {
     @PostConstruct
     void getOrient() {
         try {
-            File image = new File("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg");
-            ExifTool exifTool = new ExifToolBuilder().build();
+            String filename ="/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg";
+            String orientation = getRotateOrientation(filename);
+            logger.info("Filename: {}",filename);
+            logger.info("Orientation: {}",orientation);
+            setRotateOrientation(filename,"0");
+            setRotateOrientation(filename,orientation);
 
-            Map<Tag, String> valueMap = exifTool.getImageMeta(image, asList(
-                        StandardTag.ORIENTATION,
-                        StandardTag.IMAGE_HEIGHT,
-                        StandardTag.IMAGE_WIDTH
-                ));
-           logger.info("ORIENTATION: {}",  valueMap.get( StandardTag.ORIENTATION));
-           logger.info("IMAGE_HEIGHT: {}",  valueMap.get( StandardTag.IMAGE_HEIGHT));
-           logger.info("IMAGE_WIDTH: {}",  valueMap.get( StandardTag.IMAGE_WIDTH));
         } catch (Exception e) {
             e.printStackTrace();
         }
