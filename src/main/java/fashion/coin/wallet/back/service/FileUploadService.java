@@ -240,8 +240,7 @@ public class FileUploadService {
 //            }
 
 
-
-            logger.info("Exif: {}",originalFile);
+            logger.info("Exif: {}", originalFile);
             Process process = Runtime.getRuntime().exec("exiftool");
 
 //            String command = "exiftool -Orientation -n -S " + originalFile;
@@ -249,9 +248,10 @@ public class FileUploadService {
 //            Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
+            logger.info(String.valueOf(reader.lines().count()));
             String firstLine = reader.readLine();
             logger.info("First Line: {}", firstLine);
+
 
             int result = process.waitFor();
             logger.info("Result: {}", result);
@@ -296,11 +296,11 @@ public class FileUploadService {
 
 
     @PostConstruct
-    void getOrient(){
+    void getOrient() {
         try {
             String exif = getRotateOrientation("/var/fashion/pic/nft/846c6f309eaf0462cba6ea57e0f869ce8828486b640c845fb993df195ecac7cf.jpeg");
             logger.info(exif);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
