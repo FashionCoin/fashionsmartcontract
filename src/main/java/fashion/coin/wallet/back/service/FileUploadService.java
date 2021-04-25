@@ -242,7 +242,7 @@ public class FileUploadService {
 
 
             logger.info("Exif: {}",originalFile);
-            Process process = Runtime.getRuntime().exec(new String[]{"exiftool", "-Orientation","-n","-S", originalFile});
+            Process process = Runtime.getRuntime().exec("exiftool -Orientation -n -S " + originalFile);
 
 //            String command = "exiftool -Orientation -n -S " + originalFile;
 //            logger.info(command);
