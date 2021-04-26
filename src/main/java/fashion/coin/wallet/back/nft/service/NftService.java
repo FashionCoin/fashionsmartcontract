@@ -256,8 +256,9 @@ public class NftService {
 
         Long timestamp = System.currentTimeMillis() - DAY;
 
-        List<Nft> nftList = nftRepository.findByAuthorNameAndTimestampIsGreaterThan(login, timestamp);
+        List<Nft> nftList = nftRepository.findByAuthorNameAndFreeAndTimestampIsGreaterThan(login,true, timestamp);
         if (nftList == null) return true;
+
         return nftList.size() < 10;
     }
 
