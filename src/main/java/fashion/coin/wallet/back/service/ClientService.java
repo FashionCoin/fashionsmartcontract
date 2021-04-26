@@ -255,7 +255,12 @@ public class ClientService {
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
 
 
-            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
+            if (!apiKeyInData.equals(apiKeyInSignature)) {
+                logger.error("apiKeyInSignature: {}",apiKeyInSignature);
+                logger.error("apiKeyInData: {}",apiKeyInData);
+
+                return error109;
+            }
 
             if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
             client.setApikey(data.getApikey());
