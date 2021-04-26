@@ -634,10 +634,12 @@ NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
                 result = aiService.transfer(amountWithoutTax.toString(),
                         nftTirage.getOwnerWallet(),
                         AIService.AIWallets.MONEYBAG).isResult();
-            } else {
+            } else if (!nft.isFree()){
                 result = aiService.transfer(amountWithoutTax.toString(),
                         nft.getOwnerWallet(),
                         AIService.AIWallets.MONEYBAG).isResult();
+            }else {
+                result = true;
             }
 
             if (result) {
