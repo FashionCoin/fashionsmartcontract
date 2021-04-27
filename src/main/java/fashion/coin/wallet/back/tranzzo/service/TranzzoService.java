@@ -10,11 +10,16 @@ import fashion.coin.wallet.back.tranzzo.entity.BuyFshn;
 import fashion.coin.wallet.back.tranzzo.entity.Tranzzo;
 import fashion.coin.wallet.back.tranzzo.repository.BuyFshnRepository;
 import fashion.coin.wallet.back.tranzzo.repository.TranzzoRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -47,6 +52,9 @@ public class TranzzoService {
     @Value("${fashion.host}")
     String fashinHost;
 
+    @Value("${tranzzo.payment.url}")
+    String paymentUrl;
+
 
     @Autowired
     Gson gson;
@@ -62,6 +70,9 @@ public class TranzzoService {
 
     @Autowired
     CurrencyService currencyService;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     public Tranzzo saveRequest(TranzzoPaymentRequestDTO request) {
 
@@ -257,10 +268,37 @@ public class TranzzoService {
 
             paymentRequest.setCcNumber(maskPAN(paymentRequest.getCcNumber()));
 
-            saveRequest(paymentRequest);
+            Tranzzo tranzzo = saveRequest(paymentRequest);
 
-            return new ResultDTO(true,paymentRequest,0);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-API-AUTH", "CPAY " + apiKey + ":" + secretKey);
+            headers.set("X-API-KEY", xApiKey);
+            headers.set("X-Requested-With", "XMLHttpRequest");
 
+            HttpEntity entity = new HttpEntity(paymentRequest, headers);
+
+            ResponseEntity<String> responce = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
+
+            logger.info("Tranzzo response: {}", gson.toJson(responce));
+
+            if (responce.getStatusCode().isError()) {
+                if (responce.hasBody()) {
+                    logger.error(responce.getBody());
+                    saveError(tranzzo, responce.getBody());
+                } else {
+                    logger.error(gson.toJson(responce.getStatusCode()));
+                    saveError(tranzzo, gson.toJson(responce.getStatusCode()));
+                }
+
+                return new ResultDTO(false, tranzzo.getError(), -1);
+            } else {
+                logger.info(responce.getBody());
+                TranzzoPaymentResponseDTO tranzzoResponse = gson.fromJson(responce.getBody(), TranzzoPaymentResponseDTO.class);
+                saveResponse(tranzzo, tranzzoResponse);
+
+                return new ResultDTO(true, tranzzoResponse.getUserActionUrl(), 0);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

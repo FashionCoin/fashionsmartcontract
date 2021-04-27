@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.tranzzo.dto;
 
+// https://cdn.tranzzo.com/tranzzo-api/index.html#direct-payments-with-card-data
+
 public class BuyFshnTranzzoDTO {
 
     String apikey;

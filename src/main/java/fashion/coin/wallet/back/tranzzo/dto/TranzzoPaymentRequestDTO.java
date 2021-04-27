@@ -2,6 +2,8 @@ package fashion.coin.wallet.back.tranzzo.dto;
 
 import java.math.BigDecimal;
 
+// https://cdn.tranzzo.com/tranzzo-api/index.html#direct-payments-with-card-data
+
 public class TranzzoPaymentRequestDTO {
      String posId;
      String mode;

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+// https://cdn.tranzzo.com/tranzzo-api/index.html#direct-payments-with-card-data
+
 @Controller
 public class TranzzoController {
 
