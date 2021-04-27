@@ -314,7 +314,8 @@ public class WrapService {
         if(network.equals("ethereum")) {
             event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
         }else if(network.equals("binance")){
-            event.setBlockNumber(13845648L - hexToLong(result.getBlockNumber()));
+            logger.info("{}: {}",result.transactionHash, hexToLong(result.getBlockNumber()));
+            event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
         }
         event.setTimeStamp(hexToLong(result.getTimeStamp()));
         event.setAmount(hexToLong(result.getData()));
@@ -390,7 +391,8 @@ public class WrapService {
             EventsDTO responce = null;
             if (network.equals("binance")) {
                 responce = restTemplate.getForObject("https://api.bscscan.com/api?module=logs&action=getLogs&" +
-                                "fromBlock=" + lastBlock + "&toBlock=latest&" +
+//                                "fromBlock=" + lastBlock + "&toBlock=latest&" +
+                                "fromBlock=6573342&toBlock=latest&" +
                                 "address=" + binanceContractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
                                 "apikey=" + binanceApiKey,
                         EventsDTO.class);
