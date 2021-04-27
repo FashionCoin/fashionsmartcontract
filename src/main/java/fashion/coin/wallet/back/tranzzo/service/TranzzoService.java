@@ -276,7 +276,9 @@ public class TranzzoService {
             headers.set("X-API-KEY", xApiKey);
             headers.set("X-Requested-With", "XMLHttpRequest");
 
-            HttpEntity entity = new HttpEntity(paymentRequest, headers);
+            HttpEntity entity = new HttpEntity(gson.toJson(paymentRequest), headers);
+
+            logger.info(paymentUrl);
 
             ResponseEntity<String> responce = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
 
