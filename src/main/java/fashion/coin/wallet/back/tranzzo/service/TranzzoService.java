@@ -292,7 +292,7 @@ public class TranzzoService {
 
             Tranzzo tranzzo = saveRequest(paymentRequest);
 
-            logger.info("Tranzzo response: {}", gson.toJson(response));
+//            logger.info("Tranzzo response: {}", gson.toJson(response));
 
             if (response.getStatusCode().isError()) {
                 if (response.hasBody()) {
