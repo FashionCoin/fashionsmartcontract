@@ -315,7 +315,7 @@ public class WrapService {
             event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
         }else if(network.equals("binance")){
             logger.info("{}: {}",result.transactionHash, hexToLong(result.getBlockNumber()));
-            event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
+            event.setBlockNumber( hexToLong(result.getBlockNumber()));
         }
         event.setTimeStamp(hexToLong(result.getTimeStamp()));
         event.setAmount(hexToLong(result.getData()));
