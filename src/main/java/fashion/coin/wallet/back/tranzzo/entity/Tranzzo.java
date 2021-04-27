@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+// https://cdn.tranzzo.com/tranzzo-api/index.html#direct-payments-with-card-data
+
+
 @Entity
 public class Tranzzo {
     @Id

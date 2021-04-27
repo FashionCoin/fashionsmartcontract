@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.tranzzo.dto;
 
+import java.math.BigDecimal;
+
 public class TranzzoPaymentResponseDTO {
 
     private String paymentId;
@@ -10,7 +12,7 @@ public class TranzzoPaymentResponseDTO {
     private String posId;
     private String mode;
     private String method;
-    private Integer amount;
+    private BigDecimal amount;
     private String currency;
     private String description;
     private String status;
@@ -101,11 +103,11 @@ public class TranzzoPaymentResponseDTO {
         this.method = method;
     }
 
-    public Integer getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
