@@ -285,7 +285,7 @@ public class TranzzoService {
 
 //            ResponseEntity<String> response = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(paymentUrl, entity, String.class);
+            ResponseEntity<TranzzoPaymentResponseDTO> response = restTemplate.postForEntity(paymentUrl, entity, TranzzoPaymentResponseDTO.class);
 
 
             paymentRequest.setCc_number(maskPAN(paymentRequest.getCc_number()));
@@ -296,8 +296,8 @@ public class TranzzoService {
 
             if (response.getStatusCode().isError()) {
                 if (response.hasBody()) {
-                    logger.error(response.getBody());
-                    saveError(tranzzo, response.getBody());
+//                    logger.error(response.getBody());
+//                    saveError(tranzzo, response.getBody());
                 } else {
                     logger.error(gson.toJson(response.getStatusCode()));
                     saveError(tranzzo, gson.toJson(response.getStatusCode()));
@@ -305,8 +305,11 @@ public class TranzzoService {
 
                 return new ResultDTO(false, tranzzo.getError(), -1);
             } else {
-                logger.info(response.getBody());
-                TranzzoPaymentResponseDTO tranzzoResponse = gson.fromJson(response.getBody(), TranzzoPaymentResponseDTO.class);
+//                logger.info(response.getBody());
+                TranzzoPaymentResponseDTO tranzzoResponse =
+                        response.getBody();
+//                        gson.fromJson(response.getBody(), TranzzoPaymentResponseDTO.class);
+
                 saveResponse(tranzzo, tranzzoResponse);
 
                 return new ResultDTO(true, tranzzoResponse.getUser_action_url(), 0);
