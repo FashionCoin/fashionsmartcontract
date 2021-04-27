@@ -234,7 +234,7 @@ public class WrapService {
 
     public ResultDTO unwrap(UnwrapRequestDTO request) {
         try {
-            String network = request.equals("binance") ? "binance" : "ethereum";
+            String network = request.getNetwork().equals("binance") ? "binance" : "ethereum";
 
 
             Client client = clientService.findClientByApikey(request.getApikey());

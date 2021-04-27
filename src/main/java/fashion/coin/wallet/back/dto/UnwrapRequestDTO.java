@@ -7,11 +7,9 @@ public class UnwrapRequestDTO {
     String transactionHash;
     String amount;
 
-    String network = "ethereum";
+    String network;
 
-    public UnwrapRequestDTO() {
-        this.network = "ethereum";
-    }
+
 
     public String getApikey() {
         return apikey;
