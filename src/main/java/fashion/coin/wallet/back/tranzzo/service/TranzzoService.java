@@ -279,27 +279,31 @@ public class TranzzoService {
             logger.info(gson.toJson(entity));
             logger.info(paymentUrl);
 
-            ResponseEntity<String> responce = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
+//            ResponseEntity<String> response = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
+
+            ResponseEntity<String> response = restTemplate.postForEntity(paymentUrl, entity, String.class);
+
+
 
             paymentRequest.setCcNumber(maskPAN(paymentRequest.getCcNumber()));
 
             Tranzzo tranzzo = saveRequest(paymentRequest);
 
-            logger.info("Tranzzo response: {}", gson.toJson(responce));
+            logger.info("Tranzzo response: {}", gson.toJson(response));
 
-            if (responce.getStatusCode().isError()) {
-                if (responce.hasBody()) {
-                    logger.error(responce.getBody());
-                    saveError(tranzzo, responce.getBody());
+            if (response.getStatusCode().isError()) {
+                if (response.hasBody()) {
+                    logger.error(response.getBody());
+                    saveError(tranzzo, response.getBody());
                 } else {
-                    logger.error(gson.toJson(responce.getStatusCode()));
-                    saveError(tranzzo, gson.toJson(responce.getStatusCode()));
+                    logger.error(gson.toJson(response.getStatusCode()));
+                    saveError(tranzzo, gson.toJson(response.getStatusCode()));
                 }
 
                 return new ResultDTO(false, tranzzo.getError(), -1);
             } else {
-                logger.info(responce.getBody());
-                TranzzoPaymentResponseDTO tranzzoResponse = gson.fromJson(responce.getBody(), TranzzoPaymentResponseDTO.class);
+                logger.info(response.getBody());
+                TranzzoPaymentResponseDTO tranzzoResponse = gson.fromJson(response.getBody(), TranzzoPaymentResponseDTO.class);
                 saveResponse(tranzzo, tranzzoResponse);
 
                 return new ResultDTO(true, tranzzoResponse.getUserActionUrl(), 0);
