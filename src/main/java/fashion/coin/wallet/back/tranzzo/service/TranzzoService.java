@@ -10,19 +10,17 @@ import fashion.coin.wallet.back.tranzzo.entity.BuyFshn;
 import fashion.coin.wallet.back.tranzzo.entity.Tranzzo;
 import fashion.coin.wallet.back.tranzzo.repository.BuyFshnRepository;
 import fashion.coin.wallet.back.tranzzo.repository.TranzzoRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.web3j.abi.datatypes.Array;
-import org.web3j.abi.datatypes.Bytes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -86,20 +84,20 @@ public class TranzzoService {
         tranzzo.setTimestamp(System.currentTimeMillis());
         tranzzo.setLocalDateTime(LocalDateTime.now());
 
-        tranzzo.setPosId(request.getPosId());
+        tranzzo.setPosId(request.getPos_id());
         tranzzo.setMode(request.getMode());
         tranzzo.setMethod(request.getMethod());
         tranzzo.setAmount(new BigDecimal(request.getAmount()));
         tranzzo.setCurrency(request.getCurrency());
         tranzzo.setDescription(request.getDescription());
-        tranzzo.setOrderId(request.getOrderId());
-        tranzzo.setOrder3dsBypass(request.getOrder3dsBypass());
-        tranzzo.setCcNumber(request.getCcNumber());
-        tranzzo.setExpMonth(request.getExpMonth());
-        tranzzo.setExpYear(request.getExpYear());
-        tranzzo.setCardCvv(request.getCardCvv());
-        tranzzo.setServerUrl(request.getServerUrl());
-        tranzzo.setResultUrl(request.getResultUrl());
+        tranzzo.setOrderId(request.getOrder_id());
+        tranzzo.setOrder3dsBypass(request.getOrder_3ds_bypass());
+        tranzzo.setCcNumber(request.getCc_number());
+        tranzzo.setExpMonth(request.getExp_month());
+        tranzzo.setExpYear(request.getExp_year());
+        tranzzo.setCardCvv(request.getCard_cvv());
+        tranzzo.setServerUrl(request.getServer_url());
+        tranzzo.setResultUrl(request.getResult_url());
         tranzzo.setPayload(request.getPayload());
 
         BrowserFingerprintDTO fingerprint = request.getBrowserFingerprint();
@@ -122,40 +120,40 @@ public class TranzzoService {
 
     public Tranzzo saveResponse(Tranzzo tranzzo, TranzzoPaymentResponseDTO response) {
 
-        tranzzo.setPaymentId(response.getPaymentId());
-        tranzzo.setOrderId(response.getOrderId());
-        tranzzo.setGatewayOrderId(response.getGatewayOrderId());
-        tranzzo.setBillingOrderId(response.getBillingOrderId());
-        tranzzo.setTransactionId(response.getTransactionId());
-        tranzzo.setPosId(response.getPosId());
+        tranzzo.setPaymentId(response.getPayment_id());
+        tranzzo.setOrderId(response.getOrder_id());
+        tranzzo.setGatewayOrderId(response.getGateway_order_id());
+        tranzzo.setBillingOrderId(response.getBilling_order_id());
+        tranzzo.setTransactionId(response.getTransaction_id());
+        tranzzo.setPosId(response.getPos_id());
         tranzzo.setMode(response.getMode());
         tranzzo.setMethod(response.getMethod());
         tranzzo.setAmount(response.getAmount());
         tranzzo.setCurrency(response.getCurrency());
         tranzzo.setDescription(response.getDescription());
         tranzzo.setStatus(response.getStatus());
-        tranzzo.setStatusCode(response.getStatusCode());
-        tranzzo.setStatusDescription(response.getStatusDescription());
-        tranzzo.setUserActionRequired(response.getUserActionRequired());
-        tranzzo.setUserActionUrl(response.getUserActionUrl());
+        tranzzo.setStatusCode(response.getStatus_code());
+        tranzzo.setStatusDescription(response.getStatus_description());
+        tranzzo.setUserActionRequired(response.getUser_action_required());
+        tranzzo.setUserActionUrl(response.getUser_action_url());
         tranzzo.setEci(response.getEci());
         tranzzo.setMcc(response.getMcc());
         tranzzo.setOptions3ds(response.getOptions3ds());
-        tranzzo.setCcMask(response.getCcMask());
-        tranzzo.setCcToken(response.getCcToken());
-        tranzzo.setCcTokenExpiration(response.getCcTokenExpiration());
-        tranzzo.setCustomerId(response.getCustomerId());
-        tranzzo.setCustomerIp(response.getCustomerIp());
-        tranzzo.setCustomerFname(response.getCustomerFname());
-        tranzzo.setCustomerLname(response.getCustomerLname());
-        tranzzo.setCustomerEmail(response.getCustomerEmail());
-        tranzzo.setCustomerPhone(response.getCustomerPhone());
-        tranzzo.setCustomerCountry(response.getCustomerCountry());
-        tranzzo.setResultUrl(response.getResultUrl());
-        tranzzo.setCreatedAt(response.getCreatedAt());
-        tranzzo.setProcessingTime(response.getProcessingTime());
+        tranzzo.setCcMask(response.getCc_mask());
+        tranzzo.setCcToken(response.getCc_token());
+        tranzzo.setCcTokenExpiration(response.getCc_token_expiration());
+        tranzzo.setCustomerId(response.getCustomer_id());
+        tranzzo.setCustomerIp(response.getCustomer_ip());
+        tranzzo.setCustomerFname(response.getCustomer_fname());
+        tranzzo.setCustomerLname(response.getCustomer_lname());
+        tranzzo.setCustomerEmail(response.getCustomer_email());
+        tranzzo.setCustomerPhone(response.getCustomer_phone());
+        tranzzo.setCustomerCountry(response.getCustomer_country());
+        tranzzo.setResultUrl(response.getResult_url());
+        tranzzo.setCreatedAt(response.getCreated_at());
+        tranzzo.setProcessingTime(response.getProcessing_time());
         tranzzo.setPayload(response.getPayload());
-        tranzzo.setBankShortName(response.getBankShortName());
+        tranzzo.setBankShortName(response.getBank_short_name());
 
         tranzzoRepository.save(tranzzo);
 
@@ -241,21 +239,21 @@ public class TranzzoService {
             buyFshnRepository.save(buyFshn);
 
             TranzzoPaymentRequestDTO paymentRequest = new TranzzoPaymentRequestDTO();
-            paymentRequest.setPosId(posId);
+            paymentRequest.setPos_id(posId);
             paymentRequest.setMode("direct");
             paymentRequest.setMethod("purchase");
 //            paymentRequest.setAmount(buyFshn.getUahAmount().doubleValue());
             paymentRequest.setAmount(1.0); // TODO: sandbox
             paymentRequest.setCurrency("UAH");
             paymentRequest.setDescription("Buying FSHN for Ukrainian Hryvna");
-            paymentRequest.setOrderId(String.valueOf(buyFshn.getPaymentId()));
-            paymentRequest.setOrder3dsBypass("always");
-            paymentRequest.setCcNumber(request.getCardNumber());
-            paymentRequest.setExpMonth(Integer.parseInt(request.getExpMonth()));
-            paymentRequest.setExpYear(Integer.parseInt(request.getExpYear()));
-            paymentRequest.setCardCvv(request.getCvv());
-            paymentRequest.setServerUrl(fashinHost + "/api/v1/tranzzo/callback");
-            paymentRequest.setResultUrl(request.getResultUrl());
+            paymentRequest.setOrder_id(String.valueOf(buyFshn.getPaymentId()));
+            paymentRequest.setOrder_3ds_bypass("always");
+            paymentRequest.setCc_number(request.getCardNumber());
+            paymentRequest.setExp_month(Integer.parseInt(request.getExpMonth()));
+            paymentRequest.setExp_year(Integer.parseInt(request.getExpYear()));
+            paymentRequest.setCard_cvv(request.getCvv());
+            paymentRequest.setServer_url(fashinHost + "/api/v1/tranzzo/callback");
+            paymentRequest.setResult_url(request.getResultUrl());
 
             BrowserFingerprintDTO fingerprint = new BrowserFingerprintDTO();
             fingerprint.setBrowserColorDepth(request.getBrowserColorDepth());
@@ -290,7 +288,7 @@ public class TranzzoService {
             ResponseEntity<String> response = restTemplate.postForEntity(paymentUrl, entity, String.class);
 
 
-            paymentRequest.setCcNumber(maskPAN(paymentRequest.getCcNumber()));
+            paymentRequest.setCc_number(maskPAN(paymentRequest.getCc_number()));
 
             Tranzzo tranzzo = saveRequest(paymentRequest);
 
@@ -311,7 +309,7 @@ public class TranzzoService {
                 TranzzoPaymentResponseDTO tranzzoResponse = gson.fromJson(response.getBody(), TranzzoPaymentResponseDTO.class);
                 saveResponse(tranzzo, tranzzoResponse);
 
-                return new ResultDTO(true, tranzzoResponse.getUserActionUrl(), 0);
+                return new ResultDTO(true, tranzzoResponse.getUser_action_url(), 0);
             }
 
         } catch (RestClientException re) {

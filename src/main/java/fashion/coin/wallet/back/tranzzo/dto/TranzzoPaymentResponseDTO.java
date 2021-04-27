@@ -6,87 +6,87 @@ import java.math.BigDecimal;
 
 public class TranzzoPaymentResponseDTO {
 
-    private String paymentId;
-    private String orderId;
-    private String gatewayOrderId;
-    private String billingOrderId;
-    private String transactionId;
-    private String posId;
+    private String payment_id;
+    private String order_id;
+    private String gateway_order_id;
+    private String billing_order_id;
+    private String transaction_id;
+    private String pos_id;
     private String mode;
     private String method;
     private BigDecimal amount;
     private String currency;
     private String description;
     private String status;
-    private String statusCode;
-    private String statusDescription;
-    private Boolean userActionRequired;
-    private String userActionUrl;
+    private String status_code;
+    private String status_description;
+    private Boolean user_action_required;
+    private String user_action_url;
     private String eci;
     private String mcc;
     private String options3ds;
-    private String ccMask;
-    private String ccToken;
-    private String ccTokenExpiration;
-    private String customerId;
-    private String customerIp;
-    private String customerFname;
-    private String customerLname;
-    private String customerEmail;
-    private String customerPhone;
-    private String customerCountry;
-    private String resultUrl;
-    private String createdAt;
-    private String processingTime;
+    private String cc_mask;
+    private String cc_token;
+    private String cc_token_expiration;
+    private String customer_id;
+    private String customer_ip;
+    private String customer_fname;
+    private String customer_lname;
+    private String customer_email;
+    private String customer_phone;
+    private String customer_country;
+    private String result_url;
+    private String created_at;
+    private String processing_time;
     private String payload;
-    private String bankShortName;
+    private String bank_short_name;
 
-    public String getPaymentId() {
-        return paymentId;
+    public String getPayment_id() {
+        return payment_id;
     }
 
-    public void setPaymentId(String paymentId) {
-        this.paymentId = paymentId;
+    public void setPayment_id(String payment_id) {
+        this.payment_id = payment_id;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getOrder_id() {
+        return order_id;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 
-    public String getGatewayOrderId() {
-        return gatewayOrderId;
+    public String getGateway_order_id() {
+        return gateway_order_id;
     }
 
-    public void setGatewayOrderId(String gatewayOrderId) {
-        this.gatewayOrderId = gatewayOrderId;
+    public void setGateway_order_id(String gateway_order_id) {
+        this.gateway_order_id = gateway_order_id;
     }
 
-    public String getBillingOrderId() {
-        return billingOrderId;
+    public String getBilling_order_id() {
+        return billing_order_id;
     }
 
-    public void setBillingOrderId(String billingOrderId) {
-        this.billingOrderId = billingOrderId;
+    public void setBilling_order_id(String billing_order_id) {
+        this.billing_order_id = billing_order_id;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getTransaction_id() {
+        return transaction_id;
     }
 
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
+    public void setTransaction_id(String transaction_id) {
+        this.transaction_id = transaction_id;
     }
 
-    public String getPosId() {
-        return posId;
+    public String getPos_id() {
+        return pos_id;
     }
 
-    public void setPosId(String posId) {
-        this.posId = posId;
+    public void setPos_id(String pos_id) {
+        this.pos_id = pos_id;
     }
 
     public String getMode() {
@@ -137,36 +137,36 @@ public class TranzzoPaymentResponseDTO {
         this.status = status;
     }
 
-    public String getStatusCode() {
-        return statusCode;
+    public String getStatus_code() {
+        return status_code;
     }
 
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public void setStatus_code(String status_code) {
+        this.status_code = status_code;
     }
 
-    public String getStatusDescription() {
-        return statusDescription;
+    public String getStatus_description() {
+        return status_description;
     }
 
-    public void setStatusDescription(String statusDescription) {
-        this.statusDescription = statusDescription;
+    public void setStatus_description(String status_description) {
+        this.status_description = status_description;
     }
 
-    public Boolean getUserActionRequired() {
-        return userActionRequired;
+    public Boolean getUser_action_required() {
+        return user_action_required;
     }
 
-    public void setUserActionRequired(Boolean userActionRequired) {
-        this.userActionRequired = userActionRequired;
+    public void setUser_action_required(Boolean user_action_required) {
+        this.user_action_required = user_action_required;
     }
 
-    public String getUserActionUrl() {
-        return userActionUrl;
+    public String getUser_action_url() {
+        return user_action_url;
     }
 
-    public void setUserActionUrl(String userActionUrl) {
-        this.userActionUrl = userActionUrl;
+    public void setUser_action_url(String user_action_url) {
+        this.user_action_url = user_action_url;
     }
 
     public String getEci() {
@@ -193,108 +193,108 @@ public class TranzzoPaymentResponseDTO {
         this.options3ds = options3ds;
     }
 
-    public String getCcMask() {
-        return ccMask;
+    public String getCc_mask() {
+        return cc_mask;
     }
 
-    public void setCcMask(String ccMask) {
-        this.ccMask = ccMask;
+    public void setCc_mask(String cc_mask) {
+        this.cc_mask = cc_mask;
     }
 
-    public String getCcToken() {
-        return ccToken;
+    public String getCc_token() {
+        return cc_token;
     }
 
-    public void setCcToken(String ccToken) {
-        this.ccToken = ccToken;
+    public void setCc_token(String cc_token) {
+        this.cc_token = cc_token;
     }
 
-    public String getCcTokenExpiration() {
-        return ccTokenExpiration;
+    public String getCc_token_expiration() {
+        return cc_token_expiration;
     }
 
-    public void setCcTokenExpiration(String ccTokenExpiration) {
-        this.ccTokenExpiration = ccTokenExpiration;
+    public void setCc_token_expiration(String cc_token_expiration) {
+        this.cc_token_expiration = cc_token_expiration;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getCustomer_id() {
+        return customer_id;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setCustomer_id(String customer_id) {
+        this.customer_id = customer_id;
     }
 
-    public String getCustomerIp() {
-        return customerIp;
+    public String getCustomer_ip() {
+        return customer_ip;
     }
 
-    public void setCustomerIp(String customerIp) {
-        this.customerIp = customerIp;
+    public void setCustomer_ip(String customer_ip) {
+        this.customer_ip = customer_ip;
     }
 
-    public String getCustomerFname() {
-        return customerFname;
+    public String getCustomer_fname() {
+        return customer_fname;
     }
 
-    public void setCustomerFname(String customerFname) {
-        this.customerFname = customerFname;
+    public void setCustomer_fname(String customer_fname) {
+        this.customer_fname = customer_fname;
     }
 
-    public String getCustomerLname() {
-        return customerLname;
+    public String getCustomer_lname() {
+        return customer_lname;
     }
 
-    public void setCustomerLname(String customerLname) {
-        this.customerLname = customerLname;
+    public void setCustomer_lname(String customer_lname) {
+        this.customer_lname = customer_lname;
     }
 
-    public String getCustomerEmail() {
-        return customerEmail;
+    public String getCustomer_email() {
+        return customer_email;
     }
 
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
+    public void setCustomer_email(String customer_email) {
+        this.customer_email = customer_email;
     }
 
-    public String getCustomerPhone() {
-        return customerPhone;
+    public String getCustomer_phone() {
+        return customer_phone;
     }
 
-    public void setCustomerPhone(String customerPhone) {
-        this.customerPhone = customerPhone;
+    public void setCustomer_phone(String customer_phone) {
+        this.customer_phone = customer_phone;
     }
 
-    public String getCustomerCountry() {
-        return customerCountry;
+    public String getCustomer_country() {
+        return customer_country;
     }
 
-    public void setCustomerCountry(String customerCountry) {
-        this.customerCountry = customerCountry;
+    public void setCustomer_country(String customer_country) {
+        this.customer_country = customer_country;
     }
 
-    public String getResultUrl() {
-        return resultUrl;
+    public String getResult_url() {
+        return result_url;
     }
 
-    public void setResultUrl(String resultUrl) {
-        this.resultUrl = resultUrl;
+    public void setResult_url(String result_url) {
+        this.result_url = result_url;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public String getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 
-    public String getProcessingTime() {
-        return processingTime;
+    public String getProcessing_time() {
+        return processing_time;
     }
 
-    public void setProcessingTime(String processingTime) {
-        this.processingTime = processingTime;
+    public void setProcessing_time(String processing_time) {
+        this.processing_time = processing_time;
     }
 
     public String getPayload() {
@@ -305,11 +305,11 @@ public class TranzzoPaymentResponseDTO {
         this.payload = payload;
     }
 
-    public String getBankShortName() {
-        return bankShortName;
+    public String getBank_short_name() {
+        return bank_short_name;
     }
 
-    public void setBankShortName(String bankShortName) {
-        this.bankShortName = bankShortName;
+    public void setBank_short_name(String bank_short_name) {
+        this.bank_short_name = bank_short_name;
     }
 }

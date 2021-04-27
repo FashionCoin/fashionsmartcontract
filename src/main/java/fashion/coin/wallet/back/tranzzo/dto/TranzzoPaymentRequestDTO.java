@@ -5,29 +5,29 @@ import java.math.BigDecimal;
 // https://cdn.tranzzo.com/tranzzo-api/index.html#direct-payments-with-card-data
 
 public class TranzzoPaymentRequestDTO {
-     String posId;
+     String pos_id;
      String mode;
      String method;
      Double amount;
      String currency;
      String description;
-     String orderId;
-     String order3dsBypass;
-     String ccNumber;
-     Integer expMonth;
-     Integer expYear;
-     String cardCvv;
-     String serverUrl;
-     String resultUrl;
+     String order_id;
+     String order_3ds_bypass;
+     String cc_number;
+     Integer exp_month;
+     Integer exp_year;
+     String card_cvv;
+     String server_url;
+     String result_url;
      String payload;
      BrowserFingerprintDTO browserFingerprint;
 
-    public String getPosId() {
-        return posId;
+    public String getPos_id() {
+        return pos_id;
     }
 
-    public void setPosId(String posId) {
-        this.posId = posId;
+    public void setPos_id(String pos_id) {
+        this.pos_id = pos_id;
     }
 
     public String getMode() {
@@ -70,68 +70,68 @@ public class TranzzoPaymentRequestDTO {
         this.description = description;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public String getOrder_id() {
+        return order_id;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setOrder_id(String order_id) {
+        this.order_id = order_id;
     }
 
-    public String getOrder3dsBypass() {
-        return order3dsBypass;
+    public String getOrder_3ds_bypass() {
+        return order_3ds_bypass;
     }
 
-    public void setOrder3dsBypass(String order3dsBypass) {
-        this.order3dsBypass = order3dsBypass;
+    public void setOrder_3ds_bypass(String order_3ds_bypass) {
+        this.order_3ds_bypass = order_3ds_bypass;
     }
 
-    public String getCcNumber() {
-        return ccNumber;
+    public String getCc_number() {
+        return cc_number;
     }
 
-    public void setCcNumber(String ccNumber) {
-        this.ccNumber = ccNumber;
+    public void setCc_number(String cc_number) {
+        this.cc_number = cc_number;
     }
 
-    public Integer getExpMonth() {
-        return expMonth;
+    public Integer getExp_month() {
+        return exp_month;
     }
 
-    public void setExpMonth(Integer expMonth) {
-        this.expMonth = expMonth;
+    public void setExp_month(Integer exp_month) {
+        this.exp_month = exp_month;
     }
 
-    public Integer getExpYear() {
-        return expYear;
+    public Integer getExp_year() {
+        return exp_year;
     }
 
-    public void setExpYear(Integer expYear) {
-        this.expYear = expYear;
+    public void setExp_year(Integer exp_year) {
+        this.exp_year = exp_year;
     }
 
-    public String getCardCvv() {
-        return cardCvv;
+    public String getCard_cvv() {
+        return card_cvv;
     }
 
-    public void setCardCvv(String cardCvv) {
-        this.cardCvv = cardCvv;
+    public void setCard_cvv(String card_cvv) {
+        this.card_cvv = card_cvv;
     }
 
-    public String getServerUrl() {
-        return serverUrl;
+    public String getServer_url() {
+        return server_url;
     }
 
-    public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
+    public void setServer_url(String server_url) {
+        this.server_url = server_url;
     }
 
-    public String getResultUrl() {
-        return resultUrl;
+    public String getResult_url() {
+        return result_url;
     }
 
-    public void setResultUrl(String resultUrl) {
-        this.resultUrl = resultUrl;
+    public void setResult_url(String result_url) {
+        this.result_url = result_url;
     }
 
     public String getPayload() {
