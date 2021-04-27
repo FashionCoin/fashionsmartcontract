@@ -8,7 +8,7 @@ public class TranzzoPaymentRequestDTO {
      String posId;
      String mode;
      String method;
-     BigDecimal amount;
+     Double amount;
      String currency;
      String description;
      String orderId;
@@ -46,11 +46,11 @@ public class TranzzoPaymentRequestDTO {
         this.method = method;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

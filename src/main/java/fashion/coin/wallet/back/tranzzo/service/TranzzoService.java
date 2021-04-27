@@ -83,7 +83,7 @@ public class TranzzoService {
         tranzzo.setPosId(request.getPosId());
         tranzzo.setMode(request.getMode());
         tranzzo.setMethod(request.getMethod());
-        tranzzo.setAmount(request.getAmount());
+        tranzzo.setAmount(new BigDecimal( request.getAmount()));
         tranzzo.setCurrency(request.getCurrency());
         tranzzo.setDescription(request.getDescription());
         tranzzo.setOrderId(request.getOrderId());
@@ -238,7 +238,8 @@ public class TranzzoService {
             paymentRequest.setPosId(posId);
             paymentRequest.setMode("direct");
             paymentRequest.setMethod("purchase");
-            paymentRequest.setAmount(buyFshn.getUahAmount());
+//            paymentRequest.setAmount(buyFshn.getUahAmount().doubleValue());
+            paymentRequest.setAmount(1.0); // TODO: sandbox
             paymentRequest.setCurrency("UAH");
             paymentRequest.setDescription("Buying FSHN for Ukrainian Hryvna");
             paymentRequest.setOrderId(String.valueOf(buyFshn.getPaymentId()));
