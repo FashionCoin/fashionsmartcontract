@@ -21,12 +21,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.web3j.abi.datatypes.Array;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
@@ -312,14 +314,14 @@ public class TranzzoService {
             }
 
         } catch (RestClientException re) {
-            re.printStackTrace();
-            logger.info(gson.toJson(re));
+            logger.error(re.getLocalizedMessage());
+//            re.printStackTrace();
+//            logger.info(gson.toJson(re));
             String json = gson.toJson(re);
             Map<String,Object> errorMap = gson.fromJson(json, HashMap.class);
 
-            for(Map.Entry<String,Object> entry : errorMap.entrySet()){
-                logger.error("{} : {}",entry.getKey(),entry.getValue());
-            }
+            List<Double> doubleResponse = (List<Double>) errorMap.get(" responseBody ");
+            logger.error("Double Response: {}",gson.toJson(doubleResponse));
 
             return new ResultDTO(false, re.getMessage(), -1);
 
