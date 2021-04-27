@@ -278,6 +278,7 @@ public class TranzzoService {
 
             HttpEntity entity = new HttpEntity(gson.toJson(paymentRequest), headers);
 
+            logger.info(gson.toJson(entity));
             logger.info(paymentUrl);
 
             ResponseEntity<String> responce = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
