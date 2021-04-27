@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error230;
@@ -312,6 +314,13 @@ public class TranzzoService {
         } catch (RestClientException re) {
             re.printStackTrace();
             logger.info(gson.toJson(re));
+            String json = gson.toJson(re);
+            Map<String,Object> errorMap = gson.fromJson(json, HashMap.class);
+
+            for(Map.Entry<String,Object> entry : errorMap.entrySet()){
+                logger.error("{} : {}",entry.getKey(),entry.getValue());
+            }
+
             return new ResultDTO(false, re.getMessage(), -1);
 
         } catch (Exception e) {
