@@ -266,9 +266,6 @@ public class TranzzoService {
 
             logger.info("Tranzzo sandbox request: {}", gson.toJson(paymentRequest));
 
-            paymentRequest.setCcNumber(maskPAN(paymentRequest.getCcNumber()));
-
-            Tranzzo tranzzo = saveRequest(paymentRequest);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -282,6 +279,10 @@ public class TranzzoService {
             logger.info(paymentUrl);
 
             ResponseEntity<String> responce = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
+
+            paymentRequest.setCcNumber(maskPAN(paymentRequest.getCcNumber()));
+
+            Tranzzo tranzzo = saveRequest(paymentRequest);
 
             logger.info("Tranzzo response: {}", gson.toJson(responce));
 
