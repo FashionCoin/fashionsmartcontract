@@ -320,9 +320,9 @@ public class TranzzoService {
             String json = gson.toJson(re);
             Map<String,Object> errorMap = gson.fromJson(json, HashMap.class);
 
-            Object doubleResponse = errorMap.get("responseBody");
+            List<Double> doubleResponse =(List<Double>) errorMap.get("responseBody");
             logger.error("Double Response: {}",gson.toJson(doubleResponse));
-            logger.error("Double Response: {}",gson.toJson(doubleResponse.getClass()));
+//            logger.error("Double Response: {}",gson.toJson(doubleResponse.getClass()));
 
 
 
