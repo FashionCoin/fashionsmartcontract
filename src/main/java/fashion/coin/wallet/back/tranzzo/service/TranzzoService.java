@@ -276,7 +276,7 @@ public class TranzzoService {
             headers.set("X-API-KEY", xApiKey);
             headers.set("X-Requested-With", "XMLHttpRequest");
 
-            HttpEntity entity = new HttpEntity(gson.toJson(paymentRequest), headers);
+            HttpEntity entity = new HttpEntity(paymentRequest, headers);
 
             logger.info(gson.toJson(entity));
             logger.info(paymentUrl);
