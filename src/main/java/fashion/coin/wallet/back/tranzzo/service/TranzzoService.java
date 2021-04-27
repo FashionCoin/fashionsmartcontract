@@ -225,6 +225,7 @@ public class TranzzoService {
     }
 
     public ResultDTO paymentPay(BuyFshnTranzzoDTO request, HttpServletRequest servletRequest) {
+        Tranzzo tranzzo = null;
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
@@ -285,40 +286,22 @@ public class TranzzoService {
 
 //            ResponseEntity<String> response = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
 
-            ResponseEntity<TranzzoPaymentResponseDTO> response = restTemplate.postForEntity(paymentUrl, entity, TranzzoPaymentResponseDTO.class);
+            ResponseEntity<TranzzoPaymentResponseDTO> responseEntity = restTemplate.postForEntity(paymentUrl, entity, TranzzoPaymentResponseDTO.class);
 
-
+            TranzzoPaymentResponseDTO tranzzoResponse = responseEntity.getBody();
             paymentRequest.setCc_number(maskPAN(paymentRequest.getCc_number()));
 
-            Tranzzo tranzzo = saveRequest(paymentRequest);
+            tranzzo = saveRequest(paymentRequest);
 
-//            logger.info("Tranzzo response: {}", gson.toJson(response));
 
-            if (response.getStatusCode().isError()) {
-                if (response.hasBody()) {
-//                    logger.error(response.getBody());
-//                    saveError(tranzzo, response.getBody());
-                } else {
-                    logger.error(gson.toJson(response.getStatusCode()));
-                    saveError(tranzzo, gson.toJson(response.getStatusCode()));
-                }
+            saveResponse(tranzzo, tranzzoResponse);
 
-                return new ResultDTO(false, tranzzo.getError(), -1);
-            } else {
-//                logger.info(response.getBody());
-                TranzzoPaymentResponseDTO tranzzoResponse =
-                        response.getBody();
-//                        gson.fromJson(response.getBody(), TranzzoPaymentResponseDTO.class);
+            return new ResultDTO(true, tranzzoResponse.getUser_action_url(), 0);
 
-                saveResponse(tranzzo, tranzzoResponse);
-
-                return new ResultDTO(true, tranzzoResponse.getUser_action_url(), 0);
-            }
 
         } catch (RestClientException re) {
             logger.error(re.getLocalizedMessage());
-//            re.printStackTrace();
-//            logger.info(gson.toJson(re));
+
             String json = gson.toJson(re);
             Map<String, Object> errorMap = gson.fromJson(json, HashMap.class);
 
@@ -331,9 +314,13 @@ public class TranzzoService {
                 Integer in = doubleResponse.get(i).intValue();
                 respMessage[i] = Character.toChars(in)[0];
             }
-            logger.error(new String(respMessage));
 
-            return new ResultDTO(false, re.getMessage(), -1);
+            String error = new String(respMessage);
+
+            logger.error(error);
+            saveError(tranzzo, error);
+
+            return new ResultDTO(false, error, -1);
 
         } catch (Exception e) {
             e.printStackTrace();
