@@ -22,6 +22,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.web3j.abi.datatypes.Array;
+import org.web3j.abi.datatypes.Bytes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -318,13 +319,18 @@ public class TranzzoService {
 //            re.printStackTrace();
 //            logger.info(gson.toJson(re));
             String json = gson.toJson(re);
-            Map<String,Object> errorMap = gson.fromJson(json, HashMap.class);
+            Map<String, Object> errorMap = gson.fromJson(json, HashMap.class);
 
-            List<Double> doubleResponse =(List<Double>) errorMap.get("responseBody");
-            logger.error("Double Response: {}",gson.toJson(doubleResponse));
+            List<Double> doubleResponse = (List<Double>) errorMap.get("responseBody");
+            logger.error("Double Response: {}", gson.toJson(doubleResponse));
 //            logger.error("Double Response: {}",gson.toJson(doubleResponse.getClass()));
 
-
+            char[] respMessage = new char[doubleResponse.size()];
+            for (int i = 0; i < doubleResponse.size(); i++) {
+                Integer in = doubleResponse.get(i).intValue();
+                respMessage[i] = Character.toChars(in)[0];
+            }
+            logger.error(new String(respMessage));
 
             return new ResultDTO(false, re.getMessage(), -1);
 
