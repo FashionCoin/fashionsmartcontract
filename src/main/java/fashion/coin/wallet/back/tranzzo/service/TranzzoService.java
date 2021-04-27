@@ -331,6 +331,9 @@ public class TranzzoService {
     }
 
     public String interaction(String request) {
+
+        logger.info("Tranzzo callback: {}",request);
+
         return "Ok";
     }
 }

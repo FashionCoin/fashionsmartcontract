@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back;
 
+import fashion.coin.wallet.back.config.LoggingInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 
 
 @SpringBootApplication
@@ -17,15 +19,25 @@ public class FashionCoinWallet {
     public static void main(String[] args) {
         SpringApplication.run(FashionCoinWallet.class, args);
     }
-
+//
+//    @Bean
+//    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+//
+//        return restTemplateBuilder
+//                .setConnectTimeout(500000)
+//                .setReadTimeout(500000)
+//                .build();
+//    }
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+    public RestTemplate createRestTemplate(RestTemplateBuilder restTemplateBuilder, LoggingInterceptor loggingInterceptor) {
 
-        return restTemplateBuilder
+        RestTemplate restTemplate = restTemplateBuilder
                 .setConnectTimeout(500000)
                 .setReadTimeout(500000)
                 .build();
-    }
+        restTemplate.setInterceptors(Collections.singletonList(loggingInterceptor));
 
+        return restTemplate;
+    }
 
 }
