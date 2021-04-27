@@ -283,8 +283,10 @@ public class WrapService {
     }
 
     private boolean eventExists(String transactionHash) {
+
         WrappedTokenEvents event = null;
         for (int i = 1000; i < 100000; i += 500) {
+            logger.info("TxHash: {}",transactionHash);
             updateEthereumEventd();
             event = tokenEventsRepository.findById(transactionHash).orElse(null);
             if (event == null) {
@@ -316,6 +318,7 @@ public class WrapService {
         event.setAddressTo(hexToAddress(result.getTopics().get(2)));
         event.setType(hexToType(result.getTopics()));
         event.setNetwork(network);
+        logger.info(gson.toJson(event));
         return event;
     }
 
@@ -359,16 +362,16 @@ public class WrapService {
 
     private void updateWrapEvents(String network) {
         try {
-// TODO: Временно. Нужно удалить после того как номера блоков исправятся
-            List<WrappedTokenEvents> eventsList = tokenEventsRepository.findAll();
-            for (WrappedTokenEvents wrappedTokenEvents : eventsList) {
-                if (wrappedTokenEvents.getBlockNumber() < 0) {
-                    wrappedTokenEvents.setBlockNumber(16777216L -
-                            wrappedTokenEvents.getBlockNumber());
-
-                }
-            }
-            tokenEventsRepository.saveAll(eventsList);
+//// TODO: Временно. Нужно удалить после того как номера блоков исправятся
+//            List<WrappedTokenEvents> eventsList = tokenEventsRepository.findAll();
+//            for (WrappedTokenEvents wrappedTokenEvents : eventsList) {
+//                if (wrappedTokenEvents.getBlockNumber() < 0) {
+//                    wrappedTokenEvents.setBlockNumber(16777216L -
+//                            wrappedTokenEvents.getBlockNumber());
+//
+//                }
+//            }
+//            tokenEventsRepository.saveAll(eventsList);
 
             //////////////////////////////////
 
@@ -395,6 +398,8 @@ public class WrapService {
                                 "apikey=" + ethereumApiKey,
                         EventsDTO.class);
             }
+            logger.info(gson.toJson(responce));
+            logger.info(String.valueOf(responce.getResult().size()));
             for (EthEventDTO result : responce.getResult()) {
                 tokenEventsRepository.save(convertToEvent(result, network));
             }
