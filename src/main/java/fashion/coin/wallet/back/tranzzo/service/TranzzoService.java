@@ -19,6 +19,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +84,7 @@ public class TranzzoService {
         tranzzo.setPosId(request.getPosId());
         tranzzo.setMode(request.getMode());
         tranzzo.setMethod(request.getMethod());
-        tranzzo.setAmount(new BigDecimal( request.getAmount()));
+        tranzzo.setAmount(new BigDecimal(request.getAmount()));
         tranzzo.setCurrency(request.getCurrency());
         tranzzo.setDescription(request.getDescription());
         tranzzo.setOrderId(request.getOrderId());
@@ -284,7 +285,6 @@ public class TranzzoService {
             ResponseEntity<String> response = restTemplate.postForEntity(paymentUrl, entity, String.class);
 
 
-
             paymentRequest.setCcNumber(maskPAN(paymentRequest.getCcNumber()));
 
             Tranzzo tranzzo = saveRequest(paymentRequest);
@@ -308,6 +308,11 @@ public class TranzzoService {
 
                 return new ResultDTO(true, tranzzoResponse.getUserActionUrl(), 0);
             }
+
+        } catch (RestClientException re) {
+            re.printStackTrace();
+            logger.info(gson.toJson(re));
+            return new ResultDTO(false, re.getMessage(), -1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -337,7 +342,7 @@ public class TranzzoService {
 
     public String interaction(String request) {
 
-        logger.info("Tranzzo callback: {}",request);
+        logger.info("Tranzzo callback: {}", request);
 
         return "Ok";
     }
