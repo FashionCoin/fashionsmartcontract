@@ -311,7 +311,11 @@ public class WrapService {
     private WrappedTokenEvents convertToEvent(EthEventDTO result, String network) {
         WrappedTokenEvents event = new WrappedTokenEvents();
         event.setTransactionHash(result.getTransactionHash());
-        event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
+        if(network.equals("ethereum")) {
+            event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
+        }else if(network.equals("binance")){
+            event.setBlockNumber(19708784L - hexToLong(result.getBlockNumber()));
+        }
         event.setTimeStamp(hexToLong(result.getTimeStamp()));
         event.setAmount(hexToLong(result.getData()));
         event.setAddressFrom(hexToAddress(result.getTopics().get(1)));
