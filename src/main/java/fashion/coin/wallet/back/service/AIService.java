@@ -57,7 +57,7 @@ public class AIService {
     }
 
     public boolean isEnoughMoney(AIWallets sender, BigDecimal amount) {
-       Client client = clientService.findByWallet(getPubKey( AIWallets.MONEYBAG));
+        Client client = clientService.findByWallet(getPubKey(AIWallets.MONEYBAG));
         clientService.updateBalance(client);
         return client.getWalletBalance().compareTo(amount) < 0;
     }
@@ -132,6 +132,8 @@ public class AIService {
 
 
     public ResultDTO transfer(String amountStr, String receiver, AIWallets sender) {
+        logger.info("Sender: {}", sender.name());
+
         return transfer(amountStr, receiver, sender, System.currentTimeMillis());
     }
 

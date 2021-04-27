@@ -259,7 +259,7 @@ public class WrapService {
             }
 
 
-            logger.info("TX {} hash: {}",network, request.getTransactionHash());
+            logger.info("TX {} hash: {}", network, request.getTransactionHash());
 
             AIService.AIWallets diamondWallet = network.equals("binance") ?
                     AIService.AIWallets.BINANCE : AIService.AIWallets.DIAMOND;
@@ -286,7 +286,7 @@ public class WrapService {
 
         WrappedTokenEvents event = null;
         for (int i = 1000; i < 100000; i += 500) {
-            logger.info("TxHash: {}",transactionHash);
+            logger.info("TxHash: {}", transactionHash);
             updateEthereumEventd();
             event = tokenEventsRepository.findById(transactionHash).orElse(null);
             if (event == null) {
@@ -311,12 +311,10 @@ public class WrapService {
     private WrappedTokenEvents convertToEvent(EthEventDTO result, String network) {
         WrappedTokenEvents event = new WrappedTokenEvents();
         event.setTransactionHash(result.getTransactionHash());
-        if(network.equals("ethereum")) {
-            event.setBlockNumber(16777216L - hexToLong(result.getBlockNumber()));
-        }else if(network.equals("binance")){
-            logger.info("{}: {}",result.transactionHash, hexToLong(result.getBlockNumber()));
-            event.setBlockNumber( hexToLong(result.getBlockNumber()));
-        }
+
+        logger.info("{}: {}", result.transactionHash, hexToLong(result.getBlockNumber()));
+        event.setBlockNumber(hexToLong(result.getBlockNumber()));
+
         event.setTimeStamp(hexToLong(result.getTimeStamp()));
         event.setAmount(hexToLong(result.getData()));
         event.setAddressFrom(hexToAddress(result.getTopics().get(1)));
@@ -346,7 +344,11 @@ public class WrapService {
         hexString = hexString.replace("0x", "");
         byte[] byteArray = HexUtils.fromHexString(hexString);
         BigInteger bigInteger = new BigInteger(byteArray);
-        return bigInteger.longValue();
+        Long result = bigInteger.longValue();
+        if (result < 0) {
+            result = 16777216L - result;
+        }
+        return result;
     }
 
     private String hexToAddress(String hexString) {
@@ -423,7 +425,7 @@ public class WrapService {
             String hexAddress = cryptoWalletsService.getWalletByCryptoname(client.getCryptoname(), "ETH");
 
             String address = hexToAddress(hexAddress);
-            List<WrappedTokenEvents> fullHistory = getHistory(address,request.getNetwork());
+            List<WrappedTokenEvents> fullHistory = getHistory(address, request.getNetwork());
             Long balance = 0L;
             List<WFSHNhistory> wfshNhistoryList = new ArrayList<>();
             for (WrappedTokenEvents events : fullHistory) {
@@ -477,7 +479,7 @@ public class WrapService {
     }
 
 
-    private List<WrappedTokenEvents> getHistory(String address,String network) {
+    private List<WrappedTokenEvents> getHistory(String address, String network) {
         List<WrappedTokenEvents> eventsList = tokenEventsRepository.findByAddressFromOrAddressTo(address, address);
         eventsList.removeIf(wrappedTokenEvents -> !wrappedTokenEvents.getNetwork().equals(network));
         eventsList.sort((o1, o2) -> (o2.getTimeStamp().compareTo(o1.getTimeStamp())));
