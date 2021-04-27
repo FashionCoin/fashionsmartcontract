@@ -392,7 +392,7 @@ public class WrapService {
             if (network.equals("binance")) {
                 responce = restTemplate.getForObject("https://api.bscscan.com/api?module=logs&action=getLogs&" +
 //                                "fromBlock=" + lastBlock + "&toBlock=latest&" +
-                                "fromBlock=6573342&toBlock=latest&" +
+                                "fromBlock=" + lastBlock + "&toBlock=latest&" +
                                 "address=" + binanceContractAddress.toLowerCase() + "&topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&" +
                                 "apikey=" + binanceApiKey,
                         EventsDTO.class);
