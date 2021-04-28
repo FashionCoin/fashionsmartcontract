@@ -374,7 +374,7 @@ public class TranzzoService {
 
             String orderId = response.getOrder_id();
             logger.info("Order ID: {}", orderId);
-            Tranzzo tranzzo = tranzzoRepository.findById(Long.parseLong(orderId)).orElse(null);
+            Tranzzo tranzzo = tranzzoRepository.findTopByOrderId(orderId);
             if (tranzzo == null) {
                 logger.error("Tranzzo not found by Order ID: {}", decodedData);
                 return "FAIL";
