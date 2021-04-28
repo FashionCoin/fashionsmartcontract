@@ -52,6 +52,6 @@ public class TranzzoController {
         logger.info("Interaction Tanzzo");
         logger.info("Data: {}", data);
         logger.info("Signature: {}", signature);
-        return tranzzoService.interaction(data);
+        return tranzzoService.interaction(data,signature);
     }
 }

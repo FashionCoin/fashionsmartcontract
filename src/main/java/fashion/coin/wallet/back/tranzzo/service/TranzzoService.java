@@ -10,6 +10,8 @@ import fashion.coin.wallet.back.tranzzo.entity.BuyFshn;
 import fashion.coin.wallet.back.tranzzo.entity.Tranzzo;
 import fashion.coin.wallet.back.tranzzo.repository.BuyFshnRepository;
 import fashion.coin.wallet.back.tranzzo.repository.TranzzoRepository;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -348,9 +351,17 @@ public class TranzzoService {
                         + cardNumber.substring(12, 16);
     }
 
-    public String interaction(String request) {
+    public String interaction(String data, String signature) {
 
-        logger.info("Tranzzo callback: {}", request);
+        String decodedData = new String(Base64.getUrlDecoder().decode(data));
+        String decodedSignature = Hex.encodeHexString(Base64.getUrlDecoder().decode(signature));
+
+        logger.info("Decoded data: {}", decodedData);
+        logger.info("Decoded signature: {}", decodedSignature);
+
+        String sha1 = DigestUtils.sha1Hex(secretKey + data + secretKey);
+        logger.info("SHA1: {}", sha1);
+
 
         return "PROCEED";
     }
