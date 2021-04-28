@@ -197,6 +197,8 @@ public class TranzzoService {
             buyFshn.setIpAddress(getIpAddress(servletRequest));
             buyFshn.setUserAgent(getUserAgent(servletRequest));
 
+            buyFshn.setWallet(client.getWalletAddress());
+
             buyFshnRepository.save(buyFshn);
 
             return new ResultDTO(true, buyFshn, 0);
@@ -389,11 +391,23 @@ public class TranzzoService {
                 return "FAIL";
             }
 
-            Client client = clientService.getClient(buyFshn.getClientId());
 
             if (tranzzo.getStatus().equals("success")) {
                 logger.info("Tranzzo payment status is {}", tranzzo.getStatus());
-                aiService.transfer(buyFshn.getFshnAmount().toString(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG);
+                if (buyFshn.getTxHash() == null || buyFshn.getTxHash().length() == 0) {
+
+                    ResultDTO resultDTO = aiService.transfer(buyFshn.getFshnAmount().toString(), buyFshn.getWallet(), AIService.AIWallets.MONEYBAG);
+                    if (resultDTO.isResult()) {
+                        logger.info("Tx Hash: {}", resultDTO.getMessage());
+                        buyFshn.setTxHash(resultDTO.getMessage());
+                        buyFshnRepository.save(buyFshn);
+                    } else {
+                        logger.error(resultDTO.getMessage());
+                        return "FAIL";
+                    }
+                } else {
+                    logger.info("TxHash already exists: {}", buyFshn.getTxHash());
+                }
             } else {
                 logger.info("Status: {}", response.getStatus());
                 logger.info("Status code: {}", response.getStatus_code());

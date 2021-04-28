@@ -25,6 +25,8 @@ public class BuyFshn {
     String cardNumberMask;
     String ipAddress;
     String userAgent;
+    String wallet;
+    String txHash;
 
     public Long getPaymentId() {
         return paymentId;
@@ -128,5 +130,22 @@ public class BuyFshn {
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+
+    public String getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(String wallet) {
+        this.wallet = wallet;
+    }
+
+    public String getTxHash() {
+        return txHash;
+    }
+
+    public void setTxHash(String txHash) {
+        this.txHash = txHash;
     }
 }
