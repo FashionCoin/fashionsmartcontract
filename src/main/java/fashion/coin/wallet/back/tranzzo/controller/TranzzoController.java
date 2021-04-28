@@ -47,9 +47,11 @@ public class TranzzoController {
 
     @PostMapping("/api/v1/tranzzo/callback")
     @ResponseBody
-    String interaction(@RequestBody String request) {
+//    String interaction(@RequestBody String request) {
+    String interaction(@RequestParam String data, @RequestParam String signature) {
         logger.info("Interaction Tanzzo");
-        logger.info(gson.toJson(request));
-        return tranzzoService.interaction(request);
+        logger.info("Data: {}", data);
+        logger.info("Signature: {}", signature);
+        return tranzzoService.interaction(data);
     }
 }

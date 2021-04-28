@@ -352,6 +352,6 @@ public class TranzzoService {
 
         logger.info("Tranzzo callback: {}", request);
 
-        return "Ok";
+        return "PROCEED";
     }
 }
