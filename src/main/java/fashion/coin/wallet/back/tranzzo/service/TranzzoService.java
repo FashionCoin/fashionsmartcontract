@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.tranzzo.service;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.CurrencyService;
 import fashion.coin.wallet.back.tranzzo.dto.*;
@@ -33,8 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error230;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 // https://cdn.tranzzo.com/tranzzo-api/index.html#direct-payments-with-card-data
 
@@ -80,6 +80,9 @@ public class TranzzoService {
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    AIService aiService;
 
     public Tranzzo saveRequest(TranzzoPaymentRequestDTO request) {
 
@@ -236,6 +239,9 @@ public class TranzzoService {
             }
 
             BuyFshn buyFshn = buyFshnRepository.findById(request.getPaymentId()).orElse(null);
+            if (buyFshn == null) {
+                return error231;
+            }
 
             buyFshn.setCardNumberMask(maskPAN(request.getCardNumber()));
             buyFshn.setIpAddress(getIpAddress(servletRequest));
@@ -352,25 +358,51 @@ public class TranzzoService {
     }
 
     public String interaction(String data, String signature) {
-
+        logger.info("Tranzzo Callback Processed");
         String decodedData = new String(Base64.getUrlDecoder().decode(data));
         String decodedSignature = Hex.encodeHexString(Base64.getUrlDecoder().decode(signature));
 
         String sha1 = DigestUtils.sha1Hex(secretKey + data + secretKey);
 
 
-        if(sha1.equals(decodedSignature)){
+        if (sha1.equals(decodedSignature)) {
 
-            TranzzoPaymentResponseDTO response = gson.fromJson(decodedData,TranzzoPaymentResponseDTO.class);
-            logger.info("Status: {}",response.getStatus());
-            logger.info("Status code: {}",response.getStatus_code());
-            logger.info("Status description: {}",response.getStatus_description());
+            TranzzoPaymentResponseDTO response = gson.fromJson(decodedData, TranzzoPaymentResponseDTO.class);
 
 
+            String orderId = response.getOrder_id();
+            logger.info("Order ID: {}", orderId);
+            Tranzzo tranzzo = tranzzoRepository.findById(Long.parseLong(orderId)).orElse(null);
+            if (tranzzo == null) {
+                logger.error("Tranzzo not found by Order ID: {}", decodedData);
+                return "FAIL";
+            }
+            tranzzo.setStatus(response.getStatus());
+            tranzzo.setStatusCode(response.getStatus_code());
+            tranzzo.setStatusDescription(response.getStatus_description());
 
-        }else{
-            logger.error("Data: {}",data);
-            logger.error("Signature: {}",signature);
+            tranzzoRepository.save(tranzzo);
+
+            BuyFshn buyFshn = buyFshnRepository.findById(Long.parseLong(orderId)).orElse(null);
+            if (buyFshn == null) {
+                logger.error("BuyFshn not found by Order ID: {}", decodedData);
+                return "FAIL";
+            }
+
+            Client client = clientService.getClient(buyFshn.getClientId());
+
+            if (tranzzo.getStatus().equals("success")) {
+                logger.info("Tranzzo payment status is {}", tranzzo.getStatus());
+                aiService.transfer(buyFshn.getFshnAmount().toString(), client.getWalletAddress(), AIService.AIWallets.MONEYBAG);
+            } else {
+                logger.info("Status: {}", response.getStatus());
+                logger.info("Status code: {}", response.getStatus_code());
+                logger.info("Status description: {}", response.getStatus_description());
+                return "PROCEED";
+            }
+        } else {
+            logger.error("Data: {}", data);
+            logger.error("Signature: {}", signature);
             logger.error("Decoded data: {}", decodedData);
             logger.error("Decoded signature: {}", decodedSignature);
             logger.error("SHA1: {}", sha1);

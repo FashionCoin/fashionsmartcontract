@@ -65,5 +65,6 @@ public class ErrorDictionary {
     public static final ResultDTO error228 = new ResultDTO(false, "Owner does not have tirage this NFT", 228);
     public static final ResultDTO error229 = new ResultDTO(false, "Use another methiod for tirage NFT", 229);
     public static final ResultDTO error230 = new ResultDTO(false, "The currency exchange rate does not match the current one too much", 230);
+    public static final ResultDTO error231 = new ResultDTO(false, "Payment bill not found. Create it", 231);
 
 }
