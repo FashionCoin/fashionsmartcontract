@@ -356,12 +356,27 @@ public class TranzzoService {
         String decodedData = new String(Base64.getUrlDecoder().decode(data));
         String decodedSignature = Hex.encodeHexString(Base64.getUrlDecoder().decode(signature));
 
-        logger.info("Decoded data: {}", decodedData);
-        logger.info("Decoded signature: {}", decodedSignature);
-
         String sha1 = DigestUtils.sha1Hex(secretKey + data + secretKey);
-        logger.info("SHA1: {}", sha1);
 
+
+        if(sha1.equals(decodedSignature)){
+
+            TranzzoPaymentResponseDTO response = gson.fromJson(decodedData,TranzzoPaymentResponseDTO.class);
+            logger.info("Status: {}",response.getStatus());
+            logger.info("Status code: {}",response.getStatus_code());
+            logger.info("Status description: {}",response.getStatus_description());
+
+
+
+        }else{
+            logger.error("Data: {}",data);
+            logger.error("Signature: {}",signature);
+            logger.error("Decoded data: {}", decodedData);
+            logger.error("Decoded signature: {}", decodedSignature);
+            logger.error("SHA1: {}", sha1);
+
+            return "FAIL";
+        }
 
         return "PROCEED";
     }
