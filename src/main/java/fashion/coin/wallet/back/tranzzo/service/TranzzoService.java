@@ -196,6 +196,7 @@ public class TranzzoService {
 
             buyFshn.setIpAddress(getIpAddress(servletRequest));
             buyFshn.setUserAgent(getUserAgent(servletRequest));
+            buyFshn.setAcceptHeader(getUserAcceptHeader(servletRequest));
 
             buyFshn.setWallet(client.getWalletAddress());
 
@@ -207,6 +208,12 @@ public class TranzzoService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+
+    }
+
+    private String getUserAcceptHeader(HttpServletRequest servletRequest) {
+
+            return servletRequest.getHeader("Accept");
 
     }
 

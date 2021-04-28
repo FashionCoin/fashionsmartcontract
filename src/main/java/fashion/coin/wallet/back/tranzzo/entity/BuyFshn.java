@@ -25,6 +25,7 @@ public class BuyFshn {
     String cardNumberMask;
     String ipAddress;
     String userAgent;
+    String acceptHeader;
     String wallet;
     String txHash;
 
@@ -132,6 +133,13 @@ public class BuyFshn {
         this.userAgent = userAgent;
     }
 
+    public String getAcceptHeader() {
+        return acceptHeader;
+    }
+
+    public void setAcceptHeader(String acceptHeader) {
+        this.acceptHeader = acceptHeader;
+    }
 
     public String getWallet() {
         return wallet;
