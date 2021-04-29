@@ -30,11 +30,6 @@ import java.util.Random;
 @Component
 public class AESEncriptor implements AttributeConverter<String, String> {
 
-    @Value("${temporary.pubkey}")
-    String pubkey;
-
-    @Value("${temporary.privkey}")
-    String privkey;
 
     Logger logger = LoggerFactory.getLogger(AESEncriptor.class);
 
