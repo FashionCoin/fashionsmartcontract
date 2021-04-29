@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.api;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.*;
 import fashion.coin.wallet.back.service.ClientService;
+import fashion.coin.wallet.back.service.LogEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by JAVA-P on 22.10.2018.
@@ -30,9 +33,15 @@ public class ClientController {
 
     ClientService clientService;
 
+    @Autowired
+    LogEventService logEventService;
+
     @PostMapping("/api/v1/signup")
     @ResponseBody
-    ResultDTO registration(@RequestBody RegistrationRequestDTO data){
+    ResultDTO registration(@RequestBody RegistrationRequestDTO data, HttpServletRequest request){
+
+        logEventService.save(request, data.getApikey(),data.getCryptoname());
+
        return clientService.trySignUp(data);
     }
 
