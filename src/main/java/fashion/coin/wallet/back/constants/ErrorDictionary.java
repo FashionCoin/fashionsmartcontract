@@ -66,5 +66,6 @@ public class ErrorDictionary {
     public static final ResultDTO error229 = new ResultDTO(false, "Use another methiod for tirage NFT", 229);
     public static final ResultDTO error230 = new ResultDTO(false, "The currency exchange rate does not match the current one too much", 230);
     public static final ResultDTO error231 = new ResultDTO(false, "Payment bill not found. Create it", 231);
+    public static final ResultDTO error232 = new ResultDTO(false, "Invalid card number in 'cc_number' field. Luhn check failed.': must be a String and valid card number", 232);
 
 }

@@ -245,7 +245,13 @@ public class TranzzoService {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}",client);
                 return error109;
+            }
+
+            if(!checkCardNumber(request.getCardNumber())){
+                return error232;
             }
 
             BuyFshn buyFshn = buyFshnRepository.findById(request.getPaymentId()).orElse(null);
@@ -262,8 +268,8 @@ public class TranzzoService {
             paymentRequest.setPos_id(posId);
             paymentRequest.setMode("direct");
             paymentRequest.setMethod("purchase");
-//            paymentRequest.setAmount(buyFshn.getUahAmount().doubleValue());
-            paymentRequest.setAmount(1.0); // TODO: sandbox
+            paymentRequest.setAmount(buyFshn.getUahAmount().doubleValue());
+//            paymentRequest.setAmount(1.0); // TODO: sandbox
             paymentRequest.setCurrency("UAH");
             paymentRequest.setDescription("Buying FSHN for Ukrainian Hryvna");
             paymentRequest.setOrder_id(String.valueOf(buyFshn.getPaymentId()));
@@ -289,7 +295,7 @@ public class TranzzoService {
 
             paymentRequest.setBrowserFingerprint(fingerprint);
 
-            logger.info("Tranzzo sandbox request: {}", gson.toJson(paymentRequest));
+//            logger.info("Tranzzo sandbox request: {}", gson.toJson(paymentRequest));
 
 
             HttpHeaders headers = new HttpHeaders();
@@ -300,7 +306,7 @@ public class TranzzoService {
 
             HttpEntity entity = new HttpEntity(paymentRequest, headers);
 
-            logger.info(gson.toJson(entity));
+//            logger.info(gson.toJson(entity));
             logger.info(paymentUrl);
 
 //            ResponseEntity<String> response = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
@@ -472,5 +478,34 @@ public class TranzzoService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+
+    boolean checkCardNumber(String value) {
+        int sum1 = 0;
+        int sum2 = 0;
+        final int nDigits = value.length();
+        for (int i = nDigits; i > 0; i--) {
+            int digit = Character.getNumericValue(value.charAt(i - 1));
+            int z = digit;
+            int y = digit;
+            if (i % 2 == 0) {
+                z *= 2;
+                if (z > 9) {
+                    z -= 9;
+                }
+                sum1 += z;
+            } else sum2 += y;
+        }
+        int sum = sum1 + sum2;
+        if (value.length() != 16) sum = 1;
+        logger.info("ccnumber sum: {}", sum);
+        if (sum % 10 == 0) {
+            logger.info("Card Valid");
+            return true;
+        } else {
+            logger.error("Card not Valid");
+            return false;
+        }
     }
 }
