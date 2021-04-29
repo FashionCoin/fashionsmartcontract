@@ -21,14 +21,14 @@ public class FTransactionsController {
 
     @Autowired
     FTransactionService fTransactionService;
-/*
+
     @PostMapping("/api/v1/fwrap/transaction")
     @ResponseBody
     ResultDTO getByCurrency(@RequestBody FCurrencyRequestDTO request){
 
         return fTransactionService.getByCurrency(request);
     }
-
+/*
     @PostMapping("/api/v1/fwrap/send")
     @ResponseBody
     ResultDTO sendMoney(@RequestBody FSendMoneyRequestDTO request){
