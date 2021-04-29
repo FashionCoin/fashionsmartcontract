@@ -250,9 +250,9 @@ public class TranzzoService {
                 return error109;
             }
 
-            if(!checkCardNumber(request.getCardNumber())){
-                return error232;
-            }
+//            if(!checkCardNumber(request.getCardNumber())){
+//                return error232;
+//            }
 
             BuyFshn buyFshn = buyFshnRepository.findById(request.getPaymentId()).orElse(null);
             if (buyFshn == null) {
@@ -505,7 +505,7 @@ public class TranzzoService {
             return true;
         } else {
             logger.error("Card not Valid");
-            return false;
+            return true;
         }
     }
 }
