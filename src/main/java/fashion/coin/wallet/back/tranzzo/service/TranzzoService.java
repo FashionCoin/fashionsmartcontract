@@ -98,7 +98,7 @@ public class TranzzoService {
         tranzzo.setDescription(request.getDescription());
         tranzzo.setOrderId(request.getOrder_id());
         tranzzo.setOrder3dsBypass(request.getOrder_3ds_bypass());
-        tranzzo.setCcNumber(request.getCc_number());
+        tranzzo.setCcNumber(maskPAN(request.getCc_number()));
         tranzzo.setExpMonth(request.getExp_month());
         tranzzo.setExpYear(request.getExp_year());
         tranzzo.setCardCvv(request.getCard_cvv());
@@ -118,6 +118,7 @@ public class TranzzoService {
         tranzzo.setBrowserAcceptHeader(fingerprint.getBrowserAcceptHeader());
         tranzzo.setBrowserAcceptHeader(tranzzo.getBrowserIpAddress());
         tranzzo.setBrowserUserAgent(fingerprint.getBrowserUserAgent());
+
 
         tranzzoRepository.save(tranzzo);
 
@@ -213,7 +214,7 @@ public class TranzzoService {
 
     private String getUserAcceptHeader(HttpServletRequest servletRequest) {
 
-            return servletRequest.getHeader("Accept");
+        return servletRequest.getHeader("Accept");
 
     }
 
@@ -304,12 +305,12 @@ public class TranzzoService {
 
 //            ResponseEntity<String> response = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
 
+            tranzzo = saveRequest(paymentRequest);
+
             ResponseEntity<TranzzoPaymentResponseDTO> responseEntity = restTemplate.postForEntity(paymentUrl, entity, TranzzoPaymentResponseDTO.class);
 
             TranzzoPaymentResponseDTO tranzzoResponse = responseEntity.getBody();
             paymentRequest.setCc_number(maskPAN(paymentRequest.getCc_number()));
-
-            tranzzo = saveRequest(paymentRequest);
 
 
             saveResponse(tranzzo, tranzzoResponse);
@@ -334,8 +335,8 @@ public class TranzzoService {
             }
 
             String error = new String(respMessage);
-
-            logger.error(error);
+            logger.error("Tanzzo object: {}", tranzzo);
+            logger.error("Error text: {}", error);
             saveError(tranzzo, error);
 
             return new ResultDTO(false, error, -1);
