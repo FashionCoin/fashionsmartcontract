@@ -95,13 +95,26 @@ public class TransactionService {
 
     public ResultDTO send(TransactionRequestDTO request) {
         try {
-            if (request.getSenderWallet() == null) return error200;
+            if (request.getSenderWallet() == null) {
+                logger.error("request.getSenderWallet():{}",request.getSenderWallet());
+                return error200;
+            }
             Client sender = clientService.findByWallet(request.getSenderWallet());
-            if (sender == null) return error201;
-            if(sender.isBanned()) return error122;
+            if (sender == null){
+                logger.error("Sender: ",sender);
+                return error201;
+            }
+            if(sender.isBanned()){
+                logger.error("Sender banned: {}",sender.isBanned());
+                return error122;
+            }
             BigDecimal amount = new BigDecimal(request.getAmount());
             clientService.updateBalance(sender);
-            if (sender.getWalletBalance().compareTo(amount) < 0) return error202;
+            if (sender.getWalletBalance().compareTo(amount) < 0){
+                logger.error("sender.getWalletBalance(): {}",sender.getWalletBalance());
+                logger.error("Amount: {}",amount);
+                return error202;
+            }
 
             Client receiver = null;
             String receiverWallet = request.getReceiverWallet();
@@ -110,27 +123,45 @@ public class TransactionService {
             } else if (request.getReceiverLogin() != null) {
                 receiver = clientService.findByCryptoname(request.getReceiverLogin());
             } else {
+                logger.error("request.getReceiverWallet(): {}",request.getReceiverWallet());
+                logger.error("request.getReceiverLogin(): {}",request.getReceiverLogin());
                 return error203;
             }
 
             /// For anonimous wallet disable:
-            if (!anonimousSending && receiver == null) return error203;
+            if (!anonimousSending && receiver == null) {
+                logger.error("anonimousSending: {}",anonimousSending);
+                logger.error("receiver: {}",receiver);
+                return error203;
+            }
             ///
 
 
             if (receiver != null && !receiver.getWalletAddress().equals(receiverWallet)) {
-                System.out.println("receiver wallet: " + receiver.getWalletAddress());
-                System.out.println("request wallet: " + request.getReceiverWallet());
+                logger.error("Receiver: {}",gson.toJson( receiver));
+//                logger.error("receiver wallet: " + receiver.getWalletAddress());
+//                logger.error("request wallet: " + request.getReceiverWallet());
                 return error203;
             }
 
-            if(receiver != null && receiver.isBanned()) return error122;
+            if(receiver != null && receiver.isBanned()) {
+                logger.error("Receiver: {}",gson.toJson(receiver));
+                return error122;
+            }
 
-            if (request.getBlockchainTransaction() == null) return error204;
-            if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction()))
+            if (request.getBlockchainTransaction() == null){
+                logger.error("request.getBlockchainTransaction(): {}",request.getBlockchainTransaction());
+                return error204;
+            }
+            if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction())){
                 return error206;
+            }
+
             String txhash = createTransaction(sender, receiver, amount, request.getBlockchainTransaction());
-            if (txhash == null || txhash.length() == 0) return error205;
+            if (txhash == null || txhash.length() == 0) {
+                logger.error("TxHash: {}",txhash);
+                return error205;
+            }
             clientService.addAmountToWallet(sender, amount.negate());
             if (receiver != null) {
                 clientService.addAmountToWallet(receiver, amount);

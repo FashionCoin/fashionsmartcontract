@@ -513,6 +513,7 @@ NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
 
     public ResultDTO setNewValue(NewValueRequestDTO request) {
         try {
+            logger.info("Set new value for {}",request.getNftId());
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
                 return error109;

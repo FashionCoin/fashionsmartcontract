@@ -41,16 +41,19 @@ public class BlockchainService {
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
-            System.out.println("url: " + BLOCKCHAIN_API_URI);
+            logger.info("url: " + BLOCKCHAIN_API_URI);
             HttpHeaders headers = new HttpHeaders();
 
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<BlockchainTransactionDTO> request = new HttpEntity<>(blockchainTransaction, headers);
-            System.out.println(gson.toJson(blockchainTransaction));
+            logger.info("Request: {}",gson.toJson(blockchainTransaction));
             ResponseEntity<ResponceDTO> responce = restTemplate.postForEntity(BLOCKCHAIN_API_URI + "/wallets/transaction", request, ResponceDTO.class);
-            if (!responce.hasBody()) return "";
+            if (!responce.hasBody()) {
+                logger.error("responce.hasBody(): {}", responce.hasBody());
+                return "";
+            }
             ResponceDTO responceBody = responce.getBody();
-            System.out.println(responceBody);
+            logger.info("responceBody: {}",gson.toJson(responceBody));
             return responceBody.getTx_hash();
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,19 +80,19 @@ public class BlockchainService {
 
     public BigDecimal getBalance(String walletAddress, String cryptoname) {
         try {
-            logger.info("walletAddress: :"+walletAddress+ "   cryptoname: "+ cryptoname);
+            logger.info("walletAddress: :" + walletAddress + "   cryptoname: " + cryptoname);
             FshnBalanceDTO balanceDTO = getWalletInfo(walletAddress);
 //            logger.info("getWallet: "+ gson.toJson(balanceDTO));
             if (balanceDTO == null) return BigDecimal.ZERO;
-            if(balanceDTO.getName_hash().equals("0000000000000000000000000000000000000000000000000000000000000000")){
+            if (balanceDTO.getName_hash().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
                 logger.info(gson.toJson(balanceDTO));
-                aiService.cryptoname(cryptoname,"",walletAddress);
+                aiService.cryptoname(cryptoname, "", walletAddress);
             }
 //            logger.info(gson.toJson(balanceDTO));
             String balanceString = balanceDTO.balance;
             return (new BigDecimal(balanceString)).movePointLeft(3);
         } catch (Exception e) {
-            logger.error("Line number: "+e.getStackTrace()[0].getLineNumber());
+            logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error("Don't get balance for " + walletAddress);
             logger.error(e.getMessage());
         }
