@@ -1,7 +1,10 @@
 package fashion.coin.wallet.back.service;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -22,8 +25,18 @@ import java.util.Random;
  * Created by www.gateon.net
  * All rights to the software code are owned by GateOn
  */
+
+
 @Component
 public class AESEncriptor implements AttributeConverter<String, String> {
+
+    @Value("${temporary.pubkey}")
+    String pubkey;
+
+    @Value("${temporary.privkey}")
+    String privkey;
+
+    Logger logger = LoggerFactory.getLogger(AESEncriptor.class);
 
     Random secureRandom = new Random();
 
@@ -94,7 +107,12 @@ public class AESEncriptor implements AttributeConverter<String, String> {
         }
         System.out.println("Key and IV seted OK");
 
+        logger.info(convertToDatabaseColumn(pubkey));
+        logger.info(convertToDatabaseColumn(privkey));
+
+
     }
+
 
 
 
