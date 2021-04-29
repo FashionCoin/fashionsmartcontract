@@ -48,13 +48,17 @@ public class ClientController {
 
     @PostMapping("/api/v1/signin")
     @ResponseBody
-    ResultDTO signIn(@RequestBody SignInDTO data){
+    ResultDTO signIn(@RequestBody SignInDTO data, HttpServletRequest request){
+
+        logEventService.save(request, data.getApikey(),data.getCryptoname());
         return clientService.trySignIn(data);
     }
 
     @PostMapping("/api/v1/permanent/signin")
     @ResponseBody
-    ResultDTO permanentSignIn(@RequestBody SignInDTO data){
+    ResultDTO permanentSignIn(@RequestBody SignInDTO data, HttpServletRequest request){
+
+        logEventService.save(request, data.getApikey(),data.getCryptoname());
         return clientService.permanentSignIn(data);
     }
 

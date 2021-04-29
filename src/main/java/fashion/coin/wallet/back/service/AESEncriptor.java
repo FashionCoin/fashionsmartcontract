@@ -107,8 +107,6 @@ public class AESEncriptor implements AttributeConverter<String, String> {
         }
         System.out.println("Key and IV seted OK");
 
-        logger.info(convertToDatabaseColumn(pubkey));
-        logger.info(convertToDatabaseColumn(privkey));
 
 
     }
