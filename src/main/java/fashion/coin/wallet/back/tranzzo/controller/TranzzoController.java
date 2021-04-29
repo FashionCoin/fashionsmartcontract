@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.tranzzo.dto.BuyFshnTranzzoDTO;
 import fashion.coin.wallet.back.tranzzo.dto.CreateTranzzoPaymentDTO;
+import fashion.coin.wallet.back.tranzzo.dto.GetTanzzoStatusDTO;
 import fashion.coin.wallet.back.tranzzo.service.TranzzoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,12 @@ public class TranzzoController {
     ResultDTO paymentPay(@RequestBody BuyFshnTranzzoDTO request, HttpServletRequest servletRequest) {
         logger.info("Payment pay");
         return tranzzoService.paymentPay(request, servletRequest);
+    }
+    @PostMapping("/api/v1/tranzzo/payment/status")
+    @ResponseBody
+    ResultDTO paymentStatus(@RequestBody GetTanzzoStatusDTO request, HttpServletRequest servletRequest) {
+        logger.info("Payment status");
+        return tranzzoService.paymentStatus(request, servletRequest);
     }
 
     @PostMapping("/api/v1/tranzzo/callback")

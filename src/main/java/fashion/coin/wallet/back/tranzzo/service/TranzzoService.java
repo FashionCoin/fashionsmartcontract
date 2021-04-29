@@ -434,4 +434,43 @@ public class TranzzoService {
 
         return "PROCEED";
     }
+
+    public ResultDTO paymentStatus(GetTanzzoStatusDTO request, HttpServletRequest servletRequest) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                return error109;
+            }
+
+            BuyFshn buyFshn = buyFshnRepository.findById(request.getPaymentId()).orElse(null);
+            if (buyFshn == null) {
+                return error231;
+            }
+
+            Tranzzo tranzzo = tranzzoRepository.findTopByOrderId(String.valueOf(request.getPaymentId()));
+
+            if (tranzzo != null) {
+                TranzzoStatusDTO statusDTO = new TranzzoStatusDTO();
+                statusDTO.setFshnAmount(buyFshn.getFshnAmount());
+                statusDTO.setPaymentId(request.getPaymentId());
+                statusDTO.setStatus(tranzzo.getStatus());
+                statusDTO.setStatusCode(tranzzo.getStatusCode());
+                statusDTO.setStatusDescription(tranzzo.getStatusDescription());
+                statusDTO.setTxHash(buyFshn.getTxHash());
+                statusDTO.setUahAmount(buyFshn.getUahAmount());
+                statusDTO.setUsdAmount(buyFshn.getUsdAmount());
+                statusDTO.setWallet(buyFshn.getWallet());
+                return new ResultDTO(true, statusDTO, 0);
+            } else {
+                logger.error("Tranzzo object: {}", tranzzo);
+                logger.error("Payment ID: {}", request.getPaymentId());
+                return new ResultDTO(false, "Payment ID not found", -1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+    }
 }
