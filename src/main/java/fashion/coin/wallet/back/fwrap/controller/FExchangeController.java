@@ -19,7 +19,7 @@ public class FExchangeController {
 
     @Autowired
     FExchangeService fExchangeService;
-
+/*
     @PostMapping("/api/v1/fwrap/wrap")
     @ResponseBody
     ResultDTO wrapCurrency(@RequestBody FWrapRequestDTO request){
@@ -35,5 +35,5 @@ public class FExchangeController {
         return fExchangeService.exchange(request);
     }
 
-
+*/
 }

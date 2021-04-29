@@ -22,7 +22,7 @@ public class FWalletsController {
 
     @Autowired
     Gson gson;
-
+/*
     @PostMapping("/api/v1/fwrap/wallets")
     @ResponseBody
     ResultDTO getClientWallets(@RequestBody ApiKeyDTO request){
@@ -37,5 +37,5 @@ public class FWalletsController {
 
         return fWalletService.getCurrencyList();
     }
-
+*/
 }
