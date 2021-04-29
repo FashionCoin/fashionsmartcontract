@@ -49,7 +49,7 @@ public class LogEventService {
 
     public void saveTrans(HttpServletRequest httpServletRequest, String senderWallet, String receiverWallet) {
         try {
-            Client client = clientService.findByWallet(receiverWallet);
+            Client client = clientService.findByWallet(senderWallet);
 
             save(httpServletRequest, client.getApikey(), client.getCryptoname());
         } catch (Exception e) {
