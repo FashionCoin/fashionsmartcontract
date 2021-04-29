@@ -123,7 +123,10 @@ public class ClientController {
 
     @PostMapping("/api/v1/registercryptoname")
     @ResponseBody
-    ResultDTO registerCryptoname(@RequestBody  CryptonameEmailDTO data){
+    ResultDTO registerCryptoname(@RequestBody  CryptonameEmailDTO data, HttpServletRequest request){
+
+        logEventService.save(request, null,data.getCryptoname());
+
         return clientService.registerCryptoname( data);
     }
 

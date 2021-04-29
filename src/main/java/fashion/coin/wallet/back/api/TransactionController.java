@@ -4,13 +4,16 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionDTO;
 import fashion.coin.wallet.back.dto.TransactionListRequestDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
+import fashion.coin.wallet.back.service.LogEventService;
 import fashion.coin.wallet.back.service.TransactionService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -27,9 +30,15 @@ public class TransactionController {
 
     TransactionService transactionService;
 
+    @Autowired
+    LogEventService logEventService;
+
     @PostMapping("/api/v1/send")
     @ResponseBody
-    ResultDTO sendTransaction(@RequestBody TransactionRequestDTO request){
+    ResultDTO sendTransaction(@RequestBody TransactionRequestDTO request, HttpServletRequest httpServletRequest){
+
+        logEventService.saveTrans(httpServletRequest, request.getSenderWallet(),request.getReceiverWallet());
+
         return transactionService.send(request);
     }
 
