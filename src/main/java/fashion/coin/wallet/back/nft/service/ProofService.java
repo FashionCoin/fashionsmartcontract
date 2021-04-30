@@ -51,6 +51,8 @@ public class ProofService {
 
     public ResultDTO proofNft(NftRequestDTO request) {
         try {
+
+
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
                 return error109;
@@ -63,7 +65,7 @@ public class ProofService {
                 return error213;
             }
 
-            if(nft.isTirage()){
+            if (nft.isTirage()) {
                 return error227;
             }
 
@@ -165,23 +167,28 @@ public class ProofService {
             BigDecimal amountToDistribute = nft.getCreativeValue().divide(BigDecimal.TEN, 6, RoundingMode.HALF_UP);
 
 
-            for (int i = 1; i < 10000 ; i+=1000) {
+            for (int i = 1; i < 10000; i += 1000) {
 
-                if (!aiService.isEnoughMoney(AIService.AIWallets.MONEYBAG, amountToDistribute) ){
+                if (!aiService.isEnoughMoney(AIService.AIWallets.MONEYBAG, amountToDistribute)) {
                     try {
                         Thread.sleep(i);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     break;
                 }
 
             }
+            /// TODO: временно отключаем пруфы
 
             List<ProofHistory> proofHistoryList = proofHistoryRepository.findByNftId(nft.getId());
-            BigDecimal totalAmount = BigDecimal.ZERO;
+// TODO: раскомментировать когда включим пруфы
+            //            BigDecimal totalAmount = BigDecimal.ZERO;
+// TODO: закомментирвоать когда включим пруфы
+            BigDecimal totalAmount = amountToDistribute.divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP)   ;
 
+            /*
             if (proofHistoryList != null && proofHistoryList.size() > 0) {
 
                 BigDecimal oneProofRate = amountToDistribute.divide(nft.getProofs(), 6, RoundingMode.HALF_UP);
@@ -206,6 +213,7 @@ public class ProofService {
                     }
                 }
             }
+            */
             amountToDistribute = amountToDistribute.subtract(totalAmount).setScale(3, RoundingMode.HALF_UP);
             if (amountToDistribute.compareTo(BigDecimal.ZERO) > 0) {
                 if (!aiService.transfer(amountToDistribute.toString(),
@@ -220,13 +228,13 @@ public class ProofService {
         return new ResultDTO(true, "Ok", 0);
     }
 
-    public BigDecimal allProof(Client client){
+    public BigDecimal allProof(Client client) {
 
         BigDecimal proof = BigDecimal.ZERO;
 
         List<ProofHistory> proofHistoryList = proofHistoryRepository.findByClientId(client.getId());
-        if(proofHistoryList!=null && proofHistoryList.size()>0){
-            for(ProofHistory ph : proofHistoryList){
+        if (proofHistoryList != null && proofHistoryList.size() > 0) {
+            for (ProofHistory ph : proofHistoryList) {
                 proof = proof.add(ph.getProofValue());
             }
         }

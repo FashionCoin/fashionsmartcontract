@@ -95,7 +95,7 @@ public class ClientController {
     @ResponseBody
     ResultDTO getWallet(@RequestBody Object json){
         GetWalletsDTO data = gson.fromJson(String.valueOf(json),GetWalletsDTO.class);
-        logger.info(gson.toJson(data));
+//        logger.info(gson.toJson(data));
         return clientService.getWallets(data);
     }
 
