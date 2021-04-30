@@ -70,15 +70,17 @@ public class CurrencyService {
     }
 
     public BigDecimal getLastCurrencyRate(String currency) {
-        logger.info(currency);
+//        logger.info(currency);
 
         currency = checkFashionCurrency(currency);
 
         CurrencyRate currencyRate = currencyRateRepository.findTopByCurrencyOrderByDateTimeDesc(currency);
-        logger.info("Currency Rate: ", gson.toJson(currencyRate));
+//        logger.info("Currency Rate: ", gson.toJson(currencyRate));
         if (currencyRate != null) {
             return currencyRate.getRate();
         } else {
+            logger.error(currency);
+            logger.error("Currency Rate: {}", gson.toJson(currencyRate));
             return null;
         }
     }
@@ -144,16 +146,16 @@ public class CurrencyService {
         List<CurrencyDTO> currencyList = new ArrayList<>();
         List<String> crypts = getAvailableCrypts();
         try {
-            logger.info("Before Time: " + beforeTime);
+//            logger.info("Before Time: " + beforeTime);
             for (String currency : crypts) {
                 CurrencyRate currencyRate =
                         currencyRateRepository.findTopByCurrencyAndDateTimeIsAfter(
                                 currency, beforeTime);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, currencyRate.getRate().toString());
                 currencyList.add(currencyDTO);
-                logger.info(gson.toJson(currencyRate));
+//                logger.info(gson.toJson(currencyRate));
             }
-            logger.info("currencyList.size()=" + currencyList.size());
+//            logger.info("currencyList.size()=" + currencyList.size());
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
             logger.error(e.getMessage());
@@ -167,7 +169,7 @@ public class CurrencyService {
         List<CurrencyDTO> currencyList = new ArrayList<>();
         List<String> crypts = getAvailableCrypts();
         try {
-            logger.info("Average for: " + date);
+//            logger.info("Average for: " + date);
             LocalDateTime dateStartReq = LocalDateTime.parse(date + "T00:00:00", DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime dateEndReq = LocalDateTime.parse(date + "T23:59:59", DateTimeFormatter.ISO_DATE_TIME);
             for (String currency : crypts) {
@@ -176,10 +178,10 @@ public class CurrencyService {
                 for (int i = 0; i < 10; i++) {
                     LocalDateTime dateStart = dateStartReq.plus(i, ChronoUnit.DAYS);
                     LocalDateTime dateEnd = dateEndReq.plus(i, ChronoUnit.DAYS);
-                    logger.info("{} {} {}", currency, dateStart, dateEnd);
+//                    logger.info("{} {} {}", currency, dateStart, dateEnd);
                     avg = currencyRateRepository.getAverageCurrency(currency,
                             dateStart, dateEnd);
-                    logger.info("AVG: {}", avg);
+//                    logger.info("AVG: {}", avg);
                     if (avg != null) {
                         break;
                     } else {
@@ -193,7 +195,7 @@ public class CurrencyService {
                 BigDecimal rate = BigDecimal.valueOf(avg);
                 CurrencyDTO currencyDTO = new CurrencyDTO(currency, df.format(rate));
                 currencyList.add(currencyDTO);
-                logger.info(gson.toJson(currencyDTO));
+//                logger.info(gson.toJson(currencyDTO));
             }
         } catch (Exception e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());

@@ -76,7 +76,7 @@ public class CurrencyRateService {
                     currencyRate.setRate(fshnPrice.divide(
                             new BigDecimal(entry.getValue().price
                             ), 6, RoundingMode.HALF_UP));
-                    logger.info(gson.toJson(currencyRate));
+//                    logger.info(gson.toJson(currencyRate));
                     currencyRateRepository.save(currencyRate);
                 }
             }
@@ -107,17 +107,18 @@ public class CurrencyRateService {
                 currencyRate.setCurrency("XAU");
                 currencyRate.setDateTime(LocalDateTime.now());
                 currencyRate.setRate(auPrice);
-                logger.info(gson.toJson(currencyRate));
+//                logger.info(gson.toJson(currencyRate));
                 currencyRateRepository.save(currencyRate);
 
                 currencyRate = new CurrencyRate();
                 currencyRate.setCurrency("XAG");
                 currencyRate.setDateTime(LocalDateTime.now());
                 currencyRate.setRate(agPrice);
-                logger.info(gson.toJson(currencyRate));
+//                logger.info(gson.toJson(currencyRate));
                 currencyRateRepository.save(currencyRate);
 
             } else {
+
                 logger.error(gson.toJson(responseEntity));
             }
         } catch (Exception e) {
