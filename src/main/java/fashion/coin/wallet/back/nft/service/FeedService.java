@@ -123,10 +123,12 @@ public class FeedService {
                 feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             } else {
+                logger.error("Feed type: {}",request.getFeedType());
+
                 return error125;
             }
-            logger.info("FromIndex: {}", fromIndex);
-            logger.info("ToIndex: {}", toIndex);
+//            logger.info("FromIndex: {}", fromIndex);
+//            logger.info("ToIndex: {}", toIndex);
 
             if (fromIndex >= feed.size()) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
