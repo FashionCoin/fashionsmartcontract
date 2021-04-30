@@ -46,14 +46,14 @@ public class BlockchainService {
 
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<BlockchainTransactionDTO> request = new HttpEntity<>(blockchainTransaction, headers);
-            logger.info("Request: {}",gson.toJson(blockchainTransaction));
+            logger.info("Request: {}", gson.toJson(blockchainTransaction));
             ResponseEntity<ResponceDTO> responce = restTemplate.postForEntity(BLOCKCHAIN_API_URI + "/wallets/transaction", request, ResponceDTO.class);
             if (!responce.hasBody()) {
                 logger.error("responce.hasBody(): {}", responce.hasBody());
                 return "";
             }
             ResponceDTO responceBody = responce.getBody();
-            logger.info("responceBody: {}",gson.toJson(responceBody));
+            logger.info("responceBody: {}", gson.toJson(responceBody));
             return responceBody.getTx_hash();
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,7 +116,7 @@ public class BlockchainService {
 
     public FshnBalanceDTO getWalletInfo(String walletAddress) {
         try {
-            logger.info(walletAddress);
+
             ResponseEntity<FshnBalanceInfoDTO> responce = restTemplate.getForEntity(BLOCKCHAIN_API_URI + "/wallets/info?pub_key=" + walletAddress,
                     FshnBalanceInfoDTO.class);
             if (responce == null || !responce.hasBody()) return null;
@@ -126,8 +126,9 @@ public class BlockchainService {
             FshnBalanceDTO balanceDTO = balanceInfo.getResult();
             return balanceDTO;
         } catch (Exception e) {
-            System.out.println("Don't get wallet info for " + walletAddress);
-            System.out.println(e.getMessage());
+            logger.error(walletAddress);
+            logger.error(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
