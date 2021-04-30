@@ -260,19 +260,19 @@ public class ClientService {
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
             if (client == null) {
-                logger.error("Client: {}",client);
+                logger.error("Client: {}", client);
                 return error108;
             }
             if (client.isBanned()) {
-                logger.error("Client in ban: {}",client.isBanned());
+                logger.error("Client in ban: {}", client.isBanned());
                 return error122;
             }
             if (data.getApikey() == null) {
-                logger.error("ApiKey: {}",data.getApikey());
+                logger.error("ApiKey: {}", data.getApikey());
                 return error107;
             }
 
-            if (!checkUsingApiKey(data.getApikey())){
+            if (!checkUsingApiKey(data.getApikey())) {
                 logger.error("ApiKey is alredy in using");
                 return error117;
             }
@@ -636,9 +636,9 @@ public class ClientService {
     public boolean checkEmailToken(String token) {
         SetEmailRequest request = setEmailRepository.findByEmailVerificationCode(token);
         if (request == null) return false;
-        logger.info(String.valueOf(request.getDataTime()));
-        logger.info(String.valueOf(LocalDateTime.now().minusDays(1)));
-        logger.info(String.valueOf(request.getDataTime().compareTo(LocalDateTime.now().minusDays(1))));
+//        logger.info(String.valueOf(request.getDataTime()));
+//        logger.info(String.valueOf(LocalDateTime.now().minusDays(1)));
+//        logger.info(String.valueOf(request.getDataTime().compareTo(LocalDateTime.now().minusDays(1))));
         if (!request.isStatus() && request.getDataTime().compareTo(LocalDateTime.now().minusDays(1)) > 0) {
             Client client = request.getClient();
             client.setEmail(request.getEmail());
@@ -758,8 +758,11 @@ public class ClientService {
     }
 
     public Object getClientInfo(CheckEmailDTO data) {
-        logger.info(gson.toJson(data));
-        if (data.getApikey() == null) return error107;
+//        logger.info(gson.toJson(data));
+        if (data.getApikey() == null) {
+            logger.error("ApiKey: {]", data.getApikey());
+            return error107;
+        }
         if (data.getCryptoname() == null) {
 
             Client clientByApikey = findClientByApikey(data.getApikey());
@@ -768,11 +771,15 @@ public class ClientService {
                 return error108;
             }
 
-            if (clientByApikey.isBanned()) return error122;
+            if (clientByApikey.isBanned()) {
+                logger.error("Cliend is in bann: {}", clientByApikey.isBanned());
+                return error122;
+            }
 
             if (clientByApikey.getWalletAddress() == null || clientByApikey.getWalletAddress().length() == 0) {
                 return clientByApikey;
             } else {
+                logger.error("Wallet Address: {}", clientByApikey.getWalletAddress());
                 return error118;
             }
         }
@@ -782,12 +789,22 @@ public class ClientService {
         if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
         Client client = clientRepository.findClientByCryptoname(cryptoname);
-        logger.info("Client info: " + client);
-        if (client == null) return error108;
-        if (client.getApikey() == null) return error107;
-        if (!client.getApikey().equals(data.getApikey())) return error109;
+//        logger.info("Client info: " + client);
+        if (client == null) {
+            logger.error("Client: {}", client);
+            return error108;
+        }
+        if (client.getApikey() == null) {
+            logger.error("ApiKey: {}", client.getApikey());
+            return error107;
+        }
+        if (!client.getApikey().equals(data.getApikey())) {
+            logger.error("Apikey: {}", client.getApikey());
+            logger.error("ApiKey from data: {}", data.getApikey());
+            return error109;
+        }
         updateBalance(client);
-        logger.info(gson.toJson(client));
+//        logger.info(gson.toJson(client));
         return client;
     }
 

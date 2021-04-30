@@ -91,9 +91,9 @@ public class FeedService {
 
 
             } else if (request.getFeedType().equals(PROOFS_FEED)) {
-                logger.info(request.getFeedType());
+//                logger.info(request.getFeedType());
                 List<FriendProof> friendList = friendProofRepository.findByProofReceiverId(client.getId());
-                logger.info("Frienf List size: {}", friendList.size());
+//                logger.info("Frienf List size: {}", friendList.size());
                 for (FriendProof fp : friendList) {
 
 
@@ -119,7 +119,7 @@ public class FeedService {
 //                        feed.addAll(nftList);
                     }
                 }
-                logger.info("NFT list size: {}", feed.size());
+//                logger.info("NFT list size: {}", feed.size());
                 feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             } else {
