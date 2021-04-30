@@ -283,7 +283,7 @@ public class TranzzoService {
             paymentRequest.setAmount(buyFshn.getUahAmount().doubleValue());
 //            paymentRequest.setAmount(1.0); // TODO: sandbox
             paymentRequest.setCurrency("UAH");
-            paymentRequest.setDescription("Buying FSHN for Ukrainian Hryvna");
+            paymentRequest.setDescription("Buying " + buyFshn.getFshnAmount() + " FSHN ");
             paymentRequest.setOrder_id(String.valueOf(buyFshn.getPaymentId()));
             paymentRequest.setOrder_3ds_bypass("always");
             paymentRequest.setCc_number(request.getCardNumber());
@@ -468,10 +468,10 @@ public class TranzzoService {
 
         @Override
         public void run() {
-            for (int i = 1000; i < 100000; i+=1000) {
-                if(tryBuyNftForFiat(buyFshn)){
+            for (int i = 1000; i < 100000; i += 1000) {
+                if (tryBuyNftForFiat(buyFshn)) {
                     return;
-                }else{
+                } else {
                     try {
                         Thread.sleep(i);
                     } catch (InterruptedException e) {

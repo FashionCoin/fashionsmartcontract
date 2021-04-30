@@ -186,7 +186,7 @@ public class ProofService {
 // TODO: раскомментировать когда включим пруфы
             //            BigDecimal totalAmount = BigDecimal.ZERO;
 // TODO: закомментирвоать когда включим пруфы
-            BigDecimal totalAmount = amountToDistribute.divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP)   ;
+            BigDecimal totalAmount = amountToDistribute.divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP);
 
             /*
             if (proofHistoryList != null && proofHistoryList.size() > 0) {
