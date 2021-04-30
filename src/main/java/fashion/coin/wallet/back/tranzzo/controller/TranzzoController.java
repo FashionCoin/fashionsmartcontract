@@ -38,6 +38,14 @@ public class TranzzoController {
         return tranzzoService.createPayment(request, servletRequest);
     }
 
+    @PostMapping("/api/v1/tranzzo/nft/payment/create")
+    @ResponseBody
+    ResultDTO createNftPayment(@RequestBody CreateTranzzoPaymentDTO request, HttpServletRequest servletRequest) {
+        logger.info("Create NFT payment");
+        logger.info(gson.toJson(request));
+        return tranzzoService.createNftPayment(request, servletRequest);
+    }
+
 
     @PostMapping("/api/v1/tranzzo/payment/pay")
     @ResponseBody

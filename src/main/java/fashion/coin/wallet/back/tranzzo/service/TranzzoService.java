@@ -1,15 +1,21 @@
 package fashion.coin.wallet.back.tranzzo.service;
 
 import com.google.gson.Gson;
+import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.BuyNftDTO;
+import fashion.coin.wallet.back.nft.entity.Nft;
+import fashion.coin.wallet.back.nft.service.NftService;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.CurrencyService;
 import fashion.coin.wallet.back.tranzzo.dto.*;
 import fashion.coin.wallet.back.tranzzo.entity.BuyFshn;
+import fashion.coin.wallet.back.tranzzo.entity.BuyNft;
 import fashion.coin.wallet.back.tranzzo.entity.Tranzzo;
 import fashion.coin.wallet.back.tranzzo.repository.BuyFshnRepository;
+import fashion.coin.wallet.back.tranzzo.repository.BuyNftRepository;
 import fashion.coin.wallet.back.tranzzo.repository.TranzzoRepository;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -76,6 +82,9 @@ public class TranzzoService {
     BuyFshnRepository buyFshnRepository;
 
     @Autowired
+    BuyNftRepository buyNftRepository;
+
+    @Autowired
     CurrencyService currencyService;
 
     @Autowired
@@ -83,6 +92,9 @@ public class TranzzoService {
 
     @Autowired
     AIService aiService;
+
+    @Autowired
+    NftService nftService;
 
     public Tranzzo saveRequest(TranzzoPaymentRequestDTO request) {
 
@@ -246,7 +258,7 @@ public class TranzzoService {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
                 logger.error(request.getApikey());
-                logger.error("Client: {}",client);
+                logger.error("Client: {}", client);
                 return error109;
             }
 
@@ -415,6 +427,7 @@ public class TranzzoService {
                         logger.info("Tx Hash: {}", resultDTO.getMessage());
                         buyFshn.setTxHash(resultDTO.getMessage());
                         buyFshnRepository.save(buyFshn);
+                        tryHardBuyNftForFiat(buyFshn);
                     } else {
                         logger.error(resultDTO.getMessage());
                         return "FAIL";
@@ -439,6 +452,68 @@ public class TranzzoService {
         }
 
         return "PROCEED";
+    }
+
+    private void tryHardBuyNftForFiat(BuyFshn buyFshn) {
+        new Thread(new BuyProcess(buyFshn)).start();
+    }
+
+    class BuyProcess implements Runnable {
+        BuyFshn buyFshn;
+
+        public BuyProcess(BuyFshn buyFshn) {
+            this.buyFshn = buyFshn;
+        }
+
+
+        @Override
+        public void run() {
+            for (int i = 1000; i < 100000; i+=1000) {
+                if(tryBuyNftForFiat(buyFshn)){
+                    return;
+                }else{
+                    try {
+                        Thread.sleep(i);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean tryBuyNftForFiat(BuyFshn buyFshn) {
+        try {
+            BuyNft buyNft = buyNftRepository.findById(buyFshn.getPaymentId()).orElse(null);
+            if (buyNft == null) {
+                return false;
+            }
+            if (buyNft.isComplited()) {
+                logger.info("NFT is already buy");
+                return true;
+            }
+            BuyNftDTO buyNftDTO = gson.fromJson(buyNft.getBuyNftRequest(), BuyNftDTO.class);
+            Client client = clientService.getClient(buyNft.getClientId());
+            BigDecimal nftTotalPrice = nftService.getTotalPrice(buyNftDTO);
+            BigDecimal clientBalance = clientService.updateBalance(client).getWalletBalance();
+            if (clientBalance.compareTo(nftTotalPrice) > 0) {
+                ResultDTO result = nftService.buy(buyNftDTO);
+                if (!result.isResult()) {
+                    logger.error(gson.toJson(result));
+                } else {
+                    buyNft.setComplited(true);
+                    buyNftRepository.save(buyNft);
+                    return true;
+                }
+            } else {
+                logger.info("Client balance: {}", clientBalance);
+                logger.info("NFT total price: {}", nftTotalPrice);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public ResultDTO paymentStatus(GetTanzzoStatusDTO request, HttpServletRequest servletRequest) {
@@ -506,6 +581,36 @@ public class TranzzoService {
         } else {
             logger.error("Card not Valid");
             return true;
+        }
+    }
+
+    public ResultDTO createNftPayment(CreateTranzzoPaymentDTO request, HttpServletRequest servletRequest) {
+        try {
+            ResultDTO resultDTO = createPayment(request, servletRequest);
+            if (!resultDTO.isResult()) {
+                return resultDTO;
+            }
+            if (resultDTO.getData() instanceof BuyFshn) {
+                BuyFshn buyFshn = (BuyFshn) resultDTO.getData();
+
+                BuyNft buyNft = new BuyNft();
+                buyNft.setPaymentId(buyFshn.getPaymentId());
+                buyNft.setTimestamp(System.currentTimeMillis());
+                buyNft.setLocalDateTime(LocalDateTime.now());
+                buyNft.setNftId(request.getBuyNft().getNftId());
+                buyNft.setBuyNftRequest(gson.toJson(request.getBuyNft()));
+                buyNftRepository.save(buyNft);
+                tryBuyNftForFiat(buyFshn);
+                return resultDTO;
+
+            } else {
+                logger.error("ResultDTO: {}", gson.toJson(resultDTO));
+                return new ResultDTO(false, resultDTO.getData(), -1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), 0);
         }
     }
 }

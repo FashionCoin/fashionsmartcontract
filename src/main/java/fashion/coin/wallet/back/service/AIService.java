@@ -105,7 +105,6 @@ public class AIService {
 
         ResponceDTO responce = new ResponceDTO();
         try {
-            Gson gson = new Gson();
             BigInteger left_right = new BigInteger("1");
             BigInteger seed = new BigInteger(String.valueOf(System.currentTimeMillis()));
             String sign = SignBuilder.init()

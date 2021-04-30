@@ -256,7 +256,7 @@ public class NftService {
 
         Long timestamp = System.currentTimeMillis() - DAY;
 
-        List<Nft> nftList = nftRepository.findByAuthorNameAndFreeAndTimestampIsGreaterThan(login,true, timestamp);
+        List<Nft> nftList = nftRepository.findByAuthorNameAndFreeAndTimestampIsGreaterThan(login, true, timestamp);
         if (nftList == null) return true;
 
         return nftList.size() < 10;
@@ -471,7 +471,7 @@ public class NftService {
                 return error229;
             }
 
-NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
+            NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
 
             Client client = clientService.getClient(ownerId);
 
@@ -513,7 +513,7 @@ NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
 
     public ResultDTO setNewValue(NewValueRequestDTO request) {
         try {
-            logger.info("Set new value for {}",request.getNftId());
+            logger.info("Set new value for {}", request.getNftId());
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
                 return error109;
@@ -636,11 +636,11 @@ NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
                 result = aiService.transfer(amountWithoutTax.toString(),
                         nftTirage.getOwnerWallet(),
                         AIService.AIWallets.MONEYBAG).isResult();
-            } else if (!nft.isFree()){
+            } else if (!nft.isFree()) {
                 result = aiService.transfer(amountWithoutTax.toString(),
                         nft.getOwnerWallet(),
                         AIService.AIWallets.MONEYBAG).isResult();
-            }else {
+            } else {
                 result = true;
             }
 
@@ -1066,6 +1066,42 @@ NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
             return new ResultDTO(false, e.getMessage(), -1);
         }
 
+    }
+
+    public BigDecimal getTotalPrice(BuyNftDTO buyNftDTO) {
+        NftTirage nftTirage = null;
+
+
+        Nft nft = nftRepository.findById(buyNftDTO.getNftId()).orElse(null);
+        if (nft == null) {
+            logger.error("Nft: {}", nft);
+            return null;
+        }
+
+        if (nft.isInsale()) {
+            logger.error("Nft is in sale: {}", nft.isInsale());
+            return null;
+        }
+
+        if (nft.isTirage()) {
+            nftTirage = tirageService.tirageFindByNftAndOwnerId(buyNftDTO.getNftId(), buyNftDTO.getOwnerId());
+            if (nftTirage.getTirage() < buyNftDTO.getPieces()) {
+                logger.error("Nft tirage: {}", nftTirage.getTirage());
+                logger.error("Buy pieces: {}", buyNftDTO.getPieces());
+                return null;
+            }
+        }
+
+
+        BigDecimal amount;
+        if (nft.isTirage()) {
+            amount = nftTirage.getCreativeValue().multiply(BigDecimal.valueOf(buyNftDTO.getPieces()))
+                    .setScale(3, RoundingMode.HALF_UP);
+        } else {
+            amount = nft.getCreativeValue();
+        }
+
+        return amount;
     }
 
 
