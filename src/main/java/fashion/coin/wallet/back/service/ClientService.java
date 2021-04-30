@@ -253,7 +253,7 @@ public class ClientService {
 
     public ResultDTO trySignIn(SignInDTO data) {
         try {
-//            logger.info("Sign in " + gson.toJson(data));
+            logger.info("Sign in " + gson.toJson(data));
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
             if (cryptoname == null) cryptoname = data.getCryptoname().trim();
@@ -365,7 +365,7 @@ public class ClientService {
 
     public ResultDTO reserveName(ReserveCryptoNameDTO data) {
         try {
-            logger.info("Reserv Name " + gson.toJson(data));
+//            logger.info("Reserv Name " + gson.toJson(data));
 
 
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
@@ -498,14 +498,14 @@ public class ClientService {
         return (c >= 'a' && c <= 'z');
     }
 
-    public static void main(String[] args) {
-        ClientService clientService = new ClientService();
-        List<String> tests = Arrays.asList("normallogin", "nor-malLogin", "norm-allogin", "norma.llogin", "normallo_gin",
-                "norm allogin", "norm\uD83D\uDE09\uD83D\uDE09allogin", "nor\uD83D\uDE03mallogin", "norm\uD83D\uDE09-\uD83D\uDE09allogin", "nor\uD83D\uDE03mallo\ngin");
-        for (String test : tests) {
-            System.out.println(test + " " + clientService.checkValidCryptoname(test));
-        }
-    }
+//    public static void main(String[] args) {
+//        ClientService clientService = new ClientService();
+//        List<String> tests = Arrays.asList("normallogin", "nor-malLogin", "norm-allogin", "norma.llogin", "normallo_gin",
+//                "norm allogin", "norm\uD83D\uDE09\uD83D\uDE09allogin", "nor\uD83D\uDE03mallogin", "norm\uD83D\uDE09-\uD83D\uDE09allogin", "nor\uD83D\uDE03mallo\ngin");
+//        for (String test : tests) {
+//            System.out.println(test + " " + clientService.checkValidCryptoname(test));
+//        }
+//    }
 
     public Client findByWallet(String walletAddress) {
         try {
