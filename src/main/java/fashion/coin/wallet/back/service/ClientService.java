@@ -73,6 +73,7 @@ public class ClientService {
             logger.info(gson.toJson(data));
 
             if (data.getWalletAddress() == null || data.getWalletAddress().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
+                logger.error("Wallet: ", data.getWalletAddress());
                 return error101;
             }
             String cryptoname = null;
@@ -155,15 +156,15 @@ public class ClientService {
                             try {
                                 boolean isWalletExists = false;
                                 do {
-                                    logger.info("Sleep before telegramm bonus");
+//                                    logger.info("Sleep before telegramm bonus");
                                     Thread.sleep(1000);
-                                    logger.info("Wake Up");
+//                                    logger.info("Wake Up");
                                     FshnBalanceDTO fshnBalanceDTO = blockchainService.getWalletInfo(clientWallet);
                                     if (fshnBalanceDTO != null && fshnBalanceDTO.getPub_key() != null
                                             && fshnBalanceDTO.getPub_key().equals(clientWallet)) {
                                         isWalletExists = true;
                                     }
-                                    logger.info("isWalletExists = " + String.valueOf(isWalletExists));
+//                                    logger.info("isWalletExists = " + String.valueOf(isWalletExists));
                                 } while (!isWalletExists);
 
                                 boolean result = aiService.transfer(balance.toString(),
@@ -216,18 +217,31 @@ public class ClientService {
 
     public ResultDTO checkClient(SignInDTO data) {
         try {
-            logger.info("Chek client " + gson.toJson(data));
+//            logger.info("Chek client " + gson.toJson(data));
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
-            if (client == null) return error108;
-            if (data.getApikey() == null) return error107;
+            if (client == null) {
+                logger.error("Client: {}", client);
+                return error108;
+            }
+            if (data.getApikey() == null) {
+                logger.error("Apikey: {}", data.getApikey());
+                return error107;
+            }
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
 
 
-            if (!apiKeyInData.equals(apiKeyInSignature)) return error109;
+            if (!apiKeyInData.equals(apiKeyInSignature)) {
+                logger.error("ApiKey in Data: {}", apiKeyInData);
+                logger.error("ApiKey in signature: {}", apiKeyInSignature);
+                return error109;
+            }
 
-            if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
+            if (!checkSignature(data.getSignature(), client.getWalletAddress())) {
+                logger.error("Signature error");
+                return error115;
+            }
 
             return validLogin;
         } catch (Exception e) {
@@ -239,30 +253,45 @@ public class ClientService {
 
     public ResultDTO trySignIn(SignInDTO data) {
         try {
-            logger.info("Sign in " + gson.toJson(data));
+//            logger.info("Sign in " + gson.toJson(data));
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
             if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
-            if (client == null) return error108;
-            if (client.isBanned()) return error122;
-            if (data.getApikey() == null) return error107;
+            if (client == null) {
+                logger.error("Client: {}",client);
+                return error108;
+            }
+            if (client.isBanned()) {
+                logger.error("Client in ban: {}",client.isBanned());
+                return error122;
+            }
+            if (data.getApikey() == null) {
+                logger.error("ApiKey: {}",data.getApikey());
+                return error107;
+            }
 
-            if (!checkUsingApiKey(data.getApikey())) return error117;
+            if (!checkUsingApiKey(data.getApikey())){
+                logger.error("ApiKey is alredy in using");
+                return error117;
+            }
 
             String apiKeyInSignature = data.getSignature().substring(128);
             String apiKeyInData = SignBuilder.bytesToHex(data.getApikey().getBytes());
 
 
             if (!apiKeyInData.equals(apiKeyInSignature)) {
-                logger.error("apiKeyInSignature: {}",apiKeyInSignature);
-                logger.error("apiKeyInData: {}",apiKeyInData);
+                logger.error("apiKeyInSignature: {}", apiKeyInSignature);
+                logger.error("apiKeyInData: {}", apiKeyInData);
 
                 return error109;
             }
 
-            if (!checkSignature(data.getSignature(), client.getWalletAddress())) return error115;
+            if (!checkSignature(data.getSignature(), client.getWalletAddress())) {
+                logger.error("Signature error");
+                return error115;
+            }
             client.setApikey(data.getApikey());
 
             clientRepository.save(client);
@@ -287,7 +316,9 @@ public class ClientService {
             if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
-            if (client == null) return error108;
+            if (client == null) {
+                return error108;
+            }
             if (client.isBanned()) return error122;
             if (data.getApikey() == null) return error107;
 
@@ -297,8 +328,8 @@ public class ClientService {
 
 
             if (!apiKeyInData.equals(apiKeyInSignature)) {
-                logger.error("apiKeyInSignature: {}",apiKeyInSignature);
-                logger.error("apiKeyInData: {}",apiKeyInData);
+                logger.error("apiKeyInSignature: {}", apiKeyInSignature);
+                logger.error("apiKeyInData: {}", apiKeyInData);
                 return error109;
             }
 
@@ -1053,7 +1084,7 @@ public class ClientService {
             }
 
             client.setAbout(request.getAbout());
-            client.setSocialLinks(gson.toJson( request.getSocialLinks()));
+            client.setSocialLinks(gson.toJson(request.getSocialLinks()));
 
             clientRepository.save(client);
 
