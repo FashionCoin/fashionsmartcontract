@@ -36,10 +36,12 @@ public class FeedService {
 
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
-        logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
+//        logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
         Client client = clientService.findByCryptonameAndApiKey(request.getCryptoname(), request.getApikey());
-        logger.info("Feed Type: {}", request.getFeedType());
+//        logger.info("Feed Type: {}", request.getFeedType());
         if (client == null && !request.getFeedType().equals(MAIN_FEED)) {
+            logger.error("Client: {}", client);
+            logger.error("Feed type: {}", request.getFeedType());
             return error124;
         }
 
@@ -60,17 +62,17 @@ public class FeedService {
                     List<Nft> nftList = nftRepository.findByOwnerId(fp.getProofReceiverId());
                     nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
                     if (nftList != null && nftList.size() > 0) {
-                        nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
+                        nftList.removeIf(nft -> nft.getOwnerId() != null && nft.getOwnerId().equals(client.getId()));
 
-                        for(Nft nft : nftList){
+                        for (Nft nft : nftList) {
                             boolean isDouble = false;
-                            for(Nft feedNft : feed){
-                                if(feedNft.getId().equals(nft.getId())){
+                            for (Nft feedNft : feed) {
+                                if (feedNft.getId().equals(nft.getId())) {
                                     isDouble = true;
                                     break;
                                 }
                             }
-                            if(!isDouble){
+                            if (!isDouble) {
                                 feed.add(nft);
                             }
                         }
@@ -80,7 +82,7 @@ public class FeedService {
                 }
                 feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
                 feed.forEach(nft -> {
-                    if(nft.isTirage()){
+                    if (nft.isTirage()) {
                         nft.setOwnerId(nft.getAuthorId());
                         nft.setOwnerName(nft.getAuthorName());
                     }
@@ -99,17 +101,17 @@ public class FeedService {
                     nftList.addAll(tirageService.tirageFindByOwnerId(fp.getProofReceiverId()));
 
                     if (nftList != null && nftList.size() > 0) {
-                        nftList.removeIf(nft -> nft.getOwnerId()!=null && nft.getOwnerId().equals(client.getId()));
+                        nftList.removeIf(nft -> nft.getOwnerId() != null && nft.getOwnerId().equals(client.getId()));
 
-                        for(Nft nft : nftList){
+                        for (Nft nft : nftList) {
                             boolean isDouble = false;
-                            for(Nft feedNft : feed){
-                                if(feedNft.getId().equals(nft.getId())){
+                            for (Nft feedNft : feed) {
+                                if (feedNft.getId().equals(nft.getId())) {
                                     isDouble = true;
                                     break;
                                 }
                             }
-                            if(!isDouble){
+                            if (!isDouble) {
                                 feed.add(nft);
                             }
                         }
