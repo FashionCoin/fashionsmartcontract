@@ -64,7 +64,7 @@ public class MessagingService {
 
        jNotificationMessage.add(MESSAGE_KEY, messagePayload);
 
-       logger.info(gson.toJson(jNotificationMessage) + "\n");
+//       logger.info(gson.toJson(jNotificationMessage) + "\n");
 
         return jNotificationMessage;
     }
@@ -138,8 +138,8 @@ public class MessagingService {
 
             if (responseCode == 200) {
                 response = inputstreamToString(connection.getInputStream());
-             logger.info("Message sent to Firebase for delivery, response:");
-                logger.info(response);
+//             logger.info("Message sent to Firebase for delivery, response:");
+//                logger.info(response);
             } else {
                 logger.error("Unable to send message to Firebase:");
                 response = inputstreamToString(connection.getErrorStream());
@@ -148,6 +148,8 @@ public class MessagingService {
             return response;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("Message: {}",fcmMessage);
+            logger.error("Project ID: {}",projectId);
             return e.getMessage();
         }
     }
