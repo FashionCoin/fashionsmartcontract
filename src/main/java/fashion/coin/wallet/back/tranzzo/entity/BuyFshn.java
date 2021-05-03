@@ -29,6 +29,8 @@ public class BuyFshn {
     String wallet;
     String txHash;
 
+    boolean lock;
+
     public Long getPaymentId() {
         return paymentId;
     }
@@ -155,5 +157,13 @@ public class BuyFshn {
 
     public void setTxHash(String txHash) {
         this.txHash = txHash;
+    }
+
+    public boolean isLock() {
+        return lock;
+    }
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
     }
 }

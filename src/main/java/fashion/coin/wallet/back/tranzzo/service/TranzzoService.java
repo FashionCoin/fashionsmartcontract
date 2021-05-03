@@ -420,6 +420,11 @@ public class TranzzoService {
 
             if (tranzzo.getStatus().equals("success")) {
                 logger.info("Tranzzo payment status is {}", tranzzo.getStatus());
+                if(!buyFshn.isLock()) {
+                    buyLock(buyFshn);
+                }else{
+                    return "PROCESSED";
+                }
                 if (buyFshn.getTxHash() == null || buyFshn.getTxHash().length() == 0) {
 
                     ResultDTO resultDTO = aiService.transfer(buyFshn.getFshnAmount().toString(), buyFshn.getWallet(), AIService.AIWallets.MONEYBAG);
@@ -435,6 +440,7 @@ public class TranzzoService {
                 } else {
                     logger.info("TxHash already exists: {}", buyFshn.getTxHash());
                 }
+                buyUnLock(buyFshn);
             } else {
                 logger.info("Status: {}", response.getStatus());
                 logger.info("Status code: {}", response.getStatus_code());
@@ -452,6 +458,17 @@ public class TranzzoService {
         }
 
         return "PROCEED";
+    }
+
+
+    private void buyUnLock(BuyFshn buyFshn) {
+        buyFshn.setLock(false);
+        buyFshnRepository.save(buyFshn);
+    }
+
+    private void buyLock(BuyFshn buyFshn) {
+        buyFshn.setLock(true);
+        buyFshnRepository.save(buyFshn);
     }
 
     private void tryHardBuyNftForFiat(BuyFshn buyFshn) {
