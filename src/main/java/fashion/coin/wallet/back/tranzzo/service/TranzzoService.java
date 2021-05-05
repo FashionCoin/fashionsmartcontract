@@ -603,6 +603,9 @@ public class TranzzoService {
 
     public ResultDTO createNftPayment(CreateTranzzoPaymentDTO request, HttpServletRequest servletRequest) {
         try {
+
+            Client client = clientService.findClientByApikey(request.getApikey());
+
             ResultDTO resultDTO = createPayment(request, servletRequest);
             if (!resultDTO.isResult()) {
                 return resultDTO;
@@ -616,6 +619,7 @@ public class TranzzoService {
                 buyNft.setLocalDateTime(LocalDateTime.now());
                 buyNft.setNftId(request.getBuyNft().getNftId());
                 buyNft.setBuyNftRequest(gson.toJson(request.getBuyNft()));
+                buyNft.setClientId(client.getId());
                 buyNftRepository.save(buyNft);
                 tryBuyNftForFiat(buyFshn);
                 return resultDTO;
