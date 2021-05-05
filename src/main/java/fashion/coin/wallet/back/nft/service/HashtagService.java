@@ -55,7 +55,7 @@ public class HashtagService {
 
     boolean checkTags(String description) {
         try {
-            String text = "α "+description.replace(" "," Ξ ").replace("\n"," ") + " Ω";
+            String text = "α "+description.replace("\n"," ").replace(" "," Ξ ") + " Ω";
 
             Matcher m = tagMatcher.matcher(text);
 
