@@ -412,6 +412,10 @@ public class NftService {
         } else {
             resultDTO = checkShare(request);
         }
+        if(!resultDTO.isResult()){
+            logger.info(gson.toJson(resultDTO));
+            return false;
+        }
 
 
         logger.info(gson.toJson(resultDTO));
