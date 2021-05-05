@@ -356,6 +356,7 @@ public class NftService {
 
 
             nftHistory.setTimestamp(System.currentTimeMillis());
+            nft.setFree(false);
             if (nft.isTirage()) {
                 NftTirage newOwnerNft = tirageService.tirageFindByNftAndOwnerId(nft.getId(), clientTo.getId());
 
