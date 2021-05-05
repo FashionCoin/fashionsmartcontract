@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.tranzzo.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -28,7 +29,7 @@ public class BuyFshn {
     String acceptHeader;
     String wallet;
     String txHash;
-
+    @Column(name = "lock", columnDefinition = "boolean default false", nullable = false)
     boolean lock;
 
     public Long getPaymentId() {
