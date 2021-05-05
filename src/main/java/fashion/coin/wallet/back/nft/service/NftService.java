@@ -415,8 +415,8 @@ public class NftService {
 
 
         logger.info(gson.toJson(resultDTO));
-        if (resultDTO.getData() instanceof HashMap) {
-            HashMap<String, AllocatedFundsDTO> share = (HashMap<String, AllocatedFundsDTO>) resultDTO.getData();
+        if (resultDTO.getData() instanceof Map) {
+            Map<String, AllocatedFundsDTO> share = (Map<String, AllocatedFundsDTO>) resultDTO.getData();
             for (Map.Entry<String, AllocatedFundsDTO> allocatedFunds : share.entrySet()) {
                 TransactionRequestDTO transactionRequest = transactionsRequestMap.get(allocatedFunds.getKey());
                 BigDecimal amount = new BigDecimal(transactionRequest.getBlockchainTransaction().getBody()
