@@ -722,11 +722,13 @@ public class NftService {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
+                logger.error("ApiKey: {}",request.getApikey());
                 return error109;
             }
 
             Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
+                logger.error("Nft ID: {}",request.getNftId());
                 return error213;
             }
 
