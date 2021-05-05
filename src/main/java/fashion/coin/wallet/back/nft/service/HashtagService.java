@@ -7,9 +7,12 @@ import fashion.coin.wallet.back.nft.entity.HashTag;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.repository.HashTagRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +22,9 @@ import java.util.regex.Pattern;
 
 @Service
 public class HashtagService {
+
+
+    Logger logger = LoggerFactory.getLogger(HashtagService.class);
 
     @Autowired
     NftRepository nftRepository;
@@ -110,4 +116,19 @@ public class HashtagService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
+    @PostConstruct
+    public void refreshTags(){
+        logger.info("Refresh Hash Tags");
+        List<Nft> nftList = nftRepository.findAll();
+        logger.info("NFT List size: {}",nftList.size());
+        hashTagRepository.deleteAll();
+        for(Nft nft : nftList){
+            checkTags(nft.getDescription());
+        }
+
+        logger.info("End Refresh NFT Tags");
+
+    }
+
 }
