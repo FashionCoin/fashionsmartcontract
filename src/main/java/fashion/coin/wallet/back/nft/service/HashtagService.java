@@ -55,7 +55,9 @@ public class HashtagService {
 
     boolean checkTags(String description) {
         try {
-            Matcher m = tagMatcher.matcher(description);
+            String text = "α "+description.replace("\n"," ") + " Ω";
+
+            Matcher m = tagMatcher.matcher(text);
 
             Set<String> alreadyUsed = new HashSet<>();
 
