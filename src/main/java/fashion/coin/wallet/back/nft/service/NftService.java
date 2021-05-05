@@ -722,6 +722,7 @@ public class NftService {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
+                logger.error(gson.toJson(request));
                 logger.error("ApiKey: {}",request.getApikey());
                 return error109;
             }
@@ -771,6 +772,7 @@ public class NftService {
 
                 return new ResultDTO(true, share, 0);
             } else {
+                logger.error("Nft way allocation: {}",nft.getWayOfAllocatingFunds());
                 return error220;
             }
         } catch (Exception e) {

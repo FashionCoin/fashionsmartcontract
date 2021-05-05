@@ -502,7 +502,9 @@ public class TranzzoService {
     private boolean tryBuyNftForFiat(BuyFshn buyFshn) {
         try {
             BuyNft buyNft = buyNftRepository.findById(buyFshn.getPaymentId()).orElse(null);
+            logger.info("Buy NFT: {}",gson.toJson( buyNft));
             if (buyNft == null) {
+                logger.error("BuyNft: {}",buyNft);
                 return false;
             }
             if (buyNft.isComplited()) {
@@ -608,6 +610,7 @@ public class TranzzoService {
 
             ResultDTO resultDTO = createPayment(request, servletRequest);
             if (!resultDTO.isResult()) {
+                logger.error(gson.toJson(resultDTO));
                 return resultDTO;
             }
             if (resultDTO.getData() instanceof BuyFshn) {
