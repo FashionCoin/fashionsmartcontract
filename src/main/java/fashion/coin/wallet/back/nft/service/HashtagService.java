@@ -26,7 +26,8 @@ public class HashtagService {
     @Autowired
     HashTagRepository hashTagRepository;
 
-    public static final String REG_EX_TAG = ".*?\\s(#\\w+).*?";
+//    public static final String REG_EX_TAG = ".*?\\s(#\\w+).*?";
+    public static final String REG_EX_TAG = "\\s(#\\w+)\\s";
     Pattern tagMatcher = Pattern.compile(REG_EX_TAG);
 
     List<HashTag> findAllTags(String hashtag) {
