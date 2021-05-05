@@ -431,6 +431,10 @@ public class NftService {
             }
             return true;
         }
+        logger.info(String.valueOf(resultDTO));
+        logger.info(String.valueOf(resultDTO.getData()));
+        logger.info(String.valueOf(resultDTO.getData().getClass()));
+
         logger.error(resultDTO.getData().getClass().getName());
         return false;
     }
