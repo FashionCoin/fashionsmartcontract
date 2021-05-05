@@ -515,6 +515,8 @@ public class TranzzoService {
             Client client = clientService.getClient(buyNft.getClientId());
             BigDecimal nftTotalPrice = nftService.getTotalPrice(buyNftDTO);
             BigDecimal clientBalance = clientService.updateBalance(client).getWalletBalance();
+            buyNftDTO.setApikey(client.getApikey());
+
             if (clientBalance.compareTo(nftTotalPrice) > 0) {
                 ResultDTO result = nftService.buy(buyNftDTO);
                 if (!result.isResult()) {

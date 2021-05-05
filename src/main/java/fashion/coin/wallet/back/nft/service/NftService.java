@@ -268,6 +268,7 @@ public class NftService {
     }
 
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
+        logger.info("Buy Nft: {}", gson.toJson(buyNftDTO));
         NftTirage nftTirage = null;
         Nft nft = null;
         try {
