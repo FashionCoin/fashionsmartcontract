@@ -414,7 +414,7 @@ public class NftService {
         } else {
             resultDTO = checkShare(request);
         }
-        if(!resultDTO.isResult()){
+        if (!resultDTO.isResult()) {
             logger.info(gson.toJson(resultDTO));
             return false;
         }
@@ -477,7 +477,8 @@ public class NftService {
 
             Long ownerId = nft.getOwnerId();
             if (nft.isTirage()) {
-
+                logger.error("Tirage NFT:");
+                logger.error(gson.toJson(nft));
                 return error229;
             }
 
@@ -729,13 +730,13 @@ public class NftService {
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
                 logger.error(gson.toJson(request));
-                logger.error("ApiKey: {}",request.getApikey());
+                logger.error("ApiKey: {}", request.getApikey());
                 return error109;
             }
 
             Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
-                logger.error("Nft ID: {}",request.getNftId());
+                logger.error("Nft ID: {}", request.getNftId());
                 return error213;
             }
 
@@ -778,7 +779,7 @@ public class NftService {
 
                 return new ResultDTO(true, share, 0);
             } else {
-                logger.error("Nft way allocation: {}",nft.getWayOfAllocatingFunds());
+                logger.error("Nft way allocation: {}", nft.getWayOfAllocatingFunds());
                 return error220;
             }
         } catch (Exception e) {
