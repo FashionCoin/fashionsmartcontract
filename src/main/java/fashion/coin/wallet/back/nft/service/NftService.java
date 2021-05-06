@@ -1118,6 +1118,11 @@ public class NftService {
         return amount;
     }
 
+    public NftFile getNftFile(Nft nft) {
+        NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
+        return nftFile;
+    }
+
 
     class DividendProofPaymentProcess implements Runnable {
 

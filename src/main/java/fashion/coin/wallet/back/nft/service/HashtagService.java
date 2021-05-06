@@ -116,19 +116,19 @@ public class HashtagService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
-
-    @PostConstruct
-    public void refreshTags(){
-        logger.info("Refresh Hash Tags");
-        List<Nft> nftList = nftRepository.findAll();
-        logger.info("NFT List size: {}",nftList.size());
-        hashTagRepository.deleteAll();
-        for(Nft nft : nftList){
-            checkTags(nft.getDescription());
-        }
-
-        logger.info("End Refresh NFT Tags");
-
-    }
+//
+//    @PostConstruct
+//    public void refreshTags(){
+//        logger.info("Refresh Hash Tags");
+//        List<Nft> nftList = nftRepository.findAll();
+//        logger.info("NFT List size: {}",nftList.size());
+//        hashTagRepository.deleteAll();
+//        for(Nft nft : nftList){
+//            checkTags(nft.getDescription());
+//        }
+//
+//        logger.info("End Refresh NFT Tags");
+//
+//    }
 
 }

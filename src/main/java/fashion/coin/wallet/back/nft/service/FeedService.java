@@ -3,8 +3,10 @@ package fashion.coin.wallet.back.nft.service;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.FeedNftRequestDTO;
+import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
+import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.ClientService;
@@ -34,6 +36,7 @@ public class FeedService {
     FriendProofRepository friendProofRepository;
     TirageService tirageService;
 
+    NftService nftService;
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
 //        logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
@@ -139,7 +142,45 @@ public class FeedService {
             }
 
             List<Nft> subList = feed.subList(fromIndex, toIndex);
-            return new ResultDTO(true, subList, 0);
+
+            List<OneNftResponceDTO> result = new ArrayList<>();
+            for(Nft nft : subList){
+
+                Client owner = clientService.findByCryptoname(nft.getOwnerName());
+
+                NftFile nftFile = nftService.getNftFile(nft);
+
+                OneNftResponceDTO oneNft = new OneNftResponceDTO();
+                oneNft.setId(nft.getId());
+                oneNft.setAvaExists(owner.avaExists());
+                oneNft.setAvatar(owner.getAvatar());
+                oneNft.setAuthorId(nft.getAuthorId());
+                oneNft.setAuthorName(nft.getAuthorName());
+                oneNft.setBanned(nft.isBanned());
+                oneNft.setBurned(nft.isBurned());
+                oneNft.setCanChangeValue(nft.isCanChangeValue());
+                oneNft.setCreativeValue(nft.getCreativeValue());
+                oneNft.setDescription(nft.getDescription());
+                oneNft.setFaceValue(nft.getFaceValue());
+                oneNft.setFileName(nft.getFileName());
+                oneNft.setInsale(nft.isInsale());
+                oneNft.setOwnerId(owner.getId());
+                oneNft.setOwnerName(owner.getCryptoname());
+                oneNft.setOwnerWallet(owner.getWalletAddress());
+                oneNft.setProofs(nft.getProofs());
+                oneNft.setTimestamp(nft.getTimestamp());
+                oneNft.setTitle(nft.getTitle());
+                oneNft.setTxhash(nft.getTxhash());
+                oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
+
+                oneNft.setPieces(1L);
+
+                oneNft.setHeight(nftFile.getHeight());
+                oneNft.setWidth(nftFile.getWidth());
+                result.add(oneNft);
+            }
+
+            return new ResultDTO(true, result, 0);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResultDTO(true, new ArrayList<>(), 0);
@@ -164,5 +205,10 @@ public class FeedService {
     @Autowired
     public void setTirageService(TirageService tirageService) {
         this.tirageService = tirageService;
+    }
+
+    @Autowired
+    public void setNftService(NftService nftService) {
+        this.nftService = nftService;
     }
 }
