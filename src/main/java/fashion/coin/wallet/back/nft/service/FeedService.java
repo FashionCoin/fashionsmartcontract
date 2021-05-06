@@ -145,7 +145,7 @@ public class FeedService {
 
             List<OneNftResponceDTO> result = new ArrayList<>();
             for (Nft nft : subList) {
-                logger.info(nft.getTitle());
+//                logger.info(nft.getTitle());
                 OneNftResponceDTO oneNft = new OneNftResponceDTO();
                 if (nft.getOwnerId() != null) {
                     Client owner = clientService.getClient(nft.getOwnerId());
@@ -185,8 +185,8 @@ public class FeedService {
                 result.add(oneNft);
                 result.add(oneNft);
             }
-            logger.info("Result Size: {}", result.size());
-            return new ResultDTO(true, subList, 0);
+//            logger.info("Result Size: {}", result.size());
+            return new ResultDTO(true, result, 0);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResultDTO(true, new ArrayList<>(), 0);
