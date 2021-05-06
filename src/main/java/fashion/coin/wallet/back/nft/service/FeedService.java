@@ -139,6 +139,9 @@ public class FeedService {
             }
 
             List<Nft> subList = feed.subList(fromIndex, toIndex);
+            for(Nft nft : subList){
+                logger.info(nft.getTitle());
+            }
             return new ResultDTO(true, subList, 0);
         } catch (Exception e) {
             logger.error(e.getMessage());
