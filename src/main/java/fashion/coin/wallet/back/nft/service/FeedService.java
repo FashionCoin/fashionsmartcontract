@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.nft.dto.FeedNftRequestDTO;
 import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
+import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.ClientService;
@@ -34,6 +35,7 @@ public class FeedService {
     NftRepository nftRepository;
     FriendProofRepository friendProofRepository;
     TirageService tirageService;
+    NftService nftService;
 
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
@@ -124,7 +126,7 @@ public class FeedService {
                 feed.removeIf(nft -> nft.isBurned() || nft.isBanned());
                 feed.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             } else {
-                logger.error("Feed type: {}",request.getFeedType());
+                logger.error("Feed type: {}", request.getFeedType());
 
                 return error125;
             }
@@ -142,16 +144,17 @@ public class FeedService {
             List<Nft> subList = feed.subList(fromIndex, toIndex);
 
             List<OneNftResponceDTO> result = new ArrayList<>();
-            for(Nft nft : subList){
+            for (Nft nft : subList) {
                 logger.info(nft.getTitle());
                 OneNftResponceDTO oneNft = new OneNftResponceDTO();
-                if(nft.getOwnerId()!= null) {
+                if (nft.getOwnerId() != null) {
                     Client owner = clientService.getClient(nft.getOwnerId());
                 }
+                NftFile nftFile = nftService.getNftFile(nft);
 
                 result.add(oneNft);
             }
-            logger.info("Result Size: {}",result.size());
+            logger.info("Result Size: {}", result.size());
             return new ResultDTO(true, subList, 0);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -177,5 +180,10 @@ public class FeedService {
     @Autowired
     public void setTirageService(TirageService tirageService) {
         this.tirageService = tirageService;
+    }
+
+    @Autowired
+    public void setNftService(NftService nftService) {
+        this.nftService = nftService;
     }
 }
