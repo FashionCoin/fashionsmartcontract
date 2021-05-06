@@ -1079,6 +1079,9 @@ public class ClientService {
     }
 
     public Client getClient(Long id) {
+        if(id ==null){
+            logger.error("Client ID: {}",id);
+        }
         return clientRepository.findById(id).orElse(null);
     }
 

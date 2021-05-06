@@ -145,6 +145,10 @@ public class FeedService {
             for(Nft nft : subList){
                 logger.info(nft.getTitle());
                 OneNftResponceDTO oneNft = new OneNftResponceDTO();
+                if(nft.getOwnerId()!= null) {
+                    Client owner = clientService.getClient(nft.getOwnerId());
+                }
+
                 result.add(oneNft);
             }
             logger.info("Result Size: {}",result.size());
