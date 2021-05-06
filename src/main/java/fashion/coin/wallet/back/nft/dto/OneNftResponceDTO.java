@@ -11,6 +11,7 @@ public class OneNftResponceDTO extends Nft {
 
     String height;
     String width;
+    String orientation;
 
     public String getAvatar() {
         return avatar;
@@ -58,5 +59,13 @@ public class OneNftResponceDTO extends Nft {
 
     public void setWidth(String width) {
         this.width = width;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
     }
 }

@@ -512,6 +512,10 @@ public class NftService {
 
             oneNft.setHeight(nftFile.getHeight());
             oneNft.setWidth(nftFile.getWidth());
+            if (nftFile.getExifOrientation() == null) {
+                nftFile.setExifOrientation("0");
+            }
+            oneNft.setOrientation(nftFile.getExifOrientation());
 
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {

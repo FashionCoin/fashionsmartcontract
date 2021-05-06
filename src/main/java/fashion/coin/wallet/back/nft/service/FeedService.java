@@ -161,6 +161,10 @@ public class FeedService {
                 if (nftFile != null) {
                     oneNft.setHeight(nftFile.getHeight());
                     oneNft.setWidth(nftFile.getWidth());
+                    if (nftFile.getExifOrientation() == null) {
+                        nftFile.setExifOrientation("0");
+                    }
+                    oneNft.setOrientation(nftFile.getExifOrientation());
                 }
 
                 oneNft.setId(nft.getId());
