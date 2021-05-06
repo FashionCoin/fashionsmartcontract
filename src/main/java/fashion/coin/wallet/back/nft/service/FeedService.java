@@ -180,7 +180,7 @@ public class FeedService {
                 result.add(oneNft);
             }
 
-            return new ResultDTO(true, result, 0);
+            return new ResultDTO(true, subList, 0);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResultDTO(true, new ArrayList<>(), 0);
