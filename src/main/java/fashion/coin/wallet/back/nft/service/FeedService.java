@@ -183,6 +183,7 @@ public class FeedService {
                 oneNft.setTitle(nft.getTitle());
                 oneNft.setTxhash(nft.getTxhash());
                 oneNft.setWayOfAllocatingFunds(nft.getWayOfAllocatingFunds());
+                oneNft.setTirage(nft.isTirage());
 
                 oneNft.setPieces(1L);
 
