@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.nft.service;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.nft.dto.FeedNftRequestDTO;
+import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
 import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
@@ -139,9 +140,14 @@ public class FeedService {
             }
 
             List<Nft> subList = feed.subList(fromIndex, toIndex);
+
+            List<OneNftResponceDTO> result = new ArrayList<>();
             for(Nft nft : subList){
                 logger.info(nft.getTitle());
+                OneNftResponceDTO oneNft = new OneNftResponceDTO();
+                result.add(oneNft);
             }
+            logger.info("Result Size: {}",result.size());
             return new ResultDTO(true, subList, 0);
         } catch (Exception e) {
             logger.error(e.getMessage());
