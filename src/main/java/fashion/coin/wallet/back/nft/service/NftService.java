@@ -511,12 +511,18 @@ public class NftService {
 
             oneNft.setPieces(1L);
 
-            oneNft.setHeight(nftFile.getHeight());
-            oneNft.setWidth(nftFile.getWidth());
             if (nftFile.getExifOrientation() == null) {
                 nftFile.setExifOrientation("0");
             }
             oneNft.setOrientation(nftFile.getExifOrientation());
+            Integer o = Integer.parseInt(nftFile.getExifOrientation());
+            if(o<9 && o>4){
+                oneNft.setHeight(nftFile.getWidth());
+                oneNft.setWidth(nftFile.getHeight());
+            }else {
+                oneNft.setHeight(nftFile.getHeight());
+                oneNft.setWidth(nftFile.getWidth());
+            }
 
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
