@@ -183,7 +183,6 @@ public class FeedService {
                 oneNft.setPieces(1L);
 
                 result.add(oneNft);
-                result.add(oneNft);
             }
 //            logger.info("Result Size: {}", result.size());
             return new ResultDTO(true, result, 0);
