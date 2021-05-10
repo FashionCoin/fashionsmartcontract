@@ -134,13 +134,20 @@ public class NftService {
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
                           BlockchainTransactionDTO blockchainTransaction) {
 
-        if (!clientService.checkApiKey(login, apikey)) return error109;
+        if (!clientService.checkApiKey(login, apikey)){
+            logger.error("Ljgin: {}, Apikey: {}",login, apikey);
+            return error109;
+        }
 
         if (creativeValue.compareTo(BigDecimal.ZERO) <= 0 || faceValue.compareTo(BigDecimal.ZERO) <= 0) {
+            logger.error("Creative value: {}", creativeValue);
+            logger.error("Face Value: {}",faceValue);
             return error218;
         }
 
         if (!checkCreativeValueLimit(faceValue, creativeValue, new BigDecimal(100))) {
+            logger.error("Creative value: {}", creativeValue);
+            logger.error("Face Value: {}",faceValue);
             return error219;
         }
 
@@ -153,6 +160,7 @@ public class NftService {
         if (nftList != null) {
             nftList.removeIf(nft -> nft.isBurned());
             if (nftList.size() > 0) {
+                logger.error("NFT filename: {}",nftFile.getFilename());
                 return error123;
             }
         }
@@ -160,6 +168,8 @@ public class NftService {
         Client client = clientService.findByCryptoname(login);
 
         if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(faceValue.movePointRight(3)) != 0) {
+            logger.error("Blockchain amount: {}",blockchainTransaction.getBody().getAmount());
+            logger.error("Facevalue amount: {}",faceValue.movePointRight(3));
             return error210;
         }
 

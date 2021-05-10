@@ -516,7 +516,7 @@ public class TranzzoService {
             BigDecimal nftTotalPrice = nftService.getTotalPrice(buyNftDTO);
             BigDecimal clientBalance = clientService.updateBalance(client).getWalletBalance();
             buyNftDTO.setApikey(client.getApikey());
-
+// TODO: можем отключить, чтоб деньги не списывались так резко :)
             if (clientBalance.compareTo(nftTotalPrice) > 0) {
                 ResultDTO result = nftService.buy(buyNftDTO);
                 if (!result.isResult()) {
@@ -530,7 +530,6 @@ public class TranzzoService {
                 logger.info("Client balance: {}", clientBalance);
                 logger.info("NFT total price: {}", nftTotalPrice);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
