@@ -341,13 +341,17 @@ public class WrapService {
     }
 
     private Long hexToLong(String hexString) {
+        logger.info("Convert {} to Long:",hexString);
+
         hexString = hexString.replace("0x", "");
         byte[] byteArray = HexUtils.fromHexString(hexString);
         BigInteger bigInteger = new BigInteger(byteArray);
+        logger.info("Big Integer: {}",bigInteger);
         Long result = bigInteger.longValue();
         if (result < 0) {
             result = 16777216L - result;
         }
+        logger.info("Long: {}",result);
         return result;
     }
 
