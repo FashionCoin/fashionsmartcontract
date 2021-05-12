@@ -385,9 +385,9 @@ public class WrapService {
             long lastBlock = network.equals("binance") ?
                     6573342 : 11866190;
             WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction(network);
-            if (lastEvent != null) {
-                lastBlock = lastEvent.blockNumber;
-            }
+//            if (lastEvent != null) {
+//                lastBlock = lastEvent.blockNumber;
+//            }
             logger.info("Last event block on {}: {}", network, lastBlock);
 
             EventsDTO responce = null;
