@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.service;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     Logger logger = LoggerFactory.getLogger(EmailService.class);
+
+    @Autowired
+    Gson gson;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -35,6 +39,7 @@ public class EmailService {
             JavaMailSenderImpl senderImpl = (JavaMailSenderImpl) mailSender;
             logger.error("Email disable! EmailService.java line:37");
 //            mailSender.send(messagePreparator);
+            logger.error("{} \n{} \n{}\n", recipient, subject, message);
             logger.info("Mail to " + recipient + " sended");
         } catch (MailException e) {
             logger.error("Line number: " + e.getStackTrace()[0].getLineNumber());
