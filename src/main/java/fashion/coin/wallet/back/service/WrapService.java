@@ -375,25 +375,13 @@ public class WrapService {
 
     private void updateWrapEvents(String network) {
         try {
-//// TODO: Временно. Нужно удалить после того как номера блоков исправятся
-//            List<WrappedTokenEvents> eventsList = tokenEventsRepository.findAll();
-//            for (WrappedTokenEvents wrappedTokenEvents : eventsList) {
-//                if (wrappedTokenEvents.getBlockNumber() < 0) {
-//                    wrappedTokenEvents.setBlockNumber(16777216L -
-//                            wrappedTokenEvents.getBlockNumber());
-//
-//                }
-//            }
-//            tokenEventsRepository.saveAll(eventsList);
-
-            //////////////////////////////////
 
             long lastBlock = network.equals("binance") ?
                     6573342 : 11866190;
             WrappedTokenEvents lastEvent = tokenEventsRepository.findByLastTransaction(network);
-//            if (lastEvent != null) {
-//                lastBlock = lastEvent.blockNumber;
-//            }
+            if (lastEvent != null) {
+                lastBlock = lastEvent.blockNumber;
+            }
             logger.info("Last event block on {}: {}", network, lastBlock);
 
             EventsDTO responce = null;
