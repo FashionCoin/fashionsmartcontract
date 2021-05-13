@@ -71,12 +71,17 @@ public class PromoService {
                         bloggers.setTimestamp(System.currentTimeMillis());
                         bloggers.setCryptoname(client.getCryptoname());
                         bloggerRepository.save(bloggers);
+                    } else {
+                        logger.error("Blogger: {}", gson.toJson(bloggers));
                     }
+                } else {
+                    logger.error("Client: {}", client);
                 }
+
             } else if (promo.getPromocode() != null && !promo.getPromocode().equals("Proof-of-Love")) {
                 logger.error("Invalid Code");
                 logger.error("Promocode: {}", promo.getPromocode());
-            }else{
+            } else {
                 logger.info("Void code");
             }
             return new ResultDTO(true, "OK", 0);
