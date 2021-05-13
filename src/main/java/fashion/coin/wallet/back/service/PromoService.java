@@ -58,8 +58,8 @@ public class PromoService {
                     }
                 }
             }
-
-            if (promo.getPromocode()!= null && promo.getPromocode().equals("Proof-of-Love")) {
+            logger.info(gson.toJson(promo));
+            if (promo.getPromocode() != null && promo.getPromocode().equals("Proof-of-Love")) {
                 Client client = clientService.findClientByApikey(promo.getApiKey());
                 if (client != null) {
 
@@ -72,8 +72,8 @@ public class PromoService {
                         bloggerRepository.save(bloggers);
                     }
                 }
-            }else if (promo.getPromocode()!= null && !promo.getPromocode().equals("Proof-of-Love")){
-                logger.error("Promocode: {}",promo.getPromocode());
+            } else if (promo.getPromocode() != null && !promo.getPromocode().equals("Proof-of-Love")) {
+                logger.error("Promocode: {}", promo.getPromocode());
             }
             return new ResultDTO(true, "OK", 0);
 
