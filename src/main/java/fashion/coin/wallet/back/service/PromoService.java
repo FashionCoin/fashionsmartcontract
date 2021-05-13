@@ -59,7 +59,7 @@ public class PromoService {
                 }
             }
 
-            if (promo.getPromocode().equals("aP2LAzQhJWrcp89u")) {
+            if (promo.getPromocode()!= null && promo.getPromocode().equals("aP2LAzQhJWrcp89u")) {
                 Client client = clientService.findClientByApikey(promo.getApiKey());
                 if (client != null) {
 
