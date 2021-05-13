@@ -61,7 +61,7 @@ public class PromoService {
             logger.info(gson.toJson(promo));
             if (promo.getPromocode() != null && promo.getPromocode().equals("Proof-of-Love")) {
                 logger.info("Valid Code");
-                Client client = clientService.findClientByApikey(promo.getApiKey());
+                Client client = clientService.findClientByApikey(promo.getApikey());
                 if (client != null) {
 
                     Bloggers bloggers = bloggerRepository.findTopByCryptoname(client.getCryptoname());
@@ -75,6 +75,7 @@ public class PromoService {
                         logger.error("Blogger: {}", gson.toJson(bloggers));
                     }
                 } else {
+                    logger.error("ApiKey: {}",promo.getApikey());
                     logger.error("Client: {}", client);
                 }
 

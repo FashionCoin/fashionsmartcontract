@@ -5,7 +5,7 @@ import java.util.List;
 public class PromoDTO {
 
     String promocode;
-    String apiKey;
+    String apikey;
     List<String> nameList;
 
     public String getPromocode() {
@@ -16,12 +16,12 @@ public class PromoDTO {
         this.promocode = promocode;
     }
 
-    public String getApiKey() {
-        return apiKey;
+    public String getApikey() {
+        return apikey;
     }
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
     }
 
     public List<String> getNameList() {
