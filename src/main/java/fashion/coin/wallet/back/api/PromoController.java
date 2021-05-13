@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,7 @@ public class PromoController {
     PromoService promoService;
 
     @PostMapping("/api/v1/promo/setpromo")
+    @ResponseBody
     ResultDTO setPromo(HttpServletRequest request, @RequestBody PromoDTO promo) {
 
         ResultDTO result = promoService.setPromo(request, promo);
