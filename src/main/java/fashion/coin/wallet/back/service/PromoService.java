@@ -60,6 +60,7 @@ public class PromoService {
             }
             logger.info(gson.toJson(promo));
             if (promo.getPromocode() != null && promo.getPromocode().equals("Proof-of-Love")) {
+                logger.info("Valid Code");
                 Client client = clientService.findClientByApikey(promo.getApiKey());
                 if (client != null) {
 
@@ -73,7 +74,10 @@ public class PromoService {
                     }
                 }
             } else if (promo.getPromocode() != null && !promo.getPromocode().equals("Proof-of-Love")) {
+                logger.error("Invalid Code");
                 logger.error("Promocode: {}", promo.getPromocode());
+            }else{
+                logger.info("Void code");
             }
             return new ResultDTO(true, "OK", 0);
 
