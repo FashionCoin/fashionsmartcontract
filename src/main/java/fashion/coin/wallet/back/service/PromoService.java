@@ -72,6 +72,8 @@ public class PromoService {
                         bloggerRepository.save(bloggers);
                     }
                 }
+            }else if (promo.getPromocode()!= null && !promo.getPromocode().equals("Proof-of-Love")){
+                logger.error("Promocode: {}",promo.getPromocode());
             }
             return new ResultDTO(true, "OK", 0);
 
