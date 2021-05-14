@@ -547,22 +547,32 @@ public class NftService {
             logger.info("Set new value for {}", request.getNftId());
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
+                logger.error("Client: {}",client);
                 return error109;
             }
             Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
+                logger.error("Nft: {}",nft);
                 return error213;
             }
             NftTirage nftTirage = null;
             if (nft.isTirage()) {
                 nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), client.getId());
                 if (nftTirage.getTirage() == 0) {
+                    logger.error("Tirage Nft: {}",gson.toJson(nftTirage));
+                    logger.error("Client: {}",client.getId());
+                    logger.error("Tirage: {}", nftTirage.getTirage());
                     return error214;
                 }
                 if (!nftTirage.isCanChangeValue()) {
+                    logger.error("Tirage Nft: {}",gson.toJson(nftTirage));
+                    logger.error("Can change value: {}",nftTirage.isCanChangeValue());
                     return error216;
                 }
                 if (nftTirage.getCreativeValue().compareTo(request.getCreativeValue()) > 0) {
+                    logger.error("Tirage Nft: {}",gson.toJson(nftTirage));
+                    logger.error("Creative value: {}",nftTirage.getCreativeValue());
+                    logger.error("Request value: {}",request.getCreativeValue());
                     return error215;
                 }
 
@@ -573,16 +583,27 @@ public class NftService {
             } else {
 
                 if (!nft.getOwnerId().equals(client.getId())) {
+                    logger.error("Nft: {}",gson.toJson(nft));
+                    logger.error("Owner ID: {}",nft.getOwnerId());
+                    logger.error("Client ID: {}",client.getId());
                     return error214;
                 }
                 if (!nft.isCanChangeValue()) {
+                    logger.error("Nft: {}",gson.toJson(nft));
+                    logger.error("Can change value: {}",nft.isCanChangeValue());
                     return error216;
                 }
                 if (nft.getCreativeValue().compareTo(request.getCreativeValue()) > 0
                         || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
+                    logger.error("Nft: {}",gson.toJson(nft));
+                    logger.error("Request creative: {}",request.getCreativeValue());
+                    logger.error("Request face: {}",request.getFaceValue());
                     return error215;
                 }
                 if (!checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
+                    logger.error("Nft: {}",gson.toJson(nft));
+                    logger.error("Request creative: {}",request.getCreativeValue());
+                    logger.error("Request face: {}",request.getFaceValue());
                     return error219;
                 }
 
