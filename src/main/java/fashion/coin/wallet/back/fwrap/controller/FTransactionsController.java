@@ -28,13 +28,13 @@ public class FTransactionsController {
 
         return fTransactionService.getByCurrency(request);
     }
-/*
+
     @PostMapping("/api/v1/fwrap/send")
     @ResponseBody
     ResultDTO sendMoney(@RequestBody FSendMoneyRequestDTO request){
 
         return fTransactionService.sendMoney(request);
     }
-*/
+
 
 }
