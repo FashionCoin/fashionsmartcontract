@@ -355,15 +355,15 @@ public class NftService {
             nftHistory.setTxhash(result.getMessage());
 
             new Thread(new DividendProofPaymentProcess(nft, clientFrom)).start();
-
-            if (!nft.isTirage()) {
-
-                result = proofService.dividendPayment(nft, clientFrom);
-                if (!result.isResult()) {
-                    logger.error(gson.toJson(result));
-                    return result;
-                }
-            }
+//
+//            if (!nft.isTirage()) {
+//
+//                result = proofService.dividendPayment(nft, clientFrom);
+//                if (!result.isResult()) {
+//                    logger.error(gson.toJson(result));
+//                    return result;
+//                }
+//            }
 
 
             nftHistory.setTimestamp(System.currentTimeMillis());
@@ -1188,7 +1188,7 @@ public class NftService {
                 ResultDTO result = proofService.dividendPayment(nft, clientFrom);
                 if (!result.isResult()) {
 
-                    logger.info(gson.toJson(result));
+                    logger.error(gson.toJson(result));
                 }
             }
 
