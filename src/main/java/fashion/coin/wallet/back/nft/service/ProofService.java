@@ -184,11 +184,11 @@ public class ProofService {
 
             List<ProofHistory> proofHistoryList = proofHistoryRepository.findByNftId(nft.getId());
 // TODO: раскомментировать когда включим пруфы
-            //            BigDecimal totalAmount = BigDecimal.ZERO;
+                        BigDecimal totalAmount = BigDecimal.ZERO;
 // TODO: закомментирвоать когда включим пруфы
-            BigDecimal totalAmount = amountToDistribute.divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP);
+//            BigDecimal totalAmount = amountToDistribute.divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP);
 
-            /*
+//            /*
             if (proofHistoryList != null && proofHistoryList.size() > 0) {
 
                 BigDecimal oneProofRate = amountToDistribute.divide(nft.getProofs(), 6, RoundingMode.HALF_UP);
@@ -213,7 +213,7 @@ public class ProofService {
                     }
                 }
             }
-            */
+
             amountToDistribute = amountToDistribute.subtract(totalAmount).setScale(3, RoundingMode.HALF_UP);
             if (amountToDistribute.compareTo(BigDecimal.ZERO) > 0) {
                 if (!aiService.transfer(amountToDistribute.toString(),

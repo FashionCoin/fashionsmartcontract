@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.nft.service;
 
 import com.google.gson.Gson;
 import com.google.inject.internal.cglib.core.$ClassInfo;
+import com.google.inject.internal.cglib.core.$DefaultGeneratorStrategy;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -134,20 +135,20 @@ public class NftService {
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
                           BlockchainTransactionDTO blockchainTransaction) {
 
-        if (!clientService.checkApiKey(login, apikey)){
-            logger.error("Ljgin: {}, Apikey: {}",login, apikey);
+        if (!clientService.checkApiKey(login, apikey)) {
+            logger.error("Ljgin: {}, Apikey: {}", login, apikey);
             return error109;
         }
 
         if (creativeValue.compareTo(BigDecimal.ZERO) <= 0 || faceValue.compareTo(BigDecimal.ZERO) <= 0) {
             logger.error("Creative value: {}", creativeValue);
-            logger.error("Face Value: {}",faceValue);
+            logger.error("Face Value: {}", faceValue);
             return error218;
         }
 
         if (!checkCreativeValueLimit(faceValue, creativeValue, new BigDecimal(100))) {
             logger.error("Creative value: {}", creativeValue);
-            logger.error("Face Value: {}",faceValue);
+            logger.error("Face Value: {}", faceValue);
             return error219;
         }
 
@@ -160,7 +161,7 @@ public class NftService {
         if (nftList != null) {
             nftList.removeIf(nft -> nft.isBurned());
             if (nftList.size() > 0) {
-                logger.error("NFT filename: {}",nftFile.getFilename());
+                logger.error("NFT filename: {}", nftFile.getFilename());
                 return error123;
             }
         }
@@ -168,8 +169,8 @@ public class NftService {
         Client client = clientService.findByCryptoname(login);
 
         if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(faceValue.movePointRight(3)) != 0) {
-            logger.error("Blockchain amount: {}",blockchainTransaction.getBody().getAmount());
-            logger.error("Facevalue amount: {}",faceValue.movePointRight(3));
+            logger.error("Blockchain amount: {}", blockchainTransaction.getBody().getAmount());
+            logger.error("Facevalue amount: {}", faceValue.movePointRight(3));
             return error210;
         }
 
@@ -354,15 +355,15 @@ public class NftService {
             nftHistory.setTxhash(result.getMessage());
 
             new Thread(new DividendProofPaymentProcess(nft, clientFrom)).start();
-//
-//            if (!nft.isTirage()) {
-//
-//                result = proofService.dividendPayment(nft, clientFrom);
-//                if (!result.isResult()) {
-//
-//                    return result;
-//                }
-//            }
+
+            if (!nft.isTirage()) {
+
+                result = proofService.dividendPayment(nft, clientFrom);
+                if (!result.isResult()) {
+                    logger.error(gson.toJson(result));
+                    return result;
+                }
+            }
 
 
             nftHistory.setTimestamp(System.currentTimeMillis());
@@ -526,10 +527,10 @@ public class NftService {
             }
             oneNft.setOrientation(nftFile.getExifOrientation());
             Integer o = Integer.parseInt(nftFile.getExifOrientation());
-            if(o<9 && o>4){
+            if (o < 9 && o > 4) {
                 oneNft.setHeight(nftFile.getWidth());
                 oneNft.setWidth(nftFile.getHeight());
-            }else {
+            } else {
                 oneNft.setHeight(nftFile.getHeight());
                 oneNft.setWidth(nftFile.getWidth());
             }
@@ -547,32 +548,32 @@ public class NftService {
             logger.info("Set new value for {}", request.getNftId());
             Client client = clientService.findClientByApikey(request.getApikey());
             if (client == null) {
-                logger.error("Client: {}",client);
+                logger.error("Client: {}", client);
                 return error109;
             }
             Nft nft = nftRepository.findById(request.getNftId()).orElse(null);
             if (nft == null) {
-                logger.error("Nft: {}",nft);
+                logger.error("Nft: {}", nft);
                 return error213;
             }
             NftTirage nftTirage = null;
             if (nft.isTirage()) {
                 nftTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), client.getId());
                 if (nftTirage.getTirage() == 0) {
-                    logger.error("Tirage Nft: {}",gson.toJson(nftTirage));
-                    logger.error("Client: {}",client.getId());
+                    logger.error("Tirage Nft: {}", gson.toJson(nftTirage));
+                    logger.error("Client: {}", client.getId());
                     logger.error("Tirage: {}", nftTirage.getTirage());
                     return error214;
                 }
                 if (!nftTirage.isCanChangeValue()) {
-                    logger.error("Tirage Nft: {}",gson.toJson(nftTirage));
-                    logger.error("Can change value: {}",nftTirage.isCanChangeValue());
+                    logger.error("Tirage Nft: {}", gson.toJson(nftTirage));
+                    logger.error("Can change value: {}", nftTirage.isCanChangeValue());
                     return error216;
                 }
                 if (nftTirage.getCreativeValue().compareTo(request.getCreativeValue()) > 0) {
-                    logger.error("Tirage Nft: {}",gson.toJson(nftTirage));
-                    logger.error("Creative value: {}",nftTirage.getCreativeValue());
-                    logger.error("Request value: {}",request.getCreativeValue());
+                    logger.error("Tirage Nft: {}", gson.toJson(nftTirage));
+                    logger.error("Creative value: {}", nftTirage.getCreativeValue());
+                    logger.error("Request value: {}", request.getCreativeValue());
                     return error215;
                 }
 
@@ -583,27 +584,27 @@ public class NftService {
             } else {
 
                 if (!nft.getOwnerId().equals(client.getId())) {
-                    logger.error("Nft: {}",gson.toJson(nft));
-                    logger.error("Owner ID: {}",nft.getOwnerId());
-                    logger.error("Client ID: {}",client.getId());
+                    logger.error("Nft: {}", gson.toJson(nft));
+                    logger.error("Owner ID: {}", nft.getOwnerId());
+                    logger.error("Client ID: {}", client.getId());
                     return error214;
                 }
                 if (!nft.isCanChangeValue()) {
-                    logger.error("Nft: {}",gson.toJson(nft));
-                    logger.error("Can change value: {}",nft.isCanChangeValue());
+                    logger.error("Nft: {}", gson.toJson(nft));
+                    logger.error("Can change value: {}", nft.isCanChangeValue());
                     return error216;
                 }
                 if (nft.getCreativeValue().compareTo(request.getCreativeValue()) > 0
                         || nft.getFaceValue().compareTo(request.getFaceValue()) > 0) {
-                    logger.error("Nft: {}",gson.toJson(nft));
-                    logger.error("Request creative: {}",request.getCreativeValue());
-                    logger.error("Request face: {}",request.getFaceValue());
+                    logger.error("Nft: {}", gson.toJson(nft));
+                    logger.error("Request creative: {}", request.getCreativeValue());
+                    logger.error("Request face: {}", request.getFaceValue());
                     return error215;
                 }
                 if (!checkCreativeValueLimit(request.getFaceValue(), request.getCreativeValue(), new BigDecimal(100))) {
-                    logger.error("Nft: {}",gson.toJson(nft));
-                    logger.error("Request creative: {}",request.getCreativeValue());
-                    logger.error("Request face: {}",request.getFaceValue());
+                    logger.error("Nft: {}", gson.toJson(nft));
+                    logger.error("Request creative: {}", request.getCreativeValue());
+                    logger.error("Request face: {}", request.getFaceValue());
                     return error219;
                 }
 
