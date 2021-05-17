@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.messenger.dto.ChatListRequestDTO;
+import fashion.coin.wallet.back.messenger.dto.ChatListResponseDTO;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
 import fashion.coin.wallet.back.messenger.repository.MyConversationRepository;
@@ -63,7 +64,16 @@ public class ChatListService {
                 myConversationList = refreshConversationList(client);
             }
 
-            return new ResultDTO(true, myConversationList, 0);
+            List<ChatListResponseDTO> result = new ArrayList<>();
+            for (MyConversation myConversation : myConversationList){
+                ChatListResponseDTO response = new ChatListResponseDTO(myConversation);
+                Client friend = clientService.getClient(response.getFriendId());
+                response.setAvaExists(friend.avaExists());
+                response.setAvatar(friend.getAvatar());
+                result.add(response);
+            }
+
+            return new ResultDTO(true, result, 0);
 
         } catch (Exception e) {
             e.printStackTrace();
