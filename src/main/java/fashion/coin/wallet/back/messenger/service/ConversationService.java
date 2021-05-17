@@ -47,6 +47,9 @@ public class ConversationService {
     @Autowired
     PolClientService polClientService;
 
+    @Autowired
+    ChatMessageService chatMessageService;
+
     public Conversation createDialog() {
         Conversation conversation = new Conversation();
         conversation.setType(CONVERSATION_DIALOG);
@@ -100,8 +103,9 @@ public class ConversationService {
 
             response.setBlock(conversation.isBlock());
 
-            // TODO: message list
-            response.setChatMessageList(new ArrayList<>());
+
+
+            response.setChatMessageList(chatMessageService.getAllMessages(conversation.getId()));
 
             return new ResultDTO(true, response, 0);
         } catch (Exception e) {
