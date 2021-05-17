@@ -76,7 +76,7 @@ public class ChatListService {
                 response.setType(conversation.getType());
                 result.add(response);
             }
-            result.sort(Comparator.comparing(ChatListResponseDTO::getTimestamp));
+            result.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));
             return new ResultDTO(true, result, 0);
 
         } catch (Exception e) {
@@ -145,5 +145,6 @@ public class ChatListService {
         myConversation.setLastMessage(chatMessage.getText());
         myConversation.setRead(false);
         myConversationRepository.save(myConversation);
+        logger.info(gson.toJson(myConversation));
     }
 }
