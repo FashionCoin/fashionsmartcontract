@@ -19,7 +19,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 import static fashion.coin.wallet.back.nft.service.NftService.BASE_WAY;
@@ -184,7 +187,7 @@ public class ProofService {
 
             List<ProofHistory> proofHistoryList = proofHistoryRepository.findByNftId(nft.getId());
 // TODO: раскомментировать когда включим пруфы
-                        BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalAmount = BigDecimal.ZERO;
 // TODO: закомментирвоать когда включим пруфы
 //            BigDecimal totalAmount = amountToDistribute.divide(BigDecimal.TEN, 3, RoundingMode.HALF_UP);
 
@@ -239,5 +242,21 @@ public class ProofService {
             }
         }
         return proof;
+    }
+
+    public List<Long> mutual(Client client) {
+        List<FriendProof> proofMe = friendProofRepository.findByProofReceiverId(client.getId());
+        List<FriendProof> myProof = friendProofRepository.findByProofSenderId(client.getId());
+
+        Set<Long> friedsId = new HashSet<>();
+
+        for (FriendProof sender : proofMe) {
+            for (FriendProof receiver : myProof) {
+                if (sender.getProofSenderId().equals(receiver.getProofReceiverId())) {
+                    friedsId.add(sender.getProofSenderId());
+                }
+            }
+        }
+        return new ArrayList<>(friedsId);
     }
 }
