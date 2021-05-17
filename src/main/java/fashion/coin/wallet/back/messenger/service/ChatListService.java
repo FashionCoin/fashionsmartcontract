@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.messenger.dto.ChatListRequestDTO;
+import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
 import fashion.coin.wallet.back.messenger.repository.MyConversationRepository;
 import fashion.coin.wallet.back.nft.service.ProofService;
@@ -15,9 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
+import static fashion.coin.wallet.back.messenger.service.ConversationService.CONVERSATION_DIALOG;
 
 @Service
 public class ChatListService {
@@ -36,6 +37,9 @@ public class ChatListService {
     @Autowired
     ProofService proofService;
 
+    @Autowired
+    ConversationService conversationService;
+
     public ResultDTO chatList(ChatListRequestDTO request) {
         try {
 
@@ -50,7 +54,7 @@ public class ChatListService {
 
             // TODO: Временно, пока обновится информация по всем пользователям
             // удалить после 1 июля 2021
-            if(System.currentTimeMillis() < 1625107868000L){
+            if (System.currentTimeMillis() < 1625107868000L) {
                 myConversationList = refreshConversationList(client);
             }
             //////////////////////////////////////////////////////////////////
@@ -76,8 +80,8 @@ public class ChatListService {
             }
 
             for (Long friendId : friendIdList) {
-                checkConversationExists(friendId, client.getId());
-                checkConversationExists(client.getId(), friendId);
+                Conversation conversation = checkConversationExists(friendId, client.getId(), null);
+                checkConversationExists(client.getId(), friendId, conversation);
             }
 
             List<MyConversation> result = myConversationRepository.findByMyId(client.getId());
@@ -92,11 +96,15 @@ public class ChatListService {
 
     }
 
-    private void checkConversationExists(Long friendId, Long myId) {
+    private Conversation checkConversationExists(Long friendId, Long myId, Conversation conversation) {
         MyConversation myConversation = myConversationRepository.findTopByMyIdAndFriendId(myId, friendId);
         if (myConversation == null) {
+            if (conversation == null) {
+                conversation = conversationService.createDialog();
+            }
             Client friend = clientService.getClient(friendId);
             myConversation = new MyConversation();
+            myConversation.setConversationId(conversation.getId());
             myConversation.setFriendId(friendId);
             myConversation.setCryptoname(friend.getCryptoname());
             myConversation.setLastMessage("");
@@ -105,5 +113,6 @@ public class ChatListService {
             myConversation.setTimestamp(System.currentTimeMillis());
             myConversationRepository.save(myConversation);
         }
+        return conversation;
     }
 }

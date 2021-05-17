@@ -7,11 +7,35 @@ import javax.persistence.Id;
 @Entity
 public class Conversation {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     Long id;
 
     String type;
 
+    boolean block;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isBlock() {
+        return block;
+    }
+
+    public void setBlock(boolean block) {
+        this.block = block;
+    }
 }
