@@ -9,5 +9,6 @@ public interface MyConversationRepository extends JpaRepository<MyConversation,L
 
     List<MyConversation> findByMyId(Long myId);
     MyConversation findTopByMyIdAndFriendId(Long myId, Long friendId);
+    MyConversation findTopByMyIdAndConversationId(Long myId, Long conversationId);
 
 }

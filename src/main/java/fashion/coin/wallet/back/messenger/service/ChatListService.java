@@ -65,7 +65,7 @@ public class ChatListService {
             }
 
             List<ChatListResponseDTO> result = new ArrayList<>();
-            for (MyConversation myConversation : myConversationList){
+            for (MyConversation myConversation : myConversationList) {
                 ChatListResponseDTO response = new ChatListResponseDTO(myConversation);
                 Client friend = clientService.getClient(response.getFriendId());
                 response.setAvaExists(friend.avaExists());
@@ -124,5 +124,15 @@ public class ChatListService {
             myConversationRepository.save(myConversation);
         }
         return conversation;
+    }
+
+    public MyConversation getMyConversation(Long myId, Long conversationId) {
+        MyConversation result = myConversationRepository.findTopByMyIdAndConversationId(myId, conversationId);
+        if (result == null) {
+            logger.error("My ID: {}", myId);
+            logger.error("Conversation ID: {}", conversationId);
+            logger.error("My Conversation: {}", result);
+        }
+        return result;
     }
 }

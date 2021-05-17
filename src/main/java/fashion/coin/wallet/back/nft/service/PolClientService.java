@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.SocialLinkDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.dto.PolClientData;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
 import fashion.coin.wallet.back.nft.dto.PolClientResponseDTO;
 import fashion.coin.wallet.back.nft.entity.FriendProof;
@@ -160,9 +161,26 @@ public class PolClientService {
         }
     }
 
+
+
+
+
+
     private boolean checkProof(Long proofSenderId, Long proofReceiverId) {
         List<FriendProof> friendProofList =
                 friendProofRepository.findByProofSenderIdAndProofReceiverId(proofSenderId, proofReceiverId);
         return friendProofList != null && friendProofList.size() != 0;
     }
+//
+//    public PolClientData getData(Client friend) {
+//PolClientData polClientData = new PolClientData();
+//polClientData.setId(friend.getId());
+//polClientData.setAvatar(friend.getAvatar());
+//polClientData.setAvaExists(friend.avaExists());
+//polClientData.setCryptoname(friend.getCryptoname());
+//polClientData.setAbout(friend.getAbout());
+//
+//polClientData.setCreativeValue();
+//
+//    }
 }
