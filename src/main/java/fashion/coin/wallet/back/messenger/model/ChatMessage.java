@@ -36,6 +36,14 @@ public class ChatMessage {
         this.timestamp = timestamp;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Long getConversationId() {
         return conversationId;
     }

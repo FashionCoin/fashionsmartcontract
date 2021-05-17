@@ -76,6 +76,7 @@ public class ChatMessageService {
             chatMessage.setAuthorId(client.getId());
             chatMessage.setConversationId(myConversation.getConversationId());
             chatMessage.setText(request.getText());
+            chatMessage.setType(TEXT_MESSAGE);
 
             chatMessageRepository.save(chatMessage);
 
