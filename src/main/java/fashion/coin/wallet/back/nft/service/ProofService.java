@@ -252,7 +252,8 @@ public class ProofService {
 
         for (FriendProof sender : proofMe) {
             for (FriendProof receiver : myProof) {
-                if (sender.getProofSenderId().equals(receiver.getProofReceiverId())) {
+                if (sender.getProofSenderId().equals(receiver.getProofReceiverId())
+                        && !sender.getProofSenderId().equals(client.getId())) {
                     friedsId.add(sender.getProofSenderId());
                 }
             }
