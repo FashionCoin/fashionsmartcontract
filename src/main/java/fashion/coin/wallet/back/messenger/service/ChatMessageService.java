@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
@@ -53,6 +54,7 @@ public class ChatMessageService {
             logger.error("Message List: {}", chatMessageList);
             return new ArrayList<>();
         }
+        chatMessageList.sort(Comparator.comparing(ChatMessage::getTimestamp));
         return chatMessageList;
     }
 
@@ -81,6 +83,10 @@ public class ChatMessageService {
             chatMessageRepository.save(chatMessage);
 
             notificateForNewMessage(chatMessage);
+
+
+            chatListService.newMessage(myConversation,chatMessage);
+
             return new ResultDTO(true, chatMessage, 0);
         } catch (Exception e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.messenger.dto.ChatListRequestDTO;
 import fashion.coin.wallet.back.messenger.dto.ChatListResponseDTO;
+import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
 import fashion.coin.wallet.back.messenger.repository.MyConversationRepository;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
@@ -74,7 +76,7 @@ public class ChatListService {
                 response.setType(conversation.getType());
                 result.add(response);
             }
-
+            result.sort(Comparator.comparing(ChatListResponseDTO::getTimestamp));
             return new ResultDTO(true, result, 0);
 
         } catch (Exception e) {
@@ -136,5 +138,12 @@ public class ChatListService {
             logger.error("My Conversation: {}", result);
         }
         return result;
+    }
+
+    public void newMessage(MyConversation myConversation, ChatMessage chatMessage) {
+        myConversation.setTimestamp(chatMessage.getTimestamp());
+        myConversation.setLastMessage(chatMessage.getText());
+        myConversation.setRead(false);
+        myConversationRepository.save(myConversation);
     }
 }
