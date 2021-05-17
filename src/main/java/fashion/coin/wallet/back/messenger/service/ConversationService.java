@@ -102,8 +102,7 @@ public class ConversationService {
             }
 
             response.setBlock(conversation.isBlock());
-
-
+            response.setType(conversation.getType());
 
             response.setChatMessageList(chatMessageService.getAllMessages(conversation.getId()));
 
@@ -112,5 +111,14 @@ public class ConversationService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    public Conversation getById(Long conversationId) {
+        Conversation conversation = conversationRepository.findById(conversationId).orElse(null);
+        if (conversation == null) {
+            logger.error("Conversation ID: {}", conversationId);
+            logger.error("Conversation: {}", conversation);
+        }
+        return conversation;
     }
 }

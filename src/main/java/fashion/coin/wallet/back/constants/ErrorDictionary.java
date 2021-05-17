@@ -67,5 +67,6 @@ public class ErrorDictionary {
     public static final ResultDTO error230 = new ResultDTO(false, "The currency exchange rate does not match the current one too much", 230);
     public static final ResultDTO error231 = new ResultDTO(false, "Payment bill not found. Create it", 231);
     public static final ResultDTO error232 = new ResultDTO(false, "Invalid card number in 'cc_number' field. Luhn check failed.': must be a String and valid card number", 232);
+    public static final ResultDTO error233 = new ResultDTO(false, "You are not a member of this chat", 233);
 
 }

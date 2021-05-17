@@ -70,6 +70,8 @@ public class ChatListService {
                 Client friend = clientService.getClient(response.getFriendId());
                 response.setAvaExists(friend.avaExists());
                 response.setAvatar(friend.getAvatar());
+                Conversation conversation = conversationService.getById(myConversation.getConversationId());
+                response.setType(conversation.getType());
                 result.add(response);
             }
 

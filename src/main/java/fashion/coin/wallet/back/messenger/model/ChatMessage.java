@@ -12,6 +12,8 @@ public class ChatMessage {
 
     Long timestamp;
 
+    String type;
+
     Long conversationId;
 
     Long authorId;

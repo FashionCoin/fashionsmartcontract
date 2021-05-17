@@ -6,6 +6,7 @@ public class ChatListResponseDTO extends MyConversation {
 
     String avatar;
     boolean avaExists;
+    String type;
 
     public ChatListResponseDTO(MyConversation myConversation) {
         setConversationId(myConversation.getConversationId());
@@ -34,5 +35,13 @@ public class ChatListResponseDTO extends MyConversation {
 
     public void setAvaExists(boolean avaExists) {
         this.avaExists = avaExists;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

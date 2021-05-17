@@ -9,6 +9,7 @@ public class ShowChatResponseDTO {
 
     Long conversationId;
     Long myConversation;
+    String type;
 
     Long myId;
 
@@ -42,6 +43,14 @@ public class ShowChatResponseDTO {
 
     public void setMyConversation(Long myConversation) {
         this.myConversation = myConversation;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Long getMyId() {
