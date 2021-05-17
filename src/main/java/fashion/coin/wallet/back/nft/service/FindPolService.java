@@ -55,6 +55,7 @@ public class FindPolService {
 
             logger.info(gson.toJson(request));
             if (request == null || request.getName() == null) {
+                logger.error(gson.toJson(request));
                 return error127;
             }
 //            Client client = clientService.findClientByApikey(request.getApikey());
@@ -69,7 +70,7 @@ public class FindPolService {
             if (clientList == null || clientList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
             }
-            logger.info("Friend: {}", friend);
+//            logger.info("Friend: {}", friend);
             if (friend != null) {
                 clientList.removeIf(cl -> cl.getId().equals(friend.getId()));
                 clientList.add(friend);
@@ -289,3 +290,4 @@ public class FindPolService {
 
     }
 }
+

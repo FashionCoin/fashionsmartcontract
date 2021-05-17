@@ -1,8 +1,6 @@
 package fashion.coin.wallet.back.nft.service;
 
 import com.google.gson.Gson;
-import com.google.inject.internal.cglib.core.$ClassInfo;
-import com.google.inject.internal.cglib.core.$DefaultGeneratorStrategy;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.TransactionRequestDTO;
 import fashion.coin.wallet.back.dto.blockchain.BlockchainTransactionDTO;
@@ -15,7 +13,6 @@ import fashion.coin.wallet.back.nft.entity.NftTirage;
 import fashion.coin.wallet.back.nft.repository.NftFileRepository;
 import fashion.coin.wallet.back.nft.repository.NftHistoryRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
-import fashion.coin.wallet.back.nft.repository.NftTirageRepository;
 import fashion.coin.wallet.back.service.AIService;
 import fashion.coin.wallet.back.service.ClientService;
 import fashion.coin.wallet.back.service.FileUploadService;
@@ -318,7 +315,9 @@ public class NftService {
 
             NftHistory nftHistory = new NftHistory();
             nftHistory.setCryptonameFrom(clientFrom.getCryptoname());
+            nftHistory.setIdFrom(clientFrom.getId());
             nftHistory.setCryptonameTo(clientTo.getCryptoname());
+            nftHistory.setIdTo(clientTo.getId());
             nftHistory.setNftId(nft.getId());
             nftHistory.setAmount(amount);
 
@@ -466,6 +465,17 @@ public class NftService {
             if (nftHistoryList == null || nftHistoryList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
             }
+            for(NftHistory nftHistory : nftHistoryList){
+                if(nftHistory.getIdFrom()==null || nftHistory.getIdTo()==null){
+                    Client clientFrom = clientService.findByCryptoname(nftHistory.getCryptonameFrom());
+                    Client clientTo = clientService.findByCryptoname(nftHistory.getCryptonameTo());
+                    nftHistory.setIdFrom(clientFrom.getId());
+                    nftHistory.setIdTo(clientTo.getId());
+                    nftHistoryRepository.save(nftHistory);
+                }
+            }
+
+
             return new ResultDTO(true, nftHistoryList, 0);
         } catch (Exception e) {
             e.printStackTrace();

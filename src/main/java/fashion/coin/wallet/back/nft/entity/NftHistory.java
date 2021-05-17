@@ -15,6 +15,9 @@ public class NftHistory {
     Long nftId;
     Long timestamp;
 
+    Long idFrom;
+    Long idTo;
+
     String cryptonameFrom;
     String cryptonameTo;
     @Column(precision = 30, scale = 3)
@@ -44,6 +47,22 @@ public class NftHistory {
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Long getIdFrom() {
+        return idFrom;
+    }
+
+    public void setIdFrom(Long idFrom) {
+        this.idFrom = idFrom;
+    }
+
+    public Long getIdTo() {
+        return idTo;
+    }
+
+    public void setIdTo(Long idTo) {
+        this.idTo = idTo;
     }
 
     public String getCryptonameFrom() {
