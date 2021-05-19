@@ -223,7 +223,7 @@ public class ChatMessageService {
                 logger.error("Transaction sender: {}", gson.toJson( transactionCoins.getSender()));
                 return error237;
             }
-            if (!transactionCoins.getSender().getId().equals(myConversation.getFriendId())) {
+            if (!transactionCoins.getReceiver().getId().equals(myConversation.getFriendId())) {
                 logger.error("Friend ID: {}", myConversation.getFriendId());
                 logger.error("Transaction receiver: {}", gson.toJson( transactionCoins.getReceiver()));
                 return error238;
