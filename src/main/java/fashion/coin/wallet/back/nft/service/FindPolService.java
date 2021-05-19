@@ -66,7 +66,7 @@ public class FindPolService {
 
 
             List<Client> clientList = clientRepository.findNameContains(request.getName().toLowerCase());
-            logger.info(String.valueOf(clientList));
+//            logger.info(String.valueOf(clientList));
             if (clientList == null || clientList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<>(), 0);
             }

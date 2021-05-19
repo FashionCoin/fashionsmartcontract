@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.messenger.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,6 +21,9 @@ public class MyConversation {
     boolean isRead;
 
     Long timestamp;
+
+    @Column(name = "block", columnDefinition = "boolean default false", nullable = false)
+    boolean block;
 
     public Long getId() {
         return id;
@@ -83,5 +87,13 @@ public class MyConversation {
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isBlock() {
+        return block;
+    }
+
+    public void setBlock(boolean block) {
+        this.block = block;
     }
 }
