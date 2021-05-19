@@ -5,10 +5,7 @@ import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.TransactionCoins;
-import fashion.coin.wallet.back.messenger.dto.ChatMessageDTO;
-import fashion.coin.wallet.back.messenger.dto.SendFshnDTO;
-import fashion.coin.wallet.back.messenger.dto.SendNftDTO;
-import fashion.coin.wallet.back.messenger.dto.SendTextDTO;
+import fashion.coin.wallet.back.messenger.dto.*;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
@@ -82,12 +79,12 @@ public class ChatMessageService {
 
     private ChatMessageDTO convertToChatMessageDTO(ChatMessage chatMessage) {
         ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
-         if(chatMessage.getType().equals(NFT_MESSAGE)){
-             NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
-             chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
-        }else if(chatMessage.getType().equals(MONEY_MESSAGE)){
-             TransactionCoins transactionCoins = transactionService.getTransactionCoins(chatMessage.getTxhash());
-             chatMessageDTO.setTransaction(transactionCoins);
+        if (chatMessage.getType().equals(NFT_MESSAGE)) {
+            NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
+            chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
+        } else if (chatMessage.getType().equals(MONEY_MESSAGE)) {
+            TransactionCoins transactionCoins = transactionService.getTransactionCoins(chatMessage.getTxhash());
+            chatMessageDTO.setTransaction(convertToChatDTO(transactionCoins));
         }
         return chatMessageDTO;
     }
@@ -220,12 +217,12 @@ public class ChatMessageService {
 
             if (!transactionCoins.getSender().getId().equals(client.getId())) {
                 logger.error("Client ID: {}", client.getId());
-                logger.error("Transaction sender: {}", gson.toJson( transactionCoins.getSender()));
+                logger.error("Transaction sender: {}", gson.toJson(transactionCoins.getSender()));
                 return error237;
             }
             if (!transactionCoins.getReceiver().getId().equals(myConversation.getFriendId())) {
                 logger.error("Friend ID: {}", myConversation.getFriendId());
-                logger.error("Transaction receiver: {}", gson.toJson( transactionCoins.getReceiver()));
+                logger.error("Transaction receiver: {}", gson.toJson(transactionCoins.getReceiver()));
                 return error238;
             }
 
@@ -239,7 +236,7 @@ public class ChatMessageService {
 
             ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
 
-            chatMessageDTO.setTransaction(transactionCoins);
+            chatMessageDTO.setTransaction(convertToChatDTO(transactionCoins));
 
             notificateForNewMessage(chatMessage);
 
@@ -252,7 +249,17 @@ public class ChatMessageService {
         }
 
 
+    }
 
+    private TransactionChatDTO convertToChatDTO(TransactionCoins transactionCoins) {
 
+        TransactionChatDTO transactionChat = new TransactionChatDTO();
+        transactionChat.setId(transactionCoins.getId());
+        transactionChat.setTxhash(transactionCoins.getTxhash());
+        transactionChat.setAmount(transactionCoins.getAmount());
+        transactionChat.setTimestamp(transactionCoins.getTimestamp());
+        transactionChat.setSender(transactionCoins.getSender().getId());
+        transactionChat.setReceiver(transactionCoins.getReceiver().getId());
+        return transactionChat;
     }
 }
