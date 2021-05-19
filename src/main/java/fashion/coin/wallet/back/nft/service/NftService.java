@@ -1177,11 +1177,24 @@ public class NftService {
     }
 
     public NftHistory getEvent(Long eventid) {
-        if(eventid==null){
-            logger.error("NFT history event ID: {}",eventid);
+        if (eventid == null) {
+            logger.error("NFT history event ID: {}", eventid);
             return null;
         }
-        return nftHistoryRepository.findById(eventid).orElse(null);
+
+        NftHistory nftHistory = nftHistoryRepository.findById(eventid).orElse(null);
+        if (nftHistory != null && nftHistory.getIdFrom() == null) {
+            Client from = clientService.findByCryptoname(nftHistory.getCryptonameFrom());
+            nftHistory.setIdFrom(from.getId());
+            nftHistoryRepository.save(nftHistory);
+        }
+        if (nftHistory != null && nftHistory.getIdTo() == null) {
+            Client to = clientService.findByCryptoname(nftHistory.getCryptonameTo());
+            nftHistory.setIdTo(to.getId());
+            nftHistoryRepository.save(nftHistory);
+        }
+
+        return nftHistory;
     }
 
     public OneNftResponceDTO getOneNftDTO(NftHistory nftHistory) {
