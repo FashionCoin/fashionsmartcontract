@@ -11,7 +11,13 @@ public class ChatMessageDTO extends ChatMessage {
     }
 
     public ChatMessageDTO(ChatMessage chatMessage) {
-        super();
+        setId(chatMessage.getId());
+        setTimestamp(chatMessage.getTimestamp());
+        setType(chatMessage.getType());
+        setConversationId(chatMessage.getConversationId());
+        setAuthorId(chatMessage.getAuthorId());
+        setText(chatMessage.getText());
+        setEventid(chatMessage.getEventid());
     }
 
     public OneNftResponceDTO getNft() {

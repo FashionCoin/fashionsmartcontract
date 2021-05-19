@@ -134,8 +134,7 @@ public class ChatMessageService {
                 return error236;
             }
 
-logger.info(gson.toJson(nftHistory));
-logger.info(gson.toJson(client));
+
             if (!nftHistory.getIdFrom().equals(client.getId())) {
                 logger.error("Client ID: {}", client.getId());
                 logger.error("Nft event: {}", gson.toJson(nftHistory));
