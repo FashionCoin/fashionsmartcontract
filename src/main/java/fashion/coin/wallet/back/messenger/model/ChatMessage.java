@@ -20,6 +20,8 @@ public class ChatMessage {
 
     String text;
 
+    Long eventid;
+
     public Long getId() {
         return id;
     }
@@ -66,5 +68,13 @@ public class ChatMessage {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Long getEventid() {
+        return eventid;
+    }
+
+    public void setEventid(Long eventid) {
+        this.eventid = eventid;
     }
 }

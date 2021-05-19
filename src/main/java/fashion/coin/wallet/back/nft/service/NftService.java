@@ -465,8 +465,8 @@ public class NftService {
             if (nftHistoryList == null || nftHistoryList.size() == 0) {
                 return new ResultDTO(true, new ArrayList<NftHistory>(), 0);
             }
-            for(NftHistory nftHistory : nftHistoryList){
-                if(nftHistory.getIdFrom()==null || nftHistory.getIdTo()==null){
+            for (NftHistory nftHistory : nftHistoryList) {
+                if (nftHistory.getIdFrom() == null || nftHistory.getIdTo() == null) {
                     Client clientFrom = clientService.findByCryptoname(nftHistory.getCryptonameFrom());
                     Client clientTo = clientService.findByCryptoname(nftHistory.getCryptonameTo());
                     nftHistory.setIdFrom(clientFrom.getId());
@@ -1174,6 +1174,15 @@ public class NftService {
     public NftFile getNftFile(Nft nft) {
         NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
         return nftFile;
+    }
+
+    public NftHistory getEvent(Long eventid) {
+        return nftHistoryRepository.findById(eventid).orElse(null);
+    }
+
+    public OneNftResponceDTO getOneNftDTO(NftHistory nftHistory) {
+        Nft nft = nftRepository.findById(nftHistory.getNftId()).orElse(null);
+        return feedService.getOneNftDTO(nft);
     }
 
 

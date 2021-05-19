@@ -68,5 +68,7 @@ public class ErrorDictionary {
     public static final ResultDTO error231 = new ResultDTO(false, "Payment bill not found. Create it", 231);
     public static final ResultDTO error232 = new ResultDTO(false, "Invalid card number in 'cc_number' field. Luhn check failed.': must be a String and valid card number", 232);
     public static final ResultDTO error233 = new ResultDTO(false, "You are not a member of this chat", 233);
+    public static final ResultDTO error234 = new ResultDTO(false, "You are not a NFT sender", 234);
+    public static final ResultDTO error235 = new ResultDTO(false, "Friend are not a NFT receiver", 235);
 
 }
