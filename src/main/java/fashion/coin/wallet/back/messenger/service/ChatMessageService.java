@@ -129,6 +129,7 @@ public class ChatMessageService {
 
             NftHistory nftHistory = nftService.getEvent(request.getEventid());
             if(nftHistory==null){
+                logger.error("Request: {}",gson.toJson(request));
                 logger.error("Nft history: {}",nftHistory);
                 return error236;
             }
