@@ -58,7 +58,7 @@ public class ChatMessageService {
     public static final String MONEY_MESSAGE = "money";
 
 
-    public List<ChatMessage> getAllMessages(Long conversationId) {
+    public List<ChatMessageDTO> getAllMessages(Long conversationId) {
 
         List<ChatMessage> chatMessageList = chatMessageRepository.findByConversationIdOrderByTimestamp(conversationId);
         if (chatMessageList == null) {
@@ -66,7 +66,23 @@ public class ChatMessageService {
             return new ArrayList<>();
         }
         chatMessageList.sort(Comparator.comparing(ChatMessage::getTimestamp));
-        return chatMessageList;
+        List<ChatMessageDTO> result = new ArrayList<>();
+        for (ChatMessage chatMessage : chatMessageList) {
+            result.add(convertToChatMessageDTO(chatMessage));
+        }
+
+        return result;
+    }
+
+    private ChatMessageDTO convertToChatMessageDTO(ChatMessage chatMessage) {
+        ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
+         if(chatMessage.getType().equals(NFT_MESSAGE)){
+             NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
+             chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
+        }else if(chatMessage.getType().equals(MONEY_MESSAGE)){
+// TODO
+        }
+        return chatMessageDTO;
     }
 
     public ResultDTO sendText(SendTextDTO request) {
@@ -128,9 +144,9 @@ public class ChatMessageService {
             }
 
             NftHistory nftHistory = nftService.getEvent(request.getEventid());
-            if(nftHistory==null){
-                logger.error("Request: {}",gson.toJson(request));
-                logger.error("Nft history: {}",nftHistory);
+            if (nftHistory == null) {
+                logger.error("Request: {}", gson.toJson(request));
+                logger.error("Nft history: {}", nftHistory);
                 return error236;
             }
 

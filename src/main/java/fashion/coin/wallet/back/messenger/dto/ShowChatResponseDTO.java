@@ -27,7 +27,7 @@ public class ShowChatResponseDTO {
 
     boolean block;
 
-    List<ChatMessage> chatMessageList;
+    List<ChatMessageDTO> chatMessageList;
 
     public Long getConversationId() {
         return conversationId;
@@ -133,11 +133,11 @@ public class ShowChatResponseDTO {
         this.block = block;
     }
 
-    public List<ChatMessage> getChatMessageList() {
+    public List<ChatMessageDTO> getChatMessageList() {
         return chatMessageList;
     }
 
-    public void setChatMessageList(List<ChatMessage> chatMessageList) {
+    public void setChatMessageList(List<ChatMessageDTO> chatMessageList) {
         this.chatMessageList = chatMessageList;
     }
 }
