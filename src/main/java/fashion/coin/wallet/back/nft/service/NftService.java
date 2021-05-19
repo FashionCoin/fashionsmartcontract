@@ -1177,6 +1177,10 @@ public class NftService {
     }
 
     public NftHistory getEvent(Long eventid) {
+        if(eventid==null){
+            logger.error("NFT history event ID: {}",eventid);
+            return null;
+        }
         return nftHistoryRepository.findById(eventid).orElse(null);
     }
 
