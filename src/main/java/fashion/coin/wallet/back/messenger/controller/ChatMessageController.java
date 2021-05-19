@@ -2,6 +2,7 @@ package fashion.coin.wallet.back.messenger.controller;
 
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
+import fashion.coin.wallet.back.messenger.dto.SendFshnDTO;
 import fashion.coin.wallet.back.messenger.dto.SendNftDTO;
 import fashion.coin.wallet.back.messenger.dto.SendTextDTO;
 import fashion.coin.wallet.back.messenger.service.ChatMessageService;
@@ -34,6 +35,12 @@ public class ChatMessageController {
     @ResponseBody
     ResultDTO sendNft(@RequestBody SendNftDTO request) {
         return chatMessageService.sendNft(request);
+    }
+
+    @PostMapping("/api/v1/messenger/send/fshn")
+    @ResponseBody
+    ResultDTO sendFshn(@RequestBody SendFshnDTO request) {
+        return chatMessageService.sendFshn(request);
     }
 
 

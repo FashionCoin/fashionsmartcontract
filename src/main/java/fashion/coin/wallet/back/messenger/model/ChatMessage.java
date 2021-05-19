@@ -22,6 +22,8 @@ public class ChatMessage {
 
     Long eventid;
 
+    String txhash;
+
     public Long getId() {
         return id;
     }
@@ -76,5 +78,13 @@ public class ChatMessage {
 
     public void setEventid(Long eventid) {
         this.eventid = eventid;
+    }
+
+    public String getTxhash() {
+        return txhash;
+    }
+
+    public void setTxhash(String txhash) {
+        this.txhash = txhash;
     }
 }

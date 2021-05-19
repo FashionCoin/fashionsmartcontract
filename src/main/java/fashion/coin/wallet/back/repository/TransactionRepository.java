@@ -20,4 +20,5 @@ public interface TransactionRepository extends JpaRepository<TransactionCoins,Lo
     List<TransactionCoins> findAllBySender(Client sender);
     List<TransactionCoins> findAllByReceiver(Client receiver);
     List<TransactionCoins> findAllByTxhash(String txHash);
+    TransactionCoins findTopByTxhash(String txHash);
 }

@@ -337,4 +337,13 @@ public class TransactionService {
 
         return "Ok";
     }
+
+    public TransactionCoins getTransactionCoins(String txhash) {
+        TransactionCoins transactionCoins = transactionRepository.findTopByTxhash(txhash);
+        if(transactionCoins==null){
+            logger.error("Tx Hash: {}",txhash);
+            logger.error("Transaction: {}",transactionCoins);
+        }
+        return transactionCoins;
+    }
 }

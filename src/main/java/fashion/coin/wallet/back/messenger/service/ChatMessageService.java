@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.entity.TransactionCoins;
 import fashion.coin.wallet.back.messenger.dto.ChatMessageDTO;
+import fashion.coin.wallet.back.messenger.dto.SendFshnDTO;
 import fashion.coin.wallet.back.messenger.dto.SendNftDTO;
 import fashion.coin.wallet.back.messenger.dto.SendTextDTO;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
@@ -16,6 +18,7 @@ import fashion.coin.wallet.back.nft.entity.NftHistory;
 import fashion.coin.wallet.back.nft.service.FeedService;
 import fashion.coin.wallet.back.nft.service.NftService;
 import fashion.coin.wallet.back.service.ClientService;
+import fashion.coin.wallet.back.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,9 @@ public class ChatMessageService {
     @Autowired
     FeedService feedService;
 
+    @Autowired
+    TransactionService transactionService;
+
     public static final String TEXT_MESSAGE = "text";
     public static final String NFT_MESSAGE = "nft";
     public static final String MONEY_MESSAGE = "money";
@@ -80,7 +86,8 @@ public class ChatMessageService {
              NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
              chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
         }else if(chatMessage.getType().equals(MONEY_MESSAGE)){
-// TODO
+             TransactionCoins transactionCoins = transactionService.getTransactionCoins(chatMessage.getTxhash());
+             chatMessageDTO.setTransaction(transactionCoins);
         }
         return chatMessageDTO;
     }
@@ -183,6 +190,68 @@ public class ChatMessageService {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+
+
+    }
+
+    public ResultDTO sendFshn(SendFshnDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}", client);
+                return error109;
+            }
+            Conversation conversation = conversationService.getById(request.getConversationId());
+            MyConversation myConversation = chatListService.getMyConversation(client.getId(), conversation.getId());
+            if (myConversation == null) {
+                logger.error("Request: {}", gson.toJson(request));
+                logger.error("My Conversation: {}", myConversation);
+                return error233;
+            }
+
+            TransactionCoins transactionCoins = transactionService.getTransactionCoins(request.getTxhash());
+            if (transactionCoins == null) {
+                logger.error("Request: {}", gson.toJson(request));
+                logger.error("Transaction: {}", transactionCoins);
+                return error236;
+            }
+
+
+            if (!transactionCoins.getSender().getId().equals(client.getId())) {
+                logger.error("Client ID: {}", client.getId());
+                logger.error("Transaction sender: {}", gson.toJson( transactionCoins.getSender()));
+                return error237;
+            }
+            if (!transactionCoins.getSender().getId().equals(myConversation.getFriendId())) {
+                logger.error("Friend ID: {}", myConversation.getFriendId());
+                logger.error("Transaction receiver: {}", gson.toJson( transactionCoins.getReceiver()));
+                return error238;
+            }
+
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setTimestamp(System.currentTimeMillis());
+            chatMessage.setAuthorId(client.getId());
+            chatMessage.setConversationId(myConversation.getConversationId());
+            chatMessage.setTxhash(transactionCoins.getTxhash());
+            chatMessage.setType(MONEY_MESSAGE);
+            chatMessageRepository.save(chatMessage);
+
+            ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
+
+            chatMessageDTO.setTransaction(transactionCoins);
+
+            notificateForNewMessage(chatMessage);
+
+            chatListService.newMessage(myConversation, chatMessage);
+
+            return new ResultDTO(true, chatMessageDTO, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
+
 
 
     }
