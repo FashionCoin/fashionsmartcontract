@@ -25,8 +25,15 @@ public class ChatController {
 
     @PostMapping("/api/v1/messenger/showchat")
     @ResponseBody
-    ResultDTO showChat(@RequestBody ShowChatRequestDTO request){
-return conversationService.showChat(request);
+    ResultDTO showChat(@RequestBody ShowChatRequestDTO request) {
+        return conversationService.showChat(request);
     }
+
+    @PostMapping("/api/v1/messenger/block")
+    @ResponseBody
+    ResultDTO blockFriend(@RequestBody ShowChatRequestDTO request) {
+        return conversationService.blockFriend(request);
+    }
+
 
 }

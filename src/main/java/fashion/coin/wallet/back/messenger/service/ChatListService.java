@@ -147,4 +147,10 @@ public class ChatListService {
         myConversationRepository.save(myConversation);
         logger.info(gson.toJson(myConversation));
     }
+
+    public MyConversation setBlock(MyConversation myConversation) {
+        myConversation.setBlock(true);
+        myConversationRepository.save(myConversation);
+        return myConversation;
+    }
 }

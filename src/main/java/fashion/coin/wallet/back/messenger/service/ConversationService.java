@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
+import static fashion.coin.wallet.back.constants.ErrorDictionary.error233;
 
 import fashion.coin.wallet.back.nft.dto.PolClientData;
 
@@ -70,6 +71,14 @@ public class ConversationService {
 
             MyConversation myConversation = chatListService.getMyConversation(client.getId(), request.getConversationId());
 
+            if (conversation == null || myConversation == null) {
+                logger.error(gson.toJson(request));
+                logger.error(gson.toJson(client));
+                logger.error("Conversation: {}", gson.toJson(conversation));
+                logger.error("My Conversation: {}", gson.toJson(myConversation));
+                return error233;
+            }
+
             ShowChatResponseDTO response = new ShowChatResponseDTO();
             response.setConversationId(myConversation.getConversationId());
             response.setMyConversation(myConversation.getId());
@@ -120,5 +129,38 @@ public class ConversationService {
             logger.error("Conversation: {}", conversation);
         }
         return conversation;
+    }
+
+    public ResultDTO blockFriend(ShowChatRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}", client);
+                return error109;
+            }
+
+            Conversation conversation = conversationRepository.findById(request.getConversationId()).orElse(null);
+
+            MyConversation myConversation = chatListService.getMyConversation(client.getId(), request.getConversationId());
+
+
+            if (conversation == null || myConversation == null) {
+                logger.error(gson.toJson(request));
+                logger.error(gson.toJson(client));
+                logger.error("Conversation: {}", gson.toJson(conversation));
+                logger.error("My Conversation: {}", gson.toJson(myConversation));
+                return error233;
+            }
+
+            conversation.setBlock(true);
+            conversationRepository.save(conversation);
+            chatListService.setBlock(myConversation);
+
+            return new ResultDTO(true, conversation, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
     }
 }
