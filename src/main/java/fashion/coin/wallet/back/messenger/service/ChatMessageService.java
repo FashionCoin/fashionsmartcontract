@@ -214,7 +214,7 @@ public class ChatMessageService {
             if (transactionCoins == null) {
                 logger.error("Request: {}", gson.toJson(request));
                 logger.error("Transaction: {}", transactionCoins);
-                return error236;
+                return error239;
             }
 
 
