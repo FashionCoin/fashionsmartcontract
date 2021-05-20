@@ -141,11 +141,14 @@ public class ChatListService {
     }
 
     public void newMessage(MyConversation myConversation, ChatMessage chatMessage) {
-        myConversation.setTimestamp(chatMessage.getTimestamp());
-        myConversation.setLastMessage(chatMessage.getText());
-        myConversation.setRead(false);
-        myConversationRepository.save(myConversation);
-        logger.info(gson.toJson(myConversation));
+
+        List<MyConversation> myConversationList = getMyconversationList(myConversation.getConversationId());
+        for(MyConversation mc : myConversationList){
+            mc.setTimestamp(chatMessage.getTimestamp());
+            mc.setLastMessage(chatMessage.getText());
+            mc.setRead(false);
+            myConversationRepository.save(mc);
+        }
     }
 
     public MyConversation setBlock(MyConversation myConversation) {
