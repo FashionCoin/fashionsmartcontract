@@ -129,6 +129,7 @@ public class ChatMessageService {
     private void notificateForNewMessage(ChatMessage chatMessage) {
         logger.info("Send chat message notification...");
         List<MyConversation> members = chatListService.getMyconversationList(chatMessage.getConversationId());
+        logger.info("Members: {}",gson.toJson(members));
         for (MyConversation myConversation : members) {
             sendWsMessage(myConversation.getMyId(), gson.toJson(myConversation));
         }
@@ -284,13 +285,16 @@ public class ChatMessageService {
     }
 
     public boolean sendWsMessage(Long clientId, String message) {
+        logger.info("Send Message");
         WebSocketSession connection = wsChats.get(clientId);
         if (connection == null || !connection.isOpen()) {
+            logger.error("Connection: {}",gson.toJson(connection));
             wsChats.remove(clientId);
             return false;
         }
         try {
             connection.sendMessage(new TextMessage(message));
+            logger.info("Sent message: {}",message);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
