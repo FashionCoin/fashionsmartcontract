@@ -137,8 +137,8 @@ public class FileUploadService {
     public ResultDTO saveNft(MultipartFile multipartFile) {
         try {
 
-//            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename()).replace(" ", "_");
-            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename()).replace(" ", "_");
+//            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
             String contentType = multipartFile.getContentType();
             Long size = multipartFile.getSize();
             String fileExtension = getExtensionByStringHandling(originalFilename).orElse("");
