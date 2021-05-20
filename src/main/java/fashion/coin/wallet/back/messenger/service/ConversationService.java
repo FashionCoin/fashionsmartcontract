@@ -23,6 +23,7 @@ import static fashion.coin.wallet.back.constants.ErrorDictionary.error233;
 import fashion.coin.wallet.back.nft.dto.PolClientData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ConversationService {
@@ -163,4 +164,6 @@ public class ConversationService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
+
 }

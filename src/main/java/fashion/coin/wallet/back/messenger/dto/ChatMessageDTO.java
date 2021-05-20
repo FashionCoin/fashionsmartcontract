@@ -8,7 +8,7 @@ public class ChatMessageDTO extends ChatMessage {
 
     OneNftResponceDTO nft;
 
-    TransactionCoins transaction;
+    TransactionChatDTO transaction;
 
     public ChatMessageDTO() {
     }
@@ -31,11 +31,11 @@ public class ChatMessageDTO extends ChatMessage {
         this.nft = nft;
     }
 
-    public TransactionCoins getTransaction() {
+    public TransactionChatDTO getTransaction() {
         return transaction;
     }
 
-    public void setTransaction(TransactionCoins transaction) {
+    public void setTransaction(TransactionChatDTO transaction) {
         this.transaction = transaction;
     }
 }

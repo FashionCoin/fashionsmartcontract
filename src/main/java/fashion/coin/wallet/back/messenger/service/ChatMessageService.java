@@ -1,19 +1,14 @@
 package fashion.coin.wallet.back.messenger.service;
 
 import com.google.gson.Gson;
-import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.TransactionCoins;
-import fashion.coin.wallet.back.messenger.dto.ChatMessageDTO;
-import fashion.coin.wallet.back.messenger.dto.SendFshnDTO;
-import fashion.coin.wallet.back.messenger.dto.SendNftDTO;
-import fashion.coin.wallet.back.messenger.dto.SendTextDTO;
+import fashion.coin.wallet.back.messenger.dto.*;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
 import fashion.coin.wallet.back.messenger.repository.ChatMessageRepository;
-import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
 import fashion.coin.wallet.back.nft.service.FeedService;
 import fashion.coin.wallet.back.nft.service.NftService;
@@ -23,10 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import sun.rmi.runtime.Log;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
@@ -63,6 +60,7 @@ public class ChatMessageService {
     public static final String NFT_MESSAGE = "nft";
     public static final String MONEY_MESSAGE = "money";
 
+    Map<Long, WebSocketSession> wsChats = new HashMap<>();
 
     public List<ChatMessageDTO> getAllMessages(Long conversationId) {
 
@@ -82,12 +80,12 @@ public class ChatMessageService {
 
     private ChatMessageDTO convertToChatMessageDTO(ChatMessage chatMessage) {
         ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
-         if(chatMessage.getType().equals(NFT_MESSAGE)){
-             NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
-             chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
-        }else if(chatMessage.getType().equals(MONEY_MESSAGE)){
-             TransactionCoins transactionCoins = transactionService.getTransactionCoins(chatMessage.getTxhash());
-             chatMessageDTO.setTransaction(transactionCoins);
+        if (chatMessage.getType().equals(NFT_MESSAGE)) {
+            NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
+            chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
+        } else if (chatMessage.getType().equals(MONEY_MESSAGE)) {
+            TransactionCoins transactionCoins = transactionService.getTransactionCoins(chatMessage.getTxhash());
+            chatMessageDTO.setTransaction(convertToChatDTO(transactionCoins));
         }
         return chatMessageDTO;
     }
@@ -129,9 +127,11 @@ public class ChatMessageService {
     }
 
     private void notificateForNewMessage(ChatMessage chatMessage) {
-        // TODO: Сделать уведломление всем участникам чата про новое сообщение
         logger.info("Send chat message notification...");
-        logger.info(gson.toJson(chatMessage));
+        List<MyConversation> members = chatListService.getMyconversationList(chatMessage.getConversationId());
+        for (MyConversation myConversation : members) {
+            sendWsMessage(myConversation.getMyId(), gson.toJson(myConversation));
+        }
     }
 
     public ResultDTO sendNft(SendNftDTO request) {
@@ -220,12 +220,12 @@ public class ChatMessageService {
 
             if (!transactionCoins.getSender().getId().equals(client.getId())) {
                 logger.error("Client ID: {}", client.getId());
-                logger.error("Transaction sender: {}", gson.toJson( transactionCoins.getSender()));
+                logger.error("Transaction sender: {}", gson.toJson(transactionCoins.getSender()));
                 return error237;
             }
             if (!transactionCoins.getReceiver().getId().equals(myConversation.getFriendId())) {
                 logger.error("Friend ID: {}", myConversation.getFriendId());
-                logger.error("Transaction receiver: {}", gson.toJson( transactionCoins.getReceiver()));
+                logger.error("Transaction receiver: {}", gson.toJson(transactionCoins.getReceiver()));
                 return error238;
             }
 
@@ -239,7 +239,7 @@ public class ChatMessageService {
 
             ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
 
-            chatMessageDTO.setTransaction(transactionCoins);
+            chatMessageDTO.setTransaction(convertToChatDTO(transactionCoins));
 
             notificateForNewMessage(chatMessage);
 
@@ -252,7 +252,50 @@ public class ChatMessageService {
         }
 
 
+    }
 
+    private TransactionChatDTO convertToChatDTO(TransactionCoins transactionCoins) {
 
+        TransactionChatDTO transactionChat = new TransactionChatDTO();
+        transactionChat.setId(transactionCoins.getId());
+        transactionChat.setTxhash(transactionCoins.getTxhash());
+        transactionChat.setAmount(transactionCoins.getAmount());
+        transactionChat.setTimestamp(transactionCoins.getTimestamp());
+        transactionChat.setSender(transactionCoins.getSender().getId());
+        transactionChat.setReceiver(transactionCoins.getReceiver().getId());
+        return transactionChat;
+    }
+
+    public boolean subscribe(WebSocketSession session, String apikey) {
+
+        if (apikey != null) {
+            Client client = clientService.findClientByApikey(apikey);
+            if (client != null) {
+                wsChats.put(client.getId(), session);
+                return true;
+            } else {
+                logger.error("ApiKey: {}", apikey);
+                logger.error("Client: {}", client);
+            }
+        } else {
+            logger.error("ApiKey: {}", apikey);
+        }
+        return false;
+    }
+
+    public boolean sendWsMessage(Long clientId, String message) {
+        WebSocketSession connection = wsChats.get(clientId);
+        if (connection == null || !connection.isOpen()) {
+            wsChats.remove(clientId);
+            return false;
+        }
+        try {
+            connection.sendMessage(new TextMessage(message));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            wsChats.remove(clientId);
+        }
+        return false;
     }
 }
