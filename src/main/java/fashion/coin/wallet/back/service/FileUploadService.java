@@ -136,7 +136,7 @@ public class FileUploadService {
 
     public ResultDTO saveNft(MultipartFile multipartFile) {
         try {
-            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename()).replace(" ","_");
+            String originalFilename = StringUtils.cleanPath(multipartFile.getOriginalFilename()).replace(" ", "_");
             String contentType = multipartFile.getContentType();
             Long size = multipartFile.getSize();
             String fileExtension = getExtensionByStringHandling(originalFilename).orElse("");
@@ -146,7 +146,14 @@ public class FileUploadService {
             MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
             String shaChecksum = getFileChecksum(shaDigest, copyLocation.toFile());
             Path newName = Paths.get(NFT_PATH + File.separator + shaChecksum + fileExtension);
-            NftFile nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
+
+            NftFile nftFile = nftFileRepository.findTopByFilename(shaChecksum + fileExtension);
+            if (nftFile != null) {
+                logger.error("File already exists: {}",gson.toJson(nftFile));
+                return error123;
+            }
+
+            nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
             if (Files.exists(newName)) {
                 logger.info("{} exists", newName.toString());
                 Files.delete(copyLocation);
