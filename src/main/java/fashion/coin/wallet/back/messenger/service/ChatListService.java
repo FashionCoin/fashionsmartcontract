@@ -156,7 +156,7 @@ public class ChatListService {
 
     public List<MyConversation> getMyconversationList(Long conversationId) {
         List<MyConversation> myConversationList = myConversationRepository.findByMyId(conversationId);
-        if (myConversationList == null) {
+        if (myConversationList == null || myConversationList.size()==0) {
             logger.error("Conversation Id: {}", conversationId);
             logger.error("My Conversations: {}", myConversationList);
         }
