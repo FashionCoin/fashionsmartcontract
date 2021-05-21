@@ -129,6 +129,8 @@ public class ChatListService {
             myConversation.setMyId(myId);
             myConversation.setRead(true);
             myConversation.setTimestamp(System.currentTimeMillis());
+            myConversation.setLastReadTime(System.currentTimeMillis());
+            myConversation.setUnread(0);
             myConversationRepository.save(myConversation);
         }
         return conversation;
