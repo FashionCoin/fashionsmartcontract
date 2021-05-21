@@ -42,4 +42,11 @@ public class ChatController {
         return conversationService.lastMessages(request);
     }
 
+    @PostMapping("/api/v1/messenger/read")
+    @ResponseBody
+    ResultDTO readMessages(@RequestBody ShowChatRequestDTO request) {
+        return conversationService.readMessages(request);
+    }
+
+
 }

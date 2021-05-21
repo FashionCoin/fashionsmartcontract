@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.messenger.dto.ChatMessageDTO;
 import fashion.coin.wallet.back.messenger.dto.ShowChatRequestDTO;
 import fashion.coin.wallet.back.messenger.dto.ShowChatResponseDTO;
+import fashion.coin.wallet.back.messenger.dto.UnreadDTO;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
@@ -19,13 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
-import static fashion.coin.wallet.back.constants.ErrorDictionary.error233;
-
 import fashion.coin.wallet.back.nft.dto.PolClientData;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 
 @Service
 public class ConversationService {
@@ -188,7 +188,9 @@ public class ConversationService {
                 logger.error("My Conversation: {}", gson.toJson(myConversation));
                 return error233;
             }
-
+            if (request.getTimestamp() == null) {
+                request.setTimestamp(0L);
+            }
             List<ChatMessageDTO> chatMessageList = chatMessageService.getLastMessages(conversation.getId(), request.getTimestamp());
 
             return new ResultDTO(true, chatMessageList, 0);
@@ -197,4 +199,47 @@ public class ConversationService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
+
+    public ResultDTO readMessages(ShowChatRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}", client);
+                return error109;
+            }
+
+            Conversation conversation = conversationRepository.findById(request.getConversationId()).orElse(null);
+
+            MyConversation myConversation = chatListService.getMyConversation(client.getId(), request.getConversationId());
+
+            if (conversation == null || myConversation == null) {
+                logger.error(gson.toJson(request));
+                logger.error(gson.toJson(client));
+                logger.error("Conversation: {}", gson.toJson(conversation));
+                logger.error("My Conversation: {}", gson.toJson(myConversation));
+                return error233;
+            }
+            if (request.getTimestamp() == null) {
+                request.setTimestamp(0L);
+            }
+            if (myConversation.getLastReadTime() > request.getTimestamp()) {
+                logger.error("Request timestamp: {}", request.getTimestamp());
+                logger.error("My Conversation Last Read: {}", myConversation.getLastReadTime());
+                return error240;
+            }
+
+            List<ChatMessageDTO> chatMessageList = chatMessageService.getLastMessages(conversation.getId(), request.getTimestamp());
+
+
+            UnreadDTO unread = chatListService.setUnread(myConversation.getId(), request.getTimestamp(), chatMessageList.size());
+
+            return new ResultDTO(true, unread, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
 }
+

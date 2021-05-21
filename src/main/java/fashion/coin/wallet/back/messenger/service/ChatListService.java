@@ -5,6 +5,7 @@ import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.messenger.dto.ChatListRequestDTO;
 import fashion.coin.wallet.back.messenger.dto.ChatListResponseDTO;
+import fashion.coin.wallet.back.messenger.dto.UnreadDTO;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
@@ -42,6 +43,9 @@ public class ChatListService {
 
     @Autowired
     ConversationService conversationService;
+
+    @Autowired
+    ChatMessageService chatMessageService;
 
     public ResultDTO chatList(ChatListRequestDTO request) {
         try {
@@ -143,11 +147,15 @@ public class ChatListService {
     public void newMessage(MyConversation myConversation, ChatMessage chatMessage) {
 
         List<MyConversation> myConversationList = getMyconversationList(myConversation.getConversationId());
-        for(MyConversation mc : myConversationList){
+        for (MyConversation mc : myConversationList) {
             mc.setTimestamp(chatMessage.getTimestamp());
             mc.setLastMessage(chatMessage.getText());
             mc.setRead(false);
+            if (!mc.getMyId().equals(myConversation.getId())) {
+                mc.setUnread(mc.getUnread() + 1);
+            }
             myConversationRepository.save(mc);
+            chatMessageService.sendWsMessage(myConversation.getMyId(), gson.toJson(mc));
         }
     }
 
@@ -159,10 +167,34 @@ public class ChatListService {
 
     public List<MyConversation> getMyconversationList(Long conversationId) {
         List<MyConversation> myConversationList = myConversationRepository.findByConversationId(conversationId);
-        if (myConversationList == null || myConversationList.size()==0) {
+        if (myConversationList == null || myConversationList.size() == 0) {
             logger.error("Conversation Id: {}", conversationId);
             logger.error("My Conversations: {}", myConversationList);
         }
         return myConversationList;
+    }
+
+    public UnreadDTO setUnread(Long myconversationId, Long readTimestamp, int unreadTotal) {
+        MyConversation myConversation = myConversationRepository.findById(myconversationId).orElse(null);
+        if (myConversation != null) {
+            myConversation.setLastReadTime(readTimestamp);
+            myConversation.setUnread(unreadTotal);
+            myConversationRepository.save(myConversation);
+        } else {
+            logger.error("My Conversation ID: {}", myconversationId);
+            logger.error("My Conversation: {}", myConversation);
+        }
+
+        return countMyUnreadMessages(myConversation.getMyId());
+    }
+
+    private UnreadDTO countMyUnreadMessages(Long myId) {
+
+        List<MyConversation> myConversationList = myConversationRepository.findByMyId(myId);
+        Integer total = 0;
+        for (MyConversation myConversation : myConversationList) {
+            total += myConversation.getUnread();
+        }
+        return new UnreadDTO(total);
     }
 }

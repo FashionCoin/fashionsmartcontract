@@ -114,7 +114,7 @@ public class ChatMessageService {
 
             chatMessageRepository.save(chatMessage);
 
-            notificateForNewMessage(chatMessage);
+//            notificateForNewMessage(chatMessage);
 
 
             chatListService.newMessage(myConversation, chatMessage);
@@ -126,14 +126,14 @@ public class ChatMessageService {
         }
     }
 
-    private void notificateForNewMessage(ChatMessage chatMessage) {
-        logger.info("Send chat message notification...");
-        List<MyConversation> members = chatListService.getMyconversationList(chatMessage.getConversationId());
-        logger.info("Members: {}",gson.toJson(members));
-        for (MyConversation myConversation : members) {
-            sendWsMessage(myConversation.getMyId(), gson.toJson(myConversation));
-        }
-    }
+//    private void notificateForNewMessage(ChatMessage chatMessage) {
+//        logger.info("Send chat message notification...");
+//        List<MyConversation> members = chatListService.getMyconversationList(chatMessage.getConversationId());
+//        logger.info("Members: {}",gson.toJson(members));
+//        for (MyConversation myConversation : members) {
+//            sendWsMessage(myConversation.getMyId(), gson.toJson(myConversation));
+//        }
+//    }
 
     public ResultDTO sendNft(SendNftDTO request) {
         try {
@@ -182,7 +182,7 @@ public class ChatMessageService {
 
             chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
 
-            notificateForNewMessage(chatMessage);
+//            notificateForNewMessage(chatMessage);
 
             chatListService.newMessage(myConversation, chatMessage);
 
@@ -242,7 +242,7 @@ public class ChatMessageService {
 
             chatMessageDTO.setTransaction(convertToChatDTO(transactionCoins));
 
-            notificateForNewMessage(chatMessage);
+//            notificateForNewMessage(chatMessage);
 
             chatListService.newMessage(myConversation, chatMessage);
 

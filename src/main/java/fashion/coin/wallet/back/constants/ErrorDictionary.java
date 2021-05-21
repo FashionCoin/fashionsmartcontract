@@ -74,5 +74,6 @@ public class ErrorDictionary {
     public static final ResultDTO error237 = new ResultDTO(false, "You are not transaction sender", 237);
     public static final ResultDTO error238 = new ResultDTO(false, "Friend are not transaction receiver", 238);
     public static final ResultDTO error239 = new ResultDTO(false, "Transaction not found", 239);
+    public static final ResultDTO error240 = new ResultDTO(false, "Timestamp is so small", 240);
 
 }

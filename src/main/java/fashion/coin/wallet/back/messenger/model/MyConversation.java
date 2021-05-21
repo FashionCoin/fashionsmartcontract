@@ -1,5 +1,7 @@
 package fashion.coin.wallet.back.messenger.model;
 
+import org.web3j.abi.datatypes.Int;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +26,9 @@ public class MyConversation {
 
     @Column(name = "block", columnDefinition = "boolean default false", nullable = false)
     boolean block;
+
+    Integer unread;
+    Long lastReadTime;
 
     public Long getId() {
         return id;
@@ -95,5 +100,21 @@ public class MyConversation {
 
     public void setBlock(boolean block) {
         this.block = block;
+    }
+
+    public Integer getUnread() {
+        return unread;
+    }
+
+    public void setUnread(Integer unread) {
+        this.unread = unread;
+    }
+
+    public Long getLastReadTime() {
+        return lastReadTime;
+    }
+
+    public void setLastReadTime(Long lastReadTime) {
+        this.lastReadTime = lastReadTime;
     }
 }
