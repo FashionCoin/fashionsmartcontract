@@ -15,6 +15,8 @@ public class Conversation {
 
     boolean block;
 
+    Long ownerId;
+
     public Long getId() {
         return id;
     }
@@ -36,6 +38,15 @@ public class Conversation {
     }
 
     public void setBlock(boolean block) {
+
         this.block = block;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 }
