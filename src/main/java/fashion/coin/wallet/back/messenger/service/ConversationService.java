@@ -3,8 +3,10 @@ package fashion.coin.wallet.back.messenger.service;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.messenger.dto.ChatMessageDTO;
 import fashion.coin.wallet.back.messenger.dto.ShowChatRequestDTO;
 import fashion.coin.wallet.back.messenger.dto.ShowChatResponseDTO;
+import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
 import fashion.coin.wallet.back.messenger.repository.ConversationRepository;
@@ -166,4 +168,33 @@ public class ConversationService {
     }
 
 
+    public ResultDTO lastMessages(ShowChatRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}", client);
+                return error109;
+            }
+
+            Conversation conversation = conversationRepository.findById(request.getConversationId()).orElse(null);
+
+            MyConversation myConversation = chatListService.getMyConversation(client.getId(), request.getConversationId());
+
+            if (conversation == null || myConversation == null) {
+                logger.error(gson.toJson(request));
+                logger.error(gson.toJson(client));
+                logger.error("Conversation: {}", gson.toJson(conversation));
+                logger.error("My Conversation: {}", gson.toJson(myConversation));
+                return error233;
+            }
+
+            List<ChatMessageDTO> chatMessageList = chatMessageService.getLastMessages(conversation.getId(), request.getTimestamp());
+
+            return new ResultDTO(true, chatMessageList, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
 }

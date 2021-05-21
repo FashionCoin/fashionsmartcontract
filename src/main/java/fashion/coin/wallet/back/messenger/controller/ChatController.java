@@ -36,4 +36,10 @@ public class ChatController {
     }
 
 
+    @PostMapping("/api/v1/messenger/last")
+    @ResponseBody
+    ResultDTO lastMessages(@RequestBody ShowChatRequestDTO request) {
+        return conversationService.lastMessages(request);
+    }
+
 }

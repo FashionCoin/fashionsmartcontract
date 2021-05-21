@@ -302,4 +302,20 @@ public class ChatMessageService {
         }
         return false;
     }
+
+    public List<ChatMessageDTO> getLastMessages(Long conversationId, Long timestamp) {
+        List<ChatMessage> chatMessageList = chatMessageRepository
+                .findByConversationIdAndTimestampGreaterThanOrderByTimestamp(conversationId,timestamp);
+        if (chatMessageList == null) {
+            logger.error("Message List: {}", chatMessageList);
+            return new ArrayList<>();
+        }
+        chatMessageList.sort(Comparator.comparing(ChatMessage::getTimestamp));
+        List<ChatMessageDTO> result = new ArrayList<>();
+        for (ChatMessage chatMessage : chatMessageList) {
+            result.add(convertToChatMessageDTO(chatMessage));
+        }
+
+        return result;
+    }
 }
