@@ -195,6 +195,9 @@ public class ChatListService {
         List<MyConversation> myConversationList = myConversationRepository.findByMyId(myId);
         Integer total = 0;
         for (MyConversation myConversation : myConversationList) {
+            if(myConversation.getUnread()==null){
+                myConversation.setUnread(0);
+            }
             total += myConversation.getUnread();
         }
         return new UnreadDTO(total);
