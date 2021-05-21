@@ -195,11 +195,30 @@ public class ChatListService {
         List<MyConversation> myConversationList = myConversationRepository.findByMyId(myId);
         Integer total = 0;
         for (MyConversation myConversation : myConversationList) {
-            if(myConversation.getUnread()==null){
+            if (myConversation.getUnread() == null) {
                 myConversation.setUnread(0);
             }
             total += myConversation.getUnread();
         }
         return new UnreadDTO(total);
+    }
+
+    public ResultDTO unreadTotal(ChatListRequestDTO request) {
+        try {
+
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}", client);
+                return error109;
+            }
+
+            UnreadDTO unread = countMyUnreadMessages(client.getId());
+            return new ResultDTO(true, unread, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+
     }
 }

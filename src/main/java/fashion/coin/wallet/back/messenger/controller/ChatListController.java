@@ -29,6 +29,12 @@ public class ChatListController {
         return chatListService.chatList(request);
     }
 
+    @PostMapping("/api/v1/messenger/unread")
+    @ResponseBody
+    ResultDTO unreadTotal(@RequestBody ChatListRequestDTO request) {
+        return chatListService.unreadTotal(request);
+    }
+
 
 
 }
