@@ -223,6 +223,9 @@ public class ConversationService {
             if (request.getTimestamp() == null) {
                 request.setTimestamp(0L);
             }
+            if(myConversation.getLastReadTime()==null){
+                myConversation.setLastReadTime(0L);
+            }
             if (myConversation.getLastReadTime() > request.getTimestamp()) {
                 logger.error("Request timestamp: {}", request.getTimestamp());
                 logger.error("My Conversation Last Read: {}", myConversation.getLastReadTime());
