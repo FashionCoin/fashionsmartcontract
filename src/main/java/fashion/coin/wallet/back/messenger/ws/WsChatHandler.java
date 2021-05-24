@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
-public class WsChatHandler extends AbstractWebSocketHandler {
+public class WsChatHandler extends TextWebSocketHandler {
 
     @Autowired
     Gson gson;
@@ -45,11 +46,14 @@ public class WsChatHandler extends AbstractWebSocketHandler {
         }
     }
 
-    @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        logger.info(gson.toJson(message));
 
-        String msg = message.getPayload().toString();
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+
+        logger.info(message.getPayload());
+        String msg = message.getPayload();
+
+
         logger.info("Session " + session.getId() + ". Message: " + msg);
 
         logger.info(String.valueOf(chatMessageService));
