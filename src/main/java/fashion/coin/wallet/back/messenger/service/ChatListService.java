@@ -186,6 +186,9 @@ public class ChatListService {
         if (myConversation != null) {
             myConversation.setLastReadTime(readTimestamp);
             myConversation.setUnread(unreadTotal);
+            if(unreadTotal==0){
+                myConversation.setRead(true);
+            }
             myConversationRepository.save(myConversation);
         } else {
             logger.error("My Conversation ID: {}", myconversationId);
