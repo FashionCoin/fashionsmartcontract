@@ -302,7 +302,7 @@ public class ChatMessageService {
                 WebSocketSession connection = connectionList.get(i);
 
                 if (connection == null || !connection.isOpen()) {
-                    logger.error("Connection: {}", gson.toJson(connection));
+                    logger.error("Connection: {}", gson.toJson(connection.getId()));
                     wsChats.get(clientId).remove(i);
                 } else {
                     try {
