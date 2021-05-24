@@ -1,9 +1,11 @@
 package fashion.coin.wallet.back.messenger.ws;
 
 
+import com.google.gson.Gson;
 import fashion.coin.wallet.back.messenger.service.ChatMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
@@ -17,6 +19,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
 public class WsChatHandler extends AbstractWebSocketHandler {
+
+    @Autowired
+    Gson gson;
 
     Logger logger = LoggerFactory.getLogger(WsChatHandler.class);
     static final ConcurrentLinkedQueue<WebSocketSession> connectionList = new ConcurrentLinkedQueue<WebSocketSession>();
@@ -42,6 +47,8 @@ public class WsChatHandler extends AbstractWebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+        logger.info(gson.toJson(message));
+
         String msg = message.getPayload().toString();
         logger.info("Session " + session.getId() + ". Message: " + msg);
 
