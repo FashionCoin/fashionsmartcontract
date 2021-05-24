@@ -60,7 +60,7 @@ public class ChatMessageService {
     public static final String NFT_MESSAGE = "nft";
     public static final String MONEY_MESSAGE = "money";
 
-    Map<Long, WebSocketSession> wsChats = new HashMap<>();
+    Map<Long, List<WebSocketSession>> wsChats = new HashMap<>();
 
     public List<ChatMessageDTO> getAllMessages(Long conversationId) {
 
@@ -272,7 +272,10 @@ public class ChatMessageService {
         if (apikey != null) {
             Client client = clientService.findClientByApikey(apikey);
             if (client != null) {
-                wsChats.put(client.getId(), session);
+                if (!wsChats.containsKey(client.getId())) {
+                    wsChats.put(client.getId(), new ArrayList<>());
+                }
+                wsChats.get(client.getId()).add(session);
                 return true;
             } else {
                 logger.error("ApiKey: {}", apikey);
@@ -284,28 +287,36 @@ public class ChatMessageService {
         return false;
     }
 
-    public boolean sendWsMessage(Long clientId, String message) {
+    public void sendWsMessage(Long clientId, String message) {
         logger.info("Send Message");
-        WebSocketSession connection = wsChats.get(clientId);
-        if (connection == null || !connection.isOpen()) {
-            logger.error("Connection: {}",gson.toJson(connection));
+        List<WebSocketSession> connectionList = wsChats.get(clientId);
+        if (connectionList != null && connectionList.size() > 0) {
+            for (int i = 0; i < connectionList.size(); i++) {
+                WebSocketSession connection = connectionList.get(i);
+                if (connection == null || !connection.isOpen()) {
+                    logger.error("Connection: {}", gson.toJson(connection));
+                    wsChats.get(clientId).remove(i);
+                }else {
+                    try {
+                        connection.sendMessage(new TextMessage(message));
+                        logger.info("Sent message: {}", message);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        wsChats.get(clientId).remove(i);
+                    }
+                }
+            }
+        } else {
+            logger.error("Clietn ID: {}", clientId);
+            logger.error("Connection list: {}", gson.toJson(connectionList));
             wsChats.remove(clientId);
-            return false;
         }
-        try {
-            connection.sendMessage(new TextMessage(message));
-            logger.info("Sent message: {}",message);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            wsChats.remove(clientId);
-        }
-        return false;
+
     }
 
     public List<ChatMessageDTO> getLastMessages(Long conversationId, Long timestamp) {
         List<ChatMessage> chatMessageList = chatMessageRepository
-                .findByConversationIdAndTimestampGreaterThanOrderByTimestamp(conversationId,timestamp);
+                .findByConversationIdAndTimestampGreaterThanOrderByTimestamp(conversationId, timestamp);
         if (chatMessageList == null) {
             logger.error("Message List: {}", chatMessageList);
             return new ArrayList<>();
