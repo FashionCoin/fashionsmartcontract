@@ -294,6 +294,9 @@ public class ChatMessageService {
 
     public void sendWsMessage(Long clientId, WsResultDTO message) {
         logger.info("Send Message");
+
+        logger.info(gson.toJson(wsChats));
+
         List<WebSocketSession> connectionList = wsChats.get(clientId);
         if (connectionList != null && connectionList.size() > 0) {
             for (int i = 0; i < connectionList.size(); i++) {
