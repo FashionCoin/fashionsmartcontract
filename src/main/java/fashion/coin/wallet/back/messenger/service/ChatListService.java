@@ -6,6 +6,7 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.messenger.dto.ChatListRequestDTO;
 import fashion.coin.wallet.back.messenger.dto.ChatListResponseDTO;
 import fashion.coin.wallet.back.messenger.dto.UnreadDTO;
+import fashion.coin.wallet.back.messenger.dto.WsResultDTO;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
@@ -22,6 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.error109;
+import static fashion.coin.wallet.back.messenger.service.ChatMessageService.NEW_MESSAGE;
+import static fashion.coin.wallet.back.messenger.service.ChatMessageService.UNREAD_MESSAGES;
 import static fashion.coin.wallet.back.messenger.service.ConversationService.CONVERSATION_DIALOG;
 
 @Service
@@ -157,7 +160,9 @@ public class ChatListService {
                 mc.setUnread(mc.getUnread() + 1);
             }
             myConversationRepository.save(mc);
-            chatMessageService.sendWsMessage(myConversation.getMyId(), gson.toJson(mc));
+            chatMessageService.sendWsMessage(myConversation.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
+            UnreadDTO unread = countMyUnreadMessages(myConversation.getMyId());
+            chatMessageService.sendWsMessage(myConversation.getMyId(), new WsResultDTO(true, UNREAD_MESSAGES, unread, 0));
         }
     }
 
@@ -190,7 +195,7 @@ public class ChatListService {
         return countMyUnreadMessages(myConversation.getMyId());
     }
 
-    private UnreadDTO countMyUnreadMessages(Long myId) {
+    public UnreadDTO countMyUnreadMessages(Long myId) {
 
         List<MyConversation> myConversationList = myConversationRepository.findByMyId(myId);
         Integer total = 0;

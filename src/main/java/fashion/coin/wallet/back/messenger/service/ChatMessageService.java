@@ -62,6 +62,11 @@ public class ChatMessageService {
 
     Map<Long, List<WebSocketSession>> wsChats = new HashMap<>();
 
+
+    public static final String UNREAD_MESSAGES = "unread";
+    public static final String NEW_MESSAGE = "newmessage";
+
+
     public List<ChatMessageDTO> getAllMessages(Long conversationId) {
 
         List<ChatMessage> chatMessageList = chatMessageRepository.findByConversationIdOrderByTimestamp(conversationId);
@@ -287,7 +292,7 @@ public class ChatMessageService {
         return false;
     }
 
-    public void sendWsMessage(Long clientId, String message) {
+    public void sendWsMessage(Long clientId, WsResultDTO message) {
         logger.info("Send Message");
         List<WebSocketSession> connectionList = wsChats.get(clientId);
         if (connectionList != null && connectionList.size() > 0) {
@@ -296,9 +301,9 @@ public class ChatMessageService {
                 if (connection == null || !connection.isOpen()) {
                     logger.error("Connection: {}", gson.toJson(connection));
                     wsChats.get(clientId).remove(i);
-                }else {
+                } else {
                     try {
-                        connection.sendMessage(new TextMessage(message));
+                        connection.sendMessage(new TextMessage(gson.toJson(message)));
                         logger.info("Sent message: {}", message);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -329,4 +334,6 @@ public class ChatMessageService {
 
         return result;
     }
+
+
 }

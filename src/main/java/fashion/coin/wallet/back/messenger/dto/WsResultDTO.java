@@ -6,6 +6,16 @@ public class WsResultDTO {
     Object data;
     int error;
 
+    public WsResultDTO() {
+    }
+
+    public WsResultDTO(boolean result, String eventType, Object data, int error) {
+        this.result = result;
+        this.eventType = eventType;
+        this.data = data;
+        this.error = error;
+    }
+
     public boolean isResult() {
         return result;
     }

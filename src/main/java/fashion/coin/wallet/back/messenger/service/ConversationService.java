@@ -3,10 +3,7 @@ package fashion.coin.wallet.back.messenger.service;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
-import fashion.coin.wallet.back.messenger.dto.ChatMessageDTO;
-import fashion.coin.wallet.back.messenger.dto.ShowChatRequestDTO;
-import fashion.coin.wallet.back.messenger.dto.ShowChatResponseDTO;
-import fashion.coin.wallet.back.messenger.dto.UnreadDTO;
+import fashion.coin.wallet.back.messenger.dto.*;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
@@ -26,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
+import static fashion.coin.wallet.back.messenger.service.ChatMessageService.UNREAD_MESSAGES;
 
 @Service
 public class ConversationService {
@@ -223,7 +221,7 @@ public class ConversationService {
             if (request.getTimestamp() == null) {
                 request.setTimestamp(0L);
             }
-            if(myConversation.getLastReadTime()==null){
+            if (myConversation.getLastReadTime() == null) {
                 myConversation.setLastReadTime(0L);
             }
             if (myConversation.getLastReadTime() > request.getTimestamp()) {
@@ -236,7 +234,7 @@ public class ConversationService {
 
 
             UnreadDTO unread = chatListService.setUnread(myConversation.getId(), request.getTimestamp(), chatMessageList.size());
-
+            chatMessageService.sendWsMessage(client.getId(), new WsResultDTO(true, UNREAD_MESSAGES, unread, 0));
             return new ResultDTO(true, unread, 0);
         } catch (Exception e) {
             e.printStackTrace();
