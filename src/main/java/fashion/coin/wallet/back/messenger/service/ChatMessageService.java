@@ -296,7 +296,7 @@ public class ChatMessageService {
         logger.info("Send Message");
 
         List<WebSocketSession> connectionList = wsChats.get(clientId);
-        logger.info("Connection list: {}",connectionList);
+//        logger.info("Connection list: {}",connectionList);
         if (connectionList != null && connectionList.size() > 0) {
             for (int i = 0; i < connectionList.size(); i++) {
                 WebSocketSession connection = connectionList.get(i);

@@ -77,7 +77,7 @@ public class WsChatHandler extends TextWebSocketHandler {
 
     @Override
     protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
-        logger.info("Pong session " + session.getId() + " msg: " + message.toString());
+//        logger.info("Pong session " + session.getId() + " msg: " + message.toString());
     }
 
     void purgeConnectionList() {
@@ -117,7 +117,7 @@ public class WsChatHandler extends TextWebSocketHandler {
     public void PingWsList(){
         for(WebSocketSession ws : connectionList){
             try {
-                logger.info("ping {}",ws.getId());
+//                logger.info("ping {}",ws.getId());
                 ws.sendMessage(new PingMessage());
             } catch (IOException e) {
                 e.printStackTrace();
