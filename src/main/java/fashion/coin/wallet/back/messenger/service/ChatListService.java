@@ -160,9 +160,9 @@ public class ChatListService {
                 mc.setUnread(mc.getUnread() + 1);
             }
             myConversationRepository.save(mc);
-            chatMessageService.sendWsMessage(myConversation.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
-            UnreadDTO unread = countMyUnreadMessages(myConversation.getMyId());
-            chatMessageService.sendWsMessage(myConversation.getMyId(), new WsResultDTO(true, UNREAD_MESSAGES, unread, 0));
+            chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
+            UnreadDTO unread = countMyUnreadMessages(mc.getMyId());
+            chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, UNREAD_MESSAGES, unread, 0));
         }
     }
 

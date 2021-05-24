@@ -121,7 +121,7 @@ public class ChatMessageService {
 
 //            notificateForNewMessage(chatMessage);
 
-
+// TODO: Почему бы не просто conversation?
             chatListService.newMessage(myConversation, chatMessage);
 
             return new ResultDTO(true, chatMessage, 0);
