@@ -295,12 +295,12 @@ public class ChatMessageService {
     public void sendWsMessage(Long clientId, WsResultDTO message) {
         logger.info("Send Message");
 
-        logger.info(gson.toJson(wsChats));
-
         List<WebSocketSession> connectionList = wsChats.get(clientId);
+        logger.info("Connection list: {}",connectionList);
         if (connectionList != null && connectionList.size() > 0) {
             for (int i = 0; i < connectionList.size(); i++) {
                 WebSocketSession connection = connectionList.get(i);
+
                 if (connection == null || !connection.isOpen()) {
                     logger.error("Connection: {}", gson.toJson(connection));
                     wsChats.get(clientId).remove(i);
