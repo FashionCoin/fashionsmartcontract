@@ -3,6 +3,7 @@ package fashion.coin.wallet.back.nft.controller;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.nft.dto.FindByDurationRequestDTO;
 import fashion.coin.wallet.back.nft.dto.FindNameRequestDTO;
+import fashion.coin.wallet.back.nft.dto.TopTenDTO;
 import fashion.coin.wallet.back.nft.service.FindPolService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,4 +87,17 @@ public class FindController {
         logger.info("Request end");
         return resultDTO;
     }
+
+
+    @PostMapping("/api/v1/find/topten")
+    @ResponseBody
+    ResultDTO topTen(@RequestBody FindByDurationRequestDTO request) {
+        logger.info("Top ten start");
+        ResultDTO resultDTO = findPolService.topTen(request);
+        logger.info("Request end");
+        return resultDTO;
+    }
+
+
+
 }
