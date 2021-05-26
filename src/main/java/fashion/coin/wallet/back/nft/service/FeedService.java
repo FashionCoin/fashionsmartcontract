@@ -207,6 +207,7 @@ public class FeedService {
         oneNft.setPieces(1L);
 
         if (nft.getHeight() == null || nft.getWidth() == null || nft.getOrientation() == null) {
+            nft = nftRepository.findById(nft.getId()).orElse(null);
             nft.setHeight(oneNft.getHeight());
             nft.setWidth(oneNft.getWidth());
             nft.setOrientation(oneNft.getOrientation());
