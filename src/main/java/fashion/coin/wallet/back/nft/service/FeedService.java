@@ -173,7 +173,7 @@ public class FeedService {
         NftFile nftFile = nftService.getNftFile(nft);
         if (nftFile != null) {
             if (nftFile.getExifOrientation() == null) {
-                nftFile.setExifOrientation("0");
+                nftFile.setExifOrientation("1");
             }
             oneNft.setOrientation(nftFile.getExifOrientation());
             Integer o = Integer.parseInt(nftFile.getExifOrientation());
@@ -205,6 +205,13 @@ public class FeedService {
         oneNft.setTirage(nft.isTirage());
 
         oneNft.setPieces(1L);
+
+        if (nft.getHeight() == null || nft.getWidth() == null || nft.getOrientation() == null) {
+            nft.setHeight(oneNft.getHeight());
+            nft.setWidth(oneNft.getWidth());
+            nft.setOrientation(oneNft.getOrientation());
+            nftRepository.save(nft);
+        }
 
         return oneNft;
     }

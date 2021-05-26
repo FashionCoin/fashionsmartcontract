@@ -57,6 +57,11 @@ public class Nft {
 
     String txhash;
 
+    String height;
+    String width;
+    String orientation;
+
+
     public Nft() {
     }
 
@@ -235,5 +240,29 @@ public class Nft {
 
     public void setTirage(boolean tirage) {
         this.tirage = tirage;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public String getWidth() {
+        return width;
+    }
+
+    public void setWidth(String width) {
+        this.width = width;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(String orientation) {
+        this.orientation = orientation;
     }
 }
