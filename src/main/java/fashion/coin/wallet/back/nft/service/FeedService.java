@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -205,17 +206,31 @@ public class FeedService {
         oneNft.setTirage(nft.isTirage());
 
         oneNft.setPieces(1L);
-
-        if (nft.getHeight() == null || nft.getWidth() == null || nft.getOrientation() == null) {
-            nft = nftRepository.findById(nft.getId()).orElse(null);
-            nft.setHeight(oneNft.getHeight());
-            nft.setWidth(oneNft.getWidth());
-            nft.setOrientation(oneNft.getOrientation());
-            nftRepository.save(nft);
+        try {
+            if (nft.getHeight() == null || nft.getWidth() == null || nft.getOrientation() == null) {
+                nft = nftRepository.findById(nft.getId()).orElse(null);
+                nft.setHeight(oneNft.getHeight());
+                nft.setWidth(oneNft.getWidth());
+                nft.setOrientation(oneNft.getOrientation());
+                nft.setCurrency("FSHN");
+                nftRepository.save(nft);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
         return oneNft;
     }
+
+    @PostConstruct
+    public void saveAllSize(){
+        logger.info("Save size start...");
+        List<Nft> nftList = nftRepository.findAll();
+        for(Nft nft:nftList){
+            getOneNftDTO(nft);
+        }
+        logger.info("Save size end...");
+    }
+
 
     @Autowired
     public void setClientService(ClientService clientService) {
