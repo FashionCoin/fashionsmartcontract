@@ -197,7 +197,7 @@ public class NftService {
         nftRepository.save(nft);
 
         hashtagService.checkTags(nft.getDescription());
-
+        feedService.getOneNftDTO(nft);
         return new ResultDTO(true, nft, 0);
     }
 
@@ -256,7 +256,7 @@ public class NftService {
         nftRepository.save(nft);
 
         hashtagService.checkTags(nft.getDescription());
-
+        feedService.getOneNftDTO(nft);
         return new ResultDTO(true, nft, 0);
     }
 
@@ -1069,7 +1069,7 @@ public class NftService {
         tirageService.save(nftTirage);
 
         hashtagService.checkTags(nft.getDescription());
-
+        feedService.getOneNftDTO(nft);
         return new ResultDTO(true, nft, 0);
     }
 

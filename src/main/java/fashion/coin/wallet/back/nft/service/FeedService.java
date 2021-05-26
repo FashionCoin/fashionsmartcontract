@@ -221,15 +221,7 @@ public class FeedService {
         return oneNft;
     }
 
-    @PostConstruct
-    public void saveAllSize(){
-        logger.info("Save size start...");
-        List<Nft> nftList = nftRepository.findAll();
-        for(Nft nft:nftList){
-            getOneNftDTO(nft);
-        }
-        logger.info("Save size end...");
-    }
+
 
 
     @Autowired
