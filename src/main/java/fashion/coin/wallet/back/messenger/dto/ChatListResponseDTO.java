@@ -7,6 +7,7 @@ public class ChatListResponseDTO extends MyConversation {
     String avatar;
     boolean avaExists;
     String type;
+    int mesages;
 
     public ChatListResponseDTO(MyConversation myConversation) {
         setConversationId(myConversation.getConversationId());
@@ -18,7 +19,6 @@ public class ChatListResponseDTO extends MyConversation {
         setRead(myConversation.isRead());
         setTimestamp(myConversation.getTimestamp());
     }
-
 
 
     public String getAvatar() {
@@ -43,5 +43,13 @@ public class ChatListResponseDTO extends MyConversation {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getMesages() {
+        return mesages;
+    }
+
+    public void setMesages(int mesages) {
+        this.mesages = mesages;
     }
 }

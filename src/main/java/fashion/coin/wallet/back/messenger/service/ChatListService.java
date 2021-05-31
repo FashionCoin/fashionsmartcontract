@@ -81,6 +81,7 @@ public class ChatListService {
                 response.setAvatar(friend.getAvatar());
                 Conversation conversation = conversationService.getById(myConversation.getConversationId());
                 response.setType(conversation.getType());
+                response.setMesages(chatMessageService.totalMessages(conversation.getId()));
                 result.add(response);
             }
             result.sort((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()));

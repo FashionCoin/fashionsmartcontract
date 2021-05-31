@@ -339,4 +339,12 @@ public class ChatMessageService {
     }
 
 
+    public int totalMessages(Long conversationId) {
+        List<ChatMessage> chatMessageList = chatMessageRepository.findByConversationIdOrderByTimestamp(conversationId);
+        if(chatMessageList==null ){
+            return 0;
+        }else{
+            return chatMessageList.size();
+        }
+    }
 }
