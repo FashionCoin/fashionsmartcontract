@@ -31,6 +31,8 @@ public class PolClientResponseDTO {
 
     List<SocialLinkDTO> socialLinks;
 
+   Long conversationId;
+
 
     public Long getId() {
         return id;
@@ -142,5 +144,13 @@ public class PolClientResponseDTO {
 
     public void setSocialLinks(List<SocialLinkDTO> socialLinks) {
         this.socialLinks = socialLinks;
+    }
+
+    public Long getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(Long conversationId) {
+        this.conversationId = conversationId;
     }
 }

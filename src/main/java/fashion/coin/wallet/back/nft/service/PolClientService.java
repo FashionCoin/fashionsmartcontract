@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.SocialLinkDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.messenger.service.ConversationService;
 import fashion.coin.wallet.back.nft.dto.PolClientData;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
 import fashion.coin.wallet.back.nft.dto.PolClientResponseDTO;
@@ -49,6 +50,9 @@ public class PolClientService {
     @Autowired
     TirageService tirageService;
 
+    @Autowired
+    ConversationService conversationService;
+
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
         try {
@@ -72,7 +76,9 @@ public class PolClientService {
             PolClientResponseDTO responseDTO = new PolClientResponseDTO();
             responseDTO.setId(friend.getId());
             responseDTO.setCryptoname(friend.getCryptoname());
-
+            if(client!= null && friend!= null) {
+                responseDTO.setConversationId(conversationService.findForFriend(client.getId(), friend.getId()));
+            }
             List<Nft> nftList = nftService.getCollection(friend.getId());
             BigDecimal faceValue = BigDecimal.ZERO;
             BigDecimal creativeValue = BigDecimal.ZERO;

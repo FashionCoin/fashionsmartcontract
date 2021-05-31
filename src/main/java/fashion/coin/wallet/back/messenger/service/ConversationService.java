@@ -242,5 +242,8 @@ public class ConversationService {
         }
     }
 
+    public Long findForFriend(Long myId, Long friendId) {
+        return chatListService.findForFriend(myId,friendId);
+    }
 }
 

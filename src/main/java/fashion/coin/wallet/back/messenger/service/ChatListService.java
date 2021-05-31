@@ -229,4 +229,13 @@ public class ChatListService {
         }
 
     }
+
+    public Long findForFriend(Long myId, Long friendId) {
+        MyConversation myConversation = myConversationRepository.findTopByMyIdAndFriendId(myId,friendId);
+        if(myConversation==null){
+            return null;
+        }else{
+            return myConversation.getConversationId();
+        }
+    }
 }
