@@ -35,6 +35,12 @@ public class ChatController {
         return conversationService.blockFriend(request);
     }
 
+    @PostMapping("/api/v1/messenger/unblock")
+    @ResponseBody
+    ResultDTO unblockFriend(@RequestBody ShowChatRequestDTO request) {
+        return conversationService.unblockFriend(request);
+    }
+
 
     @PostMapping("/api/v1/messenger/last")
     @ResponseBody

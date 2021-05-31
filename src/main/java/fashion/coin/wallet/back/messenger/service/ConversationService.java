@@ -166,6 +166,40 @@ public class ConversationService {
     }
 
 
+    public ResultDTO unblockFriend(ShowChatRequestDTO request) {
+        try {
+            Client client = clientService.findClientByApikey(request.getApikey());
+            if (client == null) {
+                logger.error(request.getApikey());
+                logger.error("Client: {}", client);
+                return error109;
+            }
+
+            Conversation conversation = conversationRepository.findById(request.getConversationId()).orElse(null);
+
+            MyConversation myConversation = chatListService.getMyConversation(client.getId(), request.getConversationId());
+
+
+            if (conversation == null || myConversation == null) {
+                logger.error(gson.toJson(request));
+                logger.error(gson.toJson(client));
+                logger.error("Conversation: {}", gson.toJson(conversation));
+                logger.error("My Conversation: {}", gson.toJson(myConversation));
+                return error233;
+            }
+
+            conversation.setBlock(false);
+            conversationRepository.save(conversation);
+            chatListService.setUnblock(myConversation);
+
+            return new ResultDTO(true, conversation, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResultDTO(false, e.getMessage(), -1);
+        }
+    }
+
+
     public ResultDTO lastMessages(ShowChatRequestDTO request) {
         try {
             Client client = clientService.findClientByApikey(request.getApikey());

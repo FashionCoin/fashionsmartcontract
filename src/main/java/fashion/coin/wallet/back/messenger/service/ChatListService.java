@@ -173,6 +173,12 @@ public class ChatListService {
         return myConversation;
     }
 
+    public MyConversation setUnblock(MyConversation myConversation) {
+        myConversation.setBlock(false);
+        myConversationRepository.save(myConversation);
+        return myConversation;
+    }
+
     public List<MyConversation> getMyconversationList(Long conversationId) {
         List<MyConversation> myConversationList = myConversationRepository.findByConversationId(conversationId);
         if (myConversationList == null || myConversationList.size() == 0) {
