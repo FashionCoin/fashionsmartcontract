@@ -7,7 +7,7 @@ public class ChatListResponseDTO extends MyConversation {
     String avatar;
     boolean avaExists;
     String type;
-    int mesages;
+    int totalMessages;
 
     public ChatListResponseDTO(MyConversation myConversation) {
         setConversationId(myConversation.getConversationId());
@@ -45,11 +45,11 @@ public class ChatListResponseDTO extends MyConversation {
         this.type = type;
     }
 
-    public int getMesages() {
-        return mesages;
+    public int getTotalMessages() {
+        return totalMessages;
     }
 
-    public void setMesages(int mesages) {
-        this.mesages = mesages;
+    public void setTotalMessages(int totalMessages) {
+        this.totalMessages = totalMessages;
     }
 }
