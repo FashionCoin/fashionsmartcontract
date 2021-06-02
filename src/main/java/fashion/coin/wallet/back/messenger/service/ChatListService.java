@@ -156,8 +156,8 @@ public class ChatListService {
         for (MyConversation mc : myConversationList) {
             mc.setTimestamp(chatMessage.getTimestamp());
             mc.setLastMessage(chatMessage.getText());
-            mc.setRead(false);
             if (!mc.getMyId().equals(myConversation.getId())) {
+                mc.setRead(false);
                 mc.setUnread(mc.getUnread() + 1);
             }
             myConversationRepository.save(mc);
