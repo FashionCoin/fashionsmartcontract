@@ -151,17 +151,21 @@ public class ChatListService {
     }
 
     public void newMessage(MyConversation myConversation, ChatMessage chatMessage) {
+        logger.info("==================== FIND BUG ==================");
+        logger.info("My conversation: {}", gson.toJson(myConversation));
+        logger.info("Message: {}", gson.toJson(chatMessage));
 
         List<MyConversation> myConversationList = getMyconversationList(myConversation.getConversationId());
         for (MyConversation mc : myConversationList) {
             mc.setTimestamp(chatMessage.getTimestamp());
             mc.setLastMessage(chatMessage.getText());
+            logger.info("MC: {}", gson.toJson(mc));
             if (!mc.getMyId().equals(myConversation.getId())) {
                 mc.setRead(false);
                 mc.setUnread(mc.getUnread() + 1);
-            }else {
-                logger.info("My Conversation: {}",gson.toJson(myConversation));
-                logger.info("MC: {}",gson.toJson(mc));
+            } else {
+                logger.info("My Conversation: {}", gson.toJson(myConversation));
+                logger.info("MC: {}", gson.toJson(mc));
             }
             myConversationRepository.save(mc);
             chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
@@ -172,6 +176,7 @@ public class ChatListService {
             }
 
         }
+        logger.info("====================END=========================");
     }
 
     public MyConversation setBlock(MyConversation myConversation) {
@@ -200,7 +205,7 @@ public class ChatListService {
         if (myConversation != null) {
             myConversation.setLastReadTime(readTimestamp);
             myConversation.setUnread(unreadTotal);
-            if(unreadTotal==0){
+            if (unreadTotal == 0) {
                 myConversation.setRead(true);
             }
             myConversationRepository.save(myConversation);
@@ -245,10 +250,10 @@ public class ChatListService {
     }
 
     public Long findForFriend(Long myId, Long friendId) {
-        MyConversation myConversation = myConversationRepository.findTopByMyIdAndFriendId(myId,friendId);
-        if(myConversation==null){
+        MyConversation myConversation = myConversationRepository.findTopByMyIdAndFriendId(myId, friendId);
+        if (myConversation == null) {
             return null;
-        }else{
+        } else {
             return myConversation.getConversationId();
         }
     }
