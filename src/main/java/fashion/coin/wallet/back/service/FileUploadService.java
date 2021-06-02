@@ -151,7 +151,7 @@ public class FileUploadService {
 
             NftFile nftFile = nftFileRepository.findTopByFilename(shaChecksum + fileExtension);
             if (nftFile != null) {
-                logger.error("File already exists: {}",gson.toJson(nftFile));
+                logger.error("File already exists: {}", gson.toJson(nftFile));
                 return error123;
             }
 
@@ -219,7 +219,7 @@ public class FileUploadService {
 
             String exif = getRotateOrientation(originalFile);
             logger.info("EXIF: " + exif);
-            String command = "ffmpeg -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size300 + "'";
+            String command = "ffmpeg  -y -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size300 + "'";
             logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             logger.info("process.isAlive() : {}", process.isAlive());
@@ -230,7 +230,7 @@ public class FileUploadService {
                 setRotateOrientation(size300, exif);
             }
 
-            command = "ffmpeg -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size600 + "'";
+            command = "ffmpeg -y  -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size600 + "'";
             process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             result = process.waitFor();
             logger.info("Result: {}", result);
@@ -239,7 +239,7 @@ public class FileUploadService {
                 setRotateOrientation(size600, exif);
             }
 
-            command = "ffmpeg -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size1000 + "'";
+            command = "ffmpeg  -y  -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size1000 + "'";
             process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             result = process.waitFor();
             logger.info("Result: {}", result);
@@ -291,16 +291,16 @@ public class FileUploadService {
 
 
     public void convertAllFiles() {
-
+        logger.info("Convert All files START");
         List<NftFile> nftFileList = nftFileRepository.findAll();
         for (NftFile nftFile : nftFileList) {
 
-            if (nftFile.getContentType().toLowerCase().contains("image")) {
+            if (nftFile.getContentType().toLowerCase().contains("gif")) {
                 resizePreview(nftFile.getFilename());
-            } else if (nftFile.getContentType().toLowerCase().contains("video")) {
-                resizePreview(nftFile.getFilename().substring(0, 64) + ".jpeg");
             }
         }
+
+        logger.info("Convert All files END");
     }
 
 
