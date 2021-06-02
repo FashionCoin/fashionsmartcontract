@@ -118,11 +118,7 @@ public class ChatMessageService {
             chatMessage.setType(TEXT_MESSAGE);
 
             chatMessageRepository.save(chatMessage);
-//            // TEST
-//            chatListService.setUnread(myConversation.getId(), chatMessage.getTimestamp(), 0);
-//            notificateForNewMessage(chatMessage);
 
-// TODO: Почему бы не просто conversation?
             chatListService.newMessage(myConversation, chatMessage);
 
             return new ResultDTO(true, chatMessage, 0);

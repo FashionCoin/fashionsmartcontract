@@ -151,21 +151,13 @@ public class ChatListService {
     }
 
     public void newMessage(MyConversation myConversation, ChatMessage chatMessage) {
-        logger.info("==================== FIND BUG ==================");
-        logger.info("My conversation: {}", gson.toJson(myConversation));
-        logger.info("Message: {}", gson.toJson(chatMessage));
-
         List<MyConversation> myConversationList = getMyconversationList(myConversation.getConversationId());
         for (MyConversation mc : myConversationList) {
             mc.setTimestamp(chatMessage.getTimestamp());
             mc.setLastMessage(chatMessage.getText());
-            logger.info("MC: {}", gson.toJson(mc));
             if (!mc.getMyId().equals(myConversation.getMyId())) {
                 mc.setRead(false);
                 mc.setUnread(mc.getUnread() + 1);
-            } else {
-                logger.info("My Conversation: {}", gson.toJson(myConversation));
-                logger.info("MC: {}", gson.toJson(mc));
             }
             myConversationRepository.save(mc);
             chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
@@ -174,9 +166,7 @@ public class ChatListService {
                 UnreadDTO unread = countMyUnreadMessages(mc.getMyId());
                 chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, UNREAD_MESSAGES, unread, 0));
             }
-
         }
-        logger.info("====================END=========================");
     }
 
     public MyConversation setBlock(MyConversation myConversation) {
