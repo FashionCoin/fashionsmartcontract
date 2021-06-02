@@ -295,7 +295,7 @@ public class FileUploadService {
         List<NftFile> nftFileList = nftFileRepository.findAll();
         for (NftFile nftFile : nftFileList) {
 
-            if (nftFile.getContentType().toLowerCase().contains("gif")) {
+            if (nftFile.getContentType().toLowerCase().contains("gif") ) {
                 resizePreview(nftFile.getFilename());
             }
         }
