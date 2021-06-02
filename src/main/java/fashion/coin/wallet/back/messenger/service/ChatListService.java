@@ -159,6 +159,9 @@ public class ChatListService {
             if (!mc.getMyId().equals(myConversation.getId())) {
                 mc.setRead(false);
                 mc.setUnread(mc.getUnread() + 1);
+            }else {
+                logger.info("My Conversation: {}",gson.toJson(myConversation));
+                logger.info("MC: {}",gson.toJson(mc));
             }
             myConversationRepository.save(mc);
             chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
