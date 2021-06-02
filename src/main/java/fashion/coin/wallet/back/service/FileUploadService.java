@@ -175,6 +175,11 @@ public class FileUploadService {
                     createPreview(videoName, imageName);
                     resizePreview(shaChecksum + ".jpeg");
                 } else {
+                    if (multipartFile.getContentType().toLowerCase().contains("gif")) {
+                        String videoName = newName.toString();
+                        String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+                        createPreview(videoName, imageName);
+                    }
                     resizePreview(shaChecksum + fileExtension);
                 }
             }
@@ -295,8 +300,12 @@ public class FileUploadService {
         List<NftFile> nftFileList = nftFileRepository.findAll();
         for (NftFile nftFile : nftFileList) {
 
-            if (nftFile.getContentType().toLowerCase().contains("gif") ) {
-                resizePreview(nftFile.getFilename());
+            if (nftFile.getContentType().toLowerCase().contains("gif")) {
+                String shaChecksum = nftFile.getFilename().replace(".gif", "");
+                String videoName = NFT_PATH + File.separator + shaChecksum + ".gif";
+                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+                createPreview(videoName, imageName);
+
             }
         }
 
@@ -307,6 +316,10 @@ public class FileUploadService {
     private boolean createPreview(String videoName, String imageName) {
         try {
             String command = "ffmpeg -i '" + videoName + "' -frames 1  -f image2 '" + imageName + "'";
+            if (videoName.toLowerCase().contains("gif")) {
+                command = "ffmpeg -y -i '" + videoName + "' -pix_fmt yuvj420p  -vf \"select=eq(n\\,0)\" '" + imageName + "'";
+            }
+
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             int result = process.waitFor();
             logger.info("Result: {}", result);
