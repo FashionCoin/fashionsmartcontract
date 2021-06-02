@@ -160,7 +160,7 @@ public class ChatListService {
             mc.setTimestamp(chatMessage.getTimestamp());
             mc.setLastMessage(chatMessage.getText());
             logger.info("MC: {}", gson.toJson(mc));
-            if (!mc.getMyId().equals(myConversation.getId())) {
+            if (!mc.getMyId().equals(myConversation.getMyId())) {
                 mc.setRead(false);
                 mc.setUnread(mc.getUnread() + 1);
             } else {
@@ -170,7 +170,7 @@ public class ChatListService {
             myConversationRepository.save(mc);
             chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, NEW_MESSAGE, mc, 0));
 
-            if (!mc.getMyId().equals(myConversation.getId())) {
+            if (!mc.getMyId().equals(myConversation.getMyId())) {
                 UnreadDTO unread = countMyUnreadMessages(mc.getMyId());
                 chatMessageService.sendWsMessage(mc.getMyId(), new WsResultDTO(true, UNREAD_MESSAGES, unread, 0));
             }
