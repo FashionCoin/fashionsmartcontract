@@ -3,12 +3,17 @@ package fashion.coin.wallet.back.messenger.dto;
 import fashion.coin.wallet.back.entity.TransactionCoins;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.nft.dto.OneNftResponceDTO;
+import fashion.coin.wallet.back.nft.entity.Nft;
+
+import java.util.List;
 
 public class ChatMessageDTO extends ChatMessage {
 
     OneNftResponceDTO nft;
 
     TransactionChatDTO transaction;
+
+    List<Nft> nftList;
 
     public ChatMessageDTO() {
     }
@@ -37,5 +42,13 @@ public class ChatMessageDTO extends ChatMessage {
 
     public void setTransaction(TransactionChatDTO transaction) {
         this.transaction = transaction;
+    }
+
+    public List<Nft> getNftList() {
+        return nftList;
+    }
+
+    public void setNftList(List<Nft> nftList) {
+        this.nftList = nftList;
     }
 }

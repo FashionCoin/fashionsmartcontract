@@ -6,9 +6,12 @@ import fashion.coin.wallet.back.entity.Client;
 import fashion.coin.wallet.back.entity.TransactionCoins;
 import fashion.coin.wallet.back.messenger.dto.*;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
+import fashion.coin.wallet.back.messenger.model.ChatNftInMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
 import fashion.coin.wallet.back.messenger.repository.ChatMessageRepository;
+import fashion.coin.wallet.back.messenger.repository.ChatNftInMessageRepository;
+import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftHistory;
 import fashion.coin.wallet.back.nft.service.FeedService;
 import fashion.coin.wallet.back.nft.service.NftService;
@@ -56,6 +59,9 @@ public class ChatMessageService {
     @Autowired
     TransactionService transactionService;
 
+    @Autowired
+    ChatNftInMessageRepository chatNftInMessageRepository;
+
     public static final String TEXT_MESSAGE = "text";
     public static final String NFT_MESSAGE = "nft";
     public static final String MONEY_MESSAGE = "money";
@@ -85,6 +91,9 @@ public class ChatMessageService {
 
     private ChatMessageDTO convertToChatMessageDTO(ChatMessage chatMessage) {
         ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
+        if (chatMessage.getType().equals(TEXT_MESSAGE)) {
+            chatMessageDTO.setNftList(getNftListByChatMessageId(chatMessage.getId()));
+        }
         if (chatMessage.getType().equals(NFT_MESSAGE)) {
             NftHistory nftHistory = nftService.getEvent(chatMessage.getEventid());
             chatMessageDTO.setNft(nftService.getOneNftDTO(nftHistory));
@@ -93,6 +102,23 @@ public class ChatMessageService {
             chatMessageDTO.setTransaction(convertToChatDTO(transactionCoins));
         }
         return chatMessageDTO;
+    }
+
+    private List<Nft> getNftListByChatMessageId(Long messageId) {
+        List<Nft> nftList = null;
+        try {
+            List<ChatNftInMessage> chatNftInMessageList = chatNftInMessageRepository.findByMessageId(messageId);
+            if (chatNftInMessageList != null && chatNftInMessageList.size() > 0) {
+                nftList = new ArrayList<>();
+                for (ChatNftInMessage chatNftInMessage : chatNftInMessageList) {
+                    Nft nft = nftService.findNft(chatNftInMessage.getNftId());
+                    nftList.add(nft);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return nftList;
     }
 
     public ResultDTO sendText(SendTextDTO request) {
@@ -118,14 +144,40 @@ public class ChatMessageService {
             chatMessage.setType(TEXT_MESSAGE);
 
             chatMessageRepository.save(chatMessage);
+            ChatMessageDTO chatMessageDTO = new ChatMessageDTO(chatMessage);
+            if (request.getNftList() != null) {
+                appendNftList(chatMessageDTO, request.getNftList());
+            }
 
-            chatListService.newMessage(myConversation, chatMessage);
+            chatListService.newMessage(myConversation, chatMessageDTO);
 
-            return new ResultDTO(true, chatMessage, 0);
+            return new ResultDTO(true, chatMessageDTO, 0);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
+    }
+
+    private ChatMessageDTO appendNftList(ChatMessageDTO chatMessageDTO, List<Long> nftList) {
+        try {
+            if (nftList != null && nftList.size() > 0) {
+                List<Nft> nfts = new ArrayList<>();
+                for (Long nftId : nftList) {
+                    Nft nft = nftService.findNft(nftId);
+                    if (nft != null) {
+                        ChatNftInMessage chatNftInMessage = new ChatNftInMessage();
+                        chatNftInMessage.setMessageId(chatMessageDTO.getId());
+                        chatNftInMessage.setNftId(nft.getId());
+                        chatNftInMessageRepository.save(chatNftInMessage);
+                        nfts.add(nft);
+                    }
+                }
+                chatMessageDTO.setNftList(nfts);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return chatMessageDTO;
     }
 
 //    private void notificateForNewMessage(ChatMessage chatMessage) {
@@ -186,7 +238,7 @@ public class ChatMessageService {
 
 //            notificateForNewMessage(chatMessage);
 
-            chatListService.newMessage(myConversation, chatMessage);
+            chatListService.newMessage(myConversation, chatMessageDTO);
 
             return new ResultDTO(true, chatMessageDTO, 0);
         } catch (Exception e) {
@@ -246,7 +298,7 @@ public class ChatMessageService {
 
 //            notificateForNewMessage(chatMessage);
 
-            chatListService.newMessage(myConversation, chatMessage);
+            chatListService.newMessage(myConversation, chatMessageDTO);
 
             return new ResultDTO(true, chatMessageDTO, 0);
         } catch (Exception e) {
@@ -338,9 +390,9 @@ public class ChatMessageService {
 
     public int totalMessages(Long conversationId) {
         List<ChatMessage> chatMessageList = chatMessageRepository.findByConversationIdOrderByTimestamp(conversationId);
-        if(chatMessageList==null ){
+        if (chatMessageList == null) {
             return 0;
-        }else{
+        } else {
             return chatMessageList.size();
         }
     }

@@ -3,10 +3,7 @@ package fashion.coin.wallet.back.messenger.service;
 import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
-import fashion.coin.wallet.back.messenger.dto.ChatListRequestDTO;
-import fashion.coin.wallet.back.messenger.dto.ChatListResponseDTO;
-import fashion.coin.wallet.back.messenger.dto.UnreadDTO;
-import fashion.coin.wallet.back.messenger.dto.WsResultDTO;
+import fashion.coin.wallet.back.messenger.dto.*;
 import fashion.coin.wallet.back.messenger.model.ChatMessage;
 import fashion.coin.wallet.back.messenger.model.Conversation;
 import fashion.coin.wallet.back.messenger.model.MyConversation;
@@ -150,7 +147,7 @@ public class ChatListService {
         return result;
     }
 
-    public void newMessage(MyConversation myConversation, ChatMessage chatMessage) {
+    public void newMessage(MyConversation myConversation, ChatMessageDTO chatMessage) {
         List<MyConversation> myConversationList = getMyconversationList(myConversation.getConversationId());
         for (MyConversation mc : myConversationList) {
             mc.setTimestamp(chatMessage.getTimestamp());

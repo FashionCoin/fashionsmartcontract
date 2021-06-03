@@ -1,9 +1,12 @@
 package fashion.coin.wallet.back.messenger.dto;
 
+import java.util.List;
+
 public class SendTextDTO {
     String apikey;
     Long conversationId;
     String text;
+    List<Long> nftList;
 
     public String getApikey() {
         return apikey;
@@ -27,5 +30,13 @@ public class SendTextDTO {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public List<Long> getNftList() {
+        return nftList;
+    }
+
+    public void setNftList(List<Long> nftList) {
+        this.nftList = nftList;
     }
 }
