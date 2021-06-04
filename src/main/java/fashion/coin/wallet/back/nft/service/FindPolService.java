@@ -132,11 +132,14 @@ public class FindPolService {
 
             Long clientId = nft.getAuthorId();
             if (!topClientMap.containsKey(clientId)) {
+                Client client = clientService.getClient(clientId);
                 TopClientDTO topClient = new TopClientDTO();
                 topClient.setId(clientId);
                 topClient.setCryptoname(nft.getAuthorName());
                 topClient.setAmount(BigDecimal.ZERO);
                 topClientMap.put(clientId, topClient);
+                topClient.setAvatar(client.getAvatar());
+                topClient.setAvaExists(client.avaExists());
             }
             TopClientDTO topClient = topClientMap.get(clientId);
             topClient.setAmount(topClient.getAmount().add(nft.getFaceValue()));
@@ -184,6 +187,8 @@ public class FindPolService {
                 topClient.setCryptoname(nftHistory.getCryptonameTo());
                 topClient.setAmount(BigDecimal.ZERO);
                 topClientMap.put(cryptoname, topClient);
+                topClient.setAvatar(clientEntity.getAvatar());
+                topClient.setAvaExists(clientEntity.avaExists());
             }
             TopClientDTO topClient = topClientMap.get(cryptoname);
             topClient.setAmount(topClient.getAmount().add(nftHistory.getAmount()));

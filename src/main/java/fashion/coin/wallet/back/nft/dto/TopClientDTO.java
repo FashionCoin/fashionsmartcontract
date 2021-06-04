@@ -6,6 +6,8 @@ public class TopClientDTO {
     Long id;
     String cryptoname;
     BigDecimal amount;
+    String avatar;
+    boolean avaExists;
 
     public Long getId() {
         return id;
@@ -29,5 +31,21 @@ public class TopClientDTO {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public boolean isAvaExists() {
+        return avaExists;
+    }
+
+    public void setAvaExists(boolean avaExists) {
+        this.avaExists = avaExists;
     }
 }
