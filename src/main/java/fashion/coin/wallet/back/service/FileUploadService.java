@@ -319,9 +319,10 @@ public class FileUploadService {
 //                String videoName = NFT_PATH + File.separator + shaChecksum + ".gif";
 //                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
 //                createPreview(videoName, imageName);
-                logger.info("FILE: {}", nftFile.getFilename());
+
                 String orientation = getRotateOrientation(NFT_PATH + File.separator + nftFile.getFilename());
                 if (orientation != null || orientation != "1") {
+                    logger.info("FILE: {}", nftFile.getFilename());
                     Nft nft = nftService.findByfile(nftFile);
                     nft.setOrientation(orientation);
                     if (orientation.equals("5") || orientation.equals("6")
