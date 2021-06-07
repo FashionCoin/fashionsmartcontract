@@ -321,7 +321,7 @@ public class FileUploadService {
 //                createPreview(videoName, imageName);
 
                 String orientation = getRotateOrientation(NFT_PATH + File.separator + nftFile.getFilename());
-                if (orientation != null || orientation != "1") {
+                if (orientation != null && orientation != "1") {
                     logger.info("FILE: {}", nftFile.getFilename());
                     Nft nft = nftService.findByfile(nftFile);
                     nft.setOrientation(orientation);
