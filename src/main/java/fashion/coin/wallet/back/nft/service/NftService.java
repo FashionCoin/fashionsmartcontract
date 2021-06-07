@@ -1202,6 +1202,11 @@ public class NftService {
         return feedService.getOneNftDTO(nft);
     }
 
+    public Nft findByfile(NftFile nftFile) {
+        Nft nft = nftRepository.findTopByFileName(nftFile.getFilename());
+        return nft;
+    }
+
 
     class DividendProofPaymentProcess implements Runnable {
 

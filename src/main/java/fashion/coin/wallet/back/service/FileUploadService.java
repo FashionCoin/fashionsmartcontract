@@ -7,8 +7,10 @@ import com.thebuzzmedia.exiftool.Tag;
 import com.thebuzzmedia.exiftool.core.StandardTag;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.nft.entity.Nft;
 import fashion.coin.wallet.back.nft.entity.NftFile;
 import fashion.coin.wallet.back.nft.repository.NftFileRepository;
+import fashion.coin.wallet.back.nft.service.NftService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +88,9 @@ public class FileUploadService {
     public void setNftFileRepository(NftFileRepository nftFileRepository) {
         this.nftFileRepository = nftFileRepository;
     }
+
+    @Autowired
+    NftService nftService;
 
     @Autowired
     Gson gson;
@@ -286,8 +291,15 @@ public class FileUploadService {
             ));
             String orientation = valueMap.get(StandardTag.ORIENTATION);
             String rotation = valueMap.get(StandardTag.ROTATION);
-            logger.info("ORIENTATION: {}", orientation);
-            logger.info("ROTATION: {}", rotation);
+//            logger.info("ORIENTATION: {}", orientation);
+//            logger.info("ROTATION: {}", rotation);
+            if (rotation.trim().equals("90")) {
+                orientation = "8";
+            } else if (rotation.trim().equals("270")) {
+                orientation = "6";
+            } else if (rotation.trim().equals("180")) {
+                orientation = "3";
+            }
 
             return orientation;
         } catch (Exception e) {
@@ -308,7 +320,19 @@ public class FileUploadService {
 //                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
 //                createPreview(videoName, imageName);
                 logger.info("FILE: {}", nftFile.getFilename());
-                getRotateOrientation(NFT_PATH + File.separator + nftFile.getFilename());
+                String orientation = getRotateOrientation(NFT_PATH + File.separator + nftFile.getFilename());
+                if (orientation != null || orientation != "1") {
+                    Nft nft = nftService.findByfile(nftFile);
+                    nft.setOrientation(orientation);
+                    if (orientation.equals("5") || orientation.equals("6")
+                            || orientation.equals("7") || orientation.equals("8")) {
+                        nft.setHeight(nftFile.getWidth());
+                        nft.setWidth(nftFile.getHeight());
+                    }
+                    nftService.save(nft);
+                    nftFile.setExifOrientation(orientation);
+                    nftFileRepository.save(nftFile);
+                }
             }
         }
 
