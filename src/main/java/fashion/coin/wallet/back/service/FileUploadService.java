@@ -281,13 +281,15 @@ public class FileUploadService {
             ExifTool exifTool = new ExifToolBuilder().build();
 
             Map<Tag, String> valueMap = exifTool.getImageMeta(image, asList(
-                    StandardTag.ORIENTATION
+                    StandardTag.ORIENTATION,
+                    StandardTag.ROTATION
             ));
             String orientation = valueMap.get(StandardTag.ORIENTATION);
+            String rotation = valueMap.get(StandardTag.ROTATION);
             logger.info("ORIENTATION: {}", orientation);
+            logger.info("ROTATION: {}", rotation);
 
             return orientation;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -300,12 +302,13 @@ public class FileUploadService {
         List<NftFile> nftFileList = nftFileRepository.findAll();
         for (NftFile nftFile : nftFileList) {
 
-            if (nftFile.getContentType().toLowerCase().contains("gif")) {
-                String shaChecksum = nftFile.getFilename().replace(".gif", "");
-                String videoName = NFT_PATH + File.separator + shaChecksum + ".gif";
-                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
-                createPreview(videoName, imageName);
-
+            if (nftFile.getContentType().toLowerCase().contains("video")) {
+//                String shaChecksum = nftFile.getFilename().replace(".gif", "");
+//                String videoName = NFT_PATH + File.separator + shaChecksum + ".gif";
+//                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+//                createPreview(videoName, imageName);
+                logger.info("FILE: {}", nftFile.getFilename());
+                getRotateOrientation(NFT_PATH + File.separator + nftFile.getFilename());
             }
         }
 
