@@ -295,14 +295,15 @@ public class FileUploadService {
             String rotation = valueMap.get(StandardTag.ROTATION);
 //            logger.info("ORIENTATION: {}", orientation);
 //            logger.info("ROTATION: {}", rotation);
-            if (rotation.trim().equals("90")) {
-                orientation = "8";
-            } else if (rotation.trim().equals("270")) {
-                orientation = "6";
-            } else if (rotation.trim().equals("180")) {
-                orientation = "3";
+            if (orientation == null && rotation != null) {
+                if (rotation.trim().equals("90")) {
+                    orientation = "8";
+                } else if (rotation.trim().equals("270")) {
+                    orientation = "6";
+                } else if (rotation.trim().equals("180")) {
+                    orientation = "3";
+                }
             }
-
             return orientation;
         } catch (Exception e) {
             e.printStackTrace();
