@@ -230,13 +230,13 @@ public class FileUploadService {
             String size1000 = NFT_PATH + File.separator + "1000" + File.separator + fileName;
 
             String exif = getRotateOrientation(originalFile);
-            logger.info("EXIF: " + exif);
+//            logger.info("EXIF: " + exif);
             String command = "ffmpeg  -y -i '" + originalFile + "' -vf \"scale=300:-1, select=eq(n\\,0)\"  '" + size300 + "'";
-            logger.info(command);
+//            logger.info(command);
             Process process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
-            logger.info("process.isAlive() : {}", process.isAlive());
+//            logger.info("process.isAlive() : {}", process.isAlive());
             int result = process.waitFor();
-            logger.info("Result: {}", result);
+//            logger.info("Result: {}", result);
 
             if (exif != null) {
                 setRotateOrientation(size300, exif);
@@ -245,7 +245,7 @@ public class FileUploadService {
             command = "ffmpeg -y  -i '" + originalFile + "' -vf \"scale=600:-1, select=eq(n\\,0)\"  '" + size600 + "'";
             process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             result = process.waitFor();
-            logger.info("Result: {}", result);
+//            logger.info("Result: {}", result);
 
             if (exif != null) {
                 setRotateOrientation(size600, exif);
@@ -254,7 +254,7 @@ public class FileUploadService {
             command = "ffmpeg  -y  -i '" + originalFile + "' -vf \"scale=1000:-1, select=eq(n\\,0)\"  '" + size1000 + "'";
             process = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command});
             result = process.waitFor();
-            logger.info("Result: {}", result);
+//            logger.info("Result: {}", result);
 
             if (exif != null) {
                 setRotateOrientation(size1000, exif);
@@ -268,14 +268,14 @@ public class FileUploadService {
     private void setRotateOrientation(String filename, String exif) {
         try {
             File image = new File(filename);
-            logger.info("ORIENTATION before set: {}", getRotateOrientation(filename));
+//            logger.info("ORIENTATION before set: {}", getRotateOrientation(filename));
 
             ExifTool exifTool = new ExifToolBuilder().build();
 
             Map<Tag, String> valueMap = new HashMap<>();
             valueMap.put(StandardTag.ORIENTATION, exif);
             exifTool.setImageMeta(image, valueMap);
-            logger.info("ORIENTATION after set: {}", getRotateOrientation(filename));
+//            logger.info("ORIENTATION after set: {}", getRotateOrientation(filename));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -315,14 +315,14 @@ public class FileUploadService {
     public void convertAllFiles() {
         logger.info("Convert All files START");
 
-        List<Nft> nfts = nftService.findLast(LocalDateTime.of(2021, Month.JUNE, 8, 0, 0));
+        List<Nft> nfts = nftService.findLast(LocalDateTime.of(2021, Month.JUNE, 1, 0, 0));
 
         for (Nft nft : nfts) {
             NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
             if (nftFile.getContentType().toLowerCase().contains("video")) {
-                logger.info("Filename : {}",nft.getFileName());
+//                logger.info("Filename : {}",nft.getFileName());
                 String shaChecksum = nft.getFileName().split("\\.")[0];
-                logger.info(shaChecksum);
+//                logger.info(shaChecksum);
                 resizePreview(shaChecksum + ".jpeg");
             } else {
                 resizePreview(nft.getFileName());
