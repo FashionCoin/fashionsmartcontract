@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1205,6 +1207,12 @@ public class NftService {
     public Nft findByfile(NftFile nftFile) {
         Nft nft = nftRepository.findTopByFileName(nftFile.getFilename());
         return nft;
+    }
+
+    public List<Nft> findLast(LocalDateTime localDateTime) {
+        Timestamp timestamp = Timestamp.valueOf(localDateTime);
+        List<Nft> nftList = nftRepository.findByTimestampIsGreaterThan(timestamp.getTime());
+        return nftList;
     }
 
 

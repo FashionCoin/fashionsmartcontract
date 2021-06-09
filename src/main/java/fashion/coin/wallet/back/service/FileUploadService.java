@@ -26,6 +26,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -311,10 +313,25 @@ public class FileUploadService {
 
     public void convertAllFiles() {
         logger.info("Convert All files START");
-        List<NftFile> nftFileList = nftFileRepository.findAll();
-        for (NftFile nftFile : nftFileList) {
 
+        List<Nft> nfts = nftService.findLast(LocalDateTime.of(2021, Month.JUNE, 8, 0, 0));
+
+        for (Nft nft : nfts) {
+            NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
             if (nftFile.getContentType().toLowerCase().contains("video")) {
+                String shaChecksum = nft.getFileName().split(".")[0];
+                logger.info(shaChecksum);
+                resizePreview(shaChecksum + ".jpeg");
+            } else {
+                resizePreview(nft.getFileName());
+            }
+        }
+
+
+ /*
+              List<NftFile> nftFileList = nftFileRepository.findAll();
+        for (NftFile nftFile : nftFileList) {
+     if (nftFile.getContentType().toLowerCase().contains("video")) {
 //                String shaChecksum = nftFile.getFilename().replace(".gif", "");
 //                String videoName = NFT_PATH + File.separator + shaChecksum + ".gif";
 //                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
@@ -335,8 +352,11 @@ public class FileUploadService {
                     nftFileRepository.save(nftFile);
                 }
             }
-        }
 
+
+
+        }
+ */
         logger.info("Convert All files END");
     }
 
