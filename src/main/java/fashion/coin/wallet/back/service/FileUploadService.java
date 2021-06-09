@@ -321,7 +321,7 @@ public class FileUploadService {
             NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
             if (nftFile.getContentType().toLowerCase().contains("video")) {
                 logger.info("Filename : {}",nft.getFileName());
-                String shaChecksum = nft.getFileName().split(".")[0];
+                String shaChecksum = nft.getFileName().split("\\.")[0];
                 logger.info(shaChecksum);
                 resizePreview(shaChecksum + ".jpeg");
             } else {
