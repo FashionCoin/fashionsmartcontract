@@ -11,6 +11,7 @@ import fashion.coin.wallet.back.nft.entity.NftHistory;
 import fashion.coin.wallet.back.nft.repository.FriendProofRepository;
 import fashion.coin.wallet.back.nft.repository.NftRepository;
 import fashion.coin.wallet.back.service.ClientService;
+import fashion.coin.wallet.back.service.FileUploadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class FeedService {
     FriendProofRepository friendProofRepository;
     TirageService tirageService;
     NftService nftService;
-
+    FileUploadService fileUploadService;
 
     public ResultDTO getFeed(FeedNftRequestDTO request) {
 //        logger.info("Cryptoname: {} \t ApiKey: {}", request.getCryptoname(), request.getApikey());
@@ -173,6 +174,10 @@ public class FeedService {
 
         NftFile nftFile = nftService.getNftFile(nft);
         if (nftFile != null) {
+            // TODO: temporary to fix size
+            fileUploadService.fixSize(nftFile);
+//
+
             if (nftFile.getExifOrientation() == null) {
                 nftFile.setExifOrientation("1");
             }
@@ -222,8 +227,6 @@ public class FeedService {
     }
 
 
-
-
     @Autowired
     public void setClientService(ClientService clientService) {
         this.clientService = clientService;
@@ -247,5 +250,10 @@ public class FeedService {
     @Autowired
     public void setNftService(NftService nftService) {
         this.nftService = nftService;
+    }
+
+    @Autowired
+    public void setFileUploadService(FileUploadService fileUploadService) {
+        this.fileUploadService = fileUploadService;
     }
 }

@@ -227,12 +227,12 @@ public class FileUploadService {
         if (orientation == null && rotation != null) {
             if (rotation.trim().equals("90")) {
                 orientation = "8";
-                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
-                valueMap.put(StandardTag.IMAGE_WIDTH, height);
+//                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
+//                valueMap.put(StandardTag.IMAGE_WIDTH, height);
             } else if (rotation.trim().equals("270")) {
                 orientation = "6";
-                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
-                valueMap.put(StandardTag.IMAGE_WIDTH, height);
+//                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
+//                valueMap.put(StandardTag.IMAGE_WIDTH, height);
             } else if (rotation.trim().equals("180")) {
                 orientation = "3";
             }
@@ -401,6 +401,25 @@ public class FileUploadService {
         }
         return false;
     }
+
+
+    // TODO: Temporary to fix size
+    public NftFile fixSize(NftFile nftFile) {
+        try {
+            Path newName = Paths.get(NFT_PATH + File.separator + nftFile.getFilename());
+            Map<Tag, String> valueMap = getImageParams(newName);
+            nftFile.setExifOrientation(valueMap.get(StandardTag.ORIENTATION));
+            nftFile.setHeight(valueMap.get(StandardTag.IMAGE_HEIGHT));
+            nftFile.setWidth(valueMap.get(StandardTag.IMAGE_WIDTH));
+
+            nftFileRepository.save(nftFile);
+        } catch (Exception e) {
+            logger.error(gson.toJson(nftFile));
+            e.printStackTrace();
+        }
+        return nftFile;
+    }
+    ///
 
 
 //    @PostConstruct
