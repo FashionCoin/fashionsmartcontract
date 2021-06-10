@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 
 @Entity
 public class NftHistory {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     Long id;
 
     Long nftId;
@@ -22,7 +23,7 @@ public class NftHistory {
     String cryptonameTo;
     @Column(precision = 30, scale = 3)
     BigDecimal amount;
-
+    Long pieces;
     String txhash;
 
     public Long getId() {
@@ -87,6 +88,14 @@ public class NftHistory {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public Long getPieces() {
+        return pieces;
+    }
+
+    public void setPieces(Long pieces) {
+        this.pieces = pieces;
     }
 
     public String getTxhash() {

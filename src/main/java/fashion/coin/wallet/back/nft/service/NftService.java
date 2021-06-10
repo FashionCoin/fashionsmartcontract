@@ -323,6 +323,12 @@ public class NftService {
             nftHistory.setNftId(nft.getId());
             nftHistory.setAmount(amount);
 
+            if(buyNftDTO.getPieces()!=null && buyNftDTO.getPieces()>0){
+                nftHistory.setPieces(buyNftDTO.getPieces());
+            }else{
+                nftHistory.setPieces(1L);
+            }
+
             if (nft.isTirage()) {
                 if (!nftTirage.isInsale()) {
                     nftTirage.setInsale(true);
@@ -936,6 +942,7 @@ public class NftService {
             nftHistoryRepository.save(nftHistory);
 
             if (nft.isTirage()) {
+                nftHistory.setPieces(request.getPieces());
                 NftTirage newOwnerTirage = tirageService.tirageFindByNftAndOwnerId(nft.getId(), friend.getId());
                 newOwnerTirage.setCanChangeValue(false);
                 newOwnerTirage.setCreativeValue(nftTirage.getCreativeValue());
@@ -944,12 +951,14 @@ public class NftService {
                 tirageService.setPieces(newOwnerTirage, request.getPieces());
 
             } else {
+                nftHistory.setPieces(1L);
                 nft.setOwnerId(friend.getId());
                 nft.setOwnerName(friend.getCryptoname());
                 nft.setOwnerWallet(friend.getWalletAddress());
                 nftRepository.save(nft);
 
             }
+            nftHistoryRepository.save(nftHistory);
             return new ResultDTO(true, nftHistory, 0);
 
         } catch (Exception e) {
