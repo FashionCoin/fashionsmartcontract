@@ -939,6 +939,8 @@ public class NftService {
             nftHistory.setAmount(nft.getFaceValue());
             nftHistory.setNftId(nft.getId());
             nftHistory.setTxhash(resultDTO.getMessage());
+            nftHistory.setIdFrom(client.getId());
+            nftHistory.setIdTo(friend.getId());
             nftHistoryRepository.save(nftHistory);
 
             if (nft.isTirage()) {
