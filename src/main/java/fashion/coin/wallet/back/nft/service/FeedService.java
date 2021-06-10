@@ -174,9 +174,9 @@ public class FeedService {
 
         NftFile nftFile = nftService.getNftFile(nft);
         if (nftFile != null) {
-            // TODO: temporary to fix size
-            fileUploadService.fixSize(nftFile);
-//
+//            // TODO: temporary to fix size
+//            fileUploadService.fixSize(nftFile);
+////
 
             if (nftFile.getExifOrientation() == null) {
                 nftFile.setExifOrientation("1");
