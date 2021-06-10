@@ -209,14 +209,36 @@ public class FileUploadService {
             valueMap = exifTool.getImageMeta(image, asList(
                     StandardTag.ORIENTATION,
                     StandardTag.IMAGE_WIDTH,
-                    StandardTag.IMAGE_HEIGHT
+                    StandardTag.IMAGE_HEIGHT,
+                    StandardTag.ROTATION
             ));
         } catch (Exception e) {
             e.printStackTrace();
             valueMap.put(StandardTag.ORIENTATION, null);
             valueMap.put(StandardTag.IMAGE_HEIGHT, null);
             valueMap.put(StandardTag.IMAGE_WIDTH, null);
+            valueMap.put(StandardTag.ROTATION, null);
         }
+        String orientation = valueMap.get(StandardTag.ORIENTATION);
+        String rotation = valueMap.get(StandardTag.ROTATION);
+        String height = valueMap.get(StandardTag.IMAGE_HEIGHT);
+        String width = valueMap.get(StandardTag.IMAGE_WIDTH);
+
+        if (orientation == null && rotation != null) {
+            if (rotation.trim().equals("90")) {
+                orientation = "8";
+                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
+                valueMap.put(StandardTag.IMAGE_WIDTH, height);
+            } else if (rotation.trim().equals("270")) {
+                orientation = "6";
+                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
+                valueMap.put(StandardTag.IMAGE_WIDTH, height);
+            } else if (rotation.trim().equals("180")) {
+                orientation = "3";
+            }
+            valueMap.put(StandardTag.ORIENTATION, orientation);
+        }
+
         logger.info(gson.toJson(valueMap));
         return valueMap;
 
