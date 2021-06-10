@@ -406,7 +406,14 @@ public class FileUploadService {
     // TODO: Temporary to fix size
     public NftFile fixSize(NftFile nftFile) {
         try {
+            String shaChecksum = nftFile.getFilename().split("\\.")[0];
+
             Path newName = Paths.get(NFT_PATH + File.separator + nftFile.getFilename());
+            if (nftFile.getContentType().toLowerCase().contains("video")) {
+                newName = Paths.get(NFT_PATH + File.separator + shaChecksum + ".jpeg");
+            }
+
+
             Map<Tag, String> valueMap = getImageParams(newName);
             nftFile.setExifOrientation(valueMap.get(StandardTag.ORIENTATION));
             nftFile.setHeight(valueMap.get(StandardTag.IMAGE_HEIGHT));
