@@ -906,6 +906,9 @@ public class NftService {
             if (friend == null) {
                 return error112;
             }
+            if(client.getId().equals(friend.getId())){
+                return error241;
+            }
 
             if (nft.isTirage()) {
                 if (!checkTirageTransferFee(nft, request.getPieces(), request.getTransactionRequest())) {
