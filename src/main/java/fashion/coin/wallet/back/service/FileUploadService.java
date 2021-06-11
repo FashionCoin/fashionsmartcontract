@@ -225,6 +225,7 @@ public class FileUploadService {
         String width = valueMap.get(StandardTag.IMAGE_WIDTH);
 
         if (orientation == null && rotation != null) {
+            valueMap = new HashMap<>();
             if (rotation.trim().equals("90")) {
                 orientation = "8";
 //                valueMap.put(StandardTag.IMAGE_HEIGHT, width);
@@ -237,6 +238,10 @@ public class FileUploadService {
                 orientation = "3";
             }
             valueMap.put(StandardTag.ORIENTATION, orientation);
+            valueMap.put(StandardTag.IMAGE_HEIGHT, height);
+            valueMap.put(StandardTag.IMAGE_WIDTH, width);
+            valueMap.put(StandardTag.ROTATION, rotation);
+            logger.info("ROTATION IS OK!");
         }
 
         logger.info(gson.toJson(valueMap));
