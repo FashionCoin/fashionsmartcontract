@@ -346,9 +346,30 @@ public class FileUploadService {
 
         for (Nft nft : nfts) {
             NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
-            if(nftFile==null){
-                logger.error("NFT: {}",gson.toJson(nft));
-                logger.error("NFT FILE: {}",nftFile);
+            if (nftFile == null) {
+                logger.error("NFT: {}", gson.toJson(nft));
+                logger.error("NFT FILE: {}", nftFile);
+                String shaChecksum = nft.getFileName().split("\\.")[0];
+                String fileExtension = getExtensionByStringHandling(nft.getFileName()).orElse("");
+                String contentType = "video";
+                Long size = 0L;
+
+                nftFile = new NftFile(shaChecksum + fileExtension, contentType, size);
+                Path newName = Paths.get(NFT_PATH + File.separator + nft.getFileName());
+                Map<Tag, String> valueMap = getImageParams(newName);
+                nftFile.setExifOrientation(valueMap.get(StandardTag.ORIENTATION));
+                nftFile.setHeight(valueMap.get(StandardTag.IMAGE_HEIGHT));
+                nftFile.setWidth(valueMap.get(StandardTag.IMAGE_WIDTH));
+
+                nftFileRepository.save(nftFile);
+
+                if (nftFile.getContentType().toLowerCase().contains("video")) {
+                    String videoName = newName.toString();
+                    String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+                    createPreview(videoName, imageName);
+                    resizePreview(shaChecksum + ".jpeg");
+                }
+
             }
 //
 //            if (nftFile.getContentType().toLowerCase().contains("video")) {
