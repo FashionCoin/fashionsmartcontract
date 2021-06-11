@@ -31,12 +31,12 @@ public class InitService {
 //        aiService.printTransferTransaction("b1803b8a0c196b7f3d433c9976bb3a328982b734f4be701a12065f1e8321827b", "100.000");
 //aiService.printCreateWalletTransaction();
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//               fileUploadService.convertAllFiles();
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+               fileUploadService.convertAllFiles();
+            }
+        }).start();
 
     }
 

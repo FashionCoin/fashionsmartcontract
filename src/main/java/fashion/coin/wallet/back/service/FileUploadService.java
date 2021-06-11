@@ -342,7 +342,7 @@ public class FileUploadService {
     public void convertAllFiles() {
         logger.info("Convert All files START");
 
-        List<Nft> nfts = nftService.findLast(LocalDateTime.of(2021, Month.JUNE, 1, 0, 0));
+        List<Nft> nfts = nftService.findLast(LocalDateTime.of(2021, Month.JUNE, 10, 0, 0));
 
         for (Nft nft : nfts) {
             NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
@@ -350,10 +350,15 @@ public class FileUploadService {
 //                logger.info("Filename : {}",nft.getFileName());
                 String shaChecksum = nft.getFileName().split("\\.")[0];
 //                logger.info(shaChecksum);
+                Path newName = Paths.get(NFT_PATH + File.separator + nft.getFileName());
+                String videoName = newName.toString();
+                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+                createPreview(videoName, imageName);
                 resizePreview(shaChecksum + ".jpeg");
-            } else {
-                resizePreview(nft.getFileName());
             }
+//            else {
+//                resizePreview(nft.getFileName());
+//            }
         }
 
 
