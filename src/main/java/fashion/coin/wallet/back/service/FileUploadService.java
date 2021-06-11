@@ -346,16 +346,21 @@ public class FileUploadService {
 
         for (Nft nft : nfts) {
             NftFile nftFile = nftFileRepository.findTopByFilename(nft.getFileName());
-            if (nftFile.getContentType().toLowerCase().contains("video")) {
-//                logger.info("Filename : {}",nft.getFileName());
-                String shaChecksum = nft.getFileName().split("\\.")[0];
-//                logger.info(shaChecksum);
-                Path newName = Paths.get(NFT_PATH + File.separator + nft.getFileName());
-                String videoName = newName.toString();
-                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
-                createPreview(videoName, imageName);
-                resizePreview(shaChecksum + ".jpeg");
+            if(nftFile==null){
+                logger.error("NFT: {}",gson.toJson(nft));
+                logger.error("NFT FILE: {}",nftFile);
             }
+//
+//            if (nftFile.getContentType().toLowerCase().contains("video")) {
+////                logger.info("Filename : {}",nft.getFileName());
+//                String shaChecksum = nft.getFileName().split("\\.")[0];
+////                logger.info(shaChecksum);
+//                Path newName = Paths.get(NFT_PATH + File.separator + nft.getFileName());
+//                String videoName = newName.toString();
+//                String imageName = NFT_PATH + File.separator + shaChecksum + ".jpeg";
+//                createPreview(videoName, imageName);
+//                resizePreview(shaChecksum + ".jpeg");
+//            }
 //            else {
 //                resizePreview(nft.getFileName());
 //            }
