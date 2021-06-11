@@ -555,6 +555,7 @@ public class NftService {
 
             return new ResultDTO(true, oneNft, 0);
         } catch (Exception e) {
+            logger.error(gson.toJson(request));
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
