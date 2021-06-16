@@ -611,6 +611,7 @@ public class TranzzoService {
 
             BigDecimal nftTotalPrice = nftService.getTotalPrice(request.getBuyNft());
             if (nftTotalPrice.compareTo(request.getFshnAmount()) != 0) {
+                logger.error(gson.toJson(request));
                 return error242;
             }
 
