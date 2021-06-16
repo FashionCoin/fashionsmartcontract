@@ -420,9 +420,9 @@ public class TranzzoService {
 
             if (tranzzo.getStatus().equals("success")) {
                 logger.info("Tranzzo payment status is {}", tranzzo.getStatus());
-                if(!buyFshn.isLock()) {
+                if (!buyFshn.isLock()) {
                     buyLock(buyFshn);
-                }else{
+                } else {
                     return "PROCESSED";
                 }
                 if (buyFshn.getTxHash() == null || buyFshn.getTxHash().length() == 0) {
@@ -502,9 +502,9 @@ public class TranzzoService {
     private boolean tryBuyNftForFiat(BuyFshn buyFshn) {
         try {
             BuyNft buyNft = buyNftRepository.findById(buyFshn.getPaymentId()).orElse(null);
-            logger.info("Buy NFT: {}",gson.toJson( buyNft));
+            logger.info("Buy NFT: {}", gson.toJson(buyNft));
             if (buyNft == null) {
-                logger.error("BuyNft: {}",buyNft);
+                logger.error("BuyNft: {}", buyNft);
                 return false;
             }
             if (buyNft.isComplited()) {
@@ -609,6 +609,11 @@ public class TranzzoService {
 
             Client client = clientService.findClientByApikey(request.getApikey());
 
+            BigDecimal nftTotalPrice = nftService.getTotalPrice(request.getBuyNft());
+            if (nftTotalPrice.compareTo(request.getFshnAmount()) != 0) {
+                return error242;
+            }
+
             ResultDTO resultDTO = createPayment(request, servletRequest);
             if (!resultDTO.isResult()) {
                 logger.error(gson.toJson(resultDTO));
@@ -625,6 +630,8 @@ public class TranzzoService {
                 buyNft.setBuyNftRequest(gson.toJson(request.getBuyNft()));
                 buyNft.setClientId(client.getId());
                 buyNftRepository.save(buyNft);
+
+
                 tryBuyNftForFiat(buyFshn);
                 return resultDTO;
 

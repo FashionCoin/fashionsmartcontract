@@ -76,5 +76,6 @@ public class ErrorDictionary {
     public static final ResultDTO error239 = new ResultDTO(false, "Transaction not found", 239);
     public static final ResultDTO error240 = new ResultDTO(false, "Timestamp is so small", 240);
     public static final ResultDTO error241 = new ResultDTO(false, "Sender and receiver is a same person", 241);
+    public static final ResultDTO error242 = new ResultDTO(false, "the number of FSHN we buy is less than the cost NFT", 242);
 
 }
