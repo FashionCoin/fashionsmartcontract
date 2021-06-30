@@ -132,6 +132,7 @@ public class TransactionService {
             if (!anonimousSending && receiver == null) {
                 logger.error("anonimousSending: {}",anonimousSending);
                 logger.error("receiver: {}",receiver);
+                logger.error(gson.toJson(request));
                 return error203;
             }
             ///
