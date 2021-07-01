@@ -156,10 +156,10 @@ public class NftService {
         }
 
 
-        if (!anonimousEnable) {
-            logger.error(error243.getMessage());
-            return error243;
-        }
+//        if (!anonimousEnable) {
+//            logger.error(error243.getMessage());
+//            return error243;
+//        }
 
         ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
         if (!resultDTO.isResult()) return resultDTO;
