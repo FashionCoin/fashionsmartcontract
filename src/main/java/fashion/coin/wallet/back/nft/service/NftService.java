@@ -20,6 +20,7 @@ import fashion.coin.wallet.back.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -130,6 +131,9 @@ public class NftService {
     @Autowired
     NftFileRepository nftFileRepository;
 
+    @Value("${fashion.anonimous}")
+    Boolean anonimousEnable;
+
     public ResultDTO mint(MultipartFile multipartFile, String apikey, String login,
                           String title, String description, BigDecimal faceValue, BigDecimal creativeValue,
                           BlockchainTransactionDTO blockchainTransaction) {
@@ -151,6 +155,11 @@ public class NftService {
             return error219;
         }
 
+
+        if (!anonimousEnable) {
+            logger.error(error243.getMessage());
+            return error243;
+        }
 
         ResultDTO resultDTO = fileUploadService.saveNft(multipartFile);
         if (!resultDTO.isResult()) return resultDTO;
@@ -323,9 +332,9 @@ public class NftService {
             nftHistory.setNftId(nft.getId());
             nftHistory.setAmount(amount);
 
-            if(buyNftDTO.getPieces()!=null && buyNftDTO.getPieces()>0){
+            if (buyNftDTO.getPieces() != null && buyNftDTO.getPieces() > 0) {
                 nftHistory.setPieces(buyNftDTO.getPieces());
-            }else{
+            } else {
                 nftHistory.setPieces(1L);
             }
 
@@ -913,7 +922,7 @@ public class NftService {
             if (friend == null) {
                 return error112;
             }
-            if(client.getId().equals(friend.getId())){
+            if (client.getId().equals(friend.getId())) {
                 return error241;
             }
 
