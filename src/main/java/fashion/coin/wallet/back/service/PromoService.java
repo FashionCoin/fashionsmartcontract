@@ -39,25 +39,25 @@ public class PromoService {
             String ip = getIpAddress(request);
             String useragent = getUserAgent(request);
 
-            if (promo.getNameList() != null && promo.getNameList().size() > 0) {
-                for (String cname : promo.getNameList()) {
-                    for (String alter : promo.getNameList()) {
-                        if (!cname.equals(alter)) {
-                            Relationship relationship = relationshipRepository.findTopByCryptonameAndAlterego(cname, alter);
-                            if (relationship == null) {
-                                relationship = new Relationship();
-                                relationship.setIp(ip);
-                                relationship.setUseragent(useragent);
-                                relationship.setCryptoname(cname);
-                                relationship.setAlterego(alter);
-                                relationship.setLocalDateTime(LocalDateTime.now());
-                                relationship.setTimestamp(System.currentTimeMillis());
-                                relationshipRepository.save(relationship);
-                            }
-                        }
-                    }
-                }
-            }
+//            if (promo.getNameList() != null && promo.getNameList().size() > 0) {
+//                for (String cname : promo.getNameList()) {
+//                    for (String alter : promo.getNameList()) {
+//                        if (!cname.equals(alter)) {
+//                            Relationship relationship = relationshipRepository.findTopByCryptonameAndAlterego(cname, alter);
+//                            if (relationship == null) {
+//                                relationship = new Relationship();
+//                                relationship.setIp(ip);
+//                                relationship.setUseragent(useragent);
+//                                relationship.setCryptoname(cname);
+//                                relationship.setAlterego(alter);
+//                                relationship.setLocalDateTime(LocalDateTime.now());
+//                                relationship.setTimestamp(System.currentTimeMillis());
+//                                relationshipRepository.save(relationship);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
             logger.info(gson.toJson(promo));
             if (promo.getPromocode() != null && promo.getPromocode().equals("Proof-of-Love")) {
                 logger.info("Valid Code");

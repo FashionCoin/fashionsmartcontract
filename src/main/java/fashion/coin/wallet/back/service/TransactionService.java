@@ -53,7 +53,7 @@ public class TransactionService {
         }
 
         String txhash = blockchainService.sendTransaction(blockchainTransaction);
-        if ( transactionCoins != null && txhash != null && txhash.length() > 0) {
+        if (transactionCoins != null && txhash != null && txhash.length() > 0) {
             transactionCoins.setTxhash(txhash);
             List<TransactionCoins> list = transactionRepository.findAllByTxhash(txhash);
             if (list != null && list.size() > 0) return txhash;
@@ -96,23 +96,23 @@ public class TransactionService {
     public ResultDTO send(TransactionRequestDTO request) {
         try {
             if (request.getSenderWallet() == null) {
-                logger.error("request.getSenderWallet():{}",request.getSenderWallet());
+                logger.error("request.getSenderWallet():{}", request.getSenderWallet());
                 return error200;
             }
             Client sender = clientService.findByWallet(request.getSenderWallet());
-            if (sender == null){
-                logger.error("Sender: ",sender);
+            if (sender == null) {
+                logger.error("Sender: ", sender);
                 return error201;
             }
-            if(sender.isBanned()){
-                logger.error("Sender banned: {}",sender.isBanned());
+            if (sender.isBanned()) {
+                logger.error("Sender banned: {}", sender.isBanned());
                 return error122;
             }
             BigDecimal amount = new BigDecimal(request.getAmount());
             clientService.updateBalance(sender);
-            if (sender.getWalletBalance().compareTo(amount) < 0){
-                logger.error("sender.getWalletBalance(): {}",sender.getWalletBalance());
-                logger.error("Amount: {}",amount);
+            if (sender.getWalletBalance().compareTo(amount) < 0) {
+                logger.error("sender.getWalletBalance(): {}", sender.getWalletBalance());
+                logger.error("Amount: {}", amount);
                 return error202;
             }
 
@@ -123,15 +123,15 @@ public class TransactionService {
             } else if (request.getReceiverLogin() != null) {
                 receiver = clientService.findByCryptoname(request.getReceiverLogin());
             } else {
-                logger.error("request.getReceiverWallet(): {}",request.getReceiverWallet());
-                logger.error("request.getReceiverLogin(): {}",request.getReceiverLogin());
+                logger.error("request.getReceiverWallet(): {}", request.getReceiverWallet());
+                logger.error("request.getReceiverLogin(): {}", request.getReceiverLogin());
                 return error203;
             }
 
             /// For anonimous wallet disable:
             if (!anonimousSending && receiver == null) {
-                logger.error("anonimousSending: {}",anonimousSending);
-                logger.error("receiver: {}",receiver);
+                logger.error("anonimousSending: {}", anonimousSending);
+                logger.error("receiver: {}", receiver);
                 logger.error(gson.toJson(request));
                 return error203;
             }
@@ -139,28 +139,28 @@ public class TransactionService {
 
 
             if (receiver != null && !receiver.getWalletAddress().equals(receiverWallet)) {
-                logger.error("Receiver: {}",gson.toJson( receiver));
+                logger.error("Receiver: {}", gson.toJson(receiver));
 //                logger.error("receiver wallet: " + receiver.getWalletAddress());
 //                logger.error("request wallet: " + request.getReceiverWallet());
                 return error203;
             }
 
-            if(receiver != null && receiver.isBanned()) {
-                logger.error("Receiver: {}",gson.toJson(receiver));
+            if (receiver != null && receiver.isBanned()) {
+                logger.error("Receiver: {}", gson.toJson(receiver));
                 return error122;
             }
 
-            if (request.getBlockchainTransaction() == null){
-                logger.error("request.getBlockchainTransaction(): {}",request.getBlockchainTransaction());
+            if (request.getBlockchainTransaction() == null) {
+                logger.error("request.getBlockchainTransaction(): {}", request.getBlockchainTransaction());
                 return error204;
             }
-            if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction())){
+            if (!checkTransaction(sender.getWalletAddress(), request.getReceiverWallet(), amount, request.getBlockchainTransaction())) {
                 return error206;
             }
 
             String txhash = createTransaction(sender, receiver, amount, request.getBlockchainTransaction());
             if (txhash == null || txhash.length() == 0) {
-                logger.error("TxHash: {}",txhash);
+                logger.error("TxHash: {}", txhash);
                 return error205;
             }
             clientService.addAmountToWallet(sender, amount.negate());
@@ -169,7 +169,7 @@ public class TransactionService {
                 contactService.connectFriends(sender, receiver);
             }
 //            return created;
-            return new ResultDTO(true,txhash,0);
+            return new ResultDTO(true, txhash, 0);
         } catch (Exception e) {
             return new ResultDTO(false, e.getMessage(), -1);
         }
@@ -177,27 +177,27 @@ public class TransactionService {
 
     private boolean checkTransaction(String senderWallet, String receiverWallet, BigDecimal amount, BlockchainTransactionDTO blockchainTransaction) {
 
-    logger.info(senderWallet);
-    logger.info(receiverWallet);
-    logger.info(amount.toString());
-    logger.info(gson.toJson(blockchainTransaction));
+        logger.info(senderWallet);
+        logger.info(receiverWallet);
+        logger.info(amount.toString());
+        logger.info(gson.toJson(blockchainTransaction));
 
-        if (blockchainTransaction.getSignature() == null){
+        if (blockchainTransaction.getSignature() == null) {
             logger.error("blockchainTransaction.getSignature() == null");
             return false;
         }
-        if (!blockchainTransaction.getBody().getFrom().equals(senderWallet)){
+        if (!blockchainTransaction.getBody().getFrom().equals(senderWallet)) {
             logger.error("!blockchainTransaction.getBody().getFrom().equals(senderWallet)");
             return false;
         }
         if (receiverWallet != null) {
             logger.info("receiverWallet != null");
-            if (!blockchainTransaction.getBody().getTo().equals(receiverWallet)){
+            if (!blockchainTransaction.getBody().getTo().equals(receiverWallet)) {
                 logger.error("!blockchainTransaction.getBody().getTo().equals(receiverWallet)");
                 return false;
             }
         }
-        if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0){
+        if (new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0) {
             logger.error("new BigDecimal(blockchainTransaction.getBody().getAmount()).compareTo(amount.movePointRight(3)) != 0");
             return false;
         }
@@ -235,6 +235,14 @@ public class TransactionService {
          */
 
             List<FshnHistoryTxDTO> fshnHistoryTxList = blockchainService.getHistory(client.getWalletAddress());
+
+            /// TODO: For money bag
+            if (fshnHistoryTxList.size() > 2000) {
+                fshnHistoryTxList = fshnHistoryTxList.subList(0, 2000);
+            }
+            ///
+
+
             for (FshnHistoryTxDTO fshnHistoryTx : fshnHistoryTxList) {
                 TransactionDTO transactionDTO = new TransactionDTO();
                 if (fshnHistoryTx.from.equals(client.getWalletAddress())) {
@@ -341,9 +349,9 @@ public class TransactionService {
 
     public TransactionCoins getTransactionCoins(String txhash) {
         TransactionCoins transactionCoins = transactionRepository.findTopByTxhash(txhash);
-        if(transactionCoins==null){
-            logger.error("Tx Hash: {}",txhash);
-            logger.error("Transaction: {}",transactionCoins);
+        if (transactionCoins == null) {
+            logger.error("Tx Hash: {}", txhash);
+            logger.error("Transaction: {}", transactionCoins);
         }
         return transactionCoins;
     }
