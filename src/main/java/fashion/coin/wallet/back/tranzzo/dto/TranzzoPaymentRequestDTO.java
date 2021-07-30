@@ -15,6 +15,7 @@ public class TranzzoPaymentRequestDTO {
      Integer exp_month;
      Integer exp_year;
      String card_cvv;
+     String customer_ip;
      String server_url;
      String result_url;
      String payload;
@@ -114,6 +115,14 @@ public class TranzzoPaymentRequestDTO {
 
     public void setCard_cvv(String card_cvv) {
         this.card_cvv = card_cvv;
+    }
+
+    public String getCustomer_ip() {
+        return customer_ip;
+    }
+
+    public void setCustomer_ip(String customer_ip) {
+        this.customer_ip = customer_ip;
     }
 
     public String getServer_url() {

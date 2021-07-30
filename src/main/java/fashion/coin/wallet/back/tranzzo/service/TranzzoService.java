@@ -111,6 +111,7 @@ public class TranzzoService {
         tranzzo.setOrderId(request.getOrder_id());
         tranzzo.setOrder3dsBypass(request.getOrder_3ds_bypass());
         tranzzo.setCcNumber(maskPAN(request.getCc_number()));
+        tranzzo.setCustomerIp(request.getCustomer_ip());
         tranzzo.setExpMonth(request.getExp_month());
         tranzzo.setExpYear(request.getExp_year());
         tranzzo.setCardCvv(request.getCard_cvv());
@@ -237,6 +238,10 @@ public class TranzzoService {
 
         BigDecimal uah = request.getFshnAmount().divide(uahRate, 3, RoundingMode.HALF_UP);
 
+        // Добавляем 30%
+
+        //
+
         BigDecimal difference = uah.divide(request.getUahAmount(), 6, RoundingMode.HALF_UP);
         Double diff = difference.doubleValue();
         if (diff < 0.99 || diff > 1.01) {
@@ -290,6 +295,7 @@ public class TranzzoService {
             paymentRequest.setExp_month(Integer.parseInt(request.getExpMonth()));
             paymentRequest.setExp_year(Integer.parseInt(request.getExpYear()));
             paymentRequest.setCard_cvv(request.getCvv());
+            paymentRequest.setCustomer_ip(request.getBrowserIpAddress());
             paymentRequest.setServer_url(fashinHost + "/api/v1/tranzzo/callback");
             paymentRequest.setResult_url(request.getResultUrl());
 
