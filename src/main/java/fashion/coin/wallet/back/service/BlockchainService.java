@@ -41,6 +41,8 @@ public class BlockchainService {
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
+            Thread.currentThread().getStackTrace();
+
             logger.info("url: " + BLOCKCHAIN_API_URI);
             HttpHeaders headers = new HttpHeaders();
 

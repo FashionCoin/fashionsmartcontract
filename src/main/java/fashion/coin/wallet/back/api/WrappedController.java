@@ -20,14 +20,14 @@ public class WrappedController {
     @PostMapping("/api/v1/wrap")
     @ResponseBody
     ResultDTO wrap(@RequestBody WrappedRequestDTO request) {
-        logger.info("wrap");
+        logger.info("wrap "+request.getEthereumWallet());
         return wrapService.wrap(request);
     }
 
     @PostMapping("/api/v1/unwrap")
     @ResponseBody
     ResultDTO unwrap(@RequestBody UnwrapRequestDTO request) {
-        logger.info("unwrap");
+        logger.info("unwrap "+request.getEthereumWallet());
         return wrapService.unwrap(request);
     }
 

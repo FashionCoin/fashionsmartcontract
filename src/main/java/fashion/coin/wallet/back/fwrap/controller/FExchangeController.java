@@ -22,16 +22,16 @@ public class FExchangeController {
 
     @PostMapping("/api/v1/fwrap/wrap")
     @ResponseBody
-    ResultDTO wrapCurrency(@RequestBody FWrapRequestDTO request){
-
+    ResultDTO wrapCurrency(@RequestBody FWrapRequestDTO request) {
+        logger.info("fwrap " + request.getTransactionRequest().getSenderWallet());
         return fExchangeService.wrapCurrency(request);
     }
 
 
     @PostMapping("/api/v1/fwrap/exchange")
     @ResponseBody
-    ResultDTO exchange(@RequestBody FExchangeRequestDTO request){
-
+    ResultDTO exchange(@RequestBody FExchangeRequestDTO request) {
+        logger.info("exchange " + request.getApikey());
         return fExchangeService.exchange(request);
     }
 

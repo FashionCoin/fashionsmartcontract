@@ -33,7 +33,7 @@ public class TranzzoController {
     @PostMapping("/api/v1/tranzzo/payment/create")
     @ResponseBody
     ResultDTO createPayment(@RequestBody CreateTranzzoPaymentDTO request, HttpServletRequest servletRequest) {
-        logger.info("Create payment");
+        logger.info("Create payment " + request.getEmail());
         logger.info(gson.toJson(request));
         return tranzzoService.createPayment(request, servletRequest);
     }
@@ -41,7 +41,7 @@ public class TranzzoController {
     @PostMapping("/api/v1/tranzzo/nft/payment/create")
     @ResponseBody
     ResultDTO createNftPayment(@RequestBody CreateTranzzoPaymentDTO request, HttpServletRequest servletRequest) {
-        logger.info("Create NFT payment");
+        logger.info("Create NFT payment "+request.getPhone());
         logger.info(gson.toJson(request));
         return tranzzoService.createNftPayment(request, servletRequest);
     }
@@ -50,13 +50,13 @@ public class TranzzoController {
     @PostMapping("/api/v1/tranzzo/payment/pay")
     @ResponseBody
     ResultDTO paymentPay(@RequestBody BuyFshnTranzzoDTO request, HttpServletRequest servletRequest) {
-        logger.info("Payment pay");
+        logger.info("Payment pay " + request.getApikey());
         return tranzzoService.paymentPay(request, servletRequest);
     }
     @PostMapping("/api/v1/tranzzo/payment/status")
     @ResponseBody
     ResultDTO paymentStatus(@RequestBody GetTanzzoStatusDTO request, HttpServletRequest servletRequest) {
-        logger.info("Payment status");
+        logger.info("Payment status ");
         return tranzzoService.paymentStatus(request, servletRequest);
     }
 

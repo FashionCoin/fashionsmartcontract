@@ -24,15 +24,15 @@ public class FTransactionsController {
 
     @PostMapping("/api/v1/fwrap/transaction")
     @ResponseBody
-    ResultDTO getByCurrency(@RequestBody FCurrencyRequestDTO request){
-
+    ResultDTO getByCurrency(@RequestBody FCurrencyRequestDTO request) {
+        logger.info("transaction " + request.getApikey());
         return fTransactionService.getByCurrency(request);
     }
 
     @PostMapping("/api/v1/fwrap/send")
     @ResponseBody
-    ResultDTO sendMoney(@RequestBody FSendMoneyRequestDTO request){
-
+    ResultDTO sendMoney(@RequestBody FSendMoneyRequestDTO request) {
+        logger.info("send " + request.getReceiver());
         return fTransactionService.sendMoney(request);
     }
 

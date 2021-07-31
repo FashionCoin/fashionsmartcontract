@@ -23,6 +23,7 @@ public class TransferNftController {
     @PostMapping("/api/v1/nft/transfer")
     @ResponseBody
     ResultDTO transfer(@RequestBody NftTransferDTO request) {
+        logger.info("transfer "+request.getReceiver());
         return nftService.transfer(request);
     }
 
