@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class FExchangeController {
 
     Logger logger = LoggerFactory.getLogger(FExchangeController.class);
-
+/*
     @Autowired
     FExchangeService fExchangeService;
 
@@ -34,6 +34,6 @@ public class FExchangeController {
         logger.info("exchange " + request.getApikey());
         return fExchangeService.exchange(request);
     }
-
+*/
 
 }
