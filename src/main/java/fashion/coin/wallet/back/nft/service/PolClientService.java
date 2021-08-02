@@ -81,7 +81,7 @@ public class PolClientService {
             PolClientResponseDTO responseDTO = new PolClientResponseDTO();
             responseDTO.setId(friend.getId());
             responseDTO.setCryptoname(friend.getCryptoname());
-            if(client!= null && friend!= null) {
+            if (client != null && friend != null) {
                 responseDTO.setConversationId(conversationService.findForFriend(client.getId(), friend.getId()));
             }
             List<Nft> nftList = nftService.getCollection(friend.getId());
@@ -160,10 +160,11 @@ public class PolClientService {
             if (client != null) {
                 responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
                 responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
-                // TODO: create Chat
-                if(responseDTO.getConversationId() == null &&
-                responseDTO.isProofSender() && responseDTO.isProofReceiver()){
+
+                if (responseDTO.getConversationId() == null &&
+                        responseDTO.isProofSender() && responseDTO.isProofReceiver()) {
                     chatListService.refreshConversationList(client);
+                    responseDTO.setConversationId(conversationService.findForFriend(client.getId(), friend.getId()));
                 }
             }
             responseDTO.setAbout(friend.getAbout());
@@ -176,10 +177,6 @@ public class PolClientService {
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
-
-
-
-
 
 
     private boolean checkProof(Long proofSenderId, Long proofReceiverId) {
