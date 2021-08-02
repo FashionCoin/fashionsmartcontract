@@ -67,7 +67,8 @@ public class CurrencyRateService {
             if(!priceMap.containsKey("USD")) {
                 priceMap.put("USD", new PriceDTO("1.0"));
             }
-            BigDecimal fshnPrice = new BigDecimal(priceMap.get("FSHN").price);
+            BigDecimal fshnPrice = new BigDecimal(priceMap.get("FSHN").price)
+                    .multiply(new BigDecimal("2.0"));
             for (Map.Entry<String, PriceDTO> entry : priceMap.entrySet()) {
                 if (!entry.getKey().equals("FSHN")) {
                     CurrencyRate currencyRate = new CurrencyRate();
