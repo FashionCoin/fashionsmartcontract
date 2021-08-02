@@ -27,13 +27,13 @@ public class FExchangeController {
         return fExchangeService.wrapCurrency(request);
     }
 
-/*
+
     @PostMapping("/api/v1/fwrap/exchange")
     @ResponseBody
     ResultDTO exchange(@RequestBody FExchangeRequestDTO request) {
         logger.info("exchange " + request.getApikey());
         return fExchangeService.exchange(request);
     }
-*/
+
 
 }

@@ -78,5 +78,6 @@ public class ErrorDictionary {
     public static final ResultDTO error241 = new ResultDTO(false, "Sender and receiver is a same person", 241);
     public static final ResultDTO error242 = new ResultDTO(false, "the number of FSHN we buy is less than the cost NFT", 242);
     public static final ResultDTO error243 = new ResultDTO(false, "It is impossible to create NTF when anonymous transactions are prohibited", 243);
+    public static final ResultDTO error244 = new ResultDTO(false, "Only F-currencies are allowed to be exchanged, not FSHN", 244);
 
 }
