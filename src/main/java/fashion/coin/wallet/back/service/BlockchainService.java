@@ -41,7 +41,14 @@ public class BlockchainService {
 
     public String sendTransaction(BlockchainTransactionDTO blockchainTransaction) {
         try {
-            Thread.currentThread().getStackTrace();
+
+            StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+            for (int i = 0; i < trace.length; i++) {
+                StackTraceElement el = trace[i];
+                if(el.getClassName().contains("fashion.coin")) {
+                    logger.info(el.getClassName() + ":" + el.getMethodName() + " " + el.getLineNumber());
+                }
+            }
 
             logger.info("url: " + BLOCKCHAIN_API_URI);
             HttpHeaders headers = new HttpHeaders();

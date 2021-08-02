@@ -141,7 +141,9 @@ public class AIService {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace();
         for (int i = 0; i < trace.length; i++) {
             StackTraceElement el = trace[i];
-            logger.info(el.getClassName() + ":" + el.getMethodName() + " " + el.getLineNumber());
+            if(el.getClassName().contains("fashion.coin")) {
+                logger.info(el.getClassName() + ":" + el.getMethodName() + " " + el.getLineNumber());
+            }
         }
 
         String pub_key = getPubKey(sender);
