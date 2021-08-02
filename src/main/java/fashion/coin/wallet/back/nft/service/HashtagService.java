@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.nft.service;
 
+import com.google.gson.Gson;
 import com.google.inject.internal.asm.$ClassTooLargeException;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.nft.dto.HashTagFindAllDTO;
@@ -31,6 +32,9 @@ public class HashtagService {
 
     @Autowired
     HashTagRepository hashTagRepository;
+
+    @Autowired
+    Gson gson;
 
 //    public static final String REG_EX_TAG = ".*?\\s(#\\w+).*?";
     public static final String REG_EX_TAG = "\\s(#\\w+)\\s";
@@ -107,11 +111,16 @@ public class HashtagService {
             nftList.removeIf(nft -> nft.isBurned() || nft.isBanned());
 
             HashTag hashTag = hashTagRepository.findById(request.getHashtag()).orElse(null);
+            if(hashTag== null){
+                hashTag = new HashTag();
+                hashTag.setId(request.getHashtag());
+            }
             hashTag.setPublications((long) nftList.size());
             hashTagRepository.save(hashTag);
 
             return new ResultDTO(true, nftList, 0);
         } catch (Exception e) {
+            logger.error(gson.toJson( request));
             e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
