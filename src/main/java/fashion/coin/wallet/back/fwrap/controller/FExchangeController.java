@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class FExchangeController {
 
     Logger logger = LoggerFactory.getLogger(FExchangeController.class);
-/*
+
     @Autowired
     FExchangeService fExchangeService;
 
@@ -27,7 +27,7 @@ public class FExchangeController {
         return fExchangeService.wrapCurrency(request);
     }
 
-
+/*
     @PostMapping("/api/v1/fwrap/exchange")
     @ResponseBody
     ResultDTO exchange(@RequestBody FExchangeRequestDTO request) {
