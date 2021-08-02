@@ -137,7 +137,12 @@ public class AIService {
     }
 
     public ResultDTO transfer(String amountStr, String receiver, AIWallets sender, long seedLong) {
-        Thread.currentThread().getStackTrace();
+
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < trace.length; i++) {
+            StackTraceElement el = trace[i];
+            logger.info(el.getClassName() + ":" + el.getMethodName() + " " + el.getLineNumber());
+        }
 
         String pub_key = getPubKey(sender);
         String priv_key = getPrivKey(sender);
