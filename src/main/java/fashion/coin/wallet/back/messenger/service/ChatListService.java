@@ -90,7 +90,7 @@ public class ChatListService {
         }
     }
 
-    private List<MyConversation> refreshConversationList(Client client) {
+    public List<MyConversation> refreshConversationList(Client client) {
 
         try {
             List<Long> friendIdList = proofService.mutual(client);

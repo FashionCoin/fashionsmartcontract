@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import fashion.coin.wallet.back.dto.ResultDTO;
 import fashion.coin.wallet.back.dto.SocialLinkDTO;
 import fashion.coin.wallet.back.entity.Client;
+import fashion.coin.wallet.back.messenger.model.Conversation;
+import fashion.coin.wallet.back.messenger.service.ChatListService;
 import fashion.coin.wallet.back.messenger.service.ConversationService;
 import fashion.coin.wallet.back.nft.dto.PolClientData;
 import fashion.coin.wallet.back.nft.dto.PolClientRequestDTO;
@@ -52,6 +54,9 @@ public class PolClientService {
 
     @Autowired
     ConversationService conversationService;
+
+    @Autowired
+    ChatListService chatListService;
 
 
     public ResultDTO getClientInfo(PolClientRequestDTO request) {
@@ -155,6 +160,11 @@ public class PolClientService {
             if (client != null) {
                 responseDTO.setProofReceiver(checkProof(client.getId(), friend.getId()));
                 responseDTO.setProofSender(checkProof(friend.getId(), client.getId()));
+                // TODO: create Chat
+                if(responseDTO.getConversationId() == null &&
+                responseDTO.isProofSender() && responseDTO.isProofReceiver()){
+                    chatListService.refreshConversationList(client);
+                }
             }
             responseDTO.setAbout(friend.getAbout());
             responseDTO.setSocialLinks(gson.fromJson(friend.getSocialLinks(), List.class));
