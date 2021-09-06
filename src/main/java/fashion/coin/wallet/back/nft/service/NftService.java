@@ -24,14 +24,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.parser.Entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static fashion.coin.wallet.back.constants.ErrorDictionary.*;
 import static fashion.coin.wallet.back.nft.service.ProofService.DAY;
@@ -70,6 +69,11 @@ public class NftService {
     public static final String SELLER = "seller";
     public static final String TAX_AND_PROOFS = "taxAndProofs";
     public static final String FEE = "0.0002";
+
+
+    private static final Long SECONDS_IN_SALE = 100L;
+    Map<Long, LocalDateTime> inSaleMap = new ConcurrentHashMap<>();
+
 
     @Autowired
     public void setNftRepository(NftRepository nftRepository) {
@@ -288,6 +292,9 @@ public class NftService {
 
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
         logger.info("Buy Nft: {}", gson.toJson(buyNftDTO));
+
+        addInSale(buyNftDTO.getNftId());
+
         NftTirage nftTirage = null;
         Nft nft = null;
         try {
@@ -403,6 +410,7 @@ public class NftService {
             nftHistoryRepository.save(nftHistory);
 
             nftRepository.save(nft);
+            removeInSale(nft.getId());
             return new ResultDTO(true, nftHistory, 0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -1267,4 +1275,51 @@ public class NftService {
 
         }
     }
+
+    private void addInSale(Long id) {
+        try {
+            inSaleMap.put(id, LocalDateTime.now());
+            clearInSale();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void removeInSale(Long id) {
+        try {
+            inSaleMap.remove(id);
+            clearInSale();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    private boolean checkInSale(Long id) {
+        try {
+            for (Map.Entry<Long, LocalDateTime> entry : inSaleMap.entrySet()) {
+                if (entry.getKey().equals(id) && entry.getValue().plusSeconds(SECONDS_IN_SALE).isAfter(LocalDateTime.now())) {
+                    return true;
+                }
+            }
+            clearInSale();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void clearInSale() {
+        try {
+            Set<Map.Entry<Long, LocalDateTime>> entrySet = inSaleMap.entrySet();
+            for (Map.Entry<Long, LocalDateTime> entity : entrySet) {
+                if (entity.getValue().plusSeconds(SECONDS_IN_SALE).isAfter(LocalDateTime.now())) {
+                    inSaleMap.remove(entity.getKey());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }
