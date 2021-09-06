@@ -293,6 +293,10 @@ public class NftService {
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
         logger.info("Buy Nft: {}", gson.toJson(buyNftDTO));
 
+        if(checkInSale(buyNftDTO.getNftId())){
+            return error221;
+        }
+
         addInSale(buyNftDTO.getNftId());
 
         NftTirage nftTirage = null;
