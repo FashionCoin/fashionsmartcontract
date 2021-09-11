@@ -1357,14 +1357,18 @@ public class NftService {
                 for (Nft nft : nftList) {
                     if (!nft.isTirage()) {
                         Client owner = getOwnerFromHistory(nft.getId());
-                        if (!owner.getId().equals(nft.getOwnerId())) {
-                            logger.error("Nft: {}\n Owner nft: {} but real owner: {}",
-                                    nft.getTitle(), nft.getOwnerName(), owner.getCryptoname());
-                            nft.setOwnerId(owner.getId());
-                            nft.setOwnerName(owner.getCryptoname());
-                            nft.setOwnerWallet(owner.getWalletAddress());
-                            nftRepository.save(nft);
-                            logger.info("Fixed!");
+                        if (owner != null) {
+                            if (!owner.getId().equals(nft.getOwnerId())) {
+                                logger.error("Nft: {}\n Owner nft: {} but real owner: {}",
+                                        nft.getTitle(), nft.getOwnerName(), owner.getCryptoname());
+                                nft.setOwnerId(owner.getId());
+                                nft.setOwnerName(owner.getCryptoname());
+                                nft.setOwnerWallet(owner.getWalletAddress());
+                                nftRepository.save(nft);
+                                logger.info("Fixed!");
+                            }
+                        } else {
+                            logger.error("Owner of NFT:{} is null", nft.getId());
                         }
                     }
                 }
