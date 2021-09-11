@@ -41,7 +41,7 @@ public class InitService {
 //            }
 //        }).start();
 
-        nftService.init();
+//        nftService.init();
 
     }
 
