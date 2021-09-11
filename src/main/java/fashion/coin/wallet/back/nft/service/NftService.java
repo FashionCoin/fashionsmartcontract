@@ -412,7 +412,7 @@ public class NftService {
                 nft.setOwnerName(clientTo.getCryptoname());
                 nft.setOwnerWallet(clientTo.getWalletAddress());
                 nft.setCanChangeValue(true);
-                logger.info("Nft save: {}",gson.toJson(nft));
+                logger.info("Nft save: {}", gson.toJson(nft));
                 nftRepository.save(nft);
             }
             logger.info("Nft history: {}", gson.toJson(nftHistory));
@@ -432,7 +432,7 @@ public class NftService {
                 nftTirage.setInsale(false);
                 tirageService.save(nftTirage);
             }
-            logger.error("Nft: {}",gson.toJson(nft));
+            logger.error("Nft: {}", gson.toJson(nft));
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
@@ -1330,6 +1330,53 @@ public class NftService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Client getOwnerFromHistory(Long nftId) {
+        Long ownerId = null;
+        NftHistory nftHistory = nftHistoryRepository.findTopByNftIdOrderByTimestampDesc(nftId);
+        if (nftHistory != null) {
+            ownerId = nftHistory.getIdTo();
+        }
+        Nft nft = nftRepository.findById(nftId).orElse(null);
+        if (nft != null) {
+            ownerId = nft.getOwnerId();
+        }
+        if (ownerId != null) {
+            return clientService.getClient(ownerId);
+        }
+        return null;
+    }
+
+
+    private void fixNftOwners() {
+        new Thread(() -> {
+            logger.info("Fix NFT owners");
+            try {
+                List<Nft> nftList = nftRepository.findAll();
+                for (Nft nft : nftList) {
+                    if (!nft.isTirage()) {
+                        Client owner = getOwnerFromHistory(nft.getId());
+                        if (!owner.getId().equals(nft.getOwnerId())) {
+                            logger.error("Nft: {}\n Owner nft: {} but real owner: {}",
+                                    nft.getTitle(), nft.getOwnerName(), owner.getCryptoname());
+                            nft.setOwnerId(owner.getId());
+                            nft.setOwnerName(owner.getCryptoname());
+                            nft.setOwnerWallet(owner.getWalletAddress());
+                            nftRepository.save(nft);
+                            logger.info("Fixed!");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+    }
+
+    public void init() {
+        fixNftOwners();
     }
 
 }

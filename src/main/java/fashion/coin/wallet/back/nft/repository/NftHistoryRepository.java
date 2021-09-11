@@ -11,4 +11,6 @@ public interface NftHistoryRepository extends JpaRepository<NftHistory, Long> {
     List<NftHistory> findByCryptonameFromOrCryptonameToOrderByTimestampDesc(String cryptonameFrom,String cryptonameTo);
 
     List<NftHistory> findByTimestampIsGreaterThanOrderByTimestampDesc(Long timestamp);
+
+    NftHistory findTopByNftIdOrderByTimestampDesc(Long nftId);
 }

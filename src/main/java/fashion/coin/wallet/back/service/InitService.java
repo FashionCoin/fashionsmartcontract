@@ -1,5 +1,6 @@
 package fashion.coin.wallet.back.service;
 
+import fashion.coin.wallet.back.nft.service.NftService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,8 @@ public class InitService {
 
     FileUploadService fileUploadService;
 
+    NftService nftService;
+
     @PostConstruct
     public void init() {
         emailService.sendMail("tech@coin.fashion", "FC Wallet", "Сервер FC Wallet только что запустился");
@@ -37,6 +40,8 @@ public class InitService {
 //               fileUploadService.convertAllFiles();
 //            }
 //        }).start();
+
+        nftService.init();
 
     }
 
@@ -63,5 +68,9 @@ public class InitService {
     @Autowired
     public void setFileUploadService(FileUploadService fileUploadService) {
         this.fileUploadService = fileUploadService;
+    }
+
+    public void setNftService(NftService nftService) {
+        this.nftService = nftService;
     }
 }
