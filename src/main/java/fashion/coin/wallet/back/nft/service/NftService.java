@@ -293,10 +293,10 @@ public class NftService {
     public ResultDTO buy(BuyNftDTO buyNftDTO) {
         logger.info("Buy Nft: {}", gson.toJson(buyNftDTO));
 
-        if(checkInSale(buyNftDTO.getNftId())){
+        if (checkInSale(buyNftDTO.getNftId())) {
             logger.error(error221.getMessage());
             logger.error(gson.toJson(buyNftDTO));
-            logger.error(gson.toJson( inSaleMap.get(buyNftDTO.getNftId())));
+            logger.error(gson.toJson(inSaleMap.get(buyNftDTO.getNftId())));
             return error221;
         }
 
@@ -412,10 +412,12 @@ public class NftService {
                 nft.setOwnerName(clientTo.getCryptoname());
                 nft.setOwnerWallet(clientTo.getWalletAddress());
                 nft.setCanChangeValue(true);
+                logger.info("Nft save: {}",gson.toJson(nft));
                 nftRepository.save(nft);
             }
+            logger.info("Nft history: {}", gson.toJson(nftHistory));
             nftHistoryRepository.save(nftHistory);
-
+            logger.info("Nft: {}", gson.toJson(nft));
             nftRepository.save(nft);
             removeInSale(nft.getId());
             return new ResultDTO(true, nftHistory, 0);
@@ -430,6 +432,7 @@ public class NftService {
                 nftTirage.setInsale(false);
                 tirageService.save(nftTirage);
             }
+            logger.error("Nft: {}",gson.toJson(nft));
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
@@ -1287,7 +1290,7 @@ public class NftService {
         try {
             inSaleMap.put(id, LocalDateTime.now());
             clearInSale();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -1296,7 +1299,7 @@ public class NftService {
         try {
             inSaleMap.remove(id);
             clearInSale();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -1310,7 +1313,7 @@ public class NftService {
                 }
             }
             clearInSale();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -1324,7 +1327,7 @@ public class NftService {
                     inSaleMap.remove(entity.getKey());
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
