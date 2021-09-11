@@ -41,9 +41,9 @@ public class WsChatHandler extends TextWebSocketHandler {
         connectionList.add(session);
         logger.info("This: " + this);
         logger.info("Connection List: " + connectionList);
-        for (WebSocketSession connection : connectionList) {
-            System.out.println(connection.getId() + "\t" + connection.isOpen());
-        }
+//        for (WebSocketSession connection : connectionList) {
+//            System.out.println(connection.getId() + "\t" + connection.isOpen());
+//        }
     }
 
 

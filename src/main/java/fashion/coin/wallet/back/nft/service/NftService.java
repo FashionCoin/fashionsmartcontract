@@ -1371,6 +1371,7 @@ public class NftService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            logger.info("NFT fix completed");
         }).start();
 
     }
