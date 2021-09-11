@@ -1368,7 +1368,9 @@ public class NftService {
                                 logger.info("Fixed!");
                             }
                         } else {
-                            logger.error("Owner of NFT:{} is null", nft.getId());
+                            if (!nft.isBurned()) {
+                                logger.error("Owner of NFT:{} is null", nft.getId());
+                            }
                         }
                     }
                 }
