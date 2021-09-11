@@ -1337,10 +1337,11 @@ public class NftService {
         NftHistory nftHistory = nftHistoryRepository.findTopByNftIdOrderByTimestampDesc(nftId);
         if (nftHistory != null) {
             ownerId = nftHistory.getIdTo();
-        }
-        Nft nft = nftRepository.findById(nftId).orElse(null);
-        if (nft != null) {
-            ownerId = nft.getOwnerId();
+        } else {
+            Nft nft = nftRepository.findById(nftId).orElse(null);
+            if (nft != null) {
+                ownerId = nft.getOwnerId();
+            }
         }
         if (ownerId != null) {
             return clientService.getClient(ownerId);
