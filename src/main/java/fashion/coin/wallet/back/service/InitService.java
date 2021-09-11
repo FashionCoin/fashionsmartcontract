@@ -70,6 +70,7 @@ public class InitService {
         this.fileUploadService = fileUploadService;
     }
 
+    @Autowired
     public void setNftService(NftService nftService) {
         this.nftService = nftService;
     }
