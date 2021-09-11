@@ -294,6 +294,9 @@ public class NftService {
         logger.info("Buy Nft: {}", gson.toJson(buyNftDTO));
 
         if(checkInSale(buyNftDTO.getNftId())){
+            logger.error(error221.getMessage());
+            logger.error(gson.toJson(buyNftDTO));
+            logger.error(gson.toJson( inSaleMap.get(buyNftDTO.getNftId())));
             return error221;
         }
 
