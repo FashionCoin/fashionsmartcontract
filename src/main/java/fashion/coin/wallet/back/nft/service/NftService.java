@@ -1257,6 +1257,13 @@ public class NftService {
         return nftList;
     }
 
+    public void setInSale(Long nftId, boolean b) {
+        Nft nft = nftRepository.findById(nftId).orElse(null);
+        if(nft!= null && !nft.isTirage()){
+            nft.setInsale(false);
+        }
+    }
+
 
     class DividendProofPaymentProcess implements Runnable {
 
