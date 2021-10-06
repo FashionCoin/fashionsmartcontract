@@ -686,9 +686,10 @@ public class ClientService {
 
     public ResultDTO getWallet(GetWalletDTO data) {
         try {
+            logger.info("Data: "+gson.toJson(data));
             String brand = brandCodeService.checkBrandCode(data.getCryptoname());
+            logger.info("Brand: " + brand);
             if (brand != null) {
-                logger.info("Brand: " + brand);
                 data.setCryptoname(brand);
             }
 
