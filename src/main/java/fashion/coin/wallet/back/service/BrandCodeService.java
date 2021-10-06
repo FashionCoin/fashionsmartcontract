@@ -42,12 +42,12 @@ public class BrandCodeService {
                 }
             }
 
-                        try {
+            try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                 for (int i = 0; i < 98; i++) {
-                    byte[] encodedhash = digest.digest(("brand"+i).getBytes());
+                    byte[] encodedhash = digest.digest(("brand" + i).getBytes());
 
-                    String brnd = "k"+ bytesToHex(encodedhash).substring(0,8);
+                    String brnd = "CAPS" + bytesToHex(encodedhash).substring(0, 8);
 
                     BrandCode brandCode = brandCodeRepository.findById(brnd).orElse(null);
                     if (brandCode == null) {
@@ -73,13 +73,13 @@ public class BrandCodeService {
             int colonePosition = codeCandidat.indexOf(":");
 
             String brcode = codeCandidat.substring(0, colonePosition);
-            logger.info("brcode: "+brcode);
+            logger.info("brcode: " + brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
-            logger.info("brandCode: {}",gson.toJson( brandCode));
+            logger.info("brandCode: {}", gson.toJson(brandCode));
             if (brandCode != null && brandCode.getWallet() == null) {
                 String cryptoname = codeCandidat.substring(colonePosition + 1);
-                logger.info("cryptoname: {}",cryptoname);
+                logger.info("cryptoname: {}", cryptoname);
                 if (cryptoname.length() > 0) {
                     logger.info("checkCode: " + cryptoname);
                     brandCode.setBrand(cryptoname);
@@ -93,8 +93,6 @@ public class BrandCodeService {
     }
 
 
-
-
     public void registerClient(Client client) throws IllegalAccessException {
         logger.info("Client: " + gson.toJson(client));
 
@@ -106,7 +104,7 @@ public class BrandCodeService {
         brandCode.setWallet(client.getWalletAddress());
         brandCode.setClient(client.getId());
         brandCodeRepository.save(brandCode);
-        logger.info("Client Brand "+cryptoname+" registered");
+        logger.info("Client Brand " + cryptoname + " registered");
 
 
     }
@@ -120,12 +118,11 @@ public class BrandCodeService {
     }
 
 
-
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {
             String hex = Integer.toHexString(0xff & hash[i]);
-            if(hex.length() == 1) {
+            if (hex.length() == 1) {
                 hexString.append('0');
             }
             hexString.append(hex);
@@ -141,13 +138,13 @@ public class BrandCodeService {
             int colonePosition = codeCandidat.indexOf(":");
 
             String brcode = codeCandidat.substring(0, colonePosition);
-            logger.info("brcode: "+brcode);
+            logger.info("brcode: " + brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
-            logger.info("brandCode: {}",gson.toJson( brandCode));
-            if (brandCode != null ) {
+            logger.info("brandCode: {}", gson.toJson(brandCode));
+            if (brandCode != null) {
                 String cryptoname = codeCandidat.substring(colonePosition + 1);
-                logger.info("cryptoname: {}",cryptoname);
+                logger.info("cryptoname: {}", cryptoname);
                 if (cryptoname.length() > 0) {
                     logger.info("checkCode: " + cryptoname);
                     return cryptoname;
