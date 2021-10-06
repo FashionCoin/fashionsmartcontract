@@ -114,5 +114,30 @@ public class BrandCodeService {
         }
         return hexString.toString();
     }
+
+    public String getBrandFromCode(String codeCandidat) {
+        if (codeCandidat.contains(":")) {
+            logger.info("codeCandidat " + codeCandidat);
+            refreshBrandlist();
+
+            int colonePosition = codeCandidat.indexOf(":");
+
+            String brcode = codeCandidat.substring(0, colonePosition);
+            logger.info("brcode: "+brcode);
+
+            BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
+            logger.info("brandCode: {}",gson.toJson( brandCode));
+            if (brandCode != null ) {
+                String cryptoname = codeCandidat.substring(colonePosition + 1);
+                logger.info("cryptoname: {}",cryptoname);
+                if (cryptoname.length() > 0) {
+                    logger.info("checkCode: " + cryptoname);
+                    return cryptoname;
+                }
+            }
+        }
+        return null;
+
+    }
 }
 
