@@ -88,7 +88,7 @@ public class ClientService {
             if (cryptoname == null) {
                 cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
                 if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode((data.getCryptoname()));
-                if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase().trim();
+                if (cryptoname == null) cryptoname = data.getCryptoname().trim();
             }
             if (client == null) {
                 client = clientRepository.findClientByCryptoname(cryptoname);
@@ -120,7 +120,7 @@ public class ClientService {
             aiService.cryptoname(cryptoname, "", data.getWalletAddress());
 
             if (client == null) {
-                client = new Client(cryptoname.toLowerCase(), data.getApikey(), data.getWalletAddress());
+                client = new Client(cryptoname, data.getApikey(), data.getWalletAddress());
             } else {
                 client.setWalletAddress(data.getWalletAddress());
             }
@@ -387,7 +387,7 @@ public class ClientService {
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
             if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode(data.getCryptoname());
-            if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
+            if (cryptoname == null) cryptoname = data.getCryptoname();
 
 
             client = new Client(cryptoname, data.getApikey(), null);
@@ -448,7 +448,7 @@ public class ClientService {
 
             client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
             if (client != null) return error100;
-            if (!data.getCryptoname().toLowerCase().trim().equals(data.getCryptoname().trim())) return error104;
+            if (!data.getCryptoname().trim().equals(data.getCryptoname().trim())) return error104;
             if (!checkValidCryptoname(data.getCryptoname().trim())) {
                 logger.error("Check name");
                 return error105;
@@ -863,15 +863,15 @@ public class ClientService {
         if (client == null) return error109;
 
         if (data.getCryptoname() != null) {
-            if (!data.getCryptoname().toLowerCase().equals(data.getCryptoname())) return error104;
+            if (!data.getCryptoname().equals(data.getCryptoname())) return error104;
             if (!checkValidCryptoname(data.getCryptoname())) {
                 logger.error("Client Info");
                 return error105;
             }
 
-            if (!client.getCryptoname().toLowerCase().equals(data.getCryptoname().toLowerCase())) {
+            if (!client.getCryptoname().equals(data.getCryptoname())) {
                 if (client.isLoginChanged()) return error113;
-                client.setCryptoname(data.getCryptoname().toLowerCase());
+                client.setCryptoname(data.getCryptoname());
                 client.setLoginChanged(true);
             }
         }
@@ -949,7 +949,7 @@ public class ClientService {
         try {
             logger.info(gson.toJson(data));
             logger.info(String.valueOf(Bytes.asList(data.getCryptoname().getBytes())));
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) {
                 logger.error(gson.toJson(error100));
                 return error100;
@@ -963,11 +963,11 @@ public class ClientService {
                 logger.error("register Cryptoname" + gson.toJson(error105));
                 return error105;
             }
-            client = new Client(data.getCryptoname().toLowerCase(),
+            client = new Client(data.getCryptoname(),
                     data.getEmail());
             client.setRegisteredFrom(FROMWEB);
             clientRepository.save(client);
-            emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: " + data.getCryptoname().toLowerCase() + " ");
+            emailService.sendMail(data.getEmail(), "Fashion Coin: Congratulations!", "You created cryptoname: " + data.getCryptoname() + " ");
             return created;
         } catch (Exception e) {
             e.printStackTrace();
@@ -979,7 +979,7 @@ public class ClientService {
         try {
             logger.info(gson.toJson(data));
             logger.info(String.valueOf(Bytes.asList(data.getCryptoname().getBytes())));
-            Client client = clientRepository.findClientByCryptoname(data.getCryptoname().toLowerCase());
+            Client client = clientRepository.findClientByCryptoname(data.getCryptoname());
             if (client != null) {
                 logger.info(gson.toJson(error100));
                 return error100;
@@ -993,7 +993,7 @@ public class ClientService {
                 logger.info("Register Name " + gson.toJson(error105));
                 return error105;
             }
-            client = new Client(data.getCryptoname().toLowerCase(),
+            client = new Client(data.getCryptoname(),
                     data.getTelegramId());
             client.setRegisteredFrom(FROMTELEGRAMM);
             clientRepository.save(client);
