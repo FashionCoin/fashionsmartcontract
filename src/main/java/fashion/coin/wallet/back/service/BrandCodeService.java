@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 
 
@@ -41,6 +42,23 @@ public class BrandCodeService {
                 }
             }
 
+                        try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                for (int i = 0; i < 98; i++) {
+                    byte[] encodedhash = digest.digest(("brand"+i).getBytes());
+
+                    String brnd = "k"+ bytesToHex(encodedhash).substring(0,8);
+
+                    BrandCode brandCode = brandCodeRepository.findById(brnd).orElse(null);
+                    if (brandCode == null) {
+                        brandCode = new BrandCode(brnd);
+                        brandCodeRepository.save(brandCode);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
             listIsRefreshed = true;
