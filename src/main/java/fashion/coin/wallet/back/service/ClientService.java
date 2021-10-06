@@ -438,6 +438,7 @@ public class ClientService {
             }
 
             String brand = brandCodeService.checkBrandCode(data.getCryptoname().trim());
+            logger.info("Brand: " + brand);
             if (brand != null && brand.length() > 0) {
                 ResultDTO result = new ResultDTO(true, null, 0);
                 result.setCryptoname(brand);
