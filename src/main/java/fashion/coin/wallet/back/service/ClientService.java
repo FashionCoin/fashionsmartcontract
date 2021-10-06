@@ -686,6 +686,12 @@ public class ClientService {
 
     public ResultDTO getWallet(GetWalletDTO data) {
         try {
+            String brand = brandCodeService.checkBrandCode(data.getCryptoname());
+            if (brand != null) {
+                logger.info("Brand: " + brand);
+                data.setCryptoname(brand);
+            }
+
             Client client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
             if (client == null) {
 //                if(!anonimousSending){
@@ -749,8 +755,8 @@ public class ClientService {
     }
 
     private String checkAnonimousWallet(String address) {
-        if (address.length() < 60){
-            logger.error(address +"is not wallet");
+        if (address.length() < 60) {
+            logger.error(address + "is not wallet");
             return null;
         }
         FshnBalanceDTO walletInfo = blockchainService.getWalletInfo(address);
