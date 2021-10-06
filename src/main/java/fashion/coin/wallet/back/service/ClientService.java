@@ -57,6 +57,7 @@ public class ClientService {
     Gson gson;
     TelegramDataService telegramDataService;
     EmojiCodeService emojiCodeService;
+    BrandCodeService brandCodeService;
     CryptoWalletsService cryptoWalletsService;
 
     Random random = new Random();
@@ -86,6 +87,7 @@ public class ClientService {
             //
             if (cryptoname == null) {
                 cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+                if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode((data.getCryptoname()));
                 if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase().trim();
             }
             if (client == null) {
@@ -142,6 +144,7 @@ public class ClientService {
 
             clientRepository.save(client);
             emojiCodeService.registerClient(client);
+            brandCodeService.registerClient(client);
 
 
             if (client.getTelegramId() != null && client.getTelegramId() > 0) {
@@ -255,7 +258,8 @@ public class ClientService {
         try {
             logger.info("Sign in " + gson.toJson(data));
 
-            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname()); // ???
+            if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode(data.getCryptoname()); // ???
             if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
@@ -312,7 +316,8 @@ public class ClientService {
         try {
             logger.info("Sign in " + gson.toJson(data));
 
-            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname()); /// ???
+            if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode(data.getCryptoname()); /// ???
             if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
             Client client = clientRepository.findClientByCryptoname(cryptoname);
@@ -381,6 +386,7 @@ public class ClientService {
             }
 
             String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
+            if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode(data.getCryptoname());
             if (cryptoname == null) cryptoname = data.getCryptoname().toLowerCase();
 
 
@@ -431,6 +437,14 @@ public class ClientService {
 //                return validLogin;
             }
 
+            String brand = brandCodeService.checkBrandCode(data.getCryptoname().trim());
+            if (brand != null && brand.length() > 0) {
+                ResultDTO result = new ResultDTO(true, null, 0);
+                result.setCryptoname(brand);
+                logger.info(gson.toJson(result));
+                return result;
+            }
+
             client = clientRepository.findClientByCryptoname(data.getCryptoname().trim());
             if (client != null) return error100;
             if (!data.getCryptoname().toLowerCase().trim().equals(data.getCryptoname().trim())) return error104;
@@ -453,7 +467,9 @@ public class ClientService {
         }
         logger.info(cryptoname);
         if (emojiCodeService.checkEmojiCode(cryptoname) != null) return true;
+        if (brandCodeService.checkBrandCode(cryptoname) != null) return true;
         if (emojiCodeService.emojiAvaliable(cryptoname)) return true;
+        if (brandCodeService.brandAvaliable(cryptoname)) return true;
 
         char ch = ((char) 65039);
         String textWithoutEmoji = EmojiParser.removeAllEmojis(cryptoname).replace(Character.toString(ch), "");
@@ -607,6 +623,11 @@ public class ClientService {
     @Autowired
     public void setEmojiCodeService(EmojiCodeService emojiCodeService) {
         this.emojiCodeService = emojiCodeService;
+    }
+
+    @Autowired
+    public void setBrandCodeService(BrandCodeService brandCodeService) {
+        this.brandCodeService = brandCodeService;
     }
 
     @Autowired
@@ -786,6 +807,8 @@ public class ClientService {
 
         String cryptoname = emojiCodeService.checkEmojiCode(data.getCryptoname());
         if (cryptoname == null) cryptoname = emojiCodeService.checkEmojiCode(data.getApikey());
+        if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode(data.getCryptoname());
+        if (cryptoname == null) cryptoname = brandCodeService.checkBrandCode(data.getApikey());
         if (cryptoname == null) cryptoname = data.getCryptoname().trim();
 
         Client client = clientRepository.findClientByCryptoname(cryptoname);
@@ -1079,8 +1102,8 @@ public class ClientService {
     }
 
     public Client getClient(Long id) {
-        if(id ==null){
-            logger.error("Client ID: {}",id);
+        if (id == null) {
+            logger.error("Client ID: {}", id);
         }
         return clientRepository.findById(id).orElse(null);
     }
