@@ -65,6 +65,8 @@ public class BlockchainService {
             logger.info("responceBody: {}", gson.toJson(responceBody));
             return responceBody.getTx_hash();
         } catch (Exception e) {
+            logger.error("sendTransaction");
+            logger.error(gson.toJson(blockchainTransaction));
             e.printStackTrace();
         }
         return "";
