@@ -55,7 +55,7 @@ public class BrandCodeService {
             int colonePosition = codeCandidat.indexOf(":");
 
             String brcode = codeCandidat.substring(0, colonePosition);
-            logger.info(brcode);
+            logger.info("brcode: "+brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
             logger.info("brandCode: {}",gson.toJson( brandCode));
