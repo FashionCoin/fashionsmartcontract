@@ -137,7 +137,8 @@ public class BlockchainService {
             FshnBalanceDTO balanceDTO = balanceInfo.getResult();
             return balanceDTO;
         } catch (Exception e) {
-            logger.error(walletAddress);
+            logger.error("getWalletInfo");
+            logger.error("Wallet Address: "+walletAddress);
             logger.error(e.getMessage());
             e.printStackTrace();
         }
