@@ -749,7 +749,10 @@ public class ClientService {
     }
 
     private String checkAnonimousWallet(String address) {
-
+        if (address.length() < 60){
+            logger.error(address +"is not wallet");
+            return null;
+        }
         FshnBalanceDTO walletInfo = blockchainService.getWalletInfo(address);
         if (walletInfo != null && walletInfo.getPub_key() != null &&
                 !walletInfo.getPub_key().equals("0000000000000000000000000000000000000000000000000000000000000000")) {
