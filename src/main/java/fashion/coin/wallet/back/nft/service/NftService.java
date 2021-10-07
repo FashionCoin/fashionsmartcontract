@@ -1343,9 +1343,16 @@ public class NftService {
         Long ownerId = null;
         NftHistory nftHistory = nftHistoryRepository.findTopByNftIdOrderByTimestampDesc(nftId);
         if (nftHistory != null) {
+            if(nftId.equals(1875388L)) {
+                logger.error("nftHistory=" + gson.toJson(nftHistory));
+            }
             ownerId = nftHistory.getIdTo();
         } else {
             Nft nft = nftRepository.findById(nftId).orElse(null);
+            if(nftId.equals(1875388L)) {
+                logger.error("nftHistory=" + gson.toJson(nftHistory));
+                logger.error("a.Nft:"+gson.toJson(nft));
+            }
             if (nft != null) {
                 ownerId = nft.getOwnerId();
             } else {
