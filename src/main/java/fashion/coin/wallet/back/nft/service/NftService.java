@@ -1347,7 +1347,10 @@ public class NftService {
         } else {
             Nft nft = nftRepository.findById(nftId).orElse(null);
             if (nft != null) {
+                logger.info("Nft: " + gson.toJson(nft));
                 ownerId = nft.getOwnerId();
+            } else {
+                logger.info("Nft id=" + nftId + ": " + gson.toJson(nft));
             }
         }
         if (ownerId != null) {
@@ -1378,7 +1381,6 @@ public class NftService {
                         } else {
                             if (!nft.isBurned()) {
                                 logger.error("Owner of NFT:{} is null", nft.getId());
-                                logger.error("Owner: ", getOwnerFromHistory(nft.getId()));
                             }
                         }
                     }
