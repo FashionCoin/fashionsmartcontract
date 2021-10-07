@@ -1351,12 +1351,23 @@ public class NftService {
             } else {
                 logger.info("Nft id=" + nftId + ": " + gson.toJson(nft));
             }
+            if(nftId.equals(1875388L)) {
+                logger.error("nft:" + gson.toJson(nft));
+                logger.error("A.ownerId=" + ownerId);
+            }
         }
+
+        if(nftId.equals(1875388L)) {
+            logger.error("B.ownerId=" + ownerId);
+        }
+
         if (ownerId != null) {
             return clientService.getClient(ownerId);
         } else {
-            logger.error("nftId:"+nftId);
-            logger.error("ownerId=" + ownerId);
+            if(nftId.equals(1875388L)) {
+                logger.error("nftId:" + nftId);
+                logger.error("C.ownerId=" + ownerId);
+            }
         }
         return null;
     }
