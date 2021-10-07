@@ -1347,7 +1347,6 @@ public class NftService {
         } else {
             Nft nft = nftRepository.findById(nftId).orElse(null);
             if (nft != null) {
-                logger.info("Nft: " + gson.toJson(nft));
                 ownerId = nft.getOwnerId();
             } else {
                 logger.info("Nft id=" + nftId + ": " + gson.toJson(nft));
@@ -1355,6 +1354,8 @@ public class NftService {
         }
         if (ownerId != null) {
             return clientService.getClient(ownerId);
+        } else {
+            logger.error("ownerId=" + ownerId);
         }
         return null;
     }
