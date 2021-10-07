@@ -1340,46 +1340,56 @@ public class NftService {
     }
 
     private Client getOwnerFromHistory(Long nftId) {
-        Long ownerId = null;
-        NftHistory nftHistory = nftHistoryRepository.findTopByNftIdOrderByTimestampDesc(nftId);
-        if (nftHistory != null) {
-            if (nftId.equals(1875388L)) {
-                logger.error("nftHistory=" + gson.toJson(nftHistory));
-            }
-            ownerId = nftHistory.getIdTo();
-            if (ownerId == null && nftHistory.getCryptonameTo() != null) {
-                Client owner = clientService.findByCryptoname(nftHistory.getCryptonameTo());
-                ownerId = owner.getId();
-            }
+        try {
+            Long ownerId = null;
+            NftHistory nftHistory = nftHistoryRepository.findTopByNftIdOrderByTimestampDesc(nftId);
+            if (nftHistory != null) {
+                if (nftId.equals(1875388L)) {
+                    logger.error("nftHistory=" + gson.toJson(nftHistory));
+                }
+                ownerId = nftHistory.getIdTo();
+                if (ownerId == null && nftHistory.getCryptonameTo() != null) {
+                    Client owner = clientService.findByCryptoname(nftHistory.getCryptonameTo());
+                    ownerId = owner.getId();
+                    Client sender = clientService.findByCryptoname(nftHistory.getCryptonameFrom());
+                    Long senderId = sender.getId();
+                    nftHistory.setIdTo(ownerId);
+                    nftHistory.setIdFrom(senderId);
+                    nftHistoryRepository.save(nftHistory);
+                }
 
-        } else {
-            Nft nft = nftRepository.findById(nftId).orElse(null);
-            if (nftId.equals(1875388L)) {
-                logger.error("nftHistory=" + gson.toJson(nftHistory));
-                logger.error("a.Nft:" + gson.toJson(nft));
-            }
-            if (nft != null) {
-                ownerId = nft.getOwnerId();
             } else {
-                logger.info("Nft id=" + nftId + ": " + gson.toJson(nft));
+                Nft nft = nftRepository.findById(nftId).orElse(null);
+                if (nftId.equals(1875388L)) {
+                    logger.error("nftHistory=" + gson.toJson(nftHistory));
+                    logger.error("a.Nft:" + gson.toJson(nft));
+                }
+                if (nft != null) {
+                    ownerId = nft.getOwnerId();
+                } else {
+                    logger.info("Nft id=" + nftId + ": " + gson.toJson(nft));
+                }
+                if (nftId.equals(1875388L)) {
+                    logger.error("nft:" + gson.toJson(nft));
+                    logger.error("A.ownerId=" + ownerId);
+                }
             }
-            if (nftId.equals(1875388L)) {
-                logger.error("nft:" + gson.toJson(nft));
-                logger.error("A.ownerId=" + ownerId);
-            }
-        }
 
-        if (nftId.equals(1875388L)) {
-            logger.error("B.ownerId=" + ownerId);
-        }
-
-        if (ownerId != null) {
-            return clientService.getClient(ownerId);
-        } else {
             if (nftId.equals(1875388L)) {
-                logger.error("nftId:" + nftId);
-                logger.error("C.ownerId=" + ownerId);
+                logger.error("B.ownerId=" + ownerId);
             }
+
+            if (ownerId != null) {
+                return clientService.getClient(ownerId);
+            } else {
+                if (nftId.equals(1875388L)) {
+                    logger.error("nftId:" + nftId);
+                    logger.error("C.ownerId=" + ownerId);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("getOwnerFromHistory: nftId: " + nftId);
+            logger.error(e.getMessage());
         }
         return null;
     }
