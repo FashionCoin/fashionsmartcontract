@@ -42,23 +42,23 @@ public class BrandCodeService {
                 }
             }
 
-            try {
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                for (int i = 0; i < 98; i++) {
-                    byte[] encodedhash = digest.digest(("brand" + i).getBytes());
-
-                    String brnd = "CAPS" + bytesToHex(encodedhash).substring(0, 8);
-
-                    BrandCode brandCode = brandCodeRepository.findById(brnd).orElse(null);
-                    if (brandCode == null) {
-                        brandCode = new BrandCode(brnd);
-                        brandCodeRepository.save(brandCode);
-                    }
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+//                for (int i = 0; i < 98; i++) {
+//                    byte[] encodedhash = digest.digest(("brand" + i).getBytes());
+//
+//                    String brnd = "CAPS" + bytesToHex(encodedhash).substring(0, 8);
+//
+//                    BrandCode brandCode = brandCodeRepository.findById(brnd).orElse(null);
+//                    if (brandCode == null) {
+//                        brandCode = new BrandCode(brnd);
+//                        brandCodeRepository.save(brandCode);
+//                    }
+//                }
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
 
             listIsRefreshed = true;
