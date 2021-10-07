@@ -1259,7 +1259,7 @@ public class NftService {
 
     public void setInSale(Long nftId, boolean b) {
         Nft nft = nftRepository.findById(nftId).orElse(null);
-        if(nft!= null && !nft.isTirage()){
+        if (nft != null && !nft.isTirage()) {
             nft.setInsale(false);
         }
     }
@@ -1378,6 +1378,7 @@ public class NftService {
                         } else {
                             if (!nft.isBurned()) {
                                 logger.error("Owner of NFT:{} is null", nft.getId());
+                                logger.error("Owner: ", getOwnerFromHistory(nft.getId()));
                             }
                         }
                     }
