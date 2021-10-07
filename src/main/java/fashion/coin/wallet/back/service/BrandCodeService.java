@@ -72,7 +72,7 @@ public class BrandCodeService {
 
             int colonePosition = codeCandidat.indexOf(":");
 
-            String brcode = codeCandidat.substring(0, colonePosition);
+            String brcode = codeCandidat.substring(0, colonePosition).replace("case","CASE");
             logger.info("brcode: " + brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
@@ -108,11 +108,11 @@ public class BrandCodeService {
 
 
     }
-
+// TODO: Check logic!!
     public boolean brandAvaliable(String cryptoname) {
 
         BrandCode brandCode = brandCodeRepository.findByBrand(cryptoname);
-        if (brandCode == null) return false;
+        if (brandCode != null) return false;
         if (brandCode.getWallet() != null && brandCode.getWallet().length() > 0) return false;
         return true;
     }
@@ -137,7 +137,7 @@ public class BrandCodeService {
 
             int colonePosition = codeCandidat.indexOf(":");
 
-            String brcode = codeCandidat.substring(0, colonePosition);
+            String brcode = codeCandidat.substring(0, colonePosition).replace("case","CASE");
             logger.info("brcode: " + brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
