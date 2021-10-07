@@ -1355,6 +1355,7 @@ public class NftService {
         if (ownerId != null) {
             return clientService.getClient(ownerId);
         } else {
+            logger.error("nftId:"+nftId);
             logger.error("ownerId=" + ownerId);
         }
         return null;
