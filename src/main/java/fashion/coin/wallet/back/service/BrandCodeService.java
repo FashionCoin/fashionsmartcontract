@@ -72,7 +72,7 @@ public class BrandCodeService {
 
             int colonePosition = codeCandidat.indexOf(":");
 
-            String brcode = codeCandidat.substring(0, colonePosition).replace("case","CASE");
+            String brcode = codeCandidat.substring(0, colonePosition).replace("case", "CASE");
             logger.info("brcode: " + brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
@@ -108,13 +108,20 @@ public class BrandCodeService {
 
 
     }
-// TODO: Check logic!!
-    public boolean brandAvaliable(String cryptoname) {
 
-        BrandCode brandCode = brandCodeRepository.findByBrand(cryptoname);
-        if (brandCode != null) return false;
-        if (brandCode.getWallet() != null && brandCode.getWallet().length() > 0) return false;
-        return true;
+    // TODO: Check logic!!
+    public boolean brandAvaliable(String cryptoname) {
+        try {
+            BrandCode brandCode = brandCodeRepository.findByBrand(cryptoname);
+            if (brandCode == null) return false;
+            logger.info("brandcode: " + gson.toJson(brandCode));
+            if (brandCode.getWallet() != null && brandCode.getWallet().length() > 0) return false;
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 
@@ -137,7 +144,7 @@ public class BrandCodeService {
 
             int colonePosition = codeCandidat.indexOf(":");
 
-            String brcode = codeCandidat.substring(0, colonePosition).replace("case","CASE");
+            String brcode = codeCandidat.substring(0, colonePosition).replace("case", "CASE");
             logger.info("brcode: " + brcode);
 
             BrandCode brandCode = brandCodeRepository.findById(brcode).orElse(null);
