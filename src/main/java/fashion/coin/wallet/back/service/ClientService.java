@@ -455,6 +455,9 @@ public class ClientService {
             }
             return validLogin;
         } catch (Exception e) {
+            logger.error("checkName: "+gson.toJson( data));
+            logger.error(e.getMessage());
+            e.printStackTrace();
             return new ResultDTO(false, e.getMessage(), -1);
         }
     }
