@@ -9,7 +9,7 @@ public class ErrorDictionary {
     public static final ResultDTO error102 = new ResultDTO(false, "This is brand name", 102);
     public static final ResultDTO error103 = new ResultDTO(false, "Public Key in transaction not equal wallet", 103);
     public static final ResultDTO error104 = new ResultDTO(false, "Cryptoname must be lower case", 104);
-    public static final ResultDTO error105 = new ResultDTO(false, "Emoji error, or short login", 105);
+    public static final ResultDTO error105 = new ResultDTO(false, "Emoji error, Brand-code error, or short login", 105);
     public static final ResultDTO error106 = new ResultDTO(false, "Can't find pub_key param", 106);
     public static final ResultDTO error107 = new ResultDTO(false, "Can't find apikey param", 107);
     public static final ResultDTO error108 = new ResultDTO(false, "Please, use crypto names to send FSHN", 108);
