@@ -15,7 +15,7 @@ public interface NftRepository extends JpaRepository<Nft, Long> {
     @Query(value = "SELECT * FROM nft WHERE timestamp < ?1 AND burned = FALSE ORDER BY timestamp DESC LIMIT ?2", nativeQuery = true)
     List<Nft> findByLocalDateTimeBeforeAndOrderByLocalDateTimeDescLimitedTo(Long timestamp, int limit);
 
-    @Query(value = "SELECT * FROM nft ORDER BY timestamp DESC LIMIT 10000", nativeQuery = true)
+    @Query(value = "SELECT * FROM nft WHERE burned = FALSE  ORDER BY timestamp DESC LIMIT 10000", nativeQuery = true)
     List<Nft> findLastTenThousand();
 
     List<Nft> findByFileName(String filename);
