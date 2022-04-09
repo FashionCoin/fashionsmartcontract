@@ -157,8 +157,8 @@ public class FExchangeService {
 
             if (request.getCurrencyTo().equals("FSHN")) {
 
-                return error244;
-/*
+//                return error244;
+
                 BigDecimal receive = fshn.multiply(BigDecimal.ONE.subtract(new BigDecimal(FEE)))
                         .setScale(3, RoundingMode.HALF_UP);
                 BigDecimal fee = fshn.subtract(receive);
@@ -190,7 +190,7 @@ public class FExchangeService {
                 fWalletService.changeAmount(client, request.getCurrencyFrom(), request.getAmount().negate());
 
                 return new ResultDTO(true, fExchange, 0);
-*/
+
             } else {
                 rate = currencyService.getLastCurrencyRate(request.getCurrencyTo());
                 BigDecimal totalAmount = fshn.divide(rate, 2, RoundingMode.HALF_UP);
